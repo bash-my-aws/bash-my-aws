@@ -1,0 +1,266 @@
+#!/bin/bash
+
+# cloudformation-functions.sh
+#
+# Create, List, Update, Delete (plus diff, tail, etc) CF stacks
+#
+# Requires awscli (and jq-1.4 or later for cf_diff)
+
+
+# List CF stacks. Optionally filter on stack name.
+# e.g. 
+#      cf_list foo
+#
+# To make it fly we omit stacks with status of DELETE_COMPLETE
+cf_list() {
+  aws cloudformation list-stacks \
+    --stack-status  \
+      CREATE_COMPLETE \
+      CREATE_FAILED \
+      CREATE_IN_PROGRESS \
+      DELETE_FAILED \
+      DELETE_IN_PROGRESS \
+      ROLLBACK_COMPLETE \
+      ROLLBACK_FAILED \
+      ROLLBACK_IN_PROGRESS \
+      UPDATE_COMPLETE \
+      UPDATE_COMPLETE_CLEANUP_IN_PROGRESS \
+      UPDATE_IN_PROGRESS \
+      UPDATE_ROLLBACK_COMPLETE \
+      UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS \
+      UPDATE_ROLLBACK_FAILED \
+      UPDATE_ROLLBACK_IN_PROGRESS \
+  --query "StackSummaries[].StackName" \
+  --output text | tr '\t' '\n' | sort | grep "$1"
+}
+alias cf_stacks=cf_list
+
+# Report on what changes would be made to stack by applying template
+#
+# Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
+#
+cf_diff() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  if ! aws cloudformation describe-stacks --stack-name $stack 2>/dev/null 1>/dev/null; then 
+    echo "Stack:$stack does not exist"
+    return 1; 
+  fi
+  local template="$(cf_template $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find ${stack}.json. You can specify alternative template as second argument."
+    return 1
+  fi
+  if [ "x$( type -P colordiff )" != "x" ]; then
+    local DIFF_CMD=colordiff
+  else
+    local DIFF_CMD=diff
+  fi
+  $DIFF_CMD -u <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) <(jq --sort-keys . $template)
+  if [ $? -eq 0 ]; then
+    echo "no difference"
+  fi
+}
+
+
+# Show all events for CF stack until update completes or fails.
+cf_tail() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack=$1
+  local previous=""
+  local current=""
+  until echo "$current" | tail -1 | egrep -q "${stack}.*_(COMPLETE|FAILED)"
+  do
+    output=$(cf_events $stack)
+    if [ -z "$output" ]; then sleep 1; continue; fi
+
+    current=$(echo "$output" | sed '$d')
+    final_line=$(echo "$output" | tail -1)
+    if [ -z "$previous" ]; then
+      echo "$current"
+    elif [ "$current" != "$previous" ]; then
+      comm -13 <(echo "$previous") <(echo "$current")
+    fi
+    previous="$current"
+    sleep 1
+  done
+  echo $final_line
+}
+
+
+cf_events() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack=$1
+  aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table | uniq -u
+}
+
+
+cf_status() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack=$1
+  aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
+}
+
+
+cf_get() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack=$1
+  aws cloudformation get-template --stack-name $stack --query TemplateBody
+}
+
+cf_template() {
+  local stack=$1
+  local template=$2
+  if [ -z "$template" ]; then
+    if [ -f "${stack}.json" ]; then
+      template="${stack}.json"
+    elif [ -f "${stack%-*}.json" ]; then
+      template="${stack%-*}.json"
+    fi
+  fi
+  echo $template
+}
+
+cf_create() {
+  # XXX accept params from arguments
+  # XXX show account_alias_or_id
+  # XXX confirm if not -f
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local template="$(cf_template $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find ${stack}.json. You can specify alternative template as second argument."
+    return 1
+  fi
+  if [ -n "$3" ] ; then
+    local parameters="--parameters file://$3";
+  fi
+  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
+  then
+    cf_tail $stack
+  fi
+}
+
+cf_update() {
+  # XXX accept params from arguments
+  # XXX show diff
+  # XXX show account_alias_or_id
+  # XXX confirm if not -f
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local template="$(cf_template $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find ${stack}.json. You can specify alternative template as second argument."
+    return 1
+  fi
+  if [ -n "$3" ] ; then local parameters="--parameters file://$3"; fi
+  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
+  then
+    cf_tail $stack
+  fi
+}
+
+cf_delete() {
+  # XXX show account_alias_or_id
+  # XXX confirm if not -f
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$1"
+  if aws cloudformation delete-stack --stack-name $stack
+  then
+    cf_tail $stack
+  fi
+}
+
+
+cf_outputs() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$1"
+  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table
+}
+
+
+cf_validate() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME cf-template-file"; return 1; fi
+  aws cloudformation validate-template --template-body file://$1
+}
+
+
+# Show reasons for stack failure
+cf_failure() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  stack=$1
+  aws cloudformation describe-stack-events --stack-name $stack --query 'StackEvents[?contains(ResourceStatus,`FAILED`)].[LogicalResourceId, ResourceStatus, ResourceType, ResourceStatusReason]'
+}
+
+# Shows current value of particular parameter in a stack
+cf_param() {
+  if [ -z "$2" ] ; then echo "Usage: $FUNCNAME stack parameter"; return 1; fi
+  stack=$1
+  param=$2
+  aws cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
+}
+
+
+##
+## Functions to work with stack resources
+##
+
+cf_asg() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack=$1
+  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[?ResourceType==\`AWS::AutoScaling::AutoScalingGroup\`].PhysicalResourceId" --output text
+}
+
+
+cf_asg_instances() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack=$1
+  instance_ids="$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$(cf_asg $stack)" --query "AutoScalingGroups[].Instances[].[InstanceId]" --output text)"
+  aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].[PrivateIpAddress, PublicIpAddress, InstanceId, State.Name, InstanceType, join(\` \`, [Tags[?Key==\`Name\`].Value][])]" --output text
+}
+
+
+cf_asg_instance_ssh() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [user]"; return 1; fi
+  local stack=$1
+  local user=${2:-root}
+  local instance_ip="$(cf_asg_instances $stack | head -1 | cut -f 1)"
+  ssh ${user}@${instance_ip}
+}
+
+
+## Start instance
+cf_asg_scale_up() {
+  # XXX don't scale down
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [desired_capacity]"; return 1; fi
+  local stack=$1
+  if [ -n "$2" ]; then
+    desired_capacity="$2"
+  else
+    desired_capacity="$(cf_param $stack desiredCapacity)"
+  fi
+  if [ -z "$desired_capacity" ]; then
+    desired_capacity=1
+  fi
+  local asg_name="$(cf_asg $stack)"
+  echo "Scaling up AutoScalingGroup [$asg_name] to [$desired_capacity] instances"
+  aws autoscaling set-desired-capacity --auto-scaling-group-name $asg_name --desired-capacity $desired_capacity
+}
+
+## Stop Instance
+cf_asg_scale_down() {
+  # XXX don't scale up
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [desired_capacity]"; return 1; fi
+  local stack=$1
+  desired_capacity="${2:-0}"
+  local instances="$(cf_asg_instances $stack | cut -f 3)"
+  if [ -n "$instances" ]; then
+    aws autoscaling set-desired-capacity --auto-scaling-group-name "$(cf_asg $stack)" --desired-capacity $desired_capacity
+    echo -n "Waiting for instances to terminate ($instances)..."
+    aws ec2 wait instance-terminated --instance-ids $instances
+    echo "Done"
+  else
+    echo "No running instances found for AutoScalingGroup $stack"
+  fi
+}
+
