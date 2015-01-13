@@ -36,7 +36,7 @@ git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 
 Source the functions you want with something like:
 ```
-source ~/.bash-my-aws/cloudformation-functions.sh
+source ~/.bash-my-aws/cloudformation-functions
 ```
 
 Typing cf_[TAB] will list available functions for CloudFormation:
@@ -72,7 +72,7 @@ For more info on the query syntax used by AWSCLI, check out http://jmespath.org/
 
 ### Usage examples
 
-**cloudformation-functions.sh**
+**cloudformation-functions**
 
 #### Create a stack
 
