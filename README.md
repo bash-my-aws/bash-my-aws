@@ -2,7 +2,7 @@ bash-my-aws
 ===========
 
 Written to make my life easier, bash-my-aws assists Infrastructure Jockeys using 
-Amazon Web Servives from the command line.
+Amazon Web Services from the command line.
 
 This project provides easily memorable commands for realtime control of resources
 in Amazon AWS. The goal is to reduce the time between intention and effect.
@@ -28,7 +28,7 @@ As shown below, you may simply clone the GitHub repo and source the files requir
 (You should probably fork it instead to keep your customisations)
 
 ```
-git clone git@git.realestate.com.au:the-money/bash-my-aws.git ~/.bash-my-aws
+git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 ```
 
 
