@@ -76,7 +76,10 @@ cf_tail() {
   local previous
   until echo "$current" | tail -1 | egrep -q "${stack}.*_(COMPLETE|FAILED)"
   do
-    local output=$(cf_events $stack)
+    if ! output=$(cf_events $stack); then
+      # Something went wrong with cf_events (like stack not known)
+      return 1
+    fi
     if [ -z "$output" ]; then sleep 1; continue; fi
 
     current=$(echo "$output" | sed '$d')
@@ -96,7 +99,13 @@ cf_tail() {
 cf_events() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table | uniq -u
+  shift
+  local output
+  if output=$(aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table $@); then
+    echo "$output" | uniq -u
+  else
+    return $?
+  fi
 }
 
 
