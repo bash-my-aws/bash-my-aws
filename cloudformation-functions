@@ -38,6 +38,7 @@ cf_list() {
 }
 alias cf_stacks=cf_list
 
+
 # Report on what changes would be made to stack by applying template
 #
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
@@ -64,7 +65,6 @@ cf_diff() {
     echo "no difference"
   fi
 }
-
 
 # Show all events for CF stack until update completes or fails.
 cf_tail() {
@@ -95,7 +95,6 @@ cf_tail() {
   echo $final_line
 }
 
-
 cf_events() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
@@ -108,13 +107,11 @@ cf_events() {
   fi
 }
 
-
 cf_status() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
 }
-
 
 cf_get() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
@@ -175,7 +172,6 @@ cf_update() {
 }
 
 cf_delete() {
-  # XXX show account_alias_or_id
   # XXX confirm if not -f
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
@@ -185,25 +181,36 @@ cf_delete() {
   fi
 }
 
-
 cf_outputs() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table
+  shift
+  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table $@
 }
 
+cf_resources() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  shift
+  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}" --output table $@
+}
 
 cf_validate() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME cf-template-file"; return 1; fi
   aws cloudformation validate-template --template-body file://$1
 }
 
-
 # Show reasons for stack failure
 cf_failure() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   aws cloudformation describe-stack-events --stack-name $stack --query 'StackEvents[?contains(ResourceStatus,`FAILED`)].[LogicalResourceId, ResourceStatus, ResourceType, ResourceStatusReason]'
+}
+
+cf_params() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .
 }
 
 # Shows current value of particular parameter in a stack
@@ -213,7 +220,6 @@ cf_param() {
   local param=$2
   aws cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
 }
-
 
 ##
 ## Functions to work with stack resources
@@ -225,14 +231,12 @@ cf_asg() {
   aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[?ResourceType==\`AWS::AutoScaling::AutoScalingGroup\`].PhysicalResourceId" --output text
 }
 
-
 cf_asg_instances() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   local instance_ids="$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$(cf_asg $stack)" --query "AutoScalingGroups[].Instances[].[InstanceId]" --output text)"
   aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].[PrivateIpAddress, PublicIpAddress, InstanceId, State.Name, InstanceType, join(\` \`, [Tags[?Key==\`Name\`].Value][])]" --output text
 }
-
 
 cf_asg_instance_ssh() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [user]"; return 1; fi
@@ -241,7 +245,6 @@ cf_asg_instance_ssh() {
   local instance_ip="$(cf_asg_instances $stack | head -1 | cut -f 1)"
   ssh ${user}@${instance_ip}
 }
-
 
 ## Start instance
 cf_asg_scale_up() {
@@ -277,4 +280,3 @@ cf_asg_scale_down() {
     echo "No running instances found for AutoScalingGroup $stack"
   fi
 }
-
