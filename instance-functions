@@ -5,7 +5,7 @@
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
 # Fields to include when listing EC2 Instances
-INSTANCE_OUTPUT=${BMA_INSTANCE_OUTPUT:-"[InstanceId, State.Name, InstanceType, PrivateIpAddress, PublicIpAddress, join(\` \`, [Tags[?Key==\`Name\`].Value][]), join(\` \`, [Tags[?Key==\`contact\`].Value][]), LaunchTime]"}
+INSTANCE_OUTPUT=${BMA_INSTANCE_OUTPUT:-"[InstanceId, State.Name, StateTransitionReason, InstanceType, PrivateIpAddress, PublicIpAddress, join(\` \`, [Tags[?Key==\`Name\`].Value][]), join(\` \`, [Tags[?Key==\`contact\`].Value][]), LaunchTime]"}
 #
 # This can be overridden to customise output
 #
@@ -22,6 +22,14 @@ instances() {
     local filters="--filters Name=tag:Name,Values=${1}"
   fi
   aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text
+}
+
+instances_running() {
+  aws ec2 describe-instances --query "Reservations[].Instances[?State.Name==\`running\`].$INSTANCE_OUTPUT" --output text
+}
+
+instances_stopped() {
+  aws ec2 describe-instances --query "Reservations[].Instances[?State.Name==\`stopped\`].$INSTANCE_OUTPUT" --output text
 }
 
 instances_with_tag() {
@@ -46,37 +54,38 @@ instances_without_tag() {
   fi
 }
 
-instance_start() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  aws ec2 start-instances --instance-id $1
-}
-
-instance_stop() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  aws ec2 stop-instances --instance-id $1
-}
-
-instance_terminate() {
-  aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
-  aws ec2 terminate-instances --instance-id $1
-}
-
 instance_types() {
-  aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceType]" --output text | sort -u
+  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[].Instances[].[InstanceType]" --output text | sort | uniq -c
 }
 
-instance_count() {
-  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "length(Reservations[].Instances[])"
+instance_volumes() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
+  local instance_ids=$@
+  if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
+  then
+    aws ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
+  else
+    >&2 echo "No volumes found"
+  fi
 }
 
-instance_counts() {
-  query="{"
-  for instance_type in $(instance_types); do
-    instance_type_underscored=$(echo $instance_type | tr  . _)
-    query=$query" ${instance_type_underscored}: length(Reservations[].Instances[?InstanceType == \`${instance_type}\`][])",
-  done
-  query="${query%?}}"
-  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "$query" --output table | tr _ .
+instance_userdata() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
+  local instance_id=$1
+  aws ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
+}
+
+instance_console_output() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi 
+  local instance_id=$1
+  aws ec2 get-console-output --instance-id $instance_id --query Output --output text
+}
+
+instance_role() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
+  local instance_id=$1
+  local iam_instance_profile_id=$(aws ec2 describe-instances --instance-id $instance_id --query "Reservations[].Instances[].IamInstanceProfile.Id" --output text)
+  aws iam list-instance-profiles --query "InstanceProfiles[?InstanceProfileId==\`$iam_instance_profile_id\`].Roles[].RoleName" --output text
 }
 
 instance_ssh_details() {
@@ -112,32 +121,17 @@ instance_ssh() {
     $ip
 }
 
-instance_volumes() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
-  local instance_ids=$@
-  if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
-  then
-    aws ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
-  else
-    >&2 echo "No volumes found"
-  fi
-}
-
-instance_userdata() {
+instance_start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  local instance_id=$1
-  aws ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
+  aws ec2 start-instances --instance-id $1
 }
 
-instance_console_output() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi 
-  local instance_id=$1
-  aws ec2 get-console-output --instance-id $instance_id --query Output --output text
+instance_stop() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
+  aws ec2 stop-instances --instance-id $1
 }
 
-instance_role() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
-  local instance_id=$1
-  local iam_instance_profile_id=$(aws ec2 describe-instances --instance-id $instance_id --query "Reservations[].Instances[].IamInstanceProfile.Id" --output text)
-  aws iam list-instance-profiles --query "InstanceProfiles[?InstanceProfileId==\`$iam_instance_profile_id\`].Roles[].RoleName" --output text
+instance_terminate() {
+  aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
+  aws ec2 terminate-instances --instance-id $1
 }
