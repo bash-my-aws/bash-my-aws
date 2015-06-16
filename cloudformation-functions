@@ -62,7 +62,7 @@ cf_diff_template() {
   fi
   diff -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
   if [ $? -eq 0 ]; then
-    echo "No difference between stack template ($stack) and contents of file ($template)" >&2
+    echo "template for stack ($stack) and contents of file ($template) are the same" >&2
   fi
 }
 
@@ -91,7 +91,7 @@ cf_diff_params() {
   fi
   diff -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .) --label $params <(jq --sort-keys . $params)
   if [ $? -eq 0 ]; then
-    echo "No difference between stack params ($stack) and contents of file ($params)"
+    echo "params for stack ($stack) and contents of file ($params) are the same" >&2
   fi
 }
 
