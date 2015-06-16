@@ -39,30 +39,59 @@ cf_list() {
 alias cf_stacks=cf_list
 
 
+cf_diff() {
+  cf_diff_template $@
+  echo
+  cf_diff_params $@
+}
+
 # Report on what changes would be made to stack by applying template
 #
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
-cf_diff() {
+cf_diff_template() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
   local stack="$(basename $1 .json)"
-  if ! aws cloudformation describe-stacks --stack-name $stack 2>/dev/null 1>/dev/null; then 
-    echo "Stack: $stack does not exist"
+  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
     return 1; 
   fi
-  local template="$(cf_template $stack $2)"
+  local template="$(cf_x_template $stack $2)"
   if [ ! -f "$template" ]; then
-    echo "Could not find ${stack}.json. You can specify alternative template as second argument."
+    echo "Could not find template (${template}). You can specify alternative template as second argument." >&2
     return 1
   fi
-  if [ "x$( type -P colordiff )" != "x" ]; then
-    local DIFF_CMD=colordiff
-  else
-    local DIFF_CMD=diff
-  fi
-  $DIFF_CMD -u <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) <(jq --sort-keys . $template)
+  diff -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
   if [ $? -eq 0 ]; then
-    echo "no difference"
+    echo "No difference between stack template ($stack) and contents of file ($template)" >&2
+  fi
+}
+
+# Report on what changes would be made to stack by applying params
+#
+# Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
+#
+cf_diff_params() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
+    return 1; 
+  fi
+  local template="$(cf_x_template $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument." >&2
+    return 1
+  fi
+  local params="$(cf_x_params $stack $template $3)"
+  if [ -z "$params" ]; then
+    echo "No params file provided. Skipping" >&2
+    return 0
+  fi
+  if [ ! -f "$params" ]; then
+    return 1
+  fi
+  diff -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .) --label $params <(jq --sort-keys . $params)
+  if [ $? -eq 0 ]; then
+    echo "No difference between stack params ($stack) and contents of file ($params)"
   fi
 }
 
@@ -119,7 +148,7 @@ cf_get() {
   aws cloudformation get-template --stack-name $stack --query TemplateBody
 }
 
-cf_template() {
+cf_x_template() {
   local stack="$(basename $1 .json)"
   local template=$2
   if [ -z "$template" ]; then
@@ -132,17 +161,25 @@ cf_template() {
   echo $template
 }
 
+cf_x_params() {
+  local stack="$(basename $1 .json)"
+  local template=$2
+  local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)-\([^-][^-]*\)/\1-params-\2.json/")};
+  if [ -f "${params}" ]; then
+    echo $params
+  fi
+}
+
 cf_create() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"
-  local template="$(cf_template $stack $2)"
+  local template="$(cf_x_template $stack $2)"
   if [ ! -f "$template" ]; then
-    echo "Could not find ${stack}.json. You can specify alternative template as second argument."
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
     return 1
   fi
-  if [ -n "$3" ] ; then
-    local parameters="--parameters file://$3";
-  fi
+  local params="$(cf_x_params $stack $template $3)"
+  if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
   if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
   then
     cf_tail $stack
@@ -152,12 +189,13 @@ cf_create() {
 cf_update() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"
-  local template="$(cf_template $stack $2)"
+  local template="$(cf_x_template $stack $2)"
   if [ ! -f "$template" ]; then
-    echo "Could not find ${stack}.json. You can specify alternative template as second argument."
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
     return 1
   fi
-  if [ -n "$3" ] ; then local parameters="--parameters file://$3"; fi
+  local params="$(cf_x_params $stack $template $3)"
+  if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
   if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
   then
     cf_tail $stack
@@ -165,7 +203,6 @@ cf_update() {
 }
 
 cf_delete() {
-  # XXX confirm if not -f
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   if aws cloudformation delete-stack --stack-name $stack
