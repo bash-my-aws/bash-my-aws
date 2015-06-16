@@ -133,9 +133,6 @@ cf_template() {
 }
 
 cf_create() {
-  # XXX accept params from arguments
-  # XXX show account_alias_or_id
-  # XXX confirm if not -f
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"
   local template="$(cf_template $stack $2)"
@@ -153,10 +150,6 @@ cf_create() {
 }
 
 cf_update() {
-  # XXX accept params from arguments
-  # XXX show diff
-  # XXX show account_alias_or_id
-  # XXX confirm if not -f
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"
   local template="$(cf_template $stack $2)"
