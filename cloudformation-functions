@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# cloudformation-functions.sh
+# cloudformation-functions
 #
 # Create, List, Update, Delete (plus diff, tail, etc) CF stacks
 #
