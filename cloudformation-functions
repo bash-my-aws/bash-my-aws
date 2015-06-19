@@ -116,7 +116,7 @@ cf_tail() {
     if [ -z "$previous" ]; then
       echo "$current"
     elif [ "$current" != "$previous" ]; then
-      comm --nocheck-order -13 <(echo "$previous") <(echo "$current")
+      comm -13 <(echo "$previous") <(echo "$current")
     fi
     previous="$current"
     sleep 1
