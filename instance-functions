@@ -5,13 +5,7 @@
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
 # Fields to include when listing EC2 Instances
-INSTANCE_OUTPUT=${BMA_INSTANCE_OUTPUT:-"[InstanceId, State.Name, StateTransitionReason, InstanceType, PrivateIpAddress, PublicIpAddress, join(\` \`, [Tags[?Key==\`Name\`].Value][]), join(\` \`, [Tags[?Key==\`contact\`].Value][]), LaunchTime]"}
-#
-# This can be overridden to customise output
-#
-# Example of ENV setting to generate CSV output
-#
-# INSTANCE_OUTPUT='[join(`,`, [InstanceId,State.Name])]'
+INSTANCE_OUTPUT="[InstanceId, State.Name, InstanceType, PrivateIpAddress, PublicIpAddress, join(\` \`, [Tags[?Key==\`Name\`].Value][]), join(\` \`, [Tags[?Key==\`contact\`].Value][]), LaunchTime]"
 
 #  Fields to include when listing EBS volumes
 VOLUME_OUTPUT='[VolumeId, Size, VolumeType, State, CreateTime]'
@@ -22,14 +16,6 @@ instances() {
     local filters="--filters Name=tag:Name,Values=${1}"
   fi
   aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text
-}
-
-instances_running() {
-  aws ec2 describe-instances --query "Reservations[].Instances[?State.Name==\`running\`].$INSTANCE_OUTPUT" --output text
-}
-
-instances_stopped() {
-  aws ec2 describe-instances --query "Reservations[].Instances[?State.Name==\`stopped\`].$INSTANCE_OUTPUT" --output text
 }
 
 instances_with_tag() {
