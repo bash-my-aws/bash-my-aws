@@ -54,12 +54,14 @@ instance_ssh() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_id=$1
   local user=$2
+
   local instance_details=$(instance_ssh_details $instance_id)
   local keyname=$(echo "$instance_details" | awk '{print $1}');
-  local default_user=$(echo "$instance_details" | awk '{print $2}');
-  local ip=$(echo "$instance_details" | awk '{print $3}');
-  local instance_name=$(echo "$instance_details" | awk '{print $4}');
-  local USERNAME=${user:-$default_user}
+  local ip=$(echo "$instance_details" | awk '{print $2}');
+  local instance_name=$(echo "$instance_details" | awk '{print $3}');
+  local instance_default_user=$(echo "$instance_details" | awk '{print $4}');
+
+  local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
   echo "Connecting to $instance_id $instance_name"
   ssh \
     -t \
@@ -77,9 +79,9 @@ instance_ssh_details() {
   aws ec2 describe-instances --filters Name=instance-id,Values=$instance_id --query "
     Reservations[].Instances[0].[
       KeyName,
-      join(\` \`, [Tags[?Key==\`default-user\`].Value][] || [\`root\`])
-      PrivateIpAddress, 
-      join(\` \`, [Tags[?Key==\`Name\`].Value][] || [\`not-named\`])
+      PrivateIpAddress,
+      join(\` \`, [Tags[?Key==\`Name\`].Value][] || [\`not-named\`]),
+      join(\` \`, [Tags[?Key==\`default-user\`].Value][] || [\`\`])
     ]" --output text
 }
 
