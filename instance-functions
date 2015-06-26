@@ -11,11 +11,7 @@ INSTANCE_OUTPUT="[InstanceId, State.Name, InstanceType, PrivateIpAddress, Public
 VOLUME_OUTPUT='[VolumeId, Size, VolumeType, State, CreateTime]'
 
 instances() {
-  if [ -n "$1" ] 
-  then 
-    local filters="--filters Name=tag:Name,Values=${1}"
-  fi
-  aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text
+  aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text | grep "$1"
 }
 
 instances_with_tag() {
