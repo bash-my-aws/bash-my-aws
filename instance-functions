@@ -36,26 +36,6 @@ instances_without_tag() {
   fi
 }
 
-instance_types() {
-  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[].Instances[].[InstanceType]" --output text | sort | uniq -c
-}
-
-instance_volumes() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
-  local instance_ids=$@
-  if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
-  then
-    aws ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
-  else
-    >&2 echo "No volumes found"
-  fi
-}
-
-instance_userdata() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  local instance_id=$1
-  aws ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
-}
 
 instance_console_output() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi 
@@ -68,18 +48,6 @@ instance_role() {
   local instance_id=$1
   local iam_instance_profile_id=$(aws ec2 describe-instances --instance-id $instance_id --query "Reservations[].Instances[].IamInstanceProfile.Id" --output text)
   aws iam list-instance-profiles --query "InstanceProfiles[?InstanceProfileId==\`$iam_instance_profile_id\`].Roles[].RoleName" --output text
-}
-
-instance_ssh_details() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
-  local instance_id=$1
-  aws ec2 describe-instances --filters Name=instance-id,Values=$instance_id --query "
-    Reservations[].Instances[0].[
-      KeyName,
-      join(\` \`, [Tags[?Key==\`default-user\`].Value][] || [\`root\`])
-      PrivateIpAddress, 
-      join(\` \`, [Tags[?Key==\`Name\`].Value][] || [\`not-named\`])
-    ]" --output text
 }
 
 instance_ssh() {
@@ -103,6 +71,18 @@ instance_ssh() {
     $ip
 }
 
+instance_ssh_details() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  local instance_id=$1
+  aws ec2 describe-instances --filters Name=instance-id,Values=$instance_id --query "
+    Reservations[].Instances[0].[
+      KeyName,
+      join(\` \`, [Tags[?Key==\`default-user\`].Value][] || [\`root\`])
+      PrivateIpAddress, 
+      join(\` \`, [Tags[?Key==\`Name\`].Value][] || [\`not-named\`])
+    ]" --output text
+}
+
 instance_start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 start-instances --instance-id $1
@@ -116,4 +96,25 @@ instance_stop() {
 instance_terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
+}
+
+instance_types() {
+  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[].Instances[].[InstanceType]" --output text | sort | uniq -c
+}
+
+instance_userdata() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
+  local instance_id=$1
+  aws ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
+}
+
+instance_volumes() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
+  local instance_ids=$@
+  if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
+  then
+    aws ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
+  else
+    >&2 echo "No volumes found"
+  fi
 }
