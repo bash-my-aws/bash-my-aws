@@ -5,10 +5,39 @@
 # Create, List, Update, Delete (plus diff, tail, etc) CF stacks
 #
 # Requires awscli (and jq-1.4 or later for cf_diff)
+
+##
+# Suggested stack/template/params naming conventions
+# These are completely optional.
+# 
+#   stack   : token-env
+#   template: token.json
+#   params  : token-params-env.json
 #
-# Hint: Naming templates as [stack_name + '.json'] will allow
-# you to use tab completion to provide stack name. The functions
-# will drop the '.json' if present in the stack argument.
+# Where:
+#
+#   token : describes the resources (mywebsite, vpc, bastion, etc)
+#   env   : environment descriptor (dev, test, prod, etc)
+#
+# Following these (entirely optional) conventions means bash-my-aws can 
+# infer template & params file from stack name
+#
+# e.g. cf_create mywebsite-test
+#
+#      is equivalent (if files present) to:
+#
+#      cf_create mywebsite-test mywebsite.json mywebsite-params-test.json
+#
+# Other benefits include:
+#
+# * ease in locating stack for template (and vice versa) based on name
+# * template and params files are listed together on filesystem
+# * stack name env suffixes protect against accidents (wrong account error)
+# * supports prodlike non-prod environments through using same template
+#
+# And don't forget, these naming conventions are completely optional.
+##
+
 
 # List CF stacks. Optionally filter on stack name.
 # e.g. 
@@ -60,7 +89,12 @@ cf_diff_template() {
     echo "Could not find template (${template}). You can specify alternative template as second argument." >&2
     return 1
   fi
-  diff -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
+  if [ "x$( type -P colordiff )" != "x" ]; then
+    local DIFF_CMD=colordiff
+  else
+    local DIFF_CMD=diff
+  fi
+  $DIFF_CMD -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
   fi
@@ -89,7 +123,12 @@ cf_diff_params() {
   if [ ! -f "$params" ]; then
     return 1
   fi
-  diff -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .) --label $params <(jq --sort-keys . $params)
+  if [ "x$( type -P colordiff )" != "x" ]; then
+    local DIFF_CMD=colordiff
+  else
+    local DIFF_CMD=diff
+  fi
+  $DIFF_CMD -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys . | jp.py 'sort_by(@,&ParameterKey)') --label $params <(jq --sort-keys . $params | jp.py 'sort_by(@,&ParameterKey)' );
   if [ $? -eq 0 ]; then
     echo "params for stack ($stack) and contents of file ($params) are the same" >&2
   fi
