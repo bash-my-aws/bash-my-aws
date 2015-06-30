@@ -181,12 +181,14 @@ cf_status() {
   aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
 }
 
-cf_get() {
+cf_template() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation get-template --stack-name $stack --query TemplateBody
+  aws cloudformation get-template --stack-name $stack --query TemplateBody | jq --sort-keys .
 }
+alias cf_get=cf_template
 
+# determine name of template to use
 cf_x_template() {
   local stack="$(basename $1 .json)"
   local template=$2
