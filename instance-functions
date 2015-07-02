@@ -120,3 +120,9 @@ instance_volumes() {
     >&2 echo "No volumes found"
   fi
 }
+
+# Given an instance id, find all the ELBs the instance is a member of
+instance_registered_with_elb() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
+  aws elb describe-load-balancers --output text --query "LoadBalancerDescriptions[?Instances[?InstanceId==\`$1\`]].[LoadBalancerName]"
+}
