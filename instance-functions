@@ -11,7 +11,7 @@ INSTANCE_OUTPUT="[InstanceId, State.Name, InstanceType, PrivateIpAddress, Public
 VOLUME_OUTPUT='[VolumeId, Size, VolumeType, State, CreateTime]'
 
 instances() {
-  aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text | grep "$1"
+  aws ${AWS_OPTIONS} ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text | grep "$1"
 }
 
 instances_with_tag() {
@@ -19,9 +19,9 @@ instances_with_tag() {
   local tag_name=$1
   local tag_value=$2
   if [ -z "$tag_value" ]; then
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_name\`) == \`true\`][].${INSTANCE_OUTPUT}"
+    aws ${AWS_OPTIONS} ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_name\`) == \`true\`][].${INSTANCE_OUTPUT}"
   else
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) == \`true\`][].${INSTANCE_OUTPUT}"
+    aws ${AWS_OPTIONS} ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) == \`true\`][].${INSTANCE_OUTPUT}"
   fi
 }
 
@@ -30,9 +30,9 @@ instances_without_tag() {
   local tag_key=$1
   local tag_value=$2
   if [ -z "$tag_value" ]; then
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_key\`) != \`true\`][].${INSTANCE_OUTPUT}"
+    aws ${AWS_OPTIONS} ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_key\`) != \`true\`][].${INSTANCE_OUTPUT}"
   else
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) != \`true\`][].${INSTANCE_OUTPUT}"
+    aws ${AWS_OPTIONS} ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) != \`true\`][].${INSTANCE_OUTPUT}"
   fi
 }
 
@@ -40,14 +40,14 @@ instances_without_tag() {
 instance_console_output() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi 
   local instance_id=$1
-  aws ec2 get-console-output --instance-id $instance_id --query Output --output text
+  aws ${AWS_OPTIONS} ec2 get-console-output --instance-id $instance_id --query Output --output text
 }
 
 instance_role() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   local instance_id=$1
-  local iam_instance_profile_id=$(aws ec2 describe-instances --instance-id $instance_id --query "Reservations[].Instances[].IamInstanceProfile.Id" --output text)
-  aws iam list-instance-profiles --query "InstanceProfiles[?InstanceProfileId==\`$iam_instance_profile_id\`].Roles[].RoleName" --output text
+  local iam_instance_profile_id=$(aws ${AWS_OPTIONS} ec2 describe-instances --instance-id $instance_id --query "Reservations[].Instances[].IamInstanceProfile.Id" --output text)
+  aws ${AWS_OPTIONS} iam list-instance-profiles --query "InstanceProfiles[?InstanceProfileId==\`$iam_instance_profile_id\`].Roles[].RoleName" --output text
 }
 
 instance_ssh() {
@@ -76,7 +76,7 @@ instance_ssh() {
 instance_ssh_details() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
   local instance_id=$1
-  aws ec2 describe-instances --filters Name=instance-id,Values=$instance_id --query "
+  aws ${AWS_OPTIONS} ec2 describe-instances --filters Name=instance-id,Values=$instance_id --query "
     Reservations[].Instances[0].[
       KeyName,
       PrivateIpAddress,
@@ -87,35 +87,35 @@ instance_ssh_details() {
 
 instance_start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  aws ec2 start-instances --instance-id $1
+  aws ${AWS_OPTIONS} ec2 start-instances --instance-id $1
 }
 
 instance_stop() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  aws ec2 stop-instances --instance-id $1
+  aws ${AWS_OPTIONS} ec2 stop-instances --instance-id $1
 }
 
 instance_terminate() {
-  aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
-  aws ec2 terminate-instances --instance-id $1
+  aws ${AWS_OPTIONS} ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
+  aws ${AWS_OPTIONS} ec2 terminate-instances --instance-id $1
 }
 
 instance_types() {
-  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[].Instances[].[InstanceType]" --output text | sort | uniq -c
+  aws ${AWS_OPTIONS} ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[].Instances[].[InstanceType]" --output text | sort | uniq -c
 }
 
 instance_userdata() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   local instance_id=$1
-  aws ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
+  aws ${AWS_OPTIONS} ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
 }
 
 instance_volumes() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
   local instance_ids=$@
-  if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
+  if local volume_ids=$(aws ${AWS_OPTIONS} ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
   then
-    aws ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
+    aws ${AWS_OPTIONS} ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
   else
     >&2 echo "No volumes found"
   fi

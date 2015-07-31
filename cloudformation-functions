@@ -45,7 +45,7 @@
 #
 # To make it fly we omit stacks with status of DELETE_COMPLETE
 cf_list() {
-  aws cloudformation list-stacks \
+  aws ${AWS_OPTIONS} cloudformation list-stacks \
     --stack-status  \
       CREATE_COMPLETE \
       CREATE_FAILED \
@@ -81,7 +81,7 @@ cf_diff() {
 cf_diff_template() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
   local stack="$(basename $1 .json)"
-  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
+  if ! aws ${AWS_OPTIONS} cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
     return 1; 
   fi
   local template="$(_cf_template_arg $stack $2)"
@@ -94,7 +94,7 @@ cf_diff_template() {
   else
     local DIFF_CMD=diff
   fi
-  $DIFF_CMD -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
+  $DIFF_CMD -u --label stack <(aws ${AWS_OPTIONS} cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
   fi
@@ -107,7 +107,7 @@ cf_diff_template() {
 cf_diff_params() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
   local stack="$(basename $1 .json)"
-  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
+  if ! aws ${AWS_OPTIONS} cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
     return 1; 
   fi
   local template="$(_cf_template_arg $stack $2)"
@@ -128,7 +128,7 @@ cf_diff_params() {
   else
     local DIFF_CMD=diff
   fi
-  $DIFF_CMD -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys . | jp.py 'sort_by(@,&ParameterKey)') --label $params <(jq --sort-keys . $params | jp.py 'sort_by(@,&ParameterKey)' );
+  $DIFF_CMD -u --label params <(aws ${AWS_OPTIONS} cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys . | jp.py 'sort_by(@,&ParameterKey)') --label $params <(jq --sort-keys . $params | jp.py 'sort_by(@,&ParameterKey)' );
   if [ $? -eq 0 ]; then
     echo "params for stack ($stack) and contents of file ($params) are the same" >&2
   fi
@@ -168,7 +168,7 @@ cf_events() {
   local stack="$(basename $1 .json)"
   shift
   local output
-  if output=$(aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table $@); then
+  if output=$(aws ${AWS_OPTIONS} cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table $@); then
     echo "$output" | uniq -u
   else
     return $?
@@ -178,13 +178,13 @@ cf_events() {
 cf_status() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
+  aws ${AWS_OPTIONS} cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
 }
 
 cf_template() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation get-template --stack-name $stack --query TemplateBody | jq --sort-keys .
+  aws ${AWS_OPTIONS} cloudformation get-template --stack-name $stack --query TemplateBody | jq --sort-keys .
 }
 alias cf_get=cf_template
 
@@ -221,7 +221,7 @@ cf_create() {
   fi
   local params="$(_cf_params_arg $stack $template $3)"
   if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
-  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
+  if aws ${AWS_OPTIONS} cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
   then
     cf_tail $stack
   fi
@@ -237,7 +237,7 @@ cf_update() {
   fi
   local params="$(_cf_params_arg $stack $template $3)"
   if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
-  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
+  if aws ${AWS_OPTIONS} cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
   then
     cf_tail $stack
   fi
@@ -246,7 +246,7 @@ cf_update() {
 cf_delete() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  if aws cloudformation delete-stack --stack-name $stack
+  if aws ${AWS_OPTIONS} cloudformation delete-stack --stack-name $stack
   then
     cf_tail $stack
   fi
@@ -256,32 +256,32 @@ cf_outputs() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   shift
-  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table $@
+  aws ${AWS_OPTIONS} cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table $@
 }
 
 cf_resources() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   shift
-  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}" --output table $@
+  aws ${AWS_OPTIONS} cloudformation describe-stack-resources --stack-name $stack --query "StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}" --output table $@
 }
 
 cf_validate() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME cf-template-file"; return 1; fi
-  aws cloudformation validate-template --template-body file://$1
+  aws ${AWS_OPTIONS} cloudformation validate-template --template-body file://$1
 }
 
 # Show reasons for stack failure
 cf_failure() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation describe-stack-events --stack-name $stack --query 'StackEvents[?contains(ResourceStatus,`FAILED`)].[LogicalResourceId, ResourceStatus, ResourceType, ResourceStatusReason]'
+  aws ${AWS_OPTIONS} cloudformation describe-stack-events --stack-name $stack --query 'StackEvents[?contains(ResourceStatus,`FAILED`)].[LogicalResourceId, ResourceStatus, ResourceType, ResourceStatusReason]'
 }
 
 cf_params() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .
+  aws ${AWS_OPTIONS} cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .
 }
 
 # Shows current value of particular parameter in a stack
@@ -289,7 +289,7 @@ cf_param() {
   if [ -z "$2" ] ; then echo "Usage: $FUNCNAME stack parameter"; return 1; fi
   local stack="$(basename $1 .json)"
   local param=$2
-  aws cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
+  aws ${AWS_OPTIONS} cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
 }
 
 ##
@@ -299,7 +299,7 @@ cf_param() {
 cf_asg() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
-  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[?ResourceType==\`AWS::AutoScaling::AutoScalingGroup\`].PhysicalResourceId" --output text
+  aws ${AWS_OPTIONS} cloudformation describe-stack-resources --stack-name $stack --query "StackResources[?ResourceType==\`AWS::AutoScaling::AutoScalingGroup\`].PhysicalResourceId" --output text
 }
 
 cf_asg_instances() {
@@ -364,7 +364,7 @@ cf_elbs() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   shift
-  local elb_names=$(aws cloudformation describe-stack-resources --stack-name $stack --query 'StackResources[?ResourceType==`AWS::ElasticLoadBalancing::LoadBalancer`].[PhysicalResourceId]' --output text)
+  local elb_names=$(aws ${AWS_OPTIONS} cloudformation describe-stack-resources --stack-name $stack --query 'StackResources[?ResourceType==`AWS::ElasticLoadBalancing::LoadBalancer`].[PhysicalResourceId]' --output text)
   if [ -n "$elb_names" ]; then
     aws elb describe-load-balancers --load-balancer-names $elb_names --query 'LoadBalancerDescriptions[].[LoadBalancerName, DNSName]' --output text
   else
