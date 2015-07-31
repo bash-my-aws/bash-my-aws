@@ -71,7 +71,7 @@ For more info on the query syntax used by AWSCLI, check out http://jmespath.org/
 
 To use AWS profiles (or any other options to the `aws` command) in ~/.aws/config,
 set the environmental variable AWS_CONFIG before running any of the `cf_*` tools
-`AWS_CONFIG="--profile CustomerName"`
+`AWS_OPTIONS="--profile CustomerName"`
 
 ### Usage examples
 
