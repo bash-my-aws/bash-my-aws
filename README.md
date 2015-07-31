@@ -69,6 +69,9 @@ cf_get ()
 
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
 
+To use AWS profiles (or any other options to the `aws` command) in ~/.aws/config,
+set the environmental variable AWS_OPTIONS before running any of the `cf_*` tools
+`AWS_OPTIONS="--profile CustomerName"`
 
 ### Usage examples
 
