@@ -5,8 +5,9 @@ _cf_list() {
     return 0
 }
 
-complete -F _cf_list cf_resources
 complete -F _cf_list cf_elbs
+complete -F _cf_list cf_instances
+complete -F _cf_list cf_resources
 complete -F _cf_list instances_in_stack
 
 # vim: ft=sh

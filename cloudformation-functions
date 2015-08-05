@@ -372,4 +372,6 @@ cf_elbs() {
   fi
 }
 
-
+cf_instances() {
+  instances_with_tag "aws:cloudformation:stack-name" $1
+}
