@@ -6,5 +6,6 @@ _cf_list() {
 }
 
 complete -F _cf_list cf_resources
+complete -F _cf_list cf_elbs
 
 # vim: ft=sh
