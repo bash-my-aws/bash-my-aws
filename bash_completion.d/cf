@@ -1,0 +1,10 @@
+_cf_list() {
+    local command="$1"
+    local word="$2"
+    COMPREPLY=($(compgen -W "$(cf_list)" -- ${word}))
+    return 0
+}
+
+complete -F _cf_list cf_resources
+
+# vim: ft=sh
