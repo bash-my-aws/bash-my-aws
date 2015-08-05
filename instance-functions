@@ -17,12 +17,10 @@ instances() {
 instances_with_tag() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME tag_key [tag_value]"; return 1; fi
   local tag_name=$1
-  local tag_value=$2
-  if [ -z "$tag_value" ]; then
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_name\`) == \`true\`][].${INSTANCE_OUTPUT}"
-  else
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) == \`true\`][].${INSTANCE_OUTPUT}"
-  fi
+  local tag_value=${2:-*}
+  aws ec2 describe-instances \
+    --output text \
+    --filters "Name=tag:${tag_name},Values=${tag_value}"
 }
 
 instances_without_tag() {
