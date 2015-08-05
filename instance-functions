@@ -34,6 +34,9 @@ instances_without_tag() {
   fi
 }
 
+instances_in_stack() {
+  instances_with_tag "aws:cloudformation:stack-name" $1
+}
 
 instance_console_output() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi 
