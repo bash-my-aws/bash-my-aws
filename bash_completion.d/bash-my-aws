@@ -8,7 +8,15 @@ _cf_list() {
 _instance_list() {
     local command="$1"
     local word="$2"
-    COMPREPLY=($(compgen -W "$(instance_list)" -- ${word}))
+
+    case $word in
+      "") options="i-a i-b" ;;
+      *)
+        options=$(instance_list)
+      ;;
+    esac
+
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
     return 0
 }
 
