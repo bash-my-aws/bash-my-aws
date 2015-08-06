@@ -5,9 +5,17 @@ _cf_list() {
     return 0
 }
 
+_instance_list() {
+    local command="$1"
+    local word="$2"
+    COMPREPLY=($(compgen -W "$(instance_list)" -- ${word}))
+    return 0
+}
+
 complete -F _cf_list cf_elbs
 complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
 complete -F _cf_list instances_in_stack
+complete -F _instance_list instance
 
 # vim: ft=sh

@@ -14,6 +14,15 @@ instances() {
   aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text | grep "$1"
 }
 
+instance_list() {
+  aws ec2 describe-instances --output=json |
+    jq -r ".Reservations[].Instances[].InstanceId"
+}
+
+instance() {
+  aws ec2 describe-instances --instance-ids $@
+}
+
 instances_with_tag() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME tag_key [tag_value]"; return 1; fi
   local tag_name=$1
