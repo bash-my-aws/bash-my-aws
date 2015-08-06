@@ -25,5 +25,7 @@ complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
 complete -F _cf_list instances_in_stack
 complete -F _instance_list instance
+complete -F _instance_list instance_ip_private
+complete -F _instance_list instance_ip_public
 
 # vim: ft=sh

@@ -128,3 +128,13 @@ instance_volumes() {
     >&2 echo "No volumes found"
   fi
 }
+
+instance_ip_private() {
+  instance $@ |
+    jq -r ".Reservations[].Instances[].PrivateIpAddress"
+}
+
+instance_ip_public() {
+  instance $@ |
+    jq -r ".Reservations[].Instances[].PublicIpAddress"
+}
