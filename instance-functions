@@ -29,8 +29,9 @@ instances_with_tag() {
   local tag_name=$1
   local tag_value=${2:-*}
   aws ec2 describe-instances \
-    --output text \
-    --filters "Name=tag:${tag_name},Values=${tag_value}"
+    --output json \
+    --filters "Name=tag:${tag_name},Values=${tag_value}" |
+      jq -r ".Reservations[].Instances[].InstanceId"
 }
 
 instances_without_tag() {
