@@ -11,7 +11,9 @@ INSTANCE_OUTPUT="[InstanceId, State.Name, InstanceType, PrivateIpAddress, Public
 VOLUME_OUTPUT='[VolumeId, Size, VolumeType, State, CreateTime]'
 
 instances() {
-  aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text | grep "$1"
+  aws ec2 describe-instances $filters \
+    --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" \
+    --output text
 }
 
 instance_list() {
