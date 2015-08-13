@@ -372,4 +372,18 @@ cf_elbs() {
   fi
 }
 
+cf_rm_inactive_volumes() {
+  ids=$(aws ec2 describe-volumes --output=text --query 'Volumes[?State!=`in-use`].VolumeId')
+  arr=()
+  read -a arr <<< "$ids"
+  if((${#arr[@]}==0)); then
+    echo "all volumes is in-use, no volume could be deleted"
+  else
+    for id in "${arr[@]}"; do
+      aws ec2 delete-volume --volume-id "$id"
+      echo "volume $id is deleted"
+    done
+  fi
+}
+
 
