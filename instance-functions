@@ -1,56 +1,94 @@
 #!/bin/bash
 
-# instance-functions.sh
+# instance-functions
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
-# Fields to include when listing EC2 Instances
-INSTANCE_OUTPUT="[InstanceId, State.Name, InstanceType, PrivateIpAddress, PublicIpAddress, join(\` \`, [Tags[?Key==\`Name\`].Value][]), join(\` \`, [Tags[?Key==\`contact\`].Value][]), LaunchTime]"
-
-#  Fields to include when listing EBS volumes
-VOLUME_OUTPUT='[VolumeId, Size, VolumeType, State, CreateTime]'
+source $(dirname ${BASH_SOURCE[0]})/shared-functions
 
 instances() {
-  aws ec2 describe-instances $filters --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" --output text | grep "$1"
+  # query
+  instance_ids=$(__bma_read_inputs $@)
+  [[ -z $instance_ids ]] || instance_ids="--instance-ids ${instance_ids}"
+
+  if [[ ! -z ${INSTANCE_FILTERS} ]]; then
+    filters="--filters ${INSTANCE_FILTERS}"
+  else
+    filters=""
+  fi
+
+  aws ec2 describe-instances $filters $instance_ids \
+    --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" \
+    --output ${BMA_OUTPUT}
 }
 
-instances_with_tag() {
+instances_tagged() {
+  # query
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME tag_key [tag_value]"; return 1; fi
   local tag_name=$1
-  local tag_value=$2
-  if [ -z "$tag_value" ]; then
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_name\`) == \`true\`][].${INSTANCE_OUTPUT}"
-  else
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) == \`true\`][].${INSTANCE_OUTPUT}"
-  fi
+  local tag_value=${2:-"*"}
+  INSTANCE_FILTERS="Name=tag:${tag_name},Values=${tag_value}" instances
 }
 
+# legacy - doesn't fit new pipeable architecture
 instances_without_tag() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME tag_key [tag_value]"; return 1; fi
   local tag_key=$1
   local tag_value=$2
   if [ -z "$tag_value" ]; then
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_key\`) != \`true\`][].${INSTANCE_OUTPUT}"
+    aws ec2 describe-instances                                                                                   \
+      --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_key\`) != \`true\`][].${INSTANCE_OUTPUT}" \
+      --output text
   else
-    aws ec2 describe-instances --output text --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) != \`true\`][].${INSTANCE_OUTPUT}"
+    aws ec2 describe-instances \
+      --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) != \`true\`][].${INSTANCE_OUTPUT}" \
+      --output text
   fi
 }
 
+instance_asg() {
+  # detail
+  INSTANCE_OUTPUT="[ InstanceId Tags ]" \
+    instances $(__bma_read_inputs $@)       |
+    grep -E -e "i-[0-9a-f]{8}" -e "aws:autoscaling:groupName"  |
+    sed -E 's/aws:autoscaling:groupName//g' |
+    sed -E 's/(i-[0-9a-f]{8})/\1:/'     |
+    sed -E 's/([^\:])$/\1;/g'           |
+    tr -d '\n'                          |
+    tr ':' ' '                          |
+    tr ';' '\n'
+}
 
 instance_console_output() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi 
-  local instance_id=$1
-  aws ec2 get-console-output --instance-id $instance_id --query Output --output text
+  # detail
+  for instance_id in $(__bma_read_inputs $@); do
+    aws ec2 get-console-output    \
+      --instance-id $instance_id  \
+      --query Output              \
+      --output text
+  done
+}
+
+instance_iam_profile() {
+  # detail
+  instance_ids=$(__bma_read_inputs $@)
+  INSTANCE_OUTPUT="[ InstanceId IamInstanceProfile.Id ]" \
+    instances $instance_ids
 }
 
 instance_role() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   local instance_id=$1
-  local iam_instance_profile_id=$(aws ec2 describe-instances --instance-id $instance_id --query "Reservations[].Instances[].IamInstanceProfile.Id" --output text)
-  aws iam list-instance-profiles --query "InstanceProfiles[?InstanceProfileId==\`$iam_instance_profile_id\`].Roles[].RoleName" --output text
+  local profile_id=$(aws ec2 describe-instances --instance-id $instance_id \
+    --query "Reservations[].Instances[].IamInstanceProfile.Id"             \
+    --output text)
+  aws iam list-instance-profiles                                                     \
+    --query "InstanceProfiles[?InstanceProfileId==\`$profile_id\`].Roles[].RoleName" \
+    --output text
 }
 
 instance_ssh() {
+
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_id=$1
   local user=$2
@@ -85,6 +123,17 @@ instance_ssh_details() {
     ]" --output text
 }
 
+instance_stack() {
+  # detail. returns a stack resource.
+  INSTANCE_OUTPUT="[ InstanceId Tags ]"       \
+    instances $(__bma_read_inputs $@)             |
+    grep -E -e "aws:cloudformation:stack-id"  |
+    cut -d: -f8                               |
+    cut -d/ -f2                               |
+    sort                                      |
+    uniq
+}
+
 instance_start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 start-instances --instance-id $1
@@ -100,23 +149,53 @@ instance_terminate() {
   aws ec2 terminate-instances --instance-id $1
 }
 
+instance_type() {
+  # detail. returns an instance_type resource.
+  INSTANCE_OUTPUT="[ InstanceId InstanceType ]" \
+    instances $(__bma_read_inputs $@) |
+    awk '{ print $2 }' |
+    sort |
+    uniq
+}
+
 instance_types() {
-  aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[].Instances[].[InstanceType]" --output text | sort | uniq -c
+  # query + detail
+  INSTANCE_OUTPUT="[ InstanceId InstanceType ]" \
+    instances $(__bma_read_inputs $@)               |
+      awk '{ print $2 }'                        |
+      sort | uniq -c
 }
 
 instance_userdata() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
-  local instance_id=$1
-  aws ec2 describe-instance-attribute --attribute userData --instance-id $instance_id --query UserData --output text | base64 --decode
+  # detail
+  for instance_id in $(__bma_read_inputs $@); do
+    aws ec2 describe-instance-attribute         \
+      --attribute userData                      \
+      --instance-id $instance_id                \
+      --query UserData                          \
+      --output text                             |
+        base64 --decode
+  done
 }
 
 instance_volumes() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
-  local instance_ids=$@
-  if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId" --output text)
-  then
-    aws ec2 describe-volumes --volume-ids $volume_ids --query "Volumes[].$VOLUME_OUTPUT" --output text
-  else
-    >&2 echo "No volumes found"
-  fi
+  # detail
+  # TODO: fix the output.
+  INSTANCE_OUTPUT="BlockDeviceMappings[].Ebs[].VolumeId" \
+    instances $(__read_inputs $@)
 }
+
+# instance_volumes() {
+#   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
+#   local instance_ids=$@
+#   if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids \
+#    --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId"    \
+#    --output text)
+#   then
+#     aws ec2 describe-volumes --volume-ids $volume_ids \
+#       --query "Volumes[].$VOLUME_OUTPUT"              \
+#       --output text
+#   else
+#     >&2 echo "No volumes found"
+#   fi
+# }
