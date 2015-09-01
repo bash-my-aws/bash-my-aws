@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [[ -z ${BMA_OUTPUT} ]]; then
   BMA_OUTPUT="text"
 fi
@@ -38,10 +40,25 @@ if [[ -z ${ASG_OUTPUT} ]]; then
 fi
 
 __bma_read_inputs() {
-  if [[ -t 0 ]] || [[ -n $1 ]]; then
+  if [[ -t 0 ]]; then
     echo $@
   else
-    awk '{ print $1 }' </dev/stdin
+    local args="$@"
+    awk '{ print $1 }' | sed "s/.$/& /" | sed "s/$/$args/"
+  fi
+}
+
+__bma_read_inputs() {
+  echo "${FUNCNAME}: \$@='${@}'" >&2
+  if [[ -t 0 ]]; then
+    echo "${FUNCNAME}: STDIN is a terminal" >&2
+    echo $@
+  else
+    echo "${FUNCNAME}: STDIN is not a terminal" >&2
+    local args="$@"
+    echo "$(awk '{ print $1 }')" |
+      sed "s/.$/& /"             |
+      sed "s/$/$args/"
   fi
 }
 
