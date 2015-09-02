@@ -47,11 +47,12 @@ __bma_read_inputs() {
   else
     # echo "${FUNCNAME}: STDIN is not a terminal" >&2
     local args="$@"
-    echo "$(awk '{ print $1 }')" |
-      sed "s/.$/& /"             |
-      sed "s/$/$args/"           |
-      tr '\n' ' '                |
-      sed -E "s/\ +/ /"          |
+    cat /dev/stdin       |
+      awk '{ print $1 }' |
+      sed "s/.$/& /"     |
+      sed "s/$/$args/"   |
+      tr '\n' ' '        |
+      sed -E "s/\ +/ /"  |
       sed -E "s/\ +$//"
   fi
 }
