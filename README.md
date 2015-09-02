@@ -10,8 +10,8 @@ in Amazon AWS. The goal is to reduce the time between intention and effect.
 The functions are just as happy being called from your scripts as they are being
 tapped out on the keyboard.
 
-They make extensive use of the incredibly powerful AWSCLI. It's hoped they may also 
-provide a useful reference to its use.
+They make extensive use of the incredibly powerful AWSCLI. It's hoped they may
+also provide a useful reference to its use.
 
 
 ## Prerequisites
