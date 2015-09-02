@@ -82,7 +82,7 @@ function pass {
 }
 
 function fail {
-  echo "**** FAIL - expected:$( if [[ "$_negation_" == true ]]; then echo " NOT"; fi; ) $_expected_ | actual: ${_actual_[@]}"
+  echo "**** FAIL - expected:$( if [[ "$_negation_" == true ]]; then echo " NOT"; fi; ) '$_expected_' | actual: '${_actual_[@]}'"
 }
 
 function expect {
