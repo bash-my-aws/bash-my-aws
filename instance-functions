@@ -88,7 +88,6 @@ instance_role() {
 }
 
 instance_ssh() {
-
   IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | head -1)
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_details="$(instance_ssh_details $instance_id)"
@@ -99,9 +98,9 @@ instance_ssh() {
 
   local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
   echo "Connecting to $instance_id $instance_name"
+  
   ssh                               \
-    $debug_arg                      \
-    -t                              \
+    -tt                             \
     -i ~/.ssh/$keyname              \
     -o LogLevel=error               \
     -o StrictHostKeyChecking=no     \
