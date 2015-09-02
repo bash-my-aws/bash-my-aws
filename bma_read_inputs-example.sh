@@ -9,8 +9,8 @@ bma_read_inputs() {
   else
     echo "${FUNCNAME}: STDIN is not a terminal" >&2
     local args="$@"
-    echo "$(awk '{ print $1 }')" | 
-      sed "s/.$/& /"             | 
+    echo "$(awk '{ print $1 }')" |
+      sed "s/.$/& /"             |
       sed "s/$/$args/"
   fi
 }
