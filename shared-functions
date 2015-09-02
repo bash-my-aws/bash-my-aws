@@ -42,10 +42,10 @@ fi
 __bma_read_inputs() {
   # echo "${FUNCNAME}: \$@='${@}'" >&2
   if [[ -t 0 ]]; then
-    # echo "${FUNCNAME}: STDIN is a terminal" >&2
+    # STDIN is a terminal
     echo $@
   else
-    # echo "${FUNCNAME}: STDIN is not a terminal" >&2
+    # STDIN is not a terminal
     cat /dev/stdin       |
       awk '{ print $1 }' |
       sed "s/.$/& /"     |
