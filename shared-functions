@@ -50,6 +50,8 @@ __bma_read_inputs() {
     echo "$(awk '{ print $1 }')" |
       sed "s/.$/& /"             |
       sed "s/$/$args/"           |
+      tr '\n' ' '                |
+      sed -E "s/\ +/ /"          |
       sed -E "s/\ +$//"
   fi
 }

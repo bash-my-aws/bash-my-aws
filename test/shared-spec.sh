@@ -32,23 +32,39 @@ describe "Read Inputs" "$(
     input=$(echo "arg1" | __bma_read_inputs)
 
     it "has single word of input" "$(
-      expect "${input}" to_be $(echo -n 'arg1')
+      expect "${input}" to_be "arg1"
     )"
   )"
 
-  context "With stdins" "$(
-    input=$(__bma_read_inputs arg1 arg2)
+  context "With two words of stdin" "$(
+    input=$(echo "arg1 arg2" | __bma_read_inputs)
 
     it "has two words of input" "$(
-      expect "${input}" to_be "arg1 arg2"
+      expect "${input}" to_be "arg1"
+    )"
+  )"
+
+  context "With two lines of stdin" "$(
+    input=$(printf "arg1\narg2\n" | __bma_read_inputs)
+
+    it "has two words of input" "$(
+      expect "${input}" to_be "$(echo 'arg1 arg2')"
     )"
   )"
 
   context "With stdin and argument" "$(
-    input=$(__bma_read_inputs arg1 arg2)
+    input=$(echo "blah" | __bma_read_inputs --switch=value)
 
     it "has two words of input" "$(
-      expect "${input}" to_be "arg1 arg2"
+      expect "${input}" to_be "blah --switch=value"
+    )"
+  )"
+
+  context "With two lines of stdin and argument" "$(
+    input=$(printf "blah\nblah2\n" | __bma_read_inputs --switch=value)
+
+    it "has two words of input" "$(
+      expect "${input}" to_be "blah --switch=value blah2 --switch=value"
     )"
   )"
 )"
