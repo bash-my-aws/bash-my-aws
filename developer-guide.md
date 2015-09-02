@@ -103,3 +103,7 @@ Some example usage of this function would be:
     $ <resource>_<action> <resource_id>
 
 
+## Tests
+
+You can start the test suite by running the command `make test`.
+
