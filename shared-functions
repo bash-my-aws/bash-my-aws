@@ -40,21 +40,12 @@ if [[ -z ${ASG_OUTPUT} ]]; then
 fi
 
 __bma_read_inputs() {
+  # echo "${FUNCNAME}: \$@='${@}'" >&2
   if [[ -t 0 ]]; then
+    # echo "${FUNCNAME}: STDIN is a terminal" >&2
     echo $@
   else
-    local args="$@"
-    awk '{ print $1 }' | sed "s/.$/& /" | sed "s/$/$args/"
-  fi
-}
-
-__bma_read_inputs() {
-  echo "${FUNCNAME}: \$@='${@}'" >&2
-  if [[ -t 0 ]]; then
-    echo "${FUNCNAME}: STDIN is a terminal" >&2
-    echo $@
-  else
-    echo "${FUNCNAME}: STDIN is not a terminal" >&2
+    # echo "${FUNCNAME}: STDIN is not a terminal" >&2
     local args="$@"
     echo "$(awk '{ print $1 }')" |
       sed "s/.$/& /"             |
