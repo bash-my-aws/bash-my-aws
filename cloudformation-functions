@@ -256,7 +256,7 @@ cf_outputs() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   shift
-  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table $@
+  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output json $@
 }
 
 cf_resources() {
