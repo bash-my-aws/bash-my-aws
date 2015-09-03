@@ -180,7 +180,7 @@ instance_volumes() {
   # detail
   # TODO: fix the output.
   INSTANCE_OUTPUT="BlockDeviceMappings[].Ebs[].VolumeId" \
-    instances $(__read_inputs $@)
+    instances $(__bma_read_inputs $@)
 }
 
 # instance_volumes() {
