@@ -306,7 +306,7 @@ cf_asg_instances() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   local instance_ids="$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$(cf_asg $stack)" --query "AutoScalingGroups[].Instances[].[InstanceId]" --output text)"
-  aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].[PrivateIpAddress, PublicIpAddress, InstanceId, State.Name, InstanceType, join(\` \`, [Tags[?Key==\`Name\`].Value][])]" --output text
+  instances $instance_ids
 }
 
 cf_asg_instance_ssh() {
