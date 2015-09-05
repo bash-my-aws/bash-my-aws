@@ -90,3 +90,21 @@ describe "Switch STDIN" "$(
     expect "$(echo "a b" | __bma_switch_with -s)" to_be "-s a -s b "
   )"
 )"
+
+describe "Read STDIN" "$(
+  context "single word on a single line" "$(
+    expect "$(echo "a" | __bma_read_stdin)" to_be "a"
+  )"
+
+  context "multi word on a single line" "$(
+    expect "$(echo "a blah" | __bma_read_stdin)" to_be "a"
+  )"
+
+  context "single word on multi line" "$(
+    expect "$(printf "a\nb" | __bma_read_stdin)" to_be "a b"
+  )"
+
+  context "multi word on a single line" "$(
+    expect "$(printf "a blah\nb else\n" | __bma_read_stdin)" to_be "a b"
+  )"
+)"

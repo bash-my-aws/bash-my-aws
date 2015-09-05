@@ -45,15 +45,21 @@ __bma_read_inputs() {
     # STDIN is a terminal
     echo $@
   else
-    # STDIN is not a terminal
-    cat /dev/stdin       |
-      awk '{ print $1 }' |
+    __bma_read_stdin     |
       sed "s/.$/& /"     |
       sed "s/$/$@/"      |
       tr '\n' ' '        |
       sed -E "s/\ +/ /"  |
       sed -E "s/\ +$//"
   fi
+}
+
+__bma_read_stdin() {
+  [[ -t 0 ]] ||
+    cat /dev/stdin     |
+    awk '{ print $1 }' |
+    tr '\n' ' '        |
+    sed 's/\ $//'
 }
 
 __bma_switch_with() {
