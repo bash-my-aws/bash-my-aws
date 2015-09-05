@@ -107,3 +107,17 @@ Some example usage of this function would be:
 
 You can start the test suite by running the command `make test`.
 
+
+# Parameters
+
+bash-my-aws is very but specific about how parameters are passed into it.
+
+## STDIN
+
+* The first word of each line must be a resource.
+* Additional information will be disregarded.
+
+## ARGV
+
+* Switches are specified by their long name of --switch-name.
+* The thing immediately after a switch-name is the switch value unless it starts with a '--'.
