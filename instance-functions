@@ -26,12 +26,13 @@ instances() {
     --output text
 }
 
-instances_tagged() {
-  # query
+instances_with_tag() {
+  # type: query
+  # returns instance id's and the name tag.
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME tag_key [tag_value]"; return 1; fi
   local tag_name=$1
   local tag_value=${2:-"*"}
-  INSTANCE_FILTERS="Name=tag:${tag_name},Values=${tag_value}" instances
+  filters="Name=tag:${tag_name},Values=${tag_value}" instances
 }
 
 # legacy - doesn't fit new pipeable architecture
