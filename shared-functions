@@ -45,12 +45,7 @@ __bma_read_inputs() {
     # STDIN is a terminal
     echo $@
   else
-    __bma_read_stdin     |
-      sed "s/.$/& /"     |
-      sed "s/$/$@/"      |
-      tr '\n' ' '        |
-      sed -E "s/\ +/ /"  |
-      sed -E "s/\ +$//"
+    __bma_read_stdin | __bma_switch_with $@
   fi
 }
 
@@ -66,9 +61,15 @@ __bma_switch_with() {
   # USAGE:  echo one two three | __bma_apply_switch --the-switch
   # OUTPUT: --the-switch one --the-switch two --the-switch three
   [[ -t 0 ]] && return 0
-  [[ -z $1 ]] && return 1
+  if [[ -z $1 ]]; then
+    cat /dev/stdin
+    return 0
+  fi
+
   for stdin in $(cat /dev/stdin); do
-    echo -n "$1 $stdin "
+    for switch in $@; do
+      echo -n "$switch $stdin "
+    done
   done
   echo
 }

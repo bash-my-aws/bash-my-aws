@@ -53,18 +53,18 @@ describe "Read Inputs" "$(
   )"
 
   context "With stdin and argument" "$(
-    input=$(echo "blah" | __bma_read_inputs --switch=value)
+    input=$(echo "blah" | __bma_read_inputs --switch)
 
     it "has two words of input" "$(
-      expect "${input}" to_be "blah --switch=value"
+      expect "${input}" to_be "--switch blah "
     )"
   )"
 
   context "With two lines of stdin and argument" "$(
-    input=$(printf "blah\nblah2\n" | __bma_read_inputs --switch=value)
+    input=$(printf "blah\nblah2\n" | __bma_read_inputs --switch)
 
     it "has two words of input" "$(
-      expect "${input}" to_be "blah --switch=value blah2 --switch=value"
+      expect "${input}" to_be "--switch blah --switch blah2 "
     )"
   )"
 )"
@@ -81,8 +81,8 @@ describe "Switch STDIN" "$(
   )"
 
   context "only stdin" "$(
-    expect $(echo "first" | __bma_switch_with) to_be ""
-    expect $(echo "first" | __bma_switch_with; echo $?) to_be "1"
+    expect $(echo "first" | __bma_switch_with) to_be "first"
+    expect $(echo "first" | __bma_switch_with > /dev/null; echo $?) to_be "0"
   )"
 
   context "both stdin and switch" "$(
