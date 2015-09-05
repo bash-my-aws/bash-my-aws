@@ -88,6 +88,16 @@ __bma_read_switch() {
   done
 }
 
+__bma_extract_resources() {
+  local resources=""
+  [[ -t 0 ]] || local resources=$(cat /dev/stdin)
+  for arg in $@; do
+    [[ "$arg" =~ /^--/ ]] && break
+    resources="${resources} $arg"
+  done
+  echo ${resources}
+}
+
 __bma_clean_query() {
   __bma_read_inputs "$@" | tr -d '[:blank:]\n'
 }

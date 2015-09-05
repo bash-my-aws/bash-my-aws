@@ -122,3 +122,9 @@ describe "Read switch value" "$(
     expect "$(echo "--this-switch value --another blah" | __bma_read_switch another)" to_be "blah"
   )"
 )"
+
+describe "Extract resources" "$(
+  context "with only stdin" "$(
+    expect "$(echo "r1" | __bma_extract_resources)" to_be "r2"
+  )"
+)"
