@@ -7,18 +7,23 @@
 source $(dirname ${BASH_SOURCE[0]})/shared-functions
 
 instances() {
-  # query
-  local instance_ids=$(__bma_read_inputs $@)
-  [[ -z $instance_ids ]] || local instance_ids="--instance-ids ${instance_ids}"
+  # type: query
+  # returns instance id's and the name tag.
+  local inputs=$(__bma_read_inputs $@)
+  local instance_ids=$(echo ${inputs} | __bma_switch_stdin --instance-ids)
 
-  if [[ ! -z ${INSTANCE_FILTERS} ]]; then
-    local filters="--filters ${INSTANCE_FILTERS}"
-  else
-    local filters=""
-  fi
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "Name":       [Tags[?Key==`Name`].Value][0][0]
+      }
+    ][]
+  '
+  local query=$(echo $query | tr -d '[:blank:]\n')    # maybe make this inbuilt
 
-  aws ec2 describe-instances $filters $instance_ids \
-    --query "Reservations[].Instances[].${INSTANCE_OUTPUT}" \
+  aws ec2 describe-instances $instance_ids \
+    --query ${query} \
     --output text
 }
 
