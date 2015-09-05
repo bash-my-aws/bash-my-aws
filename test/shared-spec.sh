@@ -108,3 +108,17 @@ describe "Read STDIN" "$(
     expect "$(printf "a blah\nb else\n" | __bma_read_stdin)" to_be "a b"
   )"
 )"
+
+describe "Read switch value" "$(
+  context "no stdin" "$(
+    expect "$(__bma_read_switch this-switch)" to_be ""
+  )"
+
+  context "single switch" "$(
+    expect "$(echo "--this-switch value" | __bma_read_switch this-switch)" to_be "value"
+  )"
+
+  context "multi switch" "$(
+    expect "$(echo "--this-switch value --another blah" | __bma_read_switch another)" to_be "blah"
+  )"
+)"
