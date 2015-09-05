@@ -56,7 +56,7 @@ __bma_read_inputs() {
   fi
 }
 
-__bma_switch_stdin() {
+__bma_switch_with() {
   # USAGE:  echo one two three | __bma_apply_switch --the-switch
   # OUTPUT: --the-switch one --the-switch two --the-switch three
   [[ -t 0 ]] && return 0
@@ -65,6 +65,10 @@ __bma_switch_stdin() {
     echo -n "$1 $stdin "
   done
   echo
+}
+
+__bma_clean_query() {
+  __bma_read_inputs "$@" | tr -d '[:blank:]\n'
 }
 
 # vim: ft=sh

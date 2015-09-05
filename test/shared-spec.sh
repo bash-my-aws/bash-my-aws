@@ -71,22 +71,22 @@ describe "Read Inputs" "$(
 
 describe "Switch STDIN" "$(
   context "without anything" "$(
-    expect $(__bma_switch_stdin) to_be ""
-    expect $(__bma_switch_stdin) to_be_true
+    expect $(__bma_switch_with) to_be ""
+    expect $(__bma_switch_with) to_be_true
   )"
 
   context "only switch" "$(
-    expect $(__bma_switch_stdin --switch) to_be ""
-    expect $(__bma_switch_stdin --switch) to_be_true
+    expect $(__bma_switch_with --switch) to_be ""
+    expect $(__bma_switch_with --switch) to_be_true
   )"
 
   context "only stdin" "$(
-    expect $(echo "first" | __bma_switch_stdin) to_be ""
-    expect $(echo "first" | __bma_switch_stdin; echo $?) to_be "1"
+    expect $(echo "first" | __bma_switch_with) to_be ""
+    expect $(echo "first" | __bma_switch_with; echo $?) to_be "1"
   )"
 
   context "both stdin and switch" "$(
-    expect "$(echo "a" | __bma_switch_stdin -s)" to_be "-s a "
-    expect "$(echo "a b" | __bma_switch_stdin -s)" to_be "-s a -s b "
+    expect "$(echo "a" | __bma_switch_with -s)" to_be "-s a "
+    expect "$(echo "a b" | __bma_switch_with -s)" to_be "-s a -s b "
   )"
 )"

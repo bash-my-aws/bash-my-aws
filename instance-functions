@@ -9,9 +9,7 @@ source $(dirname ${BASH_SOURCE[0]})/shared-functions
 instances() {
   # type: query
   # returns instance id's and the name tag.
-  local inputs=$(__bma_read_inputs $@)
-  local instance_ids=$(echo ${inputs} | __bma_switch_stdin --instance-ids)
-
+  local instance_ids=$(__bma_read_inputs $@)
   local query='
     Reservations[].Instances[][
       {
@@ -20,10 +18,11 @@ instances() {
       }
     ][]
   '
-  local query=$(echo $query | tr -d '[:blank:]\n')    # maybe make this inbuilt
 
-  aws ec2 describe-instances $instance_ids \
-    --query ${query} \
+  aws ec2 describe-instances                                    \
+    $(echo ${instance_ids} | __bma_switch_with --instance-ids)  \
+    $(echo ${filters}      | __bma_switch_with --filter)        \
+    --query $(__bma_clean_query ${query})                       \
     --output text
 }
 
