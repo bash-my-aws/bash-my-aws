@@ -9,8 +9,9 @@ source $(dirname ${BASH_SOURCE[0]})/shared-functions
 instances() {
   # type: query
   # returns instance id's and the name tag.
-  local instance_ids=$(__bma_read_inputs $@)
-  local query='
+  local inputs=$(__bma_read_inputs $@)
+
+  local default_query='
     Reservations[].Instances[][
       {
         "InstanceId": InstanceId,
@@ -19,9 +20,15 @@ instances() {
     ][]
   '
 
+  local instance_ids=$(__bma_read_resources $inputs)
+  local filter=$(__bma_read_switches $inputs | grep ^--filter | cut -d\  -f2-)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+
+  [[ -z $query ]] && query=$default_query
+
   aws ec2 describe-instances                                    \
-    $(echo ${instance_ids} | __bma_switch_with --instance-ids)  \
-    $(echo ${filters}      | __bma_switch_with --filter)        \
+    $(echo ${instance_ids} | sed -E 's/\ +/--instance-id /g')   \
+    $([[ -n ${filter} ]] && echo "--filter ${filter}")          \
     --query $(__bma_clean_query ${query})                       \
     --output text
 }
@@ -32,7 +39,9 @@ instances_with_tag() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME tag_key [tag_value]"; return 1; fi
   local tag_name=$1
   local tag_value=${2:-"*"}
-  filters="Name=tag:${tag_name},Values=${tag_value}" instances
+  local filter="Name=tag:${tag_name},Values=${tag_value}"
+
+  instances --filter ${filter}
 }
 
 # legacy - doesn't fit new pipeable architecture
