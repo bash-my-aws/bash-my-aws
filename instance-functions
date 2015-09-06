@@ -11,6 +11,12 @@ instances() {
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
 
+  if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
+    BMA_DEBUG=true
+  else
+    BMA_DEBUG=false
+  fi
+
   local default_query='
     Reservations[].Instances[][
       {
@@ -23,6 +29,12 @@ instances() {
   local instance_ids=$(__bma_read_resources $inputs)
   local filter=$(__bma_read_switches $inputs | grep ^--filter | cut -d\  -f2-)
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+
+  if ${BMA_DEBUG}; then
+    echo "instance_ids: ${instance_ids}"
+    echo "filters: ${filters}"
+    echo "query: ${query}"
+  fi
 
   [[ -z $query ]] && query=$default_query
 
