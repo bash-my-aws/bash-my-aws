@@ -1,47 +1,9 @@
 #!/bin/bash
-source $(dirname ${BASH_SOURCE[0]})/parameter-functions
-
-if [[ -z ${BMA_OUTPUT} ]]; then
-  BMA_OUTPUT="text"
-fi
-
-if [[ -z ${INSTANCE_OUTPUT} ]]; then
-  INSTANCE_OUTPUT="[
-    InstanceId,
-    State.Name,
-    InstanceType,
-    PrivateIpAddress,
-    PublicIpAddress,
-    join(\` \`, [Tags[?Key==\`Name\`].Value][]),
-    join(\` \`, [Tags[?Key==\`contact\`].Value][]),
-    LaunchTime
-  ]"
-fi
-
-if [[ -z ${VOLUME_OUTPUT} ]]; then
-  VOLUME_OUTPUT='[VolumeId, Size, VolumeType, State, CreateTime]'
-fi
-
-if [[ -z ${INSTANCE_OUTPUT} ]]; then
-  INSTANCE_PROFILE_OUTPUT="[
-    Profile
-  ]"
-fi
-
-if [[ -z ${ELB_OUTPUT} ]]; then
-  ELB_OUTPUT="[
-    LoadBalancerName
-  ]"
-fi
-
-if [[ -z ${ASG_OUTPUT} ]]; then
-  ASG_OUTPUT="[
-    AutoScalingGroupName
-  ]"
-fi
+source $(dirname $0)/../parameter-functions
 
 __bma_clean_query() {
   __bma_read_inputs "$@" | tr -d '[:blank:]\n'
+  echo
 }
 
-# vim: ft=sh
+## vim: ft=sh
