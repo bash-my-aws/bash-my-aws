@@ -1,0 +1,53 @@
+__bma_read_inputs() {
+  echo "$(__bma_read_stdin) $@" |
+    sed -E 's/\ +$//'           |
+    sed -E 's/^\ +//'
+}
+
+__bma_read_stdin() {
+  [[ -t 0 ]] ||
+    cat /dev/stdin     |
+    awk '{ print $1 }' |
+    tr '\n' ' '        |
+    sed 's/\ $//'
+}
+
+__bma_read_resources() {
+  __bma_arg_types $@ |
+    grep '^r'        |
+    cut -d: -f2-
+}
+
+__bma_read_switches() {
+  nl=$'\n'
+  __bma_arg_types $@      |
+    grep '^[sv]'          |
+    tr -d '\n'            |
+    sed -e "s/s:/\\$nl/g" |
+    sed -e "s/v:/ /g"     |
+    grep -v "^$"          |
+    sort
+}
+
+__bma_arg_types() {
+  local switched=false
+
+  for arg in $@; do
+    if $switched; then
+      switched=false
+      echo "v:$arg"
+      continue
+    fi
+
+    if [[ "$arg" =~ ^-- ]]; then
+      switched=true
+      echo "s:$arg"
+      continue
+    fi
+
+    echo "r:$arg"
+
+  done
+}
+
+# vim: ft=sh
