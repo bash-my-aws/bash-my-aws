@@ -31,6 +31,7 @@ instances() {
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
 
   if ${BMA_DEBUG}; then
+    echo "inputs: ${inputs}"
     echo "instance_ids: ${instance_ids}"
     echo "filters: ${filters}"
     echo "query: ${query}"
