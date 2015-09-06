@@ -21,11 +21,8 @@ __bma_read_resources() {
 __bma_read_switches() {
   nl=$'\n'
   __bma_arg_types "$@"    |
-    grep '^[sv]'          |
-    tr -d '\n'            |
-    sed -e "s/s:/\\$nl/g" |
-    sed -e "s/v:/ /g"     |
-    grep -v "^$"          |
+    grep '^s'             |
+    sed -E 's/^s://'      |
     sort
 }
 
