@@ -20,7 +20,7 @@ __bma_read_resources() {
 
 __bma_read_switches() {
   nl=$'\n'
-  __bma_arg_types $@      |
+  __bma_arg_types "$@"    |
     grep '^[sv]'          |
     tr -d '\n'            |
     sed -e "s/s:/\\$nl/g" |
@@ -32,10 +32,10 @@ __bma_read_switches() {
 __bma_arg_types() {
   local switched=false
 
-  for arg in $@; do
+  for arg in "$@"; do
     if $switched; then
       switched=false
-      echo "v:$arg"
+      echo "v:'$arg'"
       continue
     fi
 
