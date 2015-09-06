@@ -62,27 +62,38 @@ instances_without_tag() {
   local tag_key=$1
   local tag_value=$2
   if [ -z "$tag_value" ]; then
-    aws ec2 describe-instances                                                                                   \
-      --query "Reservations[].Instances[?contains(Tags[].Key[], \`$tag_key\`) != \`true\`][].${INSTANCE_OUTPUT}" \
-      --output text
+    query="Reservations[].Instances[?contains(Tags[].Key[], \`$tag_key\`) != \`true\`][].${INSTANCE_OUTPUT}" \
+
+    local query="
+      Reservations[].Instances[?contains(
+        Tags[].Key[], \`$tag_key\`
+      ) != \`true\`][
+        {
+          \"InstanceId\": InstanceId,
+          \"Name\":       [Tags[?Key==\`Name\`].Value][0][0]
+        }
+      ][]
+    "
   else
-    aws ec2 describe-instances \
-      --query "Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) != \`true\`][].${INSTANCE_OUTPUT}" \
-      --output text
+    #query="Reservations[].Instances[?contains(Tags[?Key==\`$tag_key\`].Value[], \`$tag_value\`) != \`true\`][].${INSTANCE_OUTPUT}" \
+    local query="blah"
   fi
+
+  instances --query ${query}
 }
 
 instance_asg() {
-  # detail
-  INSTANCE_OUTPUT="[ InstanceId Tags ]" \
-    instances $(__bma_read_inputs $@)       |
-    grep -E -e "i-[0-9a-f]{8}" -e "aws:autoscaling:groupName"  |
-    sed -E 's/aws:autoscaling:groupName//g' |
-    sed -E 's/(i-[0-9a-f]{8})/\1:/'     |
-    sed -E 's/([^\:])$/\1;/g'           |
-    tr -d '\n'                          |
-    tr ':' ' '                          |
-    tr ';' '\n'
+  local inputs=$(__bma_read_inputs $@)
+
+  local query='
+    Reservations[].Instances[][
+      {
+        "AutoscalingGroupName": [Tags[?Key==`aws:autoscaling:groupName`].Value][0][0],
+        "InstanceId": InstanceId
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
 }
 
 instance_console_output() {
