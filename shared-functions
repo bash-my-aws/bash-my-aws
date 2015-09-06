@@ -1,4 +1,5 @@
 #!/bin/bash
+source $(dirname ${BASH_SOURCE[0]})/parameter-functions
 
 if [[ -z ${BMA_OUTPUT} ]]; then
   BMA_OUTPUT="text"
@@ -38,65 +39,6 @@ if [[ -z ${ASG_OUTPUT} ]]; then
     AutoScalingGroupName
   ]"
 fi
-
-__bma_read_inputs() {
-  # echo "${FUNCNAME}: \$@='${@}'" >&2
-  if [[ -t 0 ]]; then
-    # STDIN is a terminal
-    echo $@
-  else
-    __bma_read_stdin | __bma_switch_with $@
-  fi
-}
-
-__bma_read_stdin() {
-  [[ -t 0 ]] ||
-    cat /dev/stdin     |
-    awk '{ print $1 }' |
-    tr '\n' ' '        |
-    sed 's/\ $//'
-}
-
-__bma_switch_with() {
-  # USAGE:  echo one two three | __bma_apply_switch --the-switch
-  # OUTPUT: --the-switch one --the-switch two --the-switch three
-  [[ -t 0 ]] && return 0
-  if [[ -z $1 ]]; then
-    cat /dev/stdin
-    return 0
-  fi
-
-  for stdin in $(cat /dev/stdin); do
-    for switch in $@; do
-      echo -n "$switch $stdin "
-    done
-  done
-  echo
-}
-
-__bma_read_switch() {
-  [[ -t 0 ]] && return 0
-  local found=false
-
-  for i in $(cat /dev/stdin); do
-    if ${found}; then
-      echo $i
-      return 0
-    fi
-
-    [[ "${i}" == "--$1" ]] && local found=true
-  done
-}
-
-__bma_extract_resources() {
-  local resources=""
-  [[ -t 0 ]] || local resources=$(cat /dev/stdin)
-  for arg in $@; do
-    [[ "$arg" =~ /^--/ ]] && break
-    resources="${resources} $arg"
-  done
-  echo ${resources}
-}
 
 __bma_clean_query() {
   __bma_read_inputs "$@" | tr -d '[:blank:]\n'
