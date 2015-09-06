@@ -33,21 +33,21 @@ __bma_arg_types() {
   local switched=false
 
   for arg in "$@"; do
-    if $switched; then
-      switched=false
-      echo "v:'$arg'"
+    if [[ "$arg" =~ ^-- ]]; then
+      $switched && echo
+      switched=true
+      echo -n "s:$arg"
       continue
     fi
 
-    if [[ "$arg" =~ ^-- ]]; then
-      switched=true
-      echo "s:$arg"
+    if $switched; then
+      echo -n " $arg"
       continue
     fi
 
     echo "r:$arg"
-
   done
+  echo
 }
 
 # vim: ft=sh
