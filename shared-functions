@@ -1,5 +1,5 @@
 #!/bin/bash
-source $(dirname $0)/../parameter-functions
+source $(dirname ${BASH_SOURCE[0]})/parameter-functions
 
 __bma_clean_query() {
   __bma_read_inputs "$@" | tr -d '[:blank:]\n'
