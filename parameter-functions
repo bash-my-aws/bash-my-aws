@@ -19,9 +19,8 @@ __bma_read_resources() {
 }
 
 __bma_read_switches() {
-  nl=$'\n'
   __bma_arg_types "$@"    |
-    grep '^s'             |
+    grep '^s:'            |
     sed -E 's/^s://'      |
     sort
 }
