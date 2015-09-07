@@ -29,12 +29,14 @@ instances() {
   local instance_ids=$(__bma_read_resources $inputs)
   local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
   if ${BMA_DEBUG}; then
     echo "inputs: ${inputs}"
     echo "instance_ids: ${instance_ids}"
     echo "filters: ${filters}"
     echo "query: ${query}"
+    echo "output: ${output}"
   fi
 
   [[ -z $query ]] && query=$default_query
@@ -43,7 +45,7 @@ instances() {
     $(for x in ${instance_ids}; do echo "--instance-id $x"; done) \
     $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
     --query $(__bma_clean_query ${query})                         \
-    --output text
+    --output ${output:-"text"}
 }
 
 instances_with_tag() {
