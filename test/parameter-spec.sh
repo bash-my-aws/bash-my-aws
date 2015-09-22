@@ -129,4 +129,14 @@ describe "bma_expand_switches:" "$(
     val=$(__bma_expand_switches --text)
     expect "${val:-empty}" to_be "--output text"
   )"
+
+  context "with -f" "$(
+    val=$(__bma_expand_switches -f 'this is the filter')
+    expect "${val:-empty}" to_be "--filters this is the filter"
+  )"
+
+  context "with -q" "$(
+    val=$(__bma_expand_switches -q 'this is the query')
+    expect "${val:-empty}" to_be "--query this is the query"
+  )"
 )"

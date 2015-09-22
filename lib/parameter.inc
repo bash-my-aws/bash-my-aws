@@ -57,8 +57,10 @@ __bma_arg_types() {
 __bma_expand_switches() {
   # this function is for expanding or rewriting switches.
   echo $@                           |
-    sed 's/--json/--output json/'   |
-    sed 's/--text/--output text/'
+    sed -E 's/^--json/--output json/'   |
+    sed -E 's/^--text/--output text/'   |
+    sed -E 's/^-f/--filters/'           |
+    sed -E 's/^-q/--query/'
 }
 
 # vim: ft=sh
