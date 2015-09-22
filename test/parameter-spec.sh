@@ -80,6 +80,11 @@ describe "bma_read_switches:" "$(
     val=$(__bma_read_switches --switch 'with a long value' --switch 'another')
     expect "$(echo ${val:-empty})" to_be "--switch another --switch with a long value"
   )"
+
+  context "expanded switches" "$(
+    val=$(__bma_read_switches --json)
+    expect "$(echo ${val:-empty})" to_be "--output json"
+  )"
 )"
 
 describe "bma_arg_types:" "$(
@@ -106,5 +111,22 @@ describe "bma_arg_types:" "$(
   context "switches with long value" "$(
     val=$(__bma_arg_types --switch with a long value)
     expect "$(echo ${val:-empty})" to_be "s:--switch with a long value"
+  )"
+)"
+
+describe "bma_expand_switches:" "$(
+  context "with --debug" "$(
+    val=$(__bma_expand_switches --debug)
+    expect "${val:-empty}" to_be "--debug"
+  )"
+
+  context "with --json" "$(
+    val=$(__bma_expand_switches --json)
+    expect "${val:-empty}" to_be "--output json"
+  )"
+
+  context "with --text" "$(
+    val=$(__bma_expand_switches --text)
+    expect "${val:-empty}" to_be "--output text"
   )"
 )"

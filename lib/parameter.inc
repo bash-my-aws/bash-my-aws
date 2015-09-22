@@ -24,10 +24,13 @@ __bma_read_resources() {
 }
 
 __bma_read_switches() {
-  __bma_arg_types "$@"    |
-    grep '^s:'            |
-    sed -E 's/^s://'      |
-    sort
+  result=$(
+    __bma_arg_types "$@"    |
+      grep '^s:'            |
+      sed -E 's/^s://'      |
+      sort
+  )
+  __bma_expand_switches ${result}
 }
 
 __bma_arg_types() {
@@ -49,6 +52,13 @@ __bma_arg_types() {
     echo "r:$arg"
   done
   echo
+}
+
+__bma_expand_switches() {
+  # this function is for expanding or rewriting switches.
+  echo $@                           |
+    sed 's/--json/--output json/'   |
+    sed 's/--text/--output text/'
 }
 
 # vim: ft=sh
