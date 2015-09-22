@@ -75,14 +75,14 @@ asg_capacity() {
 
 asg_resume() {
   local inputs=$(__bma_read_inputs $@)
-  for asg in ${inputs}; do
+  for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling resume-processes --auto-scaling-group-name $asg
   done
 }
 
 asg_suspend() {
   local inputs=$(__bma_read_inputs $@)
-  for asg in ${inputs}; do
+  for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling suspend-processes --auto-scaling-group-name $asg
   done
 }
