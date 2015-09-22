@@ -60,6 +60,22 @@ instance_asg() {
   instances ${inputs} --query ${query}
 }
 
+instance_stack() {
+  # FIXME: the output is out of order.
+  # for some reason, InstanceId is first in text output.
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+      {
+        "Stack": [Tags[?Key==`aws:cloudformation:stack-name`].Value][0][0],
+        "InstanceId": InstanceId
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
+
 instance_role() {
   local inputs=$(__bma_read_inputs $@)
 
@@ -135,17 +151,6 @@ instance_ssh_details() {
       join(\` \`, [Tags[?Key==\`Name\`].Value][] || [\`not-named\`]),
       join(\` \`, [Tags[?Key==\`default-user\`].Value][] || [\`\`])
   ]" instances
-}
-
-instance_stack() {
-  # detail. returns a stack resource.
-  INSTANCE_OUTPUT="[ InstanceId Tags ]"       \
-    instances $(__bma_read_inputs $@)         |
-    grep -E -e "aws:cloudformation:stack-id"  |
-    cut -d: -f8                               |
-    cut -d/ -f2                               |
-    sort                                      |
-    uniq
 }
 
 instance_start() {
