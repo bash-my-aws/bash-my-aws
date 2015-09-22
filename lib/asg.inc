@@ -33,13 +33,11 @@ asgs() {
     echo "output: ${output}"
   fi
 
-  [[ -z $query ]] && query=$default_query
-
   aws autoscaling describe-auto-scaling-groups                    \
     $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names)   \
     $(for x in ${asg_names}; do echo $x; done)                    \
     $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
-    --query $(__bma_clean_query ${query})                         \
+    --query $(__bma_clean_query ${query:-${default_query}})       \
     --output ${output:-"text"}
 }
 
