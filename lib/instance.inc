@@ -75,6 +75,20 @@ instance_stack() {
   instances ${inputs} --query ${query}
 }
 
+instance_type() {
+  # FIXME: the output is out of order.
+  # for some reason, InstanceId is first in text output.
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceType": InstanceType,
+        "InstanceId": InstanceId
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
 
 instance_role() {
   local inputs=$(__bma_read_inputs $@)
@@ -166,15 +180,6 @@ instance_stop() {
 instance_terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
-}
-
-instance_type() {
-  # detail. returns an instance_type resource.
-  INSTANCE_OUTPUT="[ InstanceId InstanceType ]" \
-    instances $(__bma_read_inputs $@) |
-    awk '{ print $2 }' |
-    sort |
-    uniq
 }
 
 instance_types() {
