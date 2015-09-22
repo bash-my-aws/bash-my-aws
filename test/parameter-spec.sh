@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 source $(dirname $0)/bash-spec.sh
-source $(dirname $0)/../parameter-functions
+source $(dirname $0)/../lib/parameter.inc
 
 describe "bma_read_stdin:" "$(
   context "single word on a single line" "$(

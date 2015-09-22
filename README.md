@@ -36,7 +36,7 @@ git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 
 Source the functions you want with something like:
 ```
-source ~/.bash-my-aws/cloudformation-functions
+source ~/.bash-my-aws/lib/cloudformation.inc
 ```
 
 Typing cf_[TAB] will list available functions for CloudFormation:

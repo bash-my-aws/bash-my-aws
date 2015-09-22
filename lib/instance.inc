@@ -4,7 +4,7 @@
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
-source $(dirname ${BASH_SOURCE[0]})/shared-functions
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
 
 instances() {
   # type: query
