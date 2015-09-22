@@ -1,6 +1,6 @@
 # asg.inc
 
-asg() {
+asgs() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
