@@ -5,14 +5,14 @@ _cf_list() {
     return 0
 }
 
-_instance_list() {
+_instances() {
     local command="$1"
     local word="$2"
 
     case $word in
       "") options="i-a i-b" ;;
       *)
-        options=$(instance_list)
+        options=$(instances)
       ;;
     esac
 
@@ -24,8 +24,8 @@ complete -F _cf_list cf_elbs
 complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
 complete -F _cf_list instances_in_stack
-complete -F _instance_list instance
-complete -F _instance_list instance_ip_private
-complete -F _instance_list instance_ip_public
+complete -F _instances instances
+complete -F _instances instance_ip_private
+complete -F _instances instance_ip_public
 
 # vim: ft=sh
