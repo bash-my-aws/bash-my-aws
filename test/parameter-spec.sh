@@ -65,6 +65,11 @@ describe "bma_read_switches:" "$(
     val=$(__bma_read_switches --switch 'with a long value')
     expect "$(echo ${val:-empty})" to_be "--switch with a long value"
   )"
+
+  context "duplicate switches" "$(
+    val=$(__bma_read_switches --switch 'with a long value' --switch 'another')
+    expect "$(echo ${val:-empty})" to_be "--switch another --switch with a long value"
+  )"
 )"
 
 describe "bma_arg_types:" "$(
