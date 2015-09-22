@@ -56,4 +56,25 @@ asg_instances() {
     $(__bma_read_switches ${inputs})
 }
 
+asg_capacity() {
+  local inputs=$(__bma_read_inputs $@)
+  local asg_names=$(__bma_read_resources ${inputs})
+
+  local query='
+    AutoScalingGroups[][
+      {
+        "AutoScalingGroupName": AutoScalingGroupName,
+        "MinSize": MinSize,
+        "DesiredCapacity": DesiredCapacity,
+        "MaxSize": MaxSize
+      }
+    ][]
+  '
+
+  asgs ${asg_names}                     \
+    --query ${query}                    \
+    $(__bma_read_switches ${inputs})
+}
+
+
 # vim: ft=sh
