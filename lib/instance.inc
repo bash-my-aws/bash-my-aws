@@ -105,6 +105,22 @@ instance_volumes() {
   instances ${inputs} --query ${query}
 }
 
+instance_iam_profile() {
+  ## detail
+  # FIXME: Fix the output order
+
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+      {
+        "IamProfile": IamInstanceProfile.Id,
+        "InstanceId": InstanceId
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
 instance_role() {
   local inputs=$(__bma_read_inputs $@)
 
@@ -139,13 +155,6 @@ instance_console_output() {
       --query Output              \
       --output text
   done
-}
-
-instance_iam_profile() {
-  # detail
-  instance_ids=$(__bma_read_inputs $@)
-  INSTANCE_OUTPUT="[ InstanceId IamInstanceProfile.Id ]" \
-    instances $instance_ids
 }
 
 instance_ssh() {
