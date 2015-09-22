@@ -1,3 +1,7 @@
+# parameter.inc
+#
+# Deal with stdin and arguments.
+
 __bma_read_inputs() {
   echo "$(__bma_read_stdin) $@" |
     sed -E 's/\ +$//'           |

@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# instance-functions
+# instance.inc
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
@@ -216,4 +214,4 @@ instance_volumes() {
 #   fi
 # }
 
-# vim: set ft=sh
+# vim: ft=sh

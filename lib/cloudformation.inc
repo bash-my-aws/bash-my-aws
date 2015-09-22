@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# cloudformation-functions
+# cloudformation.inc
 #
 # Create, List, Update, Delete (plus diff, tail, etc) CF stacks
 #
@@ -378,4 +376,4 @@ cf_elbs() {
   fi
 }
 
-
+## vim: ft=sh
