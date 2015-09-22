@@ -59,7 +59,6 @@ asg_instances() {
 asg_capacity() {
   local inputs=$(__bma_read_inputs $@)
   local asg_names=$(__bma_read_resources ${inputs})
-
   local query='
     AutoScalingGroups[][
       {
