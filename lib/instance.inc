@@ -39,10 +39,10 @@ instances() {
 
   [[ -z $query ]] && query=$default_query
 
-  aws ec2 describe-instances                                      \
-    $(for x in ${instance_ids}; do echo "--instance-id $x"; done) \
-    $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
-    --query $(__bma_clean_query ${query})                         \
+  aws ec2 describe-instances                                            \
+    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+    $([[ -n ${filters} ]] && echo "--filters ${filters}")               \
+    --query $(__bma_clean_query ${query})                               \
     --output ${output:-"text"}
 }
 
