@@ -90,6 +90,21 @@ instance_type() {
   instances ${inputs} --query ${query}
 }
 
+instance_volumes() {
+  # detail
+  # FIXME: The logical json doesn't map well to text.
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "Volumes": BlockDeviceMappings[].Ebs[].VolumeId
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
 instance_role() {
   local inputs=$(__bma_read_inputs $@)
 
@@ -192,13 +207,6 @@ instance_userdata() {
       --output text                             |
         base64 --decode
   done
-}
-
-instance_volumes() {
-  # detail
-  # TODO: fix the output.
-  INSTANCE_OUTPUT="BlockDeviceMappings[].Ebs[].VolumeId" \
-    instances $(__bma_read_inputs $@)
 }
 
 # instance_volumes() {
