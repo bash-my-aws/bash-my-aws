@@ -116,7 +116,7 @@ instance_ssh() {
 
   local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
   echo "Connecting to $instance_id $instance_name"
-  
+
   ssh                               \
     -tt                             \
     -i ~/.ssh/$keyname              \
@@ -131,7 +131,7 @@ instance_ssh_details() {
   local instance_id="$(__bma_read_inputs $@)"
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   INSTANCE_FILTERS="Name=instance-id,Values=${instance_id}"           \
-  INSTANCE_OUTPUT="[ 
+  INSTANCE_OUTPUT="[
       KeyName,
       PrivateIpAddress,
       join(\` \`, [Tags[?Key==\`Name\`].Value][] || [\`not-named\`]),
