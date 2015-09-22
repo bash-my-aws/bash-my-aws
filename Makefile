@@ -1,4 +1,4 @@
 test: shared
 
 shared:
-	'./test/shared-spec.sh'
+	'./test/parameter-spec.sh'
