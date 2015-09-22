@@ -43,4 +43,17 @@ asgs() {
     --output ${output:-"text"}
 }
 
+asg_instances() {
+  local inputs=$(__bma_read_inputs $@)
+  local asg_names=$(__bma_read_resources ${inputs})
+  local filters="
+    Name=tag-key,Values=aws:autoscaling:groupName
+    Name=tag-value,Values=$(echo ${asg_names} | tr ' ' ',')
+  "
+
+  instances                                                 \
+    --filter ${filters}                                     \
+    $(__bma_read_switches ${inputs})
+}
+
 # vim: ft=sh
