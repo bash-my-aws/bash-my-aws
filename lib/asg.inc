@@ -73,5 +73,36 @@ asg_capacity() {
     $(__bma_read_switches ${inputs})
 }
 
+asg_resume() {
+  local inputs=$(__bma_read_inputs $@)
+  for asg in ${inputs}; do
+    aws autoscaling resume-processes --auto-scaling-group-name $asg
+  done
+}
+
+asg_suspend() {
+  local inputs=$(__bma_read_inputs $@)
+  for asg in ${inputs}; do
+    aws autoscaling suspend-processes --auto-scaling-group-name $asg
+  done
+}
+
+asg_suspended_processes() {
+  # TODO: fix the output
+  local inputs=$(__bma_read_inputs $@)
+  local asg_names=$(__bma_read_resources ${inputs})
+  local query='
+    AutoScalingGroups[][
+      {
+        "AutoScalingGroupName": AutoScalingGroupName,
+        "SuspendedProcesses": SuspendedProcesses
+      }
+    ][]
+  '
+
+  asgs ${asg_names}                     \
+    --query ${query}                    \
+    $(__bma_read_switches ${inputs})
+}
 
 # vim: ft=sh
