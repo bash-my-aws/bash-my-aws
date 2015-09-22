@@ -42,7 +42,10 @@ complete -F _instances instance_type
 complete -F _instances instance_volumes
 complete -F _instances instances
 
+complete -F _asgs asg_capacity
+complete -F _asgs asg_instances
 complete -F _asgs asg_resume
 complete -F _asgs asg_suspend
 complete -F _asgs asg_suspended
+
 # vim: ft=sh
