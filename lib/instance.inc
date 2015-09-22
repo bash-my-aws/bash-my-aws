@@ -182,14 +182,6 @@ instance_terminate() {
   aws ec2 terminate-instances --instance-id $1
 }
 
-instance_types() {
-  # query + detail
-  INSTANCE_OUTPUT="[ InstanceId InstanceType ]" \
-    instances $(__bma_read_inputs $@)               |
-      awk '{ print $2 }'                        |
-      sort | uniq -c
-}
-
 instance_userdata() {
   # detail
   for instance_id in $(__bma_read_inputs $@); do
