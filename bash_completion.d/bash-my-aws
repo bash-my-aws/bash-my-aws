@@ -20,6 +20,15 @@ _instances() {
     return 0
 }
 
+_asgs() {
+    local command="$1"
+    local word="$2"
+    local options=$(asgs)
+
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
 complete -F _cf_list cf_elbs
 complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
@@ -33,4 +42,7 @@ complete -F _instances instance_type
 complete -F _instances instance_volumes
 complete -F _instances instances
 
+complete -F _asgs asg_resume
+complete -F _asgs asg_suspend
+complete -F _asgs asg_suspended
 # vim: ft=sh
