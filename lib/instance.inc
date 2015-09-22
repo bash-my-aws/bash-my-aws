@@ -136,6 +136,21 @@ instance_ip() {
   instances ${inputs} --query ${query}
 }
 
+instance_dns() {
+  ## detail
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "Private": PrivateDnsName,
+        "Public": PublicDnsName
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
 instance_role() {
   local inputs=$(__bma_read_inputs $@)
 
