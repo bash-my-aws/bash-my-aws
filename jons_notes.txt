@@ -5,6 +5,7 @@
 - get the desired capacity of asg.
 - set the desired capacity of asg.
 - grab a file from s3.
+- resume and suspend an autoscaling group.
 
 asg_instances
 elb_instances
@@ -12,6 +13,7 @@ instance_asg
 instance_elb
 instance_stack
 role_instances
+cf_delete with multiple stack names.
 
 some things have only accept a single resource.
   inconsistenies in switches. some commands expect a single resource, some
