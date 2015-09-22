@@ -44,9 +44,19 @@ describe "bma_read_inputs:" "$(
 
 
 describe "bma_read_resources:" "$(
-  context "one switch with value" "$(
+  context "one value" "$(
+    val=$(__bma_read_resources r1)
+    expect "$(echo ${val:-empty})" to_be "r1"
+  )"
+
+  context "two values" "$(
     val=$(__bma_read_resources r1 r2 --a-switch a-value r3)
     expect "$(echo ${val:-empty})" to_be "r1 r2"
+  )"
+
+  context "one switch two values" "$(
+    val=$(__bma_read_resources i-8a7de654 i-b4c0176b --debug)
+    expect "$(echo ${val:-empty})" to_be "i-8a7de654 i-b4c0176b"
   )"
 )"
 
