@@ -121,6 +121,21 @@ instance_iam_profile() {
   instances ${inputs} --query ${query}
 }
 
+instance_ip() {
+  ## detail
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "Private": PrivateIpAddress,
+        "Public": PublicIpAddress
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
 instance_role() {
   local inputs=$(__bma_read_inputs $@)
 
