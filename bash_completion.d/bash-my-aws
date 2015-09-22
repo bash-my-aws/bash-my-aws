@@ -24,9 +24,13 @@ complete -F _cf_list cf_elbs
 complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
 complete -F _cf_list instances_in_stack
-complete -F _instances instances
-complete -F _instances instance_ip_private
-complete -F _instances instance_ip_public
+
 complete -F _instances instance_asg
+complete -F _instances instance_dns
+complete -F _instances instance_iam_profile
+complete -F _instances instance_ip
+complete -F _instances instance_type
+complete -F _instances instance_volumes
+complete -F _instances instances
 
 # vim: ft=sh
