@@ -27,5 +27,6 @@ complete -F _cf_list instances_in_stack
 complete -F _instances instances
 complete -F _instances instance_ip_private
 complete -F _instances instance_ip_public
+complete -F _instances instance_asg
 
 # vim: ft=sh
