@@ -263,7 +263,13 @@ cf_resources() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
   shift
-  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}" --output table $@
+  local query="StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}"
+  aws cloudformation describe-stack-resources \
+    --stack-name $stack                       \
+    --query "$query"                          \
+    --output text $@                          |
+      tr '\t' ' '                             |
+      awk '{ print $2, $1 }'
 }
 
 cf_validate() {
