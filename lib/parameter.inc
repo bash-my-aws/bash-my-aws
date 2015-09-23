@@ -27,7 +27,7 @@ __bma_read_switches() {
   result=$(
     __bma_arg_types "$@"    |
       grep '^s:'            |
-      sed -E 's/^s://'      |
+      cut -d: -f2-          |
       sort
   )
   __bma_expand_switches ${result}
