@@ -177,32 +177,6 @@ instance-userdata() {
   done
 }
 
-instance-role() {
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
-
-  local query='
-    Reservations[].Instances[][
-      {
-        "AutoscalingGroupName": [Tags[?Key==`aws:autoscaling:groupName`].Value][0][0],
-        "InstanceId": InstanceId
-      }
-    ][]
-  '
-  instance ${inputs} --query ${query}
-
-
-
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
-  local instance_id=$1
-  local profile_id=$(aws ec2 describe-instances --instance-id $instance_id \
-    --query "Reservations[].Instances[].IamInstanceProfile.Id"             \
-    --output text)
-  aws iam list-instance-profiles                                                     \
-    --query "InstanceProfiles[?InstanceProfileId==\`$profile_id\`].Roles[].RoleName" \
-    --output text
-}
-
-
 instance-console_output() {
   # detail
   for instance_id in $(__bma_read_inputs $@ | base64 -D); do
@@ -261,5 +235,31 @@ instance-terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
 }
+
+#instance-role() {
+#  local inputs=$(__bma_read_inputs $@ | base64 -D)
+#
+#  local query='
+#    Reservations[].Instances[][
+#      {
+#        "AutoscalingGroupName": [Tags[?Key==`aws:autoscaling:groupName`].Value][0][0],
+#        "InstanceId": InstanceId
+#      }
+#    ][]
+#  '
+#  instance ${inputs} --query ${query}
+#
+#
+#
+#  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
+#  local instance_id=$1
+#  local profile_id=$(aws ec2 describe-instances --instance-id $instance_id \
+#    --query "Reservations[].Instances[].IamInstanceProfile.Id"             \
+#    --output text)
+#  aws iam list-instance-profiles                                                     \
+#    --query "InstanceProfiles[?InstanceProfileId==\`$profile_id\`].Roles[].RoleName" \
+#    --output text
+#}
+
 
 # vim: ft=sh
