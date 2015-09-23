@@ -43,6 +43,22 @@ asg() {
     --output ${output:-"text"}
 }
 
+asg-capacity() {
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    AutoScalingGroups[][
+      {
+        "AutoScalingGroupName": AutoScalingGroupName,
+        "MinSize": MinSize,
+        "DesiredCapacity": DesiredCapacity,
+        "MaxSize": MaxSize
+      }
+    ][]
+  '
+
+  asg ${inputs} --query ${query}
+}
+
 asg-instances() {
   local inputs=$(__bma_read_inputs $@)
   local asg_names=$(__bma_read_resources ${inputs})
@@ -56,15 +72,14 @@ asg-instances() {
     $(__bma_read_switches ${inputs})
 }
 
-asg-capacity() {
+asg-processes_suspended() {
+  # TODO: fix the output
   local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     AutoScalingGroups[][
       {
         "AutoScalingGroupName": AutoScalingGroupName,
-        "MinSize": MinSize,
-        "DesiredCapacity": DesiredCapacity,
-        "MaxSize": MaxSize
+        "SuspendedProcesses": SuspendedProcesses
       }
     ][]
   '
@@ -84,21 +99,6 @@ asg-suspend() {
   for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling suspend-processes --auto-scaling-group-name $asg
   done
-}
-
-asg-processes_suspended() {
-  # TODO: fix the output
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
-  local query='
-    AutoScalingGroups[][
-      {
-        "AutoScalingGroupName": AutoScalingGroupName,
-        "SuspendedProcesses": SuspendedProcesses
-      }
-    ][]
-  '
-
-  asg ${inputs} --query ${query}
 }
 
 # vim: ft=sh
