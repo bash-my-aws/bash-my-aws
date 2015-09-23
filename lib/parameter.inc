@@ -3,9 +3,9 @@
 # Deal with stdin and arguments.
 
 __bma_read_inputs() {
-  echo "$(__bma_read_stdin) $@" |
-    sed -E 's/\ +$//'           |
-    sed -E 's/^\ +//'           |
+  echo "$(__bma_read_stdin | base64 -D) $@" |
+    sed -E 's/\ +$//'                       |
+    sed -E 's/^\ +//'                       |
     base64
 }
 
@@ -14,7 +14,8 @@ __bma_read_stdin() {
     cat /dev/stdin     |
     awk '{ print $1 }' |
     tr '\n' ' '        |
-    sed 's/\ $//'
+    sed 's/\ $//'      |
+    base64
 }
 
 __bma_read_resources() {

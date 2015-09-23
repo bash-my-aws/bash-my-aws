@@ -4,19 +4,19 @@ source $(dirname $0)/../lib/parameter.inc
 
 describe "bma_read_stdin:" "$(
   context "single word on a single line" "$(
-    expect "$(echo "a" | __bma_read_stdin)" to_be "a"
+    expect "$(echo "a" | __bma_read_stdin | base64 -D)" to_be "a"
   )"
 
   context "multi word on a single line" "$(
-    expect "$(echo "a blah" | __bma_read_stdin)" to_be "a"
+    expect "$(echo "a blah" | __bma_read_stdin | base64 -D)" to_be "a"
   )"
 
   context "single word on multi line" "$(
-    expect "$(printf "a\nb" | __bma_read_stdin)" to_be "a b"
+    expect "$(printf "a\nb" | __bma_read_stdin | base64 -D)" to_be "a b"
   )"
 
   context "multi word on a single line" "$(
-    expect "$(printf "a blah\nb else\n" | __bma_read_stdin)" to_be "a b"
+    expect "$(printf "a blah\nb else\n" | __bma_read_stdin | base64 -D)" to_be "a b"
   )"
 )"
 
