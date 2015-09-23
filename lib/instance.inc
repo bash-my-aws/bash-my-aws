@@ -247,19 +247,4 @@ instance-userdata() {
   done
 }
 
-# instance_volumes() {
-#   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [instance_id]"; return 1; fi
-#   local instance_ids=$@
-#   if local volume_ids=$(aws ec2 describe-instances --instance-ids $instance_ids \
-#    --query "Reservations[].Instances[].BlockDeviceMappings[].Ebs[].VolumeId"    \
-#    --output text)
-#   then
-#     aws ec2 describe-volumes --volume-ids $volume_ids \
-#       --query "Volumes[].$VOLUME_OUTPUT"              \
-#       --output text
-#   else
-#     >&2 echo "No volumes found"
-#   fi
-# }
-
 # vim: ft=sh
