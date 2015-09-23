@@ -30,7 +30,8 @@ __bma_read_switches() {
     __bma_arg_types "$@"    |
       grep '^s:'            |
       cut -d: -f2-          |
-      sort
+      sort                  |
+      base64
   )
   __bma_expand_switches ${result}
 }
@@ -58,7 +59,7 @@ __bma_arg_types() {
 
 __bma_expand_switches() {
   # this function is for expanding or rewriting switches.
-  echo $@                           |
+  echo $@ | base64 -D                   |
     sed -E 's/^--json/--output json/'   |
     sed -E 's/^--text/--output text/'   |
     sed -E 's/^-f/--filters/'           |

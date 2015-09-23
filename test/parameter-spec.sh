@@ -129,31 +129,37 @@ describe "bma_arg_types:" "$(
 
 describe "bma_expand_switches:" "$(
   context "with --debug" "$(
-    val=$(__bma_expand_switches --debug)
+    str=$(echo "--debug" | base64)
+    val=$(__bma_expand_switches ${str})
     expect "${val:-empty}" to_be "--debug"
   )"
 
   context "with --json" "$(
-    val=$(__bma_expand_switches --json)
+    str=$(echo "--json" | base64)
+    val=$(__bma_expand_switches ${str})
     expect "${val:-empty}" to_be "--output json"
   )"
 
   context "with --text" "$(
-    val=$(__bma_expand_switches --text)
+    str=$(echo "--text" | base64)
+    val=$(__bma_expand_switches ${str})
     expect "${val:-empty}" to_be "--output text"
   )"
 
   context "with -f" "$(
-    val=$(__bma_expand_switches -f 'this is the filter')
-    expect "${val:-empty}" to_be "--filters this is the filter"
+    str=$(echo "-f 'this is the filter'" | base64)
+    val=$(__bma_expand_switches ${str})
+    expect "${val:-empty}" to_be "--filters 'this is the filter'"
   )"
 
   context "with -q" "$(
-    val=$(__bma_expand_switches -q 'this is the query')
-    expect "${val:-empty}" to_be "--query this is the query"
+    str=$(echo "-q 'this is the query'" | base64)
+    val=$(__bma_expand_switches ${str})
+    expect "${val:-empty}" to_be "--query 'this is the query'"
   )"
 
   context "returns one switch per line" "$(
-    expect $(__bma_expand_switches --one 1 --two 2 | wc -l) to_be "2"
+    str=$(echo -e "--one 1\n--two 2" | base64)
+    expect $(__bma_expand_switches ${str} | wc -l) to_be "2"
   )"
 )"
