@@ -11,11 +11,11 @@ __bma_read_inputs() {
 
 __bma_read_stdin() {
   [[ -t 0 ]] ||
-    cat /dev/stdin     |
-    awk '{ print $1 }' |
-    tr '\n' ' '        |
-    sed 's/\ $//'      |
-    base64
+    cat /dev/stdin       |
+      awk '{ print $1 }' |
+      tr '\n' ' '        |
+      sed 's/\ $//'      |
+      base64
 }
 
 __bma_read_resources() {
