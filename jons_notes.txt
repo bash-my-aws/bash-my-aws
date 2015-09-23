@@ -7,6 +7,9 @@
 - get the healthcheck url from an elb.
 - grab a file from s3.
 
+- add a --version switch that works everywhere.
+- create a standard debug_msg thing
+
 elb_instances
 instance_elb
 role_instances
