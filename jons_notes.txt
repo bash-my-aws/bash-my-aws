@@ -1,11 +1,9 @@
 - rename asg_suspended because it tab completes to the dangerous asg_suspend
-- fix instance_volumes with an output of json
 
 - find elb of instance
 - find role of instance
 - find stack that created a dns record
 - get the healthcheck url from an elb.
-- set the desired capacity of asg.
 - grab a file from s3.
 
 elb_instances
