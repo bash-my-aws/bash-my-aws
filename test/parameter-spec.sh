@@ -27,17 +27,17 @@ describe "bma_read_inputs:" "$(
   )"
 
   context "with stdin" "$(
-    val=$(echo "a blah" | __bma_read_inputs)
+    val=$(echo "a blah" | __bma_read_inputs | base64 -D)
     expect "${val:-empty}" to_be "a"
   )"
 
   context "with argv" "$(
-    val=$(__bma_read_inputs "argv")
+    val=$(__bma_read_inputs "argv" | base64 -D)
     expect "${val:-empty}" to_be "argv"
   )"
 
   context "multi word on a single line" "$(
-    val=$(printf "a blah\nb else\n" | __bma_read_inputs)
+    val=$(printf "a blah\nb else\n" | __bma_read_inputs | base64 -D)
     expect "${val:-empty}" to_be "a b"
   )"
 )"

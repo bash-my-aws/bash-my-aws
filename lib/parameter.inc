@@ -5,7 +5,8 @@
 __bma_read_inputs() {
   echo "$(__bma_read_stdin) $@" |
     sed -E 's/\ +$//'           |
-    sed -E 's/^\ +//'
+    sed -E 's/^\ +//'           |
+    base64
 }
 
 __bma_read_stdin() {
