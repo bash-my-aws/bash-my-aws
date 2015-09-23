@@ -38,7 +38,7 @@ __bma_read_switches() {
 __bma_arg_types() {
   local switched=false
 
-  for arg in "$@"; do
+  for arg in $(echo $@ | base64 -D); do
     if [[ "$arg" =~ ^-- ]]; then
       $switched && echo
       switched=true

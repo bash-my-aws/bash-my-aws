@@ -45,49 +45,58 @@ describe "bma_read_inputs:" "$(
 
 describe "bma_read_resources:" "$(
   context "one value" "$(
-    val=$(__bma_read_resources r1)
+    str=$(echo "r1" | base64)
+    val=$(__bma_read_resources ${str})
     expect "$(echo ${val:-empty})" to_be "r1"
   )"
 
   context "two values" "$(
-    val=$(__bma_read_resources r1 r2 --a-switch a-value r3)
+    str=$(echo "r1 r2 --a-switch a-value r3" | base64)
+    val=$(__bma_read_resources ${str})
     expect "$(echo ${val:-empty})" to_be "r1 r2"
   )"
 
   context "one switch two values" "$(
-    val=$(__bma_read_resources i-8a7de654 i-b4c0176b --debug)
+    str=$(echo "i-8a7de654 i-b4c0176b --debug" | base64)
+    val=$(__bma_read_resources ${str})
     expect "$(echo ${val:-empty})" to_be "i-8a7de654 i-b4c0176b"
   )"
 )"
 
 describe "bma_read_switches:" "$(
   context "one switch with value" "$(
-    val=$(__bma_read_switches r1 r2 --a-switch a-value r3)
+    str=$(echo "r1 r2 --a-switch a-value r3" | base64)
+    val=$(__bma_read_switches ${str})
     expect "$(echo ${val:-empty})" to_be "--a-switch a-value r3"
   )"
 
   context "two switches with values" "$(
-    val=$(__bma_read_switches r1 r2 --a-switch a-value r3 --another one_more)
+    str=$(echo "r1 r2 --a-switch a-value r3 --another one_more" | base64)
+    val=$(__bma_read_switches ${str})
     expect "$(echo ${val:-empty})" to_be "--a-switch a-value r3 --another one_more"
   )"
 
   context "switches with long value" "$(
-    val=$(__bma_read_switches --switch 'with a long value')
-    expect "$(echo ${val:-empty})" to_be "--switch with a long value"
+    str=$(echo "--switch 'with a long value'" | base64)
+    val=$(__bma_read_switches ${str})
+    expect "$(echo ${val:-empty})" to_be "--switch 'with a long value'"
   )"
 
   context "duplicate switches" "$(
-    val=$(__bma_read_switches --switch 'with a long value' --switch 'another')
-    expect "$(echo ${val:-empty})" to_be "--switch another --switch with a long value"
+    str=$(echo "--switch 'with a long value' --switch 'another'" | base64)
+    val=$(__bma_read_switches ${str})
+    expect "$(echo ${val:-empty})" to_be "--switch 'another' --switch 'with a long value'"
   )"
 
   context "expanded switches" "$(
-    val=$(__bma_read_switches --json)
+    str=$(echo "--json" | base64)
+    val=$(__bma_read_switches ${str})
     expect "$(echo ${val:-empty})" to_be "--output json"
   )"
 
   context "returns one switch per line" "$(
-    expect $(__bma_read_switches --one 1 --two 2 | wc -l) to_be "2"
+    str=$(echo "--one 1 --two 2 | wc -l" | base64)
+    expect $(__bma_read_switches ${str} | wc -l) to_be "2"
   )"
 )"
 
@@ -98,22 +107,22 @@ describe "bma_arg_types:" "$(
   )"
 
   context "one resource" "$(
-    val=$(__bma_arg_types i-abc)
+    val=$(__bma_arg_types $(echo i-abc | base64))
     expect "${val:-empty}" to_be "r:i-abc"
   )"
 
   context "one switch" "$(
-    val=$(__bma_arg_types --switch)
+    val=$(__bma_arg_types $(echo --switch | base64))
     expect "${val:-empty}" to_be "s:--switch"
   )"
 
   context "one switch with value" "$(
-    val=$(__bma_arg_types --a-switch a-value)
+    val=$(__bma_arg_types $(echo --a-switch a-value | base64))
     expect "$(echo ${val:-empty})" to_be "s:--a-switch a-value"
   )"
 
   context "switches with long value" "$(
-    val=$(__bma_arg_types --switch with a long value)
+    val=$(__bma_arg_types $(echo --switch with a long value | base64))
     expect "$(echo ${val:-empty})" to_be "s:--switch with a long value"
   )"
 )"
