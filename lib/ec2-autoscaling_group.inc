@@ -57,8 +57,7 @@ asg-instances() {
 }
 
 asg-capacity() {
-  local inputs=$(__bma_read_inputs $@)
-  local asg_names=$(__bma_read_resources ${inputs})
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     AutoScalingGroups[][
       {
@@ -70,9 +69,7 @@ asg-capacity() {
     ][]
   '
 
-  asgs ${asg_names}                     \
-    --query ${query}                    \
-    $(__bma_read_switches ${inputs})
+  asg ${inputs} --query ${query}
 }
 
 asg-resume() {
@@ -91,8 +88,7 @@ asg-suspend() {
 
 asg-suspended_processes() {
   # TODO: fix the output
-  local inputs=$(__bma_read_inputs $@)
-  local asg_names=$(__bma_read_resources ${inputs})
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     AutoScalingGroups[][
       {
@@ -102,9 +98,7 @@ asg-suspended_processes() {
     ][]
   '
 
-  asgs ${asg_names}                     \
-    --query ${query}                    \
-    $(__bma_read_switches ${inputs})
+  asg ${inputs} --query ${query}
 }
 
 # vim: ft=sh
