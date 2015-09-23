@@ -56,4 +56,19 @@ stack() {
     sort
 }
 
+stack-status() {
+  ## detail
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    StackSummaries[][
+      {
+        "Name": StackName,
+        "Status": StackStatus
+      }
+    ][]
+  '
+  stack ${inputs} --query ${query}
+}
+
+
 ## vim: ft=sh
