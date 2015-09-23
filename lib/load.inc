@@ -1,7 +1,7 @@
 services="
   asg
   cloudformation
-  instance
+  ec2
 "
 
 for service in ${services}; do

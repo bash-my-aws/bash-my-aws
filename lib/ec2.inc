@@ -1,4 +1,4 @@
-# instance.inc
+# ec2.inc
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 

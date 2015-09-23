@@ -1,4 +1,4 @@
-# asg.inc
+# ec2-autoscaling_group.inc
 
 asgs() {
   # type: query
