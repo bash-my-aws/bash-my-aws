@@ -5,14 +5,14 @@ _cf_list() {
     return 0
 }
 
-_instances() {
+_instance() {
     local command="$1"
     local word="$2"
 
     case $word in
       "") options="i-a i-b" ;;
       *)
-        options=$(instances)
+        options=$(instance)
       ;;
     esac
 
@@ -34,13 +34,14 @@ complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
 complete -F _cf_list instances_in_stack
 
-complete -F _instances instance_asg
-complete -F _instances instance_dns
-complete -F _instances instance_iam_profile
-complete -F _instances instance_ip
-complete -F _instances instance_type
-complete -F _instances instance_volumes
-complete -F _instances instances
+complete -F _instance instance
+complete -F _instance instance-asg
+complete -F _instance instance-dns
+complete -F _instance instance-iam_profile
+complete -F _instance instance-ip
+complete -F _instance instance-state
+complete -F _instance instance-type
+complete -F _instance instance-volumes
 
 complete -F _asgs asg_capacity
 complete -F _asgs asg_instances
