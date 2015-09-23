@@ -177,11 +177,12 @@ instance-userdata() {
   done
 }
 
-instance-console_output() {
+instance-console() {
   # detail
-  for instance_id in $(__bma_read_inputs $@ | base64 -D); do
+  local inputs=$(__bma_read_inputs $@)
+  for id in $(__bma_read_resources ${inputs}); do
     aws ec2 get-console-output    \
-      --instance-id $instance_id  \
+      --instance-id $id           \
       --query Output              \
       --output text
   done

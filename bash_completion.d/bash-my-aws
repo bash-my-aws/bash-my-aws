@@ -36,11 +36,13 @@ complete -F _cf_list instances_in_stack
 
 complete -F _instance instance
 complete -F _instance instance-asg
+complete -F _instance instance-console
 complete -F _instance instance-dns
 complete -F _instance instance-iam_profile
 complete -F _instance instance-ip
 complete -F _instance instance-state
 complete -F _instance instance-type
+complete -F _instance instance-userdata
 complete -F _instance instance-volumes
 
 complete -F _asgs asg_capacity
