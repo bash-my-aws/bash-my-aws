@@ -150,6 +150,20 @@ instance-dns() {
   instance ${inputs} --query ${query}
 }
 
+instance-state() {
+  ## detail
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "State": State.Name
+      }
+    ][]
+  '
+  instance ${inputs} --query ${query}
+}
+
 instance-role() {
   local inputs=$(__bma_read_inputs $@ | base64 -D)
 
