@@ -4,7 +4,7 @@
 
 source $(dirname ${BASH_SOURCE[0]})/shared.inc
 
-instances() {
+instance() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
@@ -46,7 +46,7 @@ instances() {
     --output ${output:-"text"}
 }
 
-instance_asg() {
+instance-asg() {
   local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
@@ -59,7 +59,7 @@ instance_asg() {
   instances ${inputs} --query ${query}
 }
 
-instance_stack() {
+instance-stack() {
   # FIXME: the output is out of order.
   # for some reason, InstanceId is first in text output.
   local inputs=$(__bma_read_inputs $@ | base64 -D)
@@ -74,7 +74,7 @@ instance_stack() {
   instances ${inputs} --query ${query}
 }
 
-instance_type() {
+instance-type() {
   # FIXME: the output is out of order.
   # for some reason, InstanceId is first in text output.
   local inputs=$(__bma_read_inputs $@ | base64 -D)
@@ -89,7 +89,7 @@ instance_type() {
   instances ${inputs} --query ${query}
 }
 
-instance_volumes() {
+instance-volumes() {
   # detail
   # FIXME: The logical json doesn't map well to text.
   local inputs=$(__bma_read_inputs $@ | base64 -D)
@@ -104,7 +104,7 @@ instance_volumes() {
   instances ${inputs} --query ${query}
 }
 
-instance_iam_profile() {
+instance-iam_profile() {
   ## detail
   # FIXME: Fix the output order
 
@@ -120,7 +120,7 @@ instance_iam_profile() {
   instances ${inputs} --query ${query}
 }
 
-instance_ip() {
+instance-ip() {
   ## detail
   local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
@@ -135,7 +135,7 @@ instance_ip() {
   instances ${inputs} --query ${query}
 }
 
-instance_dns() {
+instance-dns() {
   ## detail
   local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
@@ -150,7 +150,7 @@ instance_dns() {
   instances ${inputs} --query ${query}
 }
 
-instance_role() {
+instance-role() {
   local inputs=$(__bma_read_inputs $@ | base64 -D)
 
   local query='
@@ -176,7 +176,7 @@ instance_role() {
 }
 
 
-instance_console_output() {
+instance-console_output() {
   # detail
   for instance_id in $(__bma_read_inputs $@ | base64 -D); do
     aws ec2 get-console-output    \
@@ -186,7 +186,7 @@ instance_console_output() {
   done
 }
 
-instance_ssh() {
+instance-ssh() {
   IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | base64 -D | head -1)
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_details="$(instance_ssh_details $instance_id)"
@@ -208,7 +208,7 @@ instance_ssh() {
     $ip
 }
 
-instance_ssh_details() {
+instance-ssh_details() {
   local instance_id="$(__bma_read_inputs $@ | base64 -D)"
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   INSTANCE_FILTERS="Name=instance-id,Values=${instance_id}"           \
@@ -220,22 +220,22 @@ instance_ssh_details() {
   ]" instances
 }
 
-instance_start() {
+instance-start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 start-instances --instance-id $1
 }
 
-instance_stop() {
+instance-stop() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 stop-instances --instance-id $1
 }
 
-instance_terminate() {
+instance-terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
 }
 
-instance_userdata() {
+instance-userdata() {
   # detail
   for instance_id in $(__bma_read_inputs $@ | base64 -D); do
     aws ec2 describe-instance-attribute         \
