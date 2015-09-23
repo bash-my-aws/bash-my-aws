@@ -86,7 +86,7 @@ asg-suspend() {
   done
 }
 
-asg-suspended_processes() {
+asg-processes_suspended() {
   # TODO: fix the output
   local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
