@@ -37,7 +37,7 @@ instances() {
     echo "output: ${output}"
   fi
 
-  [[ -z $query ]] && query=$default_query
+  [[ -z $query ]] && local query=$default_query
 
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
