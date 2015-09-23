@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 services="
   asg
   cloudformation
@@ -6,7 +5,7 @@ services="
 "
 
 for service in ${services}; do
-  source $(dirname $0)/../lib/${service}.inc
+  source $(dirname ${BASH_SOURCE[0]})/${service}.inc
 done
 
 # vim: ft=sh
