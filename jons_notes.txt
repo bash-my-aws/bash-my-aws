@@ -1,3 +1,4 @@
+- instances_in_stack should be a parameter of instances
 - rename asg_suspended because it tab completes to the dangerous asg_suspend
 
 - find elb of instance

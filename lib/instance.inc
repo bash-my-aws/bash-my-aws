@@ -59,45 +59,26 @@ instance-asg() {
   instance ${inputs} --query ${query}
 }
 
-instance-stack() {
-  # FIXME: the output is out of order.
-  # for some reason, InstanceId is first in text output.
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
-  local query='
-    Reservations[].Instances[][
-      {
-        "Stack": [Tags[?Key==`aws:cloudformation:stack-name`].Value][0][0],
-        "InstanceId": InstanceId
-      }
-    ][]
-  '
-  instance ${inputs} --query ${query}
-}
-
-instance-type() {
-  # FIXME: the output is out of order.
-  # for some reason, InstanceId is first in text output.
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
-  local query='
-    Reservations[].Instances[][
-      {
-        "InstanceType": InstanceType,
-        "InstanceId": InstanceId
-      }
-    ][]
-  '
-  instance ${inputs} --query ${query}
-}
-
-instance-volumes() {
+instance-console() {
   # detail
-  # FIXME: The logical json doesn't map well to text.
+  local inputs=$(__bma_read_inputs $@)
+  for id in $(__bma_read_resources ${inputs}); do
+    aws ec2 get-console-output    \
+      --instance-id $id           \
+      --query Output              \
+      --output text
+  done
+}
+
+instance-dns() {
+  ## detail
   local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
         "InstanceId": InstanceId,
-        "Volumes": BlockDeviceMappings[].Ebs[].VolumeId
+        "Private": PrivateDnsName,
+        "Public": PublicDnsName
       }
     ][]
   '
@@ -135,59 +116,6 @@ instance-ip() {
   instance ${inputs} --query ${query}
 }
 
-instance-dns() {
-  ## detail
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
-  local query='
-    Reservations[].Instances[][
-      {
-        "InstanceId": InstanceId,
-        "Private": PrivateDnsName,
-        "Public": PublicDnsName
-      }
-    ][]
-  '
-  instance ${inputs} --query ${query}
-}
-
-instance-state() {
-  ## detail
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
-  local query='
-    Reservations[].Instances[][
-      {
-        "InstanceId": InstanceId,
-        "State": State.Name
-      }
-    ][]
-  '
-  instance ${inputs} --query ${query}
-}
-
-instance-userdata() {
-  # detail
-  local inputs=$(__bma_read_inputs $@)
-  for id in $(__bma_read_resources ${inputs}); do
-    aws ec2 describe-instance-attribute \
-      --attribute userData              \
-      --instance-id $id                 \
-      --query UserData                  \
-      --output text                     |
-        base64 --decode
-  done
-}
-
-instance-console() {
-  # detail
-  local inputs=$(__bma_read_inputs $@)
-  for id in $(__bma_read_resources ${inputs}); do
-    aws ec2 get-console-output    \
-      --instance-id $id           \
-      --query Output              \
-      --output text
-  done
-}
-
 instance-ssh() {
   IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | base64 -D | head -1)
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
@@ -222,9 +150,38 @@ instance-ssh_details() {
   ]" instances
 }
 
+instance-stack() {
+  # FIXME: the output is out of order.
+  # for some reason, InstanceId is first in text output.
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    Reservations[].Instances[][
+      {
+        "Stack": [Tags[?Key==`aws:cloudformation:stack-name`].Value][0][0],
+        "InstanceId": InstanceId
+      }
+    ][]
+  '
+  instance ${inputs} --query ${query}
+}
+
 instance-start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 start-instances --instance-id $1
+}
+
+instance-state() {
+  ## detail
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "State": State.Name
+      }
+    ][]
+  '
+  instance ${inputs} --query ${query}
 }
 
 instance-stop() {
@@ -235,6 +192,49 @@ instance-stop() {
 instance-terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
+}
+
+instance-type() {
+  # FIXME: the output is out of order.
+  # for some reason, InstanceId is first in text output.
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceType": InstanceType,
+        "InstanceId": InstanceId
+      }
+    ][]
+  '
+  instance ${inputs} --query ${query}
+}
+
+instance-userdata() {
+  # detail
+  local inputs=$(__bma_read_inputs $@)
+  for id in $(__bma_read_resources ${inputs}); do
+    aws ec2 describe-instance-attribute \
+      --attribute userData              \
+      --instance-id $id                 \
+      --query UserData                  \
+      --output text                     |
+        base64 --decode
+  done
+}
+
+instance-volumes() {
+  # detail
+  # FIXME: The logical json doesn't map well to text.
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "Volumes": BlockDeviceMappings[].Ebs[].VolumeId
+      }
+    ][]
+  '
+  instance ${inputs} --query ${query}
 }
 
 #instance-role() {

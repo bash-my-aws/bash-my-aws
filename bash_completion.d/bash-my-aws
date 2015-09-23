@@ -32,7 +32,6 @@ _asgs() {
 complete -F _cf_list cf_elbs
 complete -F _cf_list cf_instances
 complete -F _cf_list cf_resources
-complete -F _cf_list instances_in_stack
 
 complete -F _instance instance
 complete -F _instance instance-asg
@@ -40,7 +39,13 @@ complete -F _instance instance-console
 complete -F _instance instance-dns
 complete -F _instance instance-iam_profile
 complete -F _instance instance-ip
+complete -F _instance instance-ssh
+complete -F _instance instance-ssh_details
+complete -F _instance instance-stack
+complete -F _instance instance-start
 complete -F _instance instance-state
+complete -F _instance instance-stop
+complete -F _instance instance-terminate
 complete -F _instance instance-type
 complete -F _instance instance-userdata
 complete -F _instance instance-volumes
