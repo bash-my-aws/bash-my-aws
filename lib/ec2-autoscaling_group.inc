@@ -1,6 +1,6 @@
 # ec2-autoscaling_group.inc
 
-asgs() {
+asg() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
@@ -43,7 +43,7 @@ asgs() {
     --output ${output:-"text"}
 }
 
-asg_instances() {
+asg-instances() {
   local inputs=$(__bma_read_inputs $@)
   local asg_names=$(__bma_read_resources ${inputs})
   local filters="
@@ -56,7 +56,7 @@ asg_instances() {
     $(__bma_read_switches ${inputs})
 }
 
-asg_capacity() {
+asg-capacity() {
   local inputs=$(__bma_read_inputs $@)
   local asg_names=$(__bma_read_resources ${inputs})
   local query='
@@ -75,21 +75,21 @@ asg_capacity() {
     $(__bma_read_switches ${inputs})
 }
 
-asg_resume() {
+asg-resume() {
   local inputs=$(__bma_read_inputs $@)
   for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling resume-processes --auto-scaling-group-name $asg
   done
 }
 
-asg_suspend() {
+asg-suspend() {
   local inputs=$(__bma_read_inputs $@)
   for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling suspend-processes --auto-scaling-group-name $asg
   done
 }
 
-asg_suspended_processes() {
+asg-suspended_processes() {
   # TODO: fix the output
   local inputs=$(__bma_read_inputs $@)
   local asg_names=$(__bma_read_resources ${inputs})
