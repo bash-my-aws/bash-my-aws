@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+services="
+  asg
+  cloudformation
+  instance
+"
+
+for service in ${services}; do
+  source $(dirname $0)/../lib/${service}.inc
+done
+
+# vim: ft=sh
