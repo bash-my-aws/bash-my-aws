@@ -85,6 +85,10 @@ describe "bma_read_switches:" "$(
     val=$(__bma_read_switches --json)
     expect "$(echo ${val:-empty})" to_be "--output json"
   )"
+
+  context "returns one switch per line" "$(
+    expect $(__bma_read_switches --one 1 --two 2 | wc -l) to_be "2"
+  )"
 )"
 
 describe "bma_arg_types:" "$(
@@ -138,5 +142,9 @@ describe "bma_expand_switches:" "$(
   context "with -q" "$(
     val=$(__bma_expand_switches -q 'this is the query')
     expect "${val:-empty}" to_be "--query this is the query"
+  )"
+
+  context "returns one switch per line" "$(
+    expect $(__bma_expand_switches --one 1 --two 2 | wc -l) to_be "2"
   )"
 )"
