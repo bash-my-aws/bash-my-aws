@@ -21,8 +21,7 @@ __bma_read_stdin() {
 __bma_read_resources() {
   __bma_arg_types $@ |
     grep '^r'        |
-    cut -d: -f2-     |
-    tr '\n' ' '
+    cut -d: -f2-
 }
 
 __bma_read_switches() {

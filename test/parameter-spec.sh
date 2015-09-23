@@ -61,6 +61,11 @@ describe "bma_read_resources:" "$(
     val=$(__bma_read_resources ${str})
     expect "$(echo ${val:-empty})" to_be "i-8a7de654 i-b4c0176b"
   )"
+
+  context "returns one resource per line" "$(
+    str=$(echo -e "one two three four" | base64)
+    expect $(__bma_read_resources ${str} | wc -l) to_be "4"
+  )"
 )"
 
 describe "bma_read_switches:" "$(
