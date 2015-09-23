@@ -56,7 +56,7 @@ instance-asg() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-stack() {
@@ -71,7 +71,7 @@ instance-stack() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-type() {
@@ -86,7 +86,7 @@ instance-type() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-volumes() {
@@ -101,7 +101,7 @@ instance-volumes() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-iam_profile() {
@@ -117,7 +117,7 @@ instance-iam_profile() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-ip() {
@@ -132,7 +132,7 @@ instance-ip() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-dns() {
@@ -147,7 +147,7 @@ instance-dns() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 }
 
 instance-role() {
@@ -161,7 +161,7 @@ instance-role() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instance ${inputs} --query ${query}
 
 
 
