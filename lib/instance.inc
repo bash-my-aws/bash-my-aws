@@ -47,8 +47,7 @@ instances() {
 }
 
 instance_asg() {
-  local inputs=$(__bma_read_inputs $@)
-
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -63,7 +62,7 @@ instance_asg() {
 instance_stack() {
   # FIXME: the output is out of order.
   # for some reason, InstanceId is first in text output.
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -78,7 +77,7 @@ instance_stack() {
 instance_type() {
   # FIXME: the output is out of order.
   # for some reason, InstanceId is first in text output.
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -93,7 +92,7 @@ instance_type() {
 instance_volumes() {
   # detail
   # FIXME: The logical json doesn't map well to text.
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -109,7 +108,7 @@ instance_iam_profile() {
   ## detail
   # FIXME: Fix the output order
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -123,7 +122,7 @@ instance_iam_profile() {
 
 instance_ip() {
   ## detail
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -138,7 +137,7 @@ instance_ip() {
 
 instance_dns() {
   ## detail
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
   local query='
     Reservations[].Instances[][
       {
@@ -152,7 +151,7 @@ instance_dns() {
 }
 
 instance_role() {
-  local inputs=$(__bma_read_inputs $@)
+  local inputs=$(__bma_read_inputs $@ | base64 -D)
 
   local query='
     Reservations[].Instances[][
@@ -179,7 +178,7 @@ instance_role() {
 
 instance_console_output() {
   # detail
-  for instance_id in $(__bma_read_inputs $@); do
+  for instance_id in $(__bma_read_inputs $@ | base64 -D); do
     aws ec2 get-console-output    \
       --instance-id $instance_id  \
       --query Output              \
@@ -188,7 +187,7 @@ instance_console_output() {
 }
 
 instance_ssh() {
-  IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | head -1)
+  IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | base64 -D | head -1)
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_details="$(instance_ssh_details $instance_id)"
   local keyname=$(echo $instance_details | awk '{print $1}');
@@ -210,7 +209,7 @@ instance_ssh() {
 }
 
 instance_ssh_details() {
-  local instance_id="$(__bma_read_inputs $@)"
+  local instance_id="$(__bma_read_inputs $@ | base64 -D)"
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   INSTANCE_FILTERS="Name=instance-id,Values=${instance_id}"           \
   INSTANCE_OUTPUT="[
@@ -238,7 +237,7 @@ instance_terminate() {
 
 instance_userdata() {
   # detail
-  for instance_id in $(__bma_read_inputs $@); do
+  for instance_id in $(__bma_read_inputs $@ | base64 -D); do
     aws ec2 describe-instance-attribute         \
       --attribute userData                      \
       --instance-id $instance_id                \
