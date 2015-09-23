@@ -20,10 +20,10 @@ _instance() {
     return 0
 }
 
-_asgs() {
+_asg() {
     local command="$1"
     local word="$2"
-    local options=$(asgs)
+    local options=$(asg)
 
     COMPREPLY=($(compgen -W "${options}" -- ${word}))
     return 0
@@ -50,10 +50,10 @@ complete -F _instance instance-type
 complete -F _instance instance-userdata
 complete -F _instance instance-volumes
 
-complete -F _asgs asg_capacity
-complete -F _asgs asg_instances
-complete -F _asgs asg_resume
-complete -F _asgs asg_suspend
-complete -F _asgs asg_suspended_processes
+complete -F _asg asg-capacity
+complete -F _asg asg-instances
+complete -F _asg asg-resume
+complete -F _asg asg-suspend
+complete -F _asg asg-suspended_processes
 
 # vim: ft=sh
