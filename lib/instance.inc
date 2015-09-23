@@ -164,6 +164,19 @@ instance-state() {
   instance ${inputs} --query ${query}
 }
 
+instance-userdata() {
+  # detail
+  local inputs=$(__bma_read_inputs $@)
+  for id in $(__bma_read_resources ${inputs}); do
+    aws ec2 describe-instance-attribute \
+      --attribute userData              \
+      --instance-id $id                 \
+      --query UserData                  \
+      --output text                     |
+        base64 --decode
+  done
+}
+
 instance-role() {
   local inputs=$(__bma_read_inputs $@ | base64 -D)
 
@@ -247,18 +260,6 @@ instance-stop() {
 instance-terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
-}
-
-instance-userdata() {
-  # detail
-  for instance_id in $(__bma_read_inputs $@ | base64 -D); do
-    aws ec2 describe-instance-attribute         \
-      --attribute userData                      \
-      --instance-id $instance_id                \
-      --query UserData                          \
-      --output text                             |
-        base64 --decode
-  done
 }
 
 # vim: ft=sh
