@@ -51,7 +51,7 @@ asg-instances() {
     Name=tag-value,Values=$(echo ${asg_names} | tr ' ' ',')
   "
 
-  instances                             \
+  instance                              \
     --filters ${filters}                \
     $(__bma_read_switches ${inputs})
 }
