@@ -52,8 +52,8 @@ complete -F _instance instance-volumes
 
 complete -F _asg asg-capacity
 complete -F _asg asg-instances
+complete -F _asg asg-processes_suspended
 complete -F _asg asg-resume
 complete -F _asg asg-suspend
-complete -F _asg asg-suspended_processes
 
 # vim: ft=sh
