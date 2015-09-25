@@ -1,4 +1,6 @@
-# ec2.inc
+#!/bin/bash
+#
+# instance-functions
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
@@ -46,7 +48,9 @@ instance() {
     --output ${output:-"text"}
 }
 
-instance-asg() {
+alias instances=instance
+
+instance_asg() {
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
@@ -59,7 +63,7 @@ instance-asg() {
   instance ${inputs} --query ${query}
 }
 
-instance-console() {
+instance_console() {
   # detail
   local inputs=$(__bma_read_inputs $@)
   for id in $(__bma_read_resources ${inputs}); do
@@ -70,7 +74,7 @@ instance-console() {
   done
 }
 
-instance-dns() {
+instance_dns() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
   local query='
@@ -85,7 +89,7 @@ instance-dns() {
   instance ${inputs} --query ${query}
 }
 
-instance-iam_profile() {
+instance_iam_profile() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
   local query='
@@ -99,7 +103,7 @@ instance-iam_profile() {
   instance ${inputs} --query ${query}
 }
 
-instance-ip() {
+instance_ip() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
   local query='
@@ -114,7 +118,7 @@ instance-ip() {
   instance ${inputs} --query ${query}
 }
 
-instance-ssh() {
+instance_ssh() {
   IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | head -1)
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_details="$(instance_ssh_details $instance_id)"
@@ -136,7 +140,7 @@ instance-ssh() {
     $ip
 }
 
-instance-ssh_details() {
+instance_ssh_details() {
   local instance_id="$(__bma_read_inputs $@)"
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   INSTANCE_FILTERS="Name=instance-id,Values=${instance_id}"           \
@@ -148,7 +152,7 @@ instance-ssh_details() {
   ]" instances
 }
 
-instance-stack() {
+instance_stack() {
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
@@ -161,12 +165,12 @@ instance-stack() {
   instance ${inputs} --query ${query}
 }
 
-instance-start() {
+instance_start() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 start-instances --instance-id $1
 }
 
-instance-state() {
+instance_state() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
   local query='
@@ -180,17 +184,33 @@ instance-state() {
   instance ${inputs} --query ${query}
 }
 
-instance-stop() {
+instance_stop() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance-id"; return 1; fi
   aws ec2 stop-instances --instance-id $1
 }
 
-instance-terminate() {
+# Replaces two older functions
+#
+# instances_with_tag() # instance_tags | grep expiry=
+# instances_without_tag() # instance_tags | grep -v expiry=
+#
+instance_tags() {
+  local inputs="$(__bma_read_inputs $@)"
+  local query='
+    Reservations[].Instances[].[
+      InstanceId, 
+      join(`" "`, Tags[].[join(`=`,[Key,Value])][])
+    ]
+  '
+  instance ${inputs} --query ${query}
+}
+
+instance_terminate() {
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
 }
 
-instance-type() {
+instance_type() {
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
@@ -203,7 +223,7 @@ instance-type() {
   instance ${inputs} --query ${query}
 }
 
-instance-userdata() {
+instance_userdata() {
   # detail
   local inputs=$(__bma_read_inputs $@)
   for id in $(__bma_read_resources ${inputs}); do
@@ -216,7 +236,7 @@ instance-userdata() {
   done
 }
 
-instance-volumes() {
+instance_volumes() {
   # detail
   # FIXME: The logical json doesn't map well to text.
   local inputs=$(__bma_read_inputs $@ | base64 -D)
