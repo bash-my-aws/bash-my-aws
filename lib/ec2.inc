@@ -151,15 +151,13 @@ instance-ssh_details() {
 }
 
 instance-stack() {
-  # FIXME: the output is out of order.
-  # for some reason, InstanceId is first in text output.
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
-      {
-        "Stack": [Tags[?Key==`aws:cloudformation:stack-name`].Value][0][0],
-        "InstanceId": InstanceId
-      }
+      [
+        [Tags[?Key==`aws:cloudformation:stack-name`].Value][0][0],
+        InstanceId
+      ]
     ][]
   '
   instance ${inputs} --query ${query}
