@@ -65,7 +65,7 @@ stack() {
 
 stack-status() {
   ## detail
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs=$(__bma_read_inputs $@)
   local query='
     StackSummaries[][
       {
