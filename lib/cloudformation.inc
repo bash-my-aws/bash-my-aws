@@ -78,15 +78,32 @@ stack-status() {
 }
 
 stack-template() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-
   local inputs=$(__bma_read_inputs $@)
 
   for stack in $(__bma_read_resources ${inputs}); do
     aws cloudformation get-template   \
-      --stack-name $stack             \
+      --stack-name ${stack}           \
       --query TemplateBody
+  done
+}
+
+stack-failure() {
+  # FIXME: only grab the latest one
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    StackEvents[?contains(ResourceStatus,`FAILED`)].[
+      PhysicalResourceId,
+      Timestamp,
+      ResourceStatusReason
+    ]
+  '
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+
+  for stack in $(__bma_read_resources ${inputs}); do
+    aws cloudformation describe-stack-events \
+      --stack-name ${stack}                  \
+      --query $(__bma_clean_query ${query})  \
+      --output ${output:-"text"}
   done
 }
 
