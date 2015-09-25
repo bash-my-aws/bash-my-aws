@@ -107,4 +107,20 @@ stack-failure() {
   done
 }
 
+stack-parameters() {
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Stacks[].Parameters[]
+  '
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+
+  for stack in $(__bma_read_resources ${inputs}); do
+    aws cloudformation describe-stacks        \
+      --stack-name ${stack}                   \
+      --query $(__bma_clean_query ${query})   \
+      --output ${output:-"text"}
+  done
+}
+
+
 ## vim: ft=sh

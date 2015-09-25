@@ -98,20 +98,6 @@ cf_validate() {
   aws cloudformation validate-template --template-body file://$1
 }
 
-cf_params() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .
-}
-
-# Shows current value of particular parameter in a stack
-cf_param() {
-  if [ -z "$2" ] ; then echo "Usage: $FUNCNAME stack parameter"; return 1; fi
-  local stack="$(basename $1 .json)"
-  local param=$2
-  aws cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
-}
-
 ##
 ## Functions to work with stack resources
 ##
