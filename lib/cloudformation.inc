@@ -68,10 +68,10 @@ stack-status() {
   local inputs=$(__bma_read_inputs $@)
   local query='
     StackSummaries[][
-      {
-        "Name": StackName,
-        "Status": StackStatus
-      }
+      [
+        StackStatus,
+        StackName
+      ]
     ][]
   '
   stack ${inputs} --query ${query}
