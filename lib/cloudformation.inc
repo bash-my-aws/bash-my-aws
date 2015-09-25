@@ -111,17 +111,21 @@ stack-failure() {
 
 stack-parameters() {
   local inputs=$(__bma_read_inputs $@)
+  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+
+  if [[ -z ${stack} ]]; then
+    __bma_error "You need to provide a stack name" || return 1
+  fi
+
   local query='
     Stacks[].Parameters[]
   '
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
-  for stack in $(__bma_read_resources ${inputs}); do
-    aws cloudformation describe-stacks        \
-      --stack-name ${stack}                   \
-      --query $(__bma_clean_query ${query})   \
-      --output ${output:-"text"}
-  done
+  aws cloudformation describe-stacks        \
+    --stack-name ${stack}                   \
+    --query $(__bma_clean_query ${query})   \
+    --output ${output:-"text"}
 }
 
 
