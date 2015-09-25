@@ -1,5 +1,7 @@
 # cloudformation.inc
 
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
+
 stack() {
   # TODO: allow filtering for resources
   # type: query
