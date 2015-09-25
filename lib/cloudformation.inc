@@ -66,6 +66,8 @@ stack() {
 }
 
 stack-delete() {
+  # XXX: Have this discussion:
+  # https://github.com/realestate-com-au/bash-my-aws/issues/19
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
 
