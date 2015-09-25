@@ -1,0 +1,59 @@
+_cf_list() {
+    local command="$1"
+    local word="$2"
+    COMPREPLY=($(compgen -W "$(cf_list)" -- ${word}))
+    return 0
+}
+
+_instance() {
+    local command="$1"
+    local word="$2"
+
+    case $word in
+      "") options="i-a i-b" ;;
+      *)
+        options=$(instance)
+      ;;
+    esac
+
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
+_asg() {
+    local command="$1"
+    local word="$2"
+    local options=$(asg)
+
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
+complete -F _cf_list cf_elbs
+complete -F _cf_list cf_instances
+complete -F _cf_list cf_resources
+
+complete -F _instance instance
+complete -F _instance instance-asg
+complete -F _instance instance-console
+complete -F _instance instance-dns
+complete -F _instance instance-iam_profile
+complete -F _instance instance-ip
+complete -F _instance instance-ssh
+complete -F _instance instance-ssh_details
+complete -F _instance instance-stack
+complete -F _instance instance-start
+complete -F _instance instance-state
+complete -F _instance instance-stop
+complete -F _instance instance-terminate
+complete -F _instance instance-type
+complete -F _instance instance-userdata
+complete -F _instance instance-volumes
+
+complete -F _asg asg-capacity
+complete -F _asg asg-instances
+complete -F _asg asg-processes_suspended
+complete -F _asg asg-resume
+complete -F _asg asg-suspend
+
+# vim: ft=sh

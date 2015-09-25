@@ -1,50 +1,4 @@
-#!/bin/bash
-
-# cloudformation-functions
-#
-# Create, List, Update, Delete (plus diff, tail, etc) CF stacks
-#
-# Requires awscli (and jq-1.4 or later for cf_diff)
-
-##
-# Suggested stack/template/params naming conventions
-# These are completely optional.
-# 
-#   stack   : token-env
-#   template: token.json
-#   params  : token-params-env.json
-#
-# Where:
-#
-#   token : describes the resources (mywebsite, vpc, bastion, etc)
-#   env   : environment descriptor (dev, test, prod, etc)
-#
-# Following these (entirely optional) conventions means bash-my-aws can 
-# infer template & params file from stack name
-#
-# e.g. cf_create mywebsite-test
-#
-#      is equivalent (if files present) to:
-#
-#      cf_create mywebsite-test mywebsite.json mywebsite-params-test.json
-#
-# Other benefits include:
-#
-# * ease in locating stack for template (and vice versa) based on name
-# * template and params files are listed together on filesystem
-# * stack name env suffixes protect against accidents (wrong account error)
-# * supports prodlike non-prod environments through using same template
-#
-# And don't forget, these naming conventions are completely optional.
-##
-
-
-# List CF stacks. Optionally filter on stack name.
-# e.g. 
-#      cf_list foo
-#
-# To make it fly we omit stacks with status of DELETE_COMPLETE
-cf_list() {
+stack() {
   aws cloudformation list-stacks \
     --stack-status  \
       CREATE_COMPLETE \
@@ -65,7 +19,163 @@ cf_list() {
   --query "StackSummaries[].StackName" \
   --output text | tr '\t' '\n' | sort | grep "$1"
 }
-alias cf_stacks=cf_list
+
+cf_events() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  shift
+  local output
+  if output=$(aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table $@); then
+    echo "$output" | uniq -u
+  else
+    return $?
+  fi
+}
+
+cf_status() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
+}
+
+cf_template() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  aws cloudformation get-template --stack-name $stack --query TemplateBody | jq --sort-keys .
+}
+alias cf_get=cf_template
+
+cf_create() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local template="$(_cf_template_arg $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
+    return 1
+  fi
+  local params="$(_cf_params_arg $stack $template $3)"
+  if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
+  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
+  then
+    cf_tail $stack
+  fi
+}
+
+cf_update() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local template="$(_cf_template_arg $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
+    return 1
+  fi
+  local params="$(_cf_params_arg $stack $template $3)"
+  if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
+  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
+  then
+    cf_tail $stack
+  fi
+}
+
+cf_delete() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  if aws cloudformation delete-stack --stack-name $stack
+  then
+    cf_tail $stack
+  fi
+}
+
+cf_outputs() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  shift
+  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output json $@
+}
+
+cf_resources() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  shift
+  local query="StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}"
+  aws cloudformation describe-stack-resources \
+    --stack-name $stack                       \
+    --query "$query"                          \
+    --output text $@                          |
+      tr '\t' ' '                             |
+      awk '{ print $2, $1 }'
+}
+
+cf_validate() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME cf-template-file"; return 1; fi
+  aws cloudformation validate-template --template-body file://$1
+}
+
+# Show reasons for stack failure
+cf_failure() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  aws cloudformation describe-stack-events --stack-name $stack --query 'StackEvents[?contains(ResourceStatus,`FAILED`)].[LogicalResourceId, ResourceStatus, ResourceType, ResourceStatusReason]'
+}
+
+cf_params() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .
+}
+
+# Shows current value of particular parameter in a stack
+cf_param() {
+  if [ -z "$2" ] ; then echo "Usage: $FUNCNAME stack parameter"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local param=$2
+  aws cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
+}
+
+##
+## Functions to work with stack resources
+##
+
+cf_asg() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[?ResourceType==\`AWS::AutoScaling::AutoScalingGroup\`].PhysicalResourceId" --output text
+}
+
+cf_asg_instances() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local instance_ids="$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$(cf_asg $stack)" --query "AutoScalingGroups[].Instances[].[InstanceId]" --output text)"
+  instances $instance_ids
+}
+
+cf_asg_instance_ssh() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [user]"; return 1; fi
+  local stack="$(basename $1 .json)"
+
+  # local user=$2
+  # local instance_id="$(cf_asg_instances $stack | head -1 | cut -f 3)"
+  # instance_ssh $instance_id $user # This requires that instance-functions have been loaded
+                                    # I'll introduce it shortly as default
+                                    # To use in the meantime uncomment this and comment
+                                    # out the next three lines
+
+  local user=${2:-${AWS_DEFAULT_USER:-$USER}}
+  local instance_ip="$(cf_asg_instances $stack | head -1 | cut -f 1)"
+  ssh ${user}@${instance_ip}
+}
+
+cf_elbs() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  shift
+  local elb_names=$(aws cloudformation describe-stack-resources --stack-name $stack --query 'StackResources[?ResourceType==`AWS::ElasticLoadBalancing::LoadBalancer`].[PhysicalResourceId]' --output text)
+  if [ -n "$elb_names" ]; then
+    aws elb describe-load-balancers --load-balancer-names $elb_names --query 'LoadBalancerDescriptions[].[LoadBalancerName, DNSName]' --output text
+  else
+    echo "No load balancers found for CloudFormation stack $stack" >&2
+  fi
+}
 
 
 cf_diff() {
@@ -163,31 +273,6 @@ cf_tail() {
   echo $final_line
 }
 
-cf_events() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  local output
-  if output=$(aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table $@); then
-    echo "$output" | uniq -u
-  else
-    return $?
-  fi
-}
-
-cf_status() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
-}
-
-cf_template() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation get-template --stack-name $stack --query TemplateBody | jq --sort-keys .
-}
-alias cf_get=cf_template
-
 # determine name of template to use
 _cf_template_arg() {
   local stack="$(basename $1 .json)"
@@ -209,120 +294,6 @@ _cf_params_arg() {
   if [ -f "${params}" ]; then
     echo $params
   fi
-}
-
-cf_create() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
-  local stack="$(basename $1 .json)"
-  local template="$(_cf_template_arg $stack $2)"
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template}). You can specify alternative template as second argument."
-    return 1
-  fi
-  local params="$(_cf_params_arg $stack $template $3)"
-  if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
-  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
-  then
-    cf_tail $stack
-  fi
-}
-
-cf_update() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
-  local stack="$(basename $1 .json)"
-  local template="$(_cf_template_arg $stack $2)"
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template}). You can specify alternative template as second argument."
-    return 1
-  fi
-  local params="$(_cf_params_arg $stack $template $3)"
-  if [ -n "$params" ] ; then local parameters="--parameters file://$params"; fi
-  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
-  then
-    cf_tail $stack
-  fi
-}
-
-cf_delete() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  if aws cloudformation delete-stack --stack-name $stack
-  then
-    cf_tail $stack
-  fi
-}
-
-cf_outputs() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output table $@
-}
-
-cf_resources() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}" --output table $@
-}
-
-cf_validate() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME cf-template-file"; return 1; fi
-  aws cloudformation validate-template --template-body file://$1
-}
-
-# Show reasons for stack failure
-cf_failure() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation describe-stack-events --stack-name $stack --query 'StackEvents[?contains(ResourceStatus,`FAILED`)].[LogicalResourceId, ResourceStatus, ResourceType, ResourceStatusReason]'
-}
-
-cf_params() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys .
-}
-
-# Shows current value of particular parameter in a stack
-cf_param() {
-  if [ -z "$2" ] ; then echo "Usage: $FUNCNAME stack parameter"; return 1; fi
-  local stack="$(basename $1 .json)"
-  local param=$2
-  aws cloudformation describe-stacks --query "Stacks[].Parameters[?ParameterKey==\`$2\`].ParameterValue" --stack-name $stack --output text
-}
-
-##
-## Functions to work with stack resources
-##
-
-cf_asg() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation describe-stack-resources --stack-name $stack --query "StackResources[?ResourceType==\`AWS::AutoScaling::AutoScalingGroup\`].PhysicalResourceId" --output text
-}
-
-cf_asg_instances() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  local instance_ids="$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$(cf_asg $stack)" --query "AutoScalingGroups[].Instances[].[InstanceId]" --output text)"
-  aws ec2 describe-instances --instance-ids $instance_ids --query "Reservations[].Instances[].[PrivateIpAddress, PublicIpAddress, InstanceId, State.Name, InstanceType, join(\` \`, [Tags[?Key==\`Name\`].Value][])]" --output text
-}
-
-cf_asg_instance_ssh() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [user]"; return 1; fi
-  local stack="$(basename $1 .json)"
-
-  # local user=$2
-  # local instance_id="$(cf_asg_instances $stack | head -1 | cut -f 3)"
-  # instance_ssh $instance_id $user # This requires that instance-functions have been loaded
-                                    # I'll introduce it shortly as default
-                                    # To use in the meantime uncomment this and comment
-                                    # out the next three lines
-
-  local user=${2:-${AWS_DEFAULT_USER:-$USER}}
-  local instance_ip="$(cf_asg_instances $stack | head -1 | cut -f 1)"
-  ssh ${user}@${instance_ip}
 }
 
 ## Start instance
@@ -359,17 +330,4 @@ cf_asg_scale_down() {
     echo "No running instances found for AutoScalingGroup $stack"
   fi
 }
-
-cf_elbs() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  local elb_names=$(aws cloudformation describe-stack-resources --stack-name $stack --query 'StackResources[?ResourceType==`AWS::ElasticLoadBalancing::LoadBalancer`].[PhysicalResourceId]' --output text)
-  if [ -n "$elb_names" ]; then
-    aws elb describe-load-balancers --load-balancer-names $elb_names --query 'LoadBalancerDescriptions[].[LoadBalancerName, DNSName]' --output text
-  else
-    echo "No load balancers found for CloudFormation stack $stack" >&2
-  fi
-}
-
 

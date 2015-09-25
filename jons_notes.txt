@@ -1,0 +1,46 @@
+- instances_in_stack should be a parameter of instances
+- rename asg_suspended because it tab completes to the dangerous asg_suspend
+
+- find elb of instance
+- find role of instance
+- find stack that created a dns record
+- get the healthcheck url from an elb.
+- grab a file from s3.
+
+- add a --version switch that works everywhere.
+- create a standard debug_msg thing
+
+elb_instances
+instance_elb
+role_instances
+cf_delete with multiple stack names.
+
+some things have only accept a single resource.
+  inconsistenies in switches. some commands expect a single resource, some
+  can take one or more. For example --load-balancer and --load-balancers
+
+some things should return multiple details (like connection draining).
+  This makes it difficult to present data as text (ie. line, delimited).
+
+some things always require a value like a r53 resource-record-set needs a zone.
+  This breaks the pattern of throw in resources and have it spew out results
+  for each. More smarts needs to be included.
+
+You cannot tell what a resource is by looking at it (for instance
+CloudFormation stacks). That means that for tools that need to take two
+arguements and you cannot identify which is which, you need to use a switch to
+tell the app.
+
+how do we want to set a value? --name=value is easiest but '--name value' is a
+more common pattern.
+
+setting values require a switch. How do we want to do that?
+
+text output is inconsistent. the results are all on one line.
+  aws autoscaling describe-auto-scaling-groups             \
+    --auto-scaling-group-names $(__read_inputs $@)         \
+    --query 'AutoScalingGroups[].Instances[].InstanceId'   \
+    --output ${BMA_OUTPUT}
+
+
+r53_zones: use list-hosted-zones-by-name and fix the output for prod.
