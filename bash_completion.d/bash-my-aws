@@ -1,7 +1,7 @@
-_cf_list() {
+_stack() {
     local command="$1"
     local word="$2"
-    COMPREPLY=($(compgen -W "$(cf_list)" -- ${word}))
+    COMPREPLY=($(compgen -W "$(stack)" -- ${word}))
     return 0
 }
 
@@ -29,9 +29,12 @@ _asg() {
     return 0
 }
 
-complete -F _cf_list cf_elbs
-complete -F _cf_list cf_instances
-complete -F _cf_list cf_resources
+complete -F _stack stack
+complete -F _stack stack-delete
+complete -F _stack stack-failure
+complete -F _stack stack-parameters
+complete -F _stack stack-status
+complete -F _stack stack-template
 
 complete -F _instance instance
 complete -F _instance instance-asg

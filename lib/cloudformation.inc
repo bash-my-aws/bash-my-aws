@@ -65,28 +65,13 @@ stack() {
     grep --color=never ${grep_filter:-".*"}
 }
 
-stack-status() {
-  ## detail
-  local inputs=$(__bma_read_inputs $@)
-  local query='
-    StackSummaries[][
-      [
-        StackStatus,
-        StackName
-      ]
-    ][]
-  '
-  stack ${inputs} --query ${query}
-}
-
-stack-template() {
-  local inputs=$(__bma_read_inputs $@)
-
-  for stack in $(__bma_read_resources ${inputs}); do
-    aws cloudformation get-template   \
-      --stack-name ${stack}           \
-      --query TemplateBody
-  done
+stack-delete() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  if aws cloudformation delete-stack --stack-name $stack
+  then
+    cf_tail $stack
+  fi
 }
 
 stack-failure() {
@@ -132,5 +117,28 @@ stack-parameters() {
     --output ${output:-"text"}
 }
 
+stack-status() {
+  ## detail
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    StackSummaries[][
+      [
+        StackStatus,
+        StackName
+      ]
+    ][]
+  '
+  stack ${inputs} --query ${query}
+}
+
+stack-template() {
+  local inputs=$(__bma_read_inputs $@)
+
+  for stack in $(__bma_read_resources ${inputs}); do
+    aws cloudformation get-template   \
+      --stack-name ${stack}           \
+      --query TemplateBody
+  done
+}
 
 ## vim: ft=sh
