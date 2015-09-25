@@ -66,12 +66,15 @@ stack() {
 }
 
 stack-delete() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  if aws cloudformation delete-stack --stack-name $stack
-  then
-    cf_tail $stack
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+
+  if [[ -z ${stack} ]]; then
+    __bma_error "You need to provide a stack name" || return 1
   fi
+
+  aws cloudformation delete-stack --stack-name $stack
+  return $?
 }
 
 stack-failure() {
