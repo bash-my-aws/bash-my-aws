@@ -64,22 +64,6 @@ cf_update() {
   fi
 }
 
-cf_delete() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  if aws cloudformation delete-stack --stack-name $stack
-  then
-    cf_tail $stack
-  fi
-}
-
-cf_outputs() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  aws cloudformation describe-stacks --stack-name $stack --query 'Stacks[].Outputs[]' --output json $@
-}
-
 cf_resources() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
