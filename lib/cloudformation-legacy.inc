@@ -32,13 +32,6 @@ cf_events() {
   fi
 }
 
-cf_template() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation get-template --stack-name $stack --query TemplateBody | jq --sort-keys .
-}
-alias cf_get=cf_template
-
 cf_create() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"
