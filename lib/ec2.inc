@@ -47,7 +47,7 @@ instance() {
 }
 
 instance-asg() {
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
@@ -72,7 +72,7 @@ instance-console() {
 
 instance-dns() {
   ## detail
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
@@ -89,7 +89,7 @@ instance-iam_profile() {
   ## detail
   # FIXME: Fix the output order
 
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
@@ -103,7 +103,7 @@ instance-iam_profile() {
 
 instance-ip() {
   ## detail
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
@@ -117,7 +117,7 @@ instance-ip() {
 }
 
 instance-ssh() {
-  IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | base64 -D | head -1)
+  IFS=' ' read instance_id user trash <<< $(__bma_read_inputs $@ | head -1)
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance-id [user]"; return 1; fi
   local instance_details="$(instance_ssh_details $instance_id)"
   local keyname=$(echo $instance_details | awk '{print $1}');
@@ -139,7 +139,7 @@ instance-ssh() {
 }
 
 instance-ssh_details() {
-  local instance_id="$(__bma_read_inputs $@ | base64 -D)"
+  local instance_id="$(__bma_read_inputs $@)"
   if [ -z "$instance_id" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
   INSTANCE_FILTERS="Name=instance-id,Values=${instance_id}"           \
   INSTANCE_OUTPUT="[
@@ -153,7 +153,7 @@ instance-ssh_details() {
 instance-stack() {
   # FIXME: the output is out of order.
   # for some reason, InstanceId is first in text output.
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
@@ -172,7 +172,7 @@ instance-start() {
 
 instance-state() {
   ## detail
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
@@ -197,7 +197,7 @@ instance-terminate() {
 instance-type() {
   # FIXME: the output is out of order.
   # for some reason, InstanceId is first in text output.
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
       {
