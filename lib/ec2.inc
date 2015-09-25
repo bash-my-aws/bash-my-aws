@@ -87,15 +87,13 @@ instance-dns() {
 
 instance-iam_profile() {
   ## detail
-  # FIXME: Fix the output order
-
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
-      {
-        "IamProfile": IamInstanceProfile.Id,
-        "InstanceId": InstanceId
-      }
+      [
+        IamInstanceProfile.Id,
+        InstanceId
+      ]
     ][]
   '
   instance ${inputs} --query ${query}
