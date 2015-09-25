@@ -245,39 +245,3 @@ _cf_params_arg() {
     echo $params
   fi
 }
-
-## Start instance
-cf_asg_scale_up() {
-  # XXX don't scale down
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [desired_capacity]"; return 1; fi
-  local stack="$(basename $1 .json)"
-  if [ -n "$2" ]; then
-    local desired_capacity="$2"
-  else
-    local desired_capacity="$(cf_param $stack desiredCapacity)"
-  fi
-  if [ -z "$desired_capacity" ]; then
-    local desired_capacity=1
-  fi
-  local asg_name="$(cf_asg $stack)"
-  echo "Scaling up AutoScalingGroup [$asg_name] to [$desired_capacity] instances"
-  aws autoscaling set-desired-capacity --auto-scaling-group-name $asg_name --desired-capacity $desired_capacity
-}
-
-## Stop Instance
-cf_asg_scale_down() {
-  # XXX don't scale up
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [desired_capacity]"; return 1; fi
-  local stack="$(basename $1 .json)"
-  local desired_capacity="${2:-0}"
-  local instances="$(cf_asg_instances $stack | cut -f 3)"
-  if [ -n "$instances" ]; then
-    aws autoscaling set-desired-capacity --auto-scaling-group-name "$(cf_asg $stack)" --desired-capacity $desired_capacity
-    echo -n "Waiting for instances to terminate ($instances)..."
-    aws ec2 wait instance-terminated --instance-ids $instances
-    echo "Done"
-  else
-    echo "No running instances found for AutoScalingGroup $stack"
-  fi
-}
-
