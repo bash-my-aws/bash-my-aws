@@ -32,12 +32,6 @@ cf_events() {
   fi
 }
 
-cf_status() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  aws cloudformation describe-stacks --stack-name "$stack" --query "Stacks[0].StackStatus" --output text
-}
-
 cf_template() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local stack="$(basename $1 .json)"
