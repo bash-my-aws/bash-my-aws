@@ -195,15 +195,13 @@ instance-terminate() {
 }
 
 instance-type() {
-  # FIXME: the output is out of order.
-  # for some reason, InstanceId is first in text output.
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[][
-      {
-        "InstanceType": InstanceType,
-        "InstanceId": InstanceId
-      }
+      [
+        InstanceType,
+        InstanceId
+      ]
     ][]
   '
   instance ${inputs} --query ${query}
