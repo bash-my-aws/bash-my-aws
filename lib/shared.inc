@@ -9,4 +9,9 @@ __bma_clean_query() {
   echo
 }
 
+__bma_error() {
+  echo "ERROR: $@" > /dev/stderr
+  return 1
+}
+
 ## vim: ft=sh
