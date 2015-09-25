@@ -20,7 +20,7 @@ stack() {
     ][]
   '
 
-  local instance_ids=$(__bma_read_resources $inputs)
+  local stack_ids=$(__bma_read_resources $inputs)
   local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
@@ -34,6 +34,11 @@ stack() {
   fi
 
   [[ -z $query ]] && local query=$default_query
+
+  grep_filter=""
+  for stack in ${stack_ids}; do
+    grep_filter="-e ${stack} "
+  done
 
   aws cloudformation list-stacks                      \
     --stack-status                                    \
@@ -54,7 +59,8 @@ stack() {
       UPDATE_ROLLBACK_IN_PROGRESS                     \
     --query $(__bma_clean_query ${query})             \
     --output ${output:-"text"}                        |
-    sort
+    sort                                              |
+    grep --color=never ${grep_filter:-".*"}
 }
 
 stack-status() {
