@@ -20,18 +20,6 @@ stack() {
   --output text | tr '\t' '\n' | sort | grep "$1"
 }
 
-cf_events() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  local output
-  if output=$(aws cloudformation describe-stack-events --stack-name $stack --query 'sort_by(StackEvents, &Timestamp)[].{Resource: LogicalResourceId, Type: ResourceType, Status: ResourceStatus}' --output table $@); then
-    echo "$output" | uniq -u
-  else
-    return $?
-  fi
-}
-
 cf_create() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"

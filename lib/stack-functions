@@ -103,6 +103,31 @@ stack-failure() {
     --output ${output:-"text"}
 }
 
+stack-events() {
+  # FIXME: only grab the latest one
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+
+  if [[ -z ${stack} ]]; then
+    __bma_error "You need to provide a stack name" || return 1
+  fi
+
+  local query='
+    sort_by(StackEvents, &Timestamp)[].[
+      Timestamp,
+      LogicalResourceId,
+      ResourceStatus
+    ]
+  '
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+
+  aws cloudformation describe-stack-events \
+    --stack-name ${stack}                  \
+    --query $(__bma_clean_query ${query})  \
+    --output ${output:-"text"}             |
+      sed '/COMPLETE/q'
+}
+
 stack-parameters() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
