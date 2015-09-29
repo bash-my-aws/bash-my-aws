@@ -30,19 +30,6 @@ cf_update() {
   fi
 }
 
-cf_resources() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  local query="StackResources[].{LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId}"
-  aws cloudformation describe-stack-resources \
-    --stack-name $stack                       \
-    --query "$query"                          \
-    --output text $@                          |
-      tr '\t' ' '                             |
-      awk '{ print $2, $1 }'
-}
-
 cf_validate() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME cf-template-file"; return 1; fi
   aws cloudformation validate-template --template-body file://$1
