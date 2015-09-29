@@ -1,25 +1,3 @@
-stack() {
-  aws cloudformation list-stacks \
-    --stack-status  \
-      CREATE_COMPLETE \
-      CREATE_FAILED \
-      CREATE_IN_PROGRESS \
-      DELETE_FAILED \
-      DELETE_IN_PROGRESS \
-      ROLLBACK_COMPLETE \
-      ROLLBACK_FAILED \
-      ROLLBACK_IN_PROGRESS \
-      UPDATE_COMPLETE \
-      UPDATE_COMPLETE_CLEANUP_IN_PROGRESS \
-      UPDATE_IN_PROGRESS \
-      UPDATE_ROLLBACK_COMPLETE \
-      UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS \
-      UPDATE_ROLLBACK_FAILED \
-      UPDATE_ROLLBACK_IN_PROGRESS \
-  --query "StackSummaries[].StackName" \
-  --output text | tr '\t' '\n' | sort | grep "$1"
-}
-
 cf_create() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
   local stack="$(basename $1 .json)"
