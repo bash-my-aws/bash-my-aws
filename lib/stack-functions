@@ -167,8 +167,7 @@ stack-resources() {
 
   local query='
     StackResources[].[
-      LogicalResourceId,
-      StackName
+      LogicalResourceId
     ]
   '
 
