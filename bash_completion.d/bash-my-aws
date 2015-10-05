@@ -33,6 +33,7 @@ complete -F _stack stack
 complete -F _stack stack-delete
 complete -F _stack stack-failure
 complete -F _stack stack-parameters
+complete -F _stack stack-resources
 complete -F _stack stack-status
 complete -F _stack stack-template
 
