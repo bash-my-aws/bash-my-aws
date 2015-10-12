@@ -147,8 +147,10 @@ stack-delete() {
 
   if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
 
-  aws cloudformation delete-stack --stack-name $stack
-  return $?
+  if aws cloudformation delete-stack --stack-name $stack
+  then
+    stack-tail $stack
+  fi
 }
 
 stack-failure() {
@@ -191,11 +193,14 @@ stack-events() {
   '
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
-  aws cloudformation describe-stack-events \
+  if output=$(aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
     --query $(__bma_clean_query ${query})  \
-    --output ${output:-"table"}            |
-    uniq -u
+    --output ${output:-"table"}); then
+    echo "$output" | uniq -u
+  else
+    return $?
+  fi
 }
 
 stack-resources() {
