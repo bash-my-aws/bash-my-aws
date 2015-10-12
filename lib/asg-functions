@@ -117,8 +117,55 @@ asg-desired-set() {
     [[ ${asg} == ${capacity} ]] && continue
     aws autoscaling set-desired-capacity  \
       --auto-scaling-group-name ${asg}    \
-      --desired-capacity ${capacity}
+      --desired-capacity ${capacity} 2>&1 | __bma_aws_error
   done
+}
+
+asg-min-size-set() {
+  local inputs=$(__bma_read_inputs $@)
+  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
+
+  # TODO: check that the value is a number
+  if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
+    true
+  else
+    __bma_error "You must provide a minimum capacity"
+    return 1
+  fi
+
+  for asg in $(__bma_read_resources ${inputs}); do
+    [[ ${asg} == ${capacity} ]] && continue
+    output=$(
+      aws autoscaling update-auto-scaling-group   \
+        --auto-scaling-group-name ${asg}          \
+        --min-size ${capacity} 2>&1
+    )
+    __bma_aws_error "${output}"
+  done
+}
+
+asg-max-size-set() {
+  local inputs=$(__bma_read_inputs $@)
+  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
+
+  # TODO: check that the value is a number
+  if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
+    true
+  else
+    __bma_error "You must provide a minimum capacity"
+    return 1
+  fi
+
+  for asg in $(__bma_read_resources ${inputs}); do
+    [[ ${asg} == ${capacity} ]] && continue
+    output=$(
+      aws autoscaling update-auto-scaling-group   \
+        --auto-scaling-group-name ${asg}          \
+        --max-size ${capacity} 2>&1
+    )
+    __bma_aws_error "${output}"
+  done
+  return $?
 }
 
 # vim: ft=sh
