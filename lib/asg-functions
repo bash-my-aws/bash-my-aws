@@ -4,12 +4,7 @@ asg() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
-
-  if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
-    BMA_DEBUG=true
-  else
-    BMA_DEBUG=false
-  fi
+  __bma_read_switches ${inputs}
 
   local default_query='
     AutoScalingGroups[][
@@ -25,13 +20,11 @@ asg() {
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
-  if ${BMA_DEBUG}; then
-    echo "inputs: ${inputs}"
-    echo "asg_names: ${asg_names}"
-    echo "filters: ${filters}"
-    echo "query: ${query}"
-    echo "output: ${output}"
-  fi
+  __bma_debug "inputs: ${inputs}"
+  __bma_debug "asg_names: ${asg_names}"
+  __bma_debug "filters: ${filters}"
+  __bma_debug "query: ${query}"
+  __bma_debug "output: ${output}"
 
   [[ -z $query ]] && query=$default_query
 
