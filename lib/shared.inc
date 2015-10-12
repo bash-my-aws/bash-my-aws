@@ -7,6 +7,7 @@ source $(dirname ${BASH_SOURCE[0]})/parameter.inc
 __bma_hooks_startup() {
   # this stuff happens right at the start. Its triggered when
   # __bma_read_inputs() is executed.
+  unset BMA_DEBUG
   unset BMA_STATUS
 }
 
@@ -21,6 +22,12 @@ __bma_error() {
   return 1
 }
 
+__bma_debug() {
+  if ${BMA_DEBUG:-false}; then
+    echo "DEBUG: $(echo $@ | tr -d '\n')"
+  fi
+}
+
 __bma_aws_error() {
   if [[ ! -z "$@" ]]; then
     __bma_error $(echo "$@" | grep -v ^$ | cut -d: -f2 | sed 's/^\ *//g')
@@ -29,6 +36,8 @@ __bma_aws_error() {
 
 __bma_exec_aws() {
   cmd="$@"
+  __bma_debug "${cmd}"
+
   output=$( ${cmd} 2>&1 )
 
   if [[ $? -ne 0 ]]; then

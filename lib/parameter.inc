@@ -56,7 +56,12 @@ __bma_arg_types() {
 
 __bma_expand_switches() {
   # this function is for expanding or rewriting switches.
+  if echo "$@" | grep "^--debug" &> /dev/null; then
+    BMA_DEBUG=true
+  fi
+
   echo "$@"                             |
+    sed -E 's/^--debug//'               |
     sed -E 's/^--json/--output json/'   |
     sed -E 's/^--text/--output text/'   |
     sed -E 's/^-f/--filters/'           |
