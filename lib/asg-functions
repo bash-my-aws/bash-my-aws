@@ -105,7 +105,6 @@ asg-desired-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  # TODO: check that the value is a number
   if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
     true
   else
@@ -119,13 +118,14 @@ asg-desired-set() {
       --auto-scaling-group-name ${asg}    \
       --desired-capacity ${capacity} 2>&1 | __bma_aws_error
   done
+  # TODO: return a failure if any fail
+  return $?
 }
 
 asg-min-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  # TODO: check that the value is a number
   if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
     true
   else
@@ -142,13 +142,14 @@ asg-min-size-set() {
     )
     __bma_aws_error "${output}"
   done
+  # TODO: return a failure if any fail
+  return $?
 }
 
 asg-max-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  # TODO: check that the value is a number
   if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
     true
   else
@@ -165,6 +166,7 @@ asg-max-size-set() {
     )
     __bma_aws_error "${output}"
   done
+  # TODO: return a failure if any fail
   return $?
 }
 
