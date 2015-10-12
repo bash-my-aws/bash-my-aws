@@ -318,38 +318,6 @@ stack-validate() {
 }
 alias cf_validate=stack-validate
 
-# determine name of stack to use
-_stack_name_arg() {
-  basename $1 .json
-}
-
-# determine name of template to use
-_stack_template_arg() {
-  local stack="$(_stack_name_arg $@)"
-  local template=$2
-  if [ -z "$template" ]; then
-    if [ -f "${stack}.json" ]; then
-      template="${stack}.json"
-    elif [ -f "${stack%-*}.json" ]; then
-      template="${stack%-*}.json"
-    fi
-  fi
-  echo $template
-}
-alias _cf_template_arg=_stack_template_arg
-
-# determine name of params file to use
-_stack_params_arg() {
-  local stack="$(_stack_name_arg $@)"
-  local template="$(_stack_template_arg $@)"
-  local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)-\([^-][^-]*\)/\1-params-\2.json/")};
-  if [ -f "${params}" ]; then
-    echo $params
-  fi
-}
-alias _cf_params_arg=_stack_params_arg
-
-
 # Show differences between CloudFormation template and Stack
 
 stack-diff(){
@@ -422,5 +390,36 @@ _stack_diff_params() {
   fi
 }
 alias cf_diff_params=_stack_diff_params
+
+# determine name of stack to use
+_stack_name_arg() {
+  basename $1 .json
+}
+
+# determine name of template to use
+_stack_template_arg() {
+  local stack="$(_stack_name_arg $@)"
+  local template=$2
+  if [ -z "$template" ]; then
+    if [ -f "${stack}.json" ]; then
+      template="${stack}.json"
+    elif [ -f "${stack%-*}.json" ]; then
+      template="${stack%-*}.json"
+    fi
+  fi
+  echo $template
+}
+alias _cf_template_arg=_stack_template_arg
+
+# determine name of params file to use
+_stack_params_arg() {
+  local stack="$(_stack_name_arg $@)"
+  local template="$(_stack_template_arg $@)"
+  local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)-\([^-][^-]*\)/\1-params-\2.json/")};
+  if [ -f "${params}" ]; then
+    echo $params
+  fi
+}
+alias _cf_params_arg=_stack_params_arg
 
 ## vim: ft=sh
