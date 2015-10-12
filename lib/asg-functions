@@ -101,4 +101,24 @@ asg-suspend() {
   done
 }
 
+asg-desired-set() {
+  local inputs=$(__bma_read_inputs $@)
+  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
+
+  # TODO: check that the value is a number
+  if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
+    true
+  else
+    __bma_error "You must provide a capacity"
+    return 1
+  fi
+
+  for asg in $(__bma_read_resources ${inputs}); do
+    [[ ${asg} == ${capacity} ]] && continue
+    aws autoscaling set-desired-capacity  \
+      --auto-scaling-group-name ${asg}    \
+      --desired-capacity ${capacity}
+  done
+}
+
 # vim: ft=sh
