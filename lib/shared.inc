@@ -4,6 +4,12 @@
 
 source $(dirname ${BASH_SOURCE[0]})/parameter.inc
 
+__bma_hooks_startup() {
+  # this stuff happens right at the start. Its triggered when
+  # __bma_read_inputs() is executed.
+  unset BMA_STATUS
+}
+
 __bma_clean_query() {
   echo $@ | tr -d '[:blank:]\n'
   echo
@@ -11,6 +17,7 @@ __bma_clean_query() {
 
 __bma_error() {
   echo "ERROR: $@" > /dev/stderr
+  BMA_STATUS=1
   return 1
 }
 

@@ -3,6 +3,7 @@
 # Deal with stdin and arguments.
 
 __bma_read_inputs() {
+  __bma_hooks_startup
   echo "$(__bma_read_stdin) $@" |
     sed -E 's/\ +$//'           |
     sed -E 's/^\ +//'
