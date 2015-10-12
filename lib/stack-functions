@@ -1,8 +1,10 @@
-# cloudformation.inc
+#!/bin/bash
+#
+# stack-functions
 
 source $(dirname ${BASH_SOURCE[0]})/shared.inc
 
-stack() {
+stacks() {
   # TODO: allow filtering for resources
   # type: query
   # returns instance id's and the name tag.
@@ -14,32 +16,22 @@ stack() {
     BMA_DEBUG=false
   fi
 
-  local default_query='
-    StackSummaries[][
-      {
-        "StackName": StackName
-      }
-    ][]
-  '
-
-  local stack_ids=$(__bma_read_resources $inputs)
-  local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
+  local grep_args=$(__bma_read_resources $inputs)
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
   if ${BMA_DEBUG}; then
     echo "inputs: ${inputs}"
     echo "instance_ids: ${instance_ids}"
-    echo "filters: ${filters}"
     echo "query: ${query}"
     echo "output: ${output}"
   fi
 
-  [[ -z $query ]] && local query=$default_query
+  [[ -z $query ]] && local query='StackSummaries[][ { "StackName": StackName } ][]'
 
   grep_filter=""
-  for stack in ${stack_ids}; do
-    grep_filter="-e ${stack} "
+  for arg in ${grep_args}; do
+    grep_filter+="-e ${arg} "
   done
 
   aws cloudformation list-stacks                      \
@@ -65,28 +57,70 @@ stack() {
     grep --color=never ${grep_filter:-".*"}
 }
 
-stack-delete() {
-  # XXX: Have this discussion:
-  # https://github.com/realestate-com-au/bash-my-aws/issues/19
+stack-create() {
+  # XXX Work out how best to display usage
+  # if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
+  
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
 
-  if [[ -z ${stack} ]]; then
-    __bma_error "You need to provide a stack name" || return 1
+  local stack=$(_stack_name_arg $inputs)
+  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
+
+  local template=$(_stack_template_arg $inputs)
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
+    return 1
   fi
+  local params=$(_stack_params_arg $inputs)
+  if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
+  
+  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
+  then
+    stack-tail $stack
+  fi
+}
+
+stack-update() {
+  # XXX Work out how best to display usage
+  # if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
+
+  local inputs=$(__bma_read_inputs $@)
+
+  local stack=$(_stack_name_arg $inputs)
+  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
+
+  local template=$(_stack_template_arg $inputs)
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
+    return 1
+  fi
+  local params=$(_stack_params_arg $inputs)
+  if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
+
+  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
+  then
+    stack-tail $stack
+  fi
+}
+
+stack-delete() {
+  local inputs=$(__bma_read_inputs $@)
+  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local stack=$(_stack_name_arg $first_resource)
+
+  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
 
   aws cloudformation delete-stack --stack-name $stack
   return $?
 }
 
 stack-failure() {
-  # FIXME: only grab the latest one
+  # FIXME: only grab the latest failure
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local stack=$(_stack_name_arg $first_resource)
 
-  if [[ -z ${stack} ]]; then
-    __bma_error "You need to provide a stack name" || return 1
-  fi
+  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
 
   local query='
     StackEvents[?contains(ResourceStatus,`FAILED`)].[
@@ -105,11 +139,10 @@ stack-failure() {
 
 stack-events() {
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local stack=$(_stack_name_arg $first_resource)
 
-  if [[ -z ${stack} ]]; then
-    __bma_error "You need to provide a stack name" || return 1
-  fi
+  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
 
   local query='
     sort_by(StackEvents, &Timestamp)[].[
@@ -123,17 +156,14 @@ stack-events() {
   aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
     --query $(__bma_clean_query ${query})  \
-    --output ${output:-"text"}             |
-      sed '/COMPLETE/q'
+    --output ${output:-"text"}             
 }
 
 stack-resources() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
 
-  if [[ -z ${stack} ]]; then
-    __bma_error "You need to provide a stack name" || return 1
-  fi
+  if [[ -z ${stack} ]]; then __bma_error "You need to provide a stack name" || return 1; fi
 
   local query='
     StackResources[].[
@@ -155,9 +185,7 @@ stack-parameters() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
 
-  if [[ -z ${stack} ]]; then
-    __bma_error "You need to provide a stack name" || return 1
-  fi
+  if [[ -z ${stack} ]]; then __bma_error "You need to provide a stack name" || return 1; fi
 
   local query='
     Stacks[].Parameters[]
@@ -184,23 +212,50 @@ stack-status() {
   stack ${inputs} --query ${query}
 }
 
+# Show all events for CF stack until update completes or fails.
+stack-tail() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
+  local stack="$(basename $1 .json)"
+  local current
+  local final_line
+  local output
+  local previous
+  until echo "$current" | tail -1 | egrep -q "${stack}.*_(COMPLETE|FAILED)"
+  do
+    if ! output=$(stack-events $stack); then
+      # Something went wrong with cf_events (like stack not known)
+      return 1
+    fi
+    if [ -z "$output" ]; then sleep 1; continue; fi
+
+    current=$(echo "$output" | sed '$d')
+    final_line=$(echo "$output" | tail -1)
+    if [ -z "$previous" ]; then
+      echo "$current"
+    elif [ "$current" != "$previous" ]; then
+      comm -13 <(echo "$previous") <(echo "$current")
+    fi
+    previous="$current"
+    sleep 1
+  done
+  echo $final_line
+}
+alias cf_tail=stack-tail
+
 stack-template() {
   local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
 
-  for stack in $(__bma_read_resources ${inputs}); do
-    aws cloudformation get-template   \
-      --stack-name ${stack}           \
-      --query TemplateBody
-  done
+  aws cloudformation get-template   \
+    --stack-name ${stack}           \
+    --query TemplateBody
 }
 
 stack-outputs() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
 
-  if [[ -z ${stack} ]]; then
-    __bma_error "You need to provide a stack name" || return 1
-  fi
+  if [[ -z ${stack} ]]; then __bma_error "You need to provide a stack name" || return 1; fi
 
   local query='
     Stacks[].Outputs[]
@@ -212,5 +267,116 @@ stack-outputs() {
     --query $(__bma_clean_query ${query})   \
     --output ${output:-"text"}
 }
+
+stack-validate() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack-template-file"; return 1; fi
+  aws cloudformation validate-template --template-body file://$1
+}
+alias cf_validate=stack-validate
+
+# determine name of stack to use
+_stack_name_arg() {
+  basename $1 .json
+}
+
+# determine name of template to use
+_stack_template_arg() {
+  local stack="$(_stack_name_arg $@)"
+  local template=$2
+  if [ -z "$template" ]; then
+    if [ -f "${stack}.json" ]; then
+      template="${stack}.json"
+    elif [ -f "${stack%-*}.json" ]; then
+      template="${stack%-*}.json"
+    fi
+  fi
+  echo $template
+}
+alias _cf_template_arg=_stack_template_arg
+
+# determine name of params file to use
+_stack_params_arg() {
+  local stack="$(_stack_name_arg $@)"
+  local template="$(_stack_template_arg $@)"
+  local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)-\([^-][^-]*\)/\1-params-\2.json/")};
+  if [ -f "${params}" ]; then
+    echo $params
+  fi
+}
+alias _cf_params_arg=_stack_params_arg
+
+
+# Show differences between CloudFormation template and Stack
+
+stack-diff(){
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; exit 1; fi
+  _stack_diff_template $@
+  echo
+  _stack_diff_params $@
+}
+alias cf_diff=stack-diff
+
+# Report on what changes would be made to stack by applying template
+#
+# Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
+#
+_stack_diff_template() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
+    return 1; 
+  fi
+  local template="$(_stack_template_arg $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template})." >&2
+    echo "You can specify alternative template as second argument." >&2
+    return 1
+  fi
+  if [ "x$( type -P colordiff )" != "x" ]; then
+    local DIFF_CMD=colordiff
+  else
+    local DIFF_CMD=diff
+  fi
+  $DIFF_CMD -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
+  if [ $? -eq 0 ]; then
+    echo "template for stack ($stack) and contents of file ($template) are the same" >&2
+  fi
+}
+alias cf_diff_template=_stack_diff_template
+
+# Report on what changes would be made to stack by applying params
+#
+# Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
+#
+_stack_diff_params() {
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  local stack="$(basename $1 .json)"
+  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
+    return 1; 
+  fi
+  local template="$(_stack_template_arg $stack $2)"
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument." >&2
+    return 1
+  fi
+  local params="$(_stack_params_arg $stack $template $3)"
+  if [ -z "$params" ]; then
+    echo "No params file provided. Skipping" >&2
+    return 0
+  fi
+  if [ ! -f "$params" ]; then
+    return 1
+  fi
+  if [ "x$( type -P colordiff )" != "x" ]; then
+    local DIFF_CMD=colordiff
+  else
+    local DIFF_CMD=diff
+  fi
+  $DIFF_CMD -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys . | jp.py 'sort_by(@,&ParameterKey)') --label $params <(jq --sort-keys . $params | jp.py 'sort_by(@,&ParameterKey)' );
+  if [ $? -eq 0 ]; then
+    echo "params for stack ($stack) and contents of file ($params) are the same" >&2
+  fi
+}
+alias cf_diff_params=_stack_diff_params
 
 ## vim: ft=sh
