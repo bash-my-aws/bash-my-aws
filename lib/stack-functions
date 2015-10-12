@@ -4,10 +4,47 @@
 
 source $(dirname ${BASH_SOURCE[0]})/shared.inc
 
+##
+# Suggested stack/template/params naming conventions
+# These are completely optional.
+#
+#   stack   : token-env
+#   template: token.json
+#   params  : token-params-env.json
+#
+# Where:
+#
+#   token : describes the resources (mywebsite, vpc, bastion, etc)
+#   env   : environment descriptor (dev, test, prod, etc)
+#
+# Following these (entirely optional) conventions means bash-my-aws can
+# infer template & params file from stack name
+#
+# e.g. cf_create mywebsite-test
+#
+#      is equivalent (if files present) to:
+#
+#      cf_create mywebsite-test mywebsite.json mywebsite-params-test.json
+#
+# Other benefits include:
+#
+# * ease in locating stack for template (and vice versa) based on name
+# * template and params files are listed together on filesystem
+# * stack name env suffixes protect against accidents (wrong account error)
+# * supports prodlike non-prod environments through using same template
+#
+# And don't forget, these naming conventions are completely optional.
+##
+
+
+# List CF stacks. Optionally filter on stack name.
+# e.g.
+#      stacks foo
+#
+# To make it fly we omit stacks with status of DELETE_COMPLETE
 stacks() {
   # TODO: allow filtering for resources
   # type: query
-  # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
 
   if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
@@ -148,6 +185,7 @@ stack-events() {
     sort_by(StackEvents, &Timestamp)[].[
       Timestamp,
       LogicalResourceId,
+      ResourceType,
       ResourceStatus
     ]
   '
@@ -156,7 +194,7 @@ stack-events() {
   aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
     --query $(__bma_clean_query ${query})  \
-    --output ${output:-"text"}
+    --output ${output:-"table"}             
 }
 
 stack-resources() {
@@ -215,7 +253,7 @@ stack-status() {
 # Show all events for CF stack until update completes or fails.
 stack-tail() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
+  local stack=$(_stack_name_arg $1)
   local current
   local final_line
   local output
