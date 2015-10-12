@@ -1,18 +1,18 @@
-_stack() {
+_stacks() {
     local command="$1"
     local word="$2"
-    COMPREPLY=($(compgen -W "$(stack)" -- ${word}))
+    COMPREPLY=($(compgen -W "$(stacks)" -- ${word}))
     return 0
 }
 
-_instance() {
+_instances() {
     local command="$1"
     local word="$2"
 
     case $word in
       "") options="i-a i-b" ;;
       *)
-        options=$(instance)
+        options=$(instances)
       ;;
     esac
 
@@ -29,30 +29,30 @@ _asg() {
     return 0
 }
 
-complete -F _stack stack
-complete -F _stack stack-delete
-complete -F _stack stack-failure
-complete -F _stack stack-parameters
-complete -F _stack stack-resources
-complete -F _stack stack-status
-complete -F _stack stack-template
+complete -F _stacks stacks
+complete -F _stacks stack-delete
+complete -F _stacks stack-failure
+complete -F _stacks stack-parameters
+complete -F _stacks stack-resources
+complete -F _stacks stack-status
+complete -F _stacks stack-template
 
-complete -F _instance instance
-complete -F _instance instance-asg
-complete -F _instance instance-console
-complete -F _instance instance-dns
-complete -F _instance instance-iam_profile
-complete -F _instance instance-ip
-complete -F _instance instance-ssh
-complete -F _instance instance-ssh_details
-complete -F _instance instance-stack
-complete -F _instance instance-start
-complete -F _instance instance-state
-complete -F _instance instance-stop
-complete -F _instance instance-terminate
-complete -F _instance instance-type
-complete -F _instance instance-userdata
-complete -F _instance instance-volumes
+complete -F _instances instances
+complete -F _instances instance-asg
+complete -F _instances instance-console
+complete -F _instances instance-dns
+complete -F _instances instance-iam_profile
+complete -F _instances instance-ip
+complete -F _instances instance-ssh
+complete -F _instances instance-ssh_details
+complete -F _instances instance-stack
+complete -F _instances instance-start
+complete -F _instances instance-state
+complete -F _instances instance-stop
+complete -F _instances instance-terminate
+complete -F _instances instance-type
+complete -F _instances instance-userdata
+complete -F _instances instance-volumes
 
 complete -F _asg asg-capacity
 complete -F _asg asg-instances
