@@ -59,5 +59,6 @@ complete -F _asg asg-instances
 complete -F _asg asg-processes_suspended
 complete -F _asg asg-resume
 complete -F _asg asg-suspend
+complete -F _asg asg-desired-set
 
 # vim: ft=sh
