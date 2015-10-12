@@ -91,7 +91,7 @@ asg-suspend() {
   done
 }
 
-asg-desired-set() {
+asg-desired-size-set() {
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
