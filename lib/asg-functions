@@ -114,12 +114,13 @@ asg-desired-set() {
 
   for asg in $(__bma_read_resources ${inputs}); do
     [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling set-desired-capacity  \
-      --auto-scaling-group-name ${asg}    \
-      --desired-capacity ${capacity} 2>&1 | __bma_aws_error
+    __bma_exec_aws "
+      aws autoscaling set-desired-capacity  \
+        --auto-scaling-group-name ${asg}    \
+        --desired-capacity ${capacity}
+    "
   done
-  # TODO: return a failure if any fail
-  return $?
+  return ${BMA_STATUS}
 }
 
 asg-min-size-set() {
@@ -135,15 +136,13 @@ asg-min-size-set() {
 
   for asg in $(__bma_read_resources ${inputs}); do
     [[ ${asg} == ${capacity} ]] && continue
-    output=$(
+    __bma_exec_aws "
       aws autoscaling update-auto-scaling-group   \
         --auto-scaling-group-name ${asg}          \
-        --min-size ${capacity} 2>&1
-    )
-    __bma_aws_error "${output}"
+        --min-size ${capacity}
+    "
   done
-  # TODO: return a failure if any fail
-  return $?
+  return ${BMA_STATUS}
 }
 
 asg-max-size-set() {
@@ -159,15 +158,13 @@ asg-max-size-set() {
 
   for asg in $(__bma_read_resources ${inputs}); do
     [[ ${asg} == ${capacity} ]] && continue
-    output=$(
+    __bma_exec_aws "
       aws autoscaling update-auto-scaling-group   \
         --auto-scaling-group-name ${asg}          \
-        --max-size ${capacity} 2>&1
-    )
-    __bma_aws_error "${output}"
+        --max-size ${capacity}
+    "
   done
-  # TODO: return a failure if any fail
-  return $?
+  return ${BMA_STATUS}
 }
 
 # vim: ft=sh
