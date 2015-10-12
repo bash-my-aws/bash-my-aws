@@ -7,7 +7,7 @@ source $(dirname ${BASH_SOURCE[0]})/parameter.inc
 __bma_hooks_startup() {
   # this stuff happens right at the start. Its triggered when
   # __bma_read_inputs() is executed.
-  unset BMA_DEBUG
+  export BMA_DEBUG=false
   unset BMA_STATUS
 }
 
