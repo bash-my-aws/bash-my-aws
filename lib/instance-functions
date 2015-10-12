@@ -6,7 +6,7 @@
 
 source $(dirname ${BASH_SOURCE[0]})/shared.inc
 
-instance() {
+instances() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
@@ -48,8 +48,6 @@ instance() {
     --output ${output:-"text"}
 }
 
-alias instances=instance
-
 instance_asg() {
   local inputs="$(__bma_read_inputs $@)"
   local query='
@@ -60,7 +58,7 @@ instance_asg() {
       }
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_console() {
@@ -86,7 +84,7 @@ instance_dns() {
       }
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_iam_profile() {
@@ -100,7 +98,7 @@ instance_iam_profile() {
       ]
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_ip() {
@@ -115,7 +113,7 @@ instance_ip() {
       }
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_ssh() {
@@ -162,7 +160,7 @@ instance_stack() {
       ]
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_start() {
@@ -181,7 +179,7 @@ instance_state() {
       }
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_stop() {
@@ -202,7 +200,7 @@ instance_tags() {
       join(`" "`, Tags[].[join(`=`,[Key,Value])][])
     ]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_terminate() {
@@ -220,7 +218,7 @@ instance_type() {
       ]
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 instance_userdata() {
@@ -248,7 +246,7 @@ instance_volumes() {
       }
     ][]
   '
-  instance ${inputs} --query ${query}
+  instances ${inputs} --query ${query}
 }
 
 #instance-role() {
@@ -262,7 +260,7 @@ instance_volumes() {
 #      }
 #    ][]
 #  '
-#  instance ${inputs} --query ${query}
+#  instances ${inputs} --query ${query}
 #
 #
 #
