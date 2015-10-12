@@ -194,7 +194,8 @@ stack-events() {
   aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
     --query $(__bma_clean_query ${query})  \
-    --output ${output:-"table"}             
+    --output ${output:-"table"}            |
+    uniq -u
 }
 
 stack-resources() {
