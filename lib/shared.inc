@@ -27,4 +27,17 @@ __bma_aws_error() {
   fi
 }
 
+__bma_exec_aws() {
+  cmd="$@"
+  output=$( ${cmd} 2>&1 )
+
+  if [[ $? -ne 0 ]]; then
+    __bma_aws_error "${output}"
+    return 1
+  fi
+
+  echo -n "${output}"
+  return 0
+}
+
 ## vim: ft=sh
