@@ -88,7 +88,7 @@ stacks() {
       UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS    \
       UPDATE_ROLLBACK_FAILED                          \
       UPDATE_ROLLBACK_IN_PROGRESS                     \
-    --query $(__bma_clean_query ${query})             \
+    --query "${query}"                                \
     --output ${output:-"text"}                        |
     sort                                              |
     grep --color=never ${grep_filter:-".*"}
@@ -172,7 +172,7 @@ stack-failure() {
 
   aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
-    --query $(__bma_clean_query ${query})  \
+    --query "${query}"                     \
     --output ${output:-"text"}
 }
 
@@ -194,8 +194,8 @@ stack-events() {
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
   if output=$(aws cloudformation describe-stack-events \
-    --stack-name ${stack}                  \
-    --query $(__bma_clean_query ${query})  \
+    --stack-name ${stack}                              \
+    --query "${query}"                                 \
     --output ${output:-"table"}); then
     echo "$output" | uniq -u
   else
@@ -206,24 +206,32 @@ stack-events() {
 stack-resources() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
-
   if [[ -z ${stack} ]]; then __bma_error "You need to provide a stack name" || return 1; fi
 
-  local query='
-    StackResources[].[
-      PhysicalResourceId,
-      ResourceType
-    ]
-  '
+  local query='StackResources[].[ PhysicalResourceId, ResourceType ]'
 
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
   aws cloudformation describe-stack-resources \
     --stack-name ${stack}                     \
-    --query $(__bma_clean_query ${query})     \
+    --query "${query}"                        \
     --output ${output:-"text"}
 }
 
+stack-asgs() {
+  stack-resources $@ | grep AWS::AutoScaling::AutoScalingGroup
+}
+alias cf_asg=stack-asg
+
+stack-elbs() {
+  stack-resources $@ | grep AWS::ElasticLoadBalancing::LoadBalancer
+}
+alias cf_elbs=stack-elbs
+
+stack-instances() {
+  stack-resources $@ | grep AWS::EC2::Instance
+}
+alias cf_asg=stack-asg
 
 stack-parameters() {
   local inputs=$(__bma_read_inputs $@)
@@ -238,7 +246,7 @@ stack-parameters() {
 
   aws cloudformation describe-stacks        \
     --stack-name ${stack}                   \
-    --query $(__bma_clean_query ${query})   \
+    --query "${query}"                      \
     --output ${output:-"text"}
 }
 
@@ -308,7 +316,7 @@ stack-outputs() {
 
   aws cloudformation describe-stacks        \
     --stack-name ${stack}                   \
-    --query $(__bma_clean_query ${query})   \
+    --query "${query}"                      \
     --output ${output:-"text"}
 }
 
