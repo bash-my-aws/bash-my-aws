@@ -256,12 +256,12 @@ stack-status() {
   local query='
     StackSummaries[][
       [
-        StackStatus,
-        StackName
+        StackName,
+        StackStatus
       ]
     ][]
   '
-  stack ${inputs} --query ${query}
+  stacks ${inputs} --query ${query}
 }
 
 # Show all events for CF stack until update completes or fails.
