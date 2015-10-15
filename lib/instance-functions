@@ -118,7 +118,7 @@ instance-ip() {
 }
 
 instance-ssh() {
-  local instance_details="$(instance_ssh_details $@ | head -1)"
+  local instance_details="$(instance-ssh-details $@ | head -1)"
   local instance_id=$(echo $instance_details | awk '{print $1}');
   local keyname=$(echo $instance_details | awk '{print $2}');
   local private_ip=$(echo $instance_details | awk '{print $3}');
