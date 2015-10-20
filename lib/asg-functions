@@ -1,6 +1,6 @@
 # ec2-autoscaling_group.inc
 
-asg() {
+asgs() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
@@ -46,7 +46,7 @@ asg-capacity() {
     ][]
   '
 
-  asg ${inputs} --query ${query}
+  asgs ${inputs} --query ${query}
 }
 
 asg-instances() {
@@ -74,7 +74,7 @@ asg-processes_suspended() {
     ][]
   '
 
-  asg ${inputs} --query ${query}
+  asgs ${inputs} --query ${query}
 }
 
 asg-resume() {
