@@ -13,15 +13,3 @@ cf_asg_instance_ssh() {
   local instance_ip="$(cf_asg_instances $stack | head -1 | cut -f 1)"
   ssh ${user}@${instance_ip}
 }
-
-cf_elbs() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack="$(basename $1 .json)"
-  shift
-  local elb_names=$(aws cloudformation describe-stack-resources --stack-name $stack --query 'StackResources[?ResourceType==`AWS::ElasticLoadBalancing::LoadBalancer`].[PhysicalResourceId]' --output text)
-  if [ -n "$elb_names" ]; then
-    aws elb describe-load-balancers --load-balancer-names $elb_names --query 'LoadBalancerDescriptions[].[LoadBalancerName, DNSName]' --output text
-  else
-    echo "No load balancers found for CloudFormation stack $stack" >&2
-  fi
-}
