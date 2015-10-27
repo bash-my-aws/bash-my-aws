@@ -20,8 +20,11 @@ instances() {
   local default_query='
     Reservations[].Instances[][
         InstanceId,
+        ImageId,
+        InstanceType,
         State.Name,
-        [Tags[?Key==`Name`].Value][0][0]
+        [Tags[?Key==`Name`].Value][0][0],
+        LaunchTime
     ]
   '
 
