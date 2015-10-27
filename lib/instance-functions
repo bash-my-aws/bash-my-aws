@@ -121,7 +121,12 @@ instance-ip() {
 }
 
 instance-ssh() {
-  local instance_details="$(instance-ssh-details $@ | head -1)"
+  # XXX Does not work with input from STDIN
+  if ! [[ -t 0 ]]; then echo "Usage: $FUNCNAME instance_id [login]"; return 1; fi
+  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [login]"; return 1; fi
+  local instance_id=$1
+  if [ -n "$2" ]; then local user="$2"; fi
+  local instance_details="$(instance-ssh-details $1)"
   local instance_id=$(echo $instance_details | awk '{print $1}');
   local keyname=$(echo $instance_details | awk '{print $2}');
   local private_ip=$(echo $instance_details | awk '{print $3}');
@@ -129,10 +134,10 @@ instance-ssh() {
   local instance_default_user=$(echo $instance_details | awk '{print $5}');
 
   local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
-  echo "Connecting to EC2 Instance $instance_id '$instance_name'"
+  echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
 
   ssh                                  \
-    -tt                                \
+    -t                                \
     -i ${BMA_SSH_DIR:-~/.ssh/}$keyname \
     -o LogLevel=error                  \
     -o StrictHostKeyChecking=no        \
