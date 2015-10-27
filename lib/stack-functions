@@ -64,7 +64,7 @@ stacks() {
     echo "output: ${output}"
   fi
 
-  [[ -z $query ]] && local query='StackSummaries[][ { "StackName": StackName } ][]'
+  [[ -z $query ]] && local query='StackSummaries[][ StackName, CreationTime, LastUpdatedTime ]'
 
   grep_filter=""
   for arg in ${grep_args}; do
@@ -230,7 +230,7 @@ stack-elbs() {
 alias cf_elbs=stack-elbs
 
 stack-instances() {
-  stack-resources $@ | grep AWS::EC2::Instance
+  stack-resources $@ | grep AWS::EC2::Instance | instances
 }
 alias cf_instances=stack-instances
 
