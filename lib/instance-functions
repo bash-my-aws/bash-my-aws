@@ -249,13 +249,11 @@ instance-userdata() {
 instance-volumes() {
   # detail
   # FIXME: The logical json doesn't map well to text.
-  local inputs=$(__bma_read_inputs $@ | base64 -D)
+  local inputs=$(__bma_read_inputs $@)
   local query='
     Reservations[].Instances[][
-      {
-        "InstanceId": InstanceId,
-        "Volumes": BlockDeviceMappings[].Ebs[].VolumeId
-      }
+        InstanceId,
+        join(` `, BlockDeviceMappings[].Ebs[].VolumeId)
     ][]
   '
   instances ${inputs} --query ${query}
