@@ -208,7 +208,7 @@ instance-tags() {
   local inputs="$(__bma_read_inputs $@)"
   local query='
     Reservations[].Instances[].[
-      InstanceId, 
+      InstanceId,
       join(`" "`, Tags[].[join(`=`,[Key,Value])][])
     ]
   '
