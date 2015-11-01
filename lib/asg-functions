@@ -1,10 +1,11 @@
-# ec2-autoscaling_group.inc
+#!/bin/bash
+#
+# asg-functions
 
 asgs() {
   # type: query
   # returns instance id's and the name tag.
   local inputs=$(__bma_read_inputs $@)
-  __bma_read_switches ${inputs}
 
   local default_query='
     AutoScalingGroups[][
@@ -19,18 +20,14 @@ asgs() {
   local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
   local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
   [[ -z $query ]] && query=$default_query
 
-  __bma_exec_aws "
-    aws autoscaling describe-auto-scaling-groups                    \
-      $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names)   \
-      $(for x in ${asg_names}; do echo $x; done)                    \
-      $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
-      --query "${query}"                                            \
-      --output ${output:-"text"}
-  "
-  return ${BMA_STATUS}
+  aws autoscaling describe-auto-scaling-groups                    \
+    $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names)   \
+    $(for x in ${asg_names}; do echo $x; done)                    \
+    $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
+    --query "${query}"                                            \
+    --output ${output:-"text"}
 }
 
 asg-capacity() {
