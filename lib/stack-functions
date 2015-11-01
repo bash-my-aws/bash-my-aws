@@ -263,8 +263,8 @@ stack-status() {
 
 # Show all events for CF stack until update completes or fails.
 stack-tail() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
-  local stack=$(_stack_name_arg $1)
+  local stack=$(__bma_read_inputs $@ | cut -f1)
+  if [ -z "$stack" ] ; then echo "Usage: $FUNCNAME stack"; return 1; fi
   local current
   local final_line
   local output
