@@ -225,8 +225,8 @@ instance-type() {
   local query='
     Reservations[].Instances[][
       [
-        InstanceType,
-        InstanceId
+        InstanceId,
+        InstanceType
       ]
     ][]
   '
