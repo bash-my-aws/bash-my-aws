@@ -64,7 +64,7 @@ stacks() {
     echo "output: ${output}"
   fi
 
-  [[ -z $query ]] && local query='StackSummaries[][ StackName, CreationTime, LastUpdatedTime ]'
+  [[ -z $query ]] && local query='StackSummaries[][ StackName ]'
 
   grep_filter=""
   for arg in ${grep_args}; do
