@@ -154,12 +154,8 @@ stack-delete() {
 }
 
 stack-failure() {
-  # FIXME: only grab the latest failure
-  local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
-  local stack=$(_stack_name_arg $first_resource)
-
-  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
+  [[ -z $1 ]] && __bma_usage "[stack]" || return 1
+  local stack=$1
 
   local query='
     StackEvents[?contains(ResourceStatus,`FAILED`)].[
