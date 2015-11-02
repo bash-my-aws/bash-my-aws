@@ -63,20 +63,6 @@ $ cf_get
 Usage: cf_get stack
 ```
 
-You can easily inspect/customize/learn_from what the function is doing:
-```
-$ type cf_get
-cf_get is a function
-cf_get ()
-{
-    if [ -z "$1" ]; then
-        echo "Usage: $FUNCNAME stack-name";
-        return 1;
-    fi;
-    aws cloudformation get-template --stack-name $1 --query TemplateBody
-}
-```
-
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
 
 
