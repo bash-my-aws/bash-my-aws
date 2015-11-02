@@ -304,14 +304,14 @@ stack-outputs() {
 }
 
 stack-validate() {
-  [[ -z "$1" ]] && __bma_usage "stack-template-file" && return 1
+  [[ -z "$1" ]] && __bma_usage "template-file" && return 1
   aws cloudformation validate-template --template-body file://$1
 }
 
 # Show differences between CloudFormation template and Stack
 
 stack-diff(){
-  [[ -z "$1" ]] && __bma_usage "stack [stack-template-file]" && return 1
+  [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
   _stack_diff_template $@
   echo
   _stack_diff_params $@
@@ -322,7 +322,7 @@ stack-diff(){
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_template() {
-  [[ -z "$1" ]] && __bma_usage "stack [stack-template-file]" && return 1
+  [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
@@ -349,7 +349,7 @@ _stack_diff_template() {
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_params() {
-  [[ -z "$1" ]] && __bma_usage "stack [stack-template-file]" && return 1
+  [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
