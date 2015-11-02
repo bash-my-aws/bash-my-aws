@@ -123,12 +123,13 @@ $ cf_diff example
 ```
 
 
-#### Update a stack
-```
-$ cf_update
-Usage: cf_update stack [template-file] [params-file]
+#### Updating a stack
 
-$ cf_update example # creates stack called example using example.json 
+```ShellSession
+$ stack-update
+USAGE: stack-update stack [template-file] [params-file]
+
+$ stack-update example # creates stack called example using example.json
 ...
 ```
 
