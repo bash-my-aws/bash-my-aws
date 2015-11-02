@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+ROOT_DIR="$(dirname $0)/../"
+
+cat <<EOF
+_stacks() {
+    local command="\$1"
+    local word="\$2"
+    COMPREPLY=(\$(compgen -W "\$(stacks)" -- \${word}))
+    return 0
+}
+
+_instances() {
+    local command="\$1"
+    local word="\$2"
+
+    case \$word in
+      "") options="i-a i-b" ;;
+      *)
+        options=\$(instances)
+      ;;
+    esac
+
+    COMPREPLY=(\$(compgen -W "\${options}" -- \${word}))
+    return 0
+}
+
+_asg() {
+    local command="\$1"
+    local word="\$2"
+    local options=\$(asg)
+
+    COMPREPLY=(\$(compgen -W "\${options}" -- \${word}))
+    return 0
+}
+
+EOF
+
+for type in instance asg stack; do
+  functions=$(
+    cat ${ROOT_DIR}/lib/${type}-functions |
+    grep -e "^[^_#][^\ ]*()\ \?{" |
+    tr -d "() {"
+  )
+
+  for function in ${functions}; do
+    echo "complete -F _${type}s ${function}"
+  done
+done
