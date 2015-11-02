@@ -44,6 +44,13 @@ describe "_stack_template_arg:" "$(
     rm stack.json
   )"
 
+  context "can find template when stack is hyphenated and it exists" "$(
+    cd ${TMPDIR}
+    touch stack.json
+    expect $(_stack_template_arg "stack-example") to_be "stack.json"
+    rm stack.json
+  )"
+
   context "can find template when it is provided" "$(
     tmpfile=$(mktemp -t bma.XXX)
     expect $(_stack_template_arg "stack" "${tmpfile}") to_be "${tmpfile}"
