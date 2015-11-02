@@ -1,3 +1,5 @@
+![TravisCI](https://api.travis-ci.org/realestate-com-au/bash-my-aws.svg)
+
 bash-my-aws
 ===========
 
