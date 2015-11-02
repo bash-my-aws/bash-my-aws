@@ -134,12 +134,13 @@ $ stack-update example # creates stack called example using example.json
 ```
 
 
-#### Delete a stack
-```
-$ cf_delete
-Usage: cf_delete stack
+#### Deleting a stack
 
-$ cf_delete example # deletes stack called example
+```ShellSession
+$ stack-delete
+USAGE: stack-delete stack
+
+$ stack-delete example # deletes stack called example
 ...
 ```
 

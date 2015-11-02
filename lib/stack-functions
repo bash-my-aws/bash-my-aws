@@ -140,11 +140,9 @@ stack-delete() {
   local inputs=$(__bma_read_inputs $@)
   local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
   local stack=$(_stack_name_arg $first_resource)
+  [[ -z ${stack} ]]; __bma_usage "stack" && return 1
 
-  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
-
-  if aws cloudformation delete-stack --stack-name $stack
-  then
+  if aws cloudformation delete-stack --stack-name $stack; then
     stack-tail $stack
   fi
 }
