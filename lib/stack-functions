@@ -332,7 +332,7 @@ stack-diff(){
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_template() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  [[ -z "$2" ]] && __bma_usage "[stack] [stack-template-file]" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
@@ -359,7 +359,7 @@ _stack_diff_template() {
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_params() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
+  [[ -z "$2" ]] && __bma_usage "[stack] [stack-template-file]" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
