@@ -391,8 +391,8 @@ _stack_diff_params() {
   fi
 }
 
-# determine name of stack to use
 _stack_name_arg() {
+  # extract the stack name from the template file
   basename $1 .json
 }
 
