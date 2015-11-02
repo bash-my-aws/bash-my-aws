@@ -95,8 +95,15 @@ $ cf_create example-test # creates stack called example-test using example.json
 
 This is basically 'ls' with the ability to filter by a search string
 
-```
-$ cf_list example # call without filter argument to return all stacks
+```ShellSession
+$ stacks # call without filter argument to return all stacks
+example-app
+example-app-test
+example-app-dev
+something
+something-else
+
+$ stacks example # Or filter out the relevant stacks
 example-app
 example-app-test
 example-app-dev
