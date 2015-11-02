@@ -39,6 +39,12 @@ Source the functions you want with something like:
 source ~/.bash-my-aws/lib/cloudformation.inc
 ```
 
+Add the bash_completion scripts: (optional)
+```
+~/.bash-my-aws/bin/generate_bash_completion > ~/.bash_completion.d/bash-my-aws
+source ~/.bash_completion.d/bash-my-aws
+```
+
 Typing cf_[TAB] will list available functions for CloudFormation:
 ```
 $ cf_
