@@ -37,14 +37,13 @@ $ git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 ## Usage
 
 Source the functions you want with something like:
-```
-source ~/.bash-my-aws/lib/cloudformation.inc
+```ShellSession
+$ source ~/.bash-my-aws/lib/cloudformation.inc
 ```
 
 Add the bash_completion scripts: (optional)
-```
-make generate_bash_completion > ~/.bash_completion.d/bash-my-aws
-source ~/.bash_completion.d/bash-my-aws
+```ShellSession
+$ source <(~/.bash-my-aws/bin/generate_bash_completion)
 ```
 
 Typing cf_[TAB] will list available functions for CloudFormation:
