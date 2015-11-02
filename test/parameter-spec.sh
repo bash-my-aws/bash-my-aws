@@ -93,10 +93,16 @@ describe "bma_read_switches:" "$(
     expect "$(echo ${val:-empty})" to_be "--switch 'another' --switch 'with a long value'"
   )"
 
-  context "expanded switches" "$(
+  context "expanded json switch" "$(
     str=$(echo "--json")
     val=$(__bma_read_switches ${str})
     expect "$(echo ${val:-empty})" to_be "--output json"
+  )"
+
+  context "expanded tables switch" "$(
+    str=$(echo "--table")
+    val=$(__bma_read_switches ${str})
+    expect "$(echo ${val:-empty})" to_be "--output table"
   )"
 
   context "returns one switch per line" "$(
