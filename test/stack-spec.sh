@@ -23,3 +23,31 @@ describe "_stack_name_arg:" "$(
     expect "$(_stack_name_arg "/path/to/file.xml")" to_be "file.xml"
   )"
 )"
+
+describe "_stack_template_arg:" "$(
+  context "cannot find template without any details" "$(
+    expect $(_stack_template_arg) to_be ""
+  )"
+
+  context "cannot find template with only stack name" "$(
+    expect $(_stack_template_arg "stack") to_be ""
+  )"
+
+  context "cannot find template when it's gone" "$(
+    expect $(_stack_template_arg "stack" /file/is/gone) to_be "/file/is/gone"
+  )"
+
+  context "can find template when it exists" "$(
+    cd ${TMPDIR}
+    touch stack.json
+    expect $(_stack_template_arg "stack") to_be "stack.json"
+    rm stack.json
+  )"
+
+  context "can find template when it is provided" "$(
+    tmpfile=$(mktemp -t bma.XXX)
+    expect $(_stack_template_arg "stack" "${tmpfile}") to_be "${tmpfile}"
+    rm ${tmpfile}
+  )"
+
+)"
