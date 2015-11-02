@@ -145,22 +145,22 @@ $ stack-delete example # deletes stack called example
 ```
 
 
-#### Tail stack events
+#### Tailing stack events
 
 The create/update tasks call this one but it can also be called directly.
 It watches events for a stack until it sees them complete or fail.
 
-```
+```ShellSession
 $ stack-tail my-stack
-----------------------------------------------------------------------
-|                         DescribeStackEvents                        |
-+--------------+----------------------+------------------------------+
-|   Resource   |       Status         |            Type              |
-+--------------+----------------------+------------------------------+
-|  who-is-my-am|  CREATE_IN_PROGRESS  |  AWS::CloudFormation::Stack  |
-|  S3Bucket    |  CREATE_COMPLETE     |  AWS::S3::Bucket             |
-|  BucketPolicy|  CREATE_COMPLETE     |  AWS::S3::BucketPolicy       |
-|  DNS         |  CREATE_COMPLETE     |  AWS::Route53::RecordSet     |
-|  who-is-my-am|  CREATE_COMPLETE     |  AWS::CloudFormation::Stack  |
-+--------------+----------------------+------------------------------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+|                                                                  DescribeStackEvents                                                                  |
++--------------------------+-------------------------------+-------------------------------------------+------------------------------------------------+
+|  2015-07-25T23:13:21.628Z|  MyStack                      |  AWS::CloudFormation::Stack               |  CREATE_IN_PROGRESS                            |
+|  2015-07-25T23:13:27.221Z|  AppServerSSHSecurityGroup    |  AWS::EC2::SecurityGroup                  |  CREATE_IN_PROGRESS                            |
+|  2015-07-25T23:13:27.235Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_IN_PROGRESS                            |
+|  2015-07-25T23:13:27.291Z|  InternalELBSecurityGroup     |  AWS::EC2::SecurityGroup                  |  CREATE_IN_PROGRESS                            |
+|  2015-07-25T23:13:27.537Z|  AppServerRole                |  AWS::IAM::Role                           |  CREATE_IN_PROGRESS                            |
+|  2015-07-25T23:13:28.244Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_IN_PROGRESS                            |
+|  2015-07-25T23:13:28.769Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_COMPLETE                               |
++--------------------------+-------------------------------+-------------------------------------------+------------------------------------------------+
 ```
