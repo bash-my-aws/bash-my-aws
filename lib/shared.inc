@@ -15,6 +15,11 @@ __bma_error() {
   return 1
 }
 
+__bma_usage() {
+  echo "USAGE: ${FUNCNAME[1]} $@" > /dev/stderr
+  return 1
+}
+
 __bma_aws_error() {
   if [[ ! -z "$@" ]]; then
     __bma_error $(echo "$@" | grep -v ^$ | cut -d: -f2 | sed 's/^\ *//g')
