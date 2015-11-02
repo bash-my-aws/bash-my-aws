@@ -12,7 +12,6 @@ __bma_error() {
 
 __bma_usage() {
   echo "USAGE: ${FUNCNAME[1]} $@" > /dev/stderr
-  return 1
 }
 
 ## vim: ft=sh

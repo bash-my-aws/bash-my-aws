@@ -317,7 +317,7 @@ stack-outputs() {
 }
 
 stack-validate() {
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack-template-file"; return 1; fi
+  [[ -z "$1" ]] && __bma_usage "[stack-template-file]" && return 1
   aws cloudformation validate-template --template-body file://$1
 }
 
