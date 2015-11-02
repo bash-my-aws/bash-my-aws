@@ -26,6 +26,7 @@ __bma_read_switches() {
   result="$(
     __bma_arg_types "$@"    |
       grep '^s:'            |
+      sort                  |
       cut -d: -f2-          |
       sort
   )"
