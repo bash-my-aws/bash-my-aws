@@ -321,7 +321,7 @@ stack-validate() {
 # Show differences between CloudFormation template and Stack
 
 stack-diff(){
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; exit 1; fi
+  [[ -z "$2" ]] && __bma_usage "[stack] [stack-template-file]" && return 1
   _stack_diff_template $@
   echo
   _stack_diff_params $@
