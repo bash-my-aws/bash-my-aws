@@ -180,7 +180,7 @@ stack-events() {
   local inputs=$(__bma_read_inputs $@)
   local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
   local stack=$(_stack_name_arg $first_resource)
-  [[ -z ${stack} ]] && __bma_usage "[stack]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='
     sort_by(StackEvents, &Timestamp)[].[
@@ -205,7 +205,7 @@ stack-events() {
 stack-resources() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
-  [[ -z ${stack} ]] && __bma_usage "[stack]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='StackResources[].[ PhysicalResourceId, ResourceType ]'
 
@@ -232,7 +232,7 @@ stack-instances() {
 stack-parameters() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
-  [[ -z ${stack} ]] && __bma_usage "[stack]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='
     Stacks[].Parameters[]
@@ -262,7 +262,7 @@ stack-status() {
 # Show all events for CF stack until update completes or fails.
 stack-tail() {
   local stack=$(__bma_read_inputs $@ | cut -f1)
-  [[ -z ${stack} ]] && __bma_usage "[stack]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
   local current
   local final_line
   local output
@@ -300,7 +300,7 @@ stack-template() {
 stack-outputs() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
-  [[ -z ${stack} ]] && __bma_usage "[stack]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='
     Stacks[].Outputs[]
@@ -314,14 +314,14 @@ stack-outputs() {
 }
 
 stack-validate() {
-  [[ -z "$1" ]] && __bma_usage "[stack-template-file]" && return 1
+  [[ -z "$1" ]] && __bma_usage "stack-template-file" && return 1
   aws cloudformation validate-template --template-body file://$1
 }
 
 # Show differences between CloudFormation template and Stack
 
 stack-diff(){
-  [[ -z "$2" ]] && __bma_usage "[stack] [stack-template-file]" && return 1
+  [[ -z "$2" ]] && __bma_usage "stack stack-template-file" && return 1
   _stack_diff_template $@
   echo
   _stack_diff_params $@
@@ -332,7 +332,7 @@ stack-diff(){
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_template() {
-  [[ -z "$2" ]] && __bma_usage "[stack] [stack-template-file]" && return 1
+  [[ -z "$2" ]] && __bma_usage "stack stack-template-file" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
@@ -359,7 +359,7 @@ _stack_diff_template() {
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_params() {
-  [[ -z "$2" ]] && __bma_usage "[stack] [stack-template-file]" && return 1
+  [[ -z "$2" ]] && __bma_usage "stack stack-template-file" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
