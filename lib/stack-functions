@@ -300,8 +300,7 @@ stack-template() {
 stack-outputs() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
-
-  if [[ -z ${stack} ]]; then __bma_error "You need to provide a stack name" || return 1; fi
+  [[ -z ${stack} ]] && __bma_usage "[stack]" && return 1
 
   local query='
     Stacks[].Outputs[]
