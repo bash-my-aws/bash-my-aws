@@ -1,4 +1,5 @@
-test: shared
+test: run_tests
 
-shared:
+run_tests:
 	'./test/parameter-spec.sh'
+	'./test/stack-spec.sh'
