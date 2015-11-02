@@ -57,12 +57,6 @@ stack-delete      stack-instances   stack-tail
 stack-diff        stack-outputs     stack-template
 ```
 
-Omitting required arguments will result in Usage instructions being displayed:
-```
-$ cf_get
-Usage: cf_get stack
-```
-
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
 
 
