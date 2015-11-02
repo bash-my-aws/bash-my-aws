@@ -95,13 +95,9 @@ stacks() {
 }
 
 stack-create() {
-  # XXX Work out how best to display usage
-  # if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
-
   local inputs=$(__bma_read_inputs $@)
-
   local stack=$(_stack_name_arg $inputs)
-  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local template=$(_stack_template_arg $inputs)
   if [ ! -f "$template" ]; then
