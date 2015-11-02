@@ -29,8 +29,8 @@ also provide a useful reference to its use.
 As shown below, you may simply clone the GitHub repo and source the files required.
 (You should probably fork it instead to keep your customisations)
 
-```
-git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
+```Shell
+$ git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 ```
 
 
