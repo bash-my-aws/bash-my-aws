@@ -41,7 +41,7 @@ source ~/.bash-my-aws/lib/cloudformation.inc
 
 Add the bash_completion scripts: (optional)
 ```
-~/.bash-my-aws/bin/generate_bash_completion > ~/.bash_completion.d/bash-my-aws
+make generate_bash_completion > ~/.bash_completion.d/bash-my-aws
 source ~/.bash_completion.d/bash-my-aws
 ```
 
