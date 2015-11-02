@@ -20,10 +20,4 @@ __bma_usage() {
   return 1
 }
 
-__bma_aws_error() {
-  if [[ ! -z "$@" ]]; then
-    __bma_error $(echo "$@" | grep -v ^$ | cut -d: -f2 | sed 's/^\ *//g')
-  fi
-}
-
 ## vim: ft=sh
