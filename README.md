@@ -21,7 +21,7 @@ also provide a useful reference to its use.
 * bash
 * [awscli](http://aws.amazon.com/cli/)
 * jp (installed automatically if you used python-pip to install awscli)
-* [jq-1.4](http://stedolan.github.io/jq/download/) or later (for the cf_diff function)
+* [jq-1.4](http://stedolan.github.io/jq/download/) or later (for stack-diff)
 
 
 ## Installation
@@ -105,11 +105,11 @@ example-app-dev
 
 
 #### See what changes will be made by updating a stack
-```
-$ cf_diff
-Usage: cf_diff stack [template-file]
+```ShellSession
+$ stack-diff
+USAGE: stack-diff stack [template-file]
 
-$ cf_diff example
+$ stack-diff example
 --- /dev/fd/63  2014-12-24 15:12:33.000000000 +1100
 +++ /dev/fd/62  2014-12-24 15:12:33.000000000 +1100
 @@ -113,7 +113,7 @@
