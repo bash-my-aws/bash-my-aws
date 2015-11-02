@@ -38,7 +38,7 @@ $ git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 
 Source the functions you want with something like:
 ```ShellSession
-$ source ~/.bash-my-aws/lib/cloudformation.inc
+$ for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
 ```
 
 Add the bash_completion scripts: (optional)
