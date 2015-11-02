@@ -78,16 +78,16 @@ This function gives you tab completion for filenames (missing from AWSCLI).
 $ cf_create
 Usage: cf_create stack [template-file] [params-file]
 
-$ cf_create example      # creates stack called example using example.json 
+$ cf_create example      # creates stack called example using example.json
 ```
 
 It's also one of the functions that allows you to omit the template name
-if it exists in the current directory and matches the stack name with '.json' 
-appended. 
+if it exists in the current directory and matches the stack name with '.json'
+appended.
 
 It's even smart enough to detect that you've added '-blah' to the stack name.
 ```
-$ cf_create example-test # creates stack called example-test using example.json 
+$ cf_create example-test # creates stack called example-test using example.json
 ```
 
 
