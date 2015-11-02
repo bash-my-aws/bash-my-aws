@@ -46,12 +46,15 @@ Add the bash_completion scripts: (optional)
 $ source <(~/.bash-my-aws/bin/generate_bash_completion)
 ```
 
-Typing cf_[TAB] will list available functions for CloudFormation:
-```
-$ cf_
-cf_asg_instance_ssh  cf_asg_scale_down    cf_delete            cf_events            cf_list              cf_status            cf_validate
-cf_asg_instances     cf_asg_scale_up      cf_describe          cf_fail              cf_outputs           cf_tail
-cf_asg_name          cf_create            cf_diff              cf_get               cf_param             cf_update
+Typing stack[TAB][TAB] will list available functions for CloudFormation:
+
+```ShellSession
+$ stack
+stack             stack-elbs        stack-parameters  stack-update
+stack-asgs        stack-events      stack-resources   stack-validate
+stack-create      stack-failure     stack-status      stacks
+stack-delete      stack-instances   stack-tail
+stack-diff        stack-outputs     stack-template
 ```
 
 Omitting required arguments will result in Usage instructions being displayed:
