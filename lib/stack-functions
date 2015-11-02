@@ -97,7 +97,7 @@ stacks() {
 stack-create() {
   # XXX Work out how best to display usage
   # if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template-file] [params-file]"; return 1; fi
-  
+
   local inputs=$(__bma_read_inputs $@)
 
   local stack=$(_stack_name_arg $inputs)
@@ -110,7 +110,7 @@ stack-create() {
   fi
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
-  
+
   if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
   then
     stack-tail $stack
@@ -244,7 +244,7 @@ stack-parameters() {
   aws cloudformation describe-stacks        \
     --stack-name ${stack}                   \
     --query "${query}"                      \
-    --output ${output:-"text"}
+    --output ${output:-"json"}
 }
 
 stack-status() {
@@ -336,9 +336,9 @@ stack-diff(){
 #
 _stack_diff_template() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
-  local stack="$(basename $1 .json)"
-  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
-    return 1; 
+  local stack="$(_stack_name_arg $@)"
+  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
+    return 1;
   fi
   local template="$(_stack_template_arg $stack $2)"
   if [ ! -f "$template" ]; then
@@ -351,7 +351,7 @@ _stack_diff_template() {
   else
     local DIFF_CMD=diff
   fi
-  $DIFF_CMD -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template) 
+  $DIFF_CMD -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template)
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
   fi
@@ -363,9 +363,9 @@ _stack_diff_template() {
 #
 _stack_diff_params() {
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME stack [template]"; return 1; fi
-  local stack="$(basename $1 .json)"
-  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then 
-    return 1; 
+  local stack="$(_stack_name_arg $@)"
+  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
+    return 1;
   fi
   local template="$(_stack_template_arg $stack $2)"
   if [ ! -f "$template" ]; then
@@ -414,7 +414,7 @@ _stack_template_arg() {
 _stack_params_arg() {
   local stack="$(_stack_name_arg $@)"
   local template="$(_stack_template_arg $@)"
-  local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)-\([^-][^-]*\)/\1-params-\2.json/")};
+  local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)\(.*\)/\1-params\2.json/")};
   if [ -f "${params}" ]; then
     echo $params
   fi
