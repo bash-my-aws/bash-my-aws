@@ -122,8 +122,15 @@ instance-ip() {
 
 instance-ssh() {
   # XXX Does not work with input from STDIN
+
+  # TODO: this may be cleaner
+  #if [[ ! -t 0 ]] || [[ -z "$1" ]]; then
+  #  __bma_usage "instance_id [login-template-file]"
+  #  return 1
+  #fi
   if ! [[ -t 0 ]]; then echo "Usage: $FUNCNAME instance_id [login]"; return 1; fi
   if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [login]"; return 1; fi
+
   local instance_id=$1
   if [ -n "$2" ]; then local user="$2"; fi
   local instance_details="$(instance-ssh-details $1)"
