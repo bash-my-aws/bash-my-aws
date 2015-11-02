@@ -4,7 +4,7 @@ source $(dirname $0)/../lib/stack-functions
 
 describe "_stack_name_arg:" "$(
   context "without an argument" "$(
-    expect "$(_stack_name_arg)" to_be ""
+    expect $(_stack_name_arg) to_be ""
   )"
 
   context "with a string" "$(

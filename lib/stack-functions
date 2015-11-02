@@ -393,7 +393,7 @@ _stack_diff_params() {
 
 _stack_name_arg() {
   # extract the stack name from the template file
-  basename $1 .json
+  basename "$1" .json
 }
 
 # determine name of template to use
