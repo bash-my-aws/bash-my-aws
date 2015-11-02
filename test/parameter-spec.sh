@@ -76,9 +76,9 @@ describe "bma_read_switches:" "$(
   )"
 
   context "two switches with values" "$(
-    str=$(echo "r1 r2 --a-switch a-value r3 --another one_more")
+    str=$(echo "r1 r2 --second a-value r3 --first one_more")
     val=$(__bma_read_switches ${str})
-    expect "$(echo ${val:-empty})" to_be "--a-switch a-value r3 --another one_more"
+    expect "$(echo ${val:-empty})" to_be "--first one_more --second a-value r3"
   )"
 
   context "switches with long value" "$(
