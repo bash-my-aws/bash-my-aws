@@ -2,14 +2,14 @@
 ROOT_DIR="$(dirname $0)/../"
 
 cat <<EOF
-_stacks() {
+_bma_stacks_completion() {
     local command="\$1"
     local word="\$2"
     COMPREPLY=(\$(compgen -W "\$(stacks)" -- \${word}))
     return 0
 }
 
-_instances() {
+_bma_instances_completion() {
     local command="\$1"
     local word="\$2"
 
@@ -24,7 +24,7 @@ _instances() {
     return 0
 }
 
-_asg() {
+_bma_asgs_completion() {
     local command="\$1"
     local word="\$2"
     local options=\$(asg)
@@ -43,6 +43,9 @@ for type in instance asg stack; do
   )
 
   for function in ${functions}; do
-    echo "complete -F _${type}s ${function}"
+    [[ "${function}" == "stack-validate" ]] && continue
+    echo "complete -F _bma_${type}s_completion ${function}"
   done
 done
+
+echo "complete -f stack-validate"
