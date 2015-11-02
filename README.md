@@ -149,7 +149,7 @@ The create/update tasks call this one but it can also be called directly.
 It watches events for a stack until it sees them complete or fail.
 
 ```
-$ cf_tail who-is-my-am
+$ stack-tail my-stack
 ----------------------------------------------------------------------
 |                         DescribeStackEvents                        |
 +--------------+----------------------+------------------------------+

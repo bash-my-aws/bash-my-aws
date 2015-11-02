@@ -20,11 +20,11 @@ source $(dirname ${BASH_SOURCE[0]})/shared.inc
 # Following these (entirely optional) conventions means bash-my-aws can
 # infer template & params file from stack name
 #
-# e.g. cf_create mywebsite-test
+# e.g. stack-create mywebsite-test
 #
 #      is equivalent (if files present) to:
 #
-#      cf_create mywebsite-test mywebsite.json mywebsite-params-test.json
+#      stack-create mywebsite-test mywebsite.json mywebsite-params-test.json
 #
 # Other benefits include:
 #
@@ -272,7 +272,7 @@ stack-tail() {
   until echo "$current" | tail -1 | egrep -q "${stack}.*_(COMPLETE|FAILED)"
   do
     if ! output=$(stack-events $stack); then
-      # Something went wrong with cf_events (like stack not known)
+      # Something went wrong with stack-events (like stack not known)
       return 1
     fi
     if [ -z "$output" ]; then sleep 1; continue; fi
