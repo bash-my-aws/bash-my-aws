@@ -109,20 +109,20 @@ example-app-dev
 $ stack-diff
 USAGE: stack-diff stack [template-file]
 
-$ stack-diff example
---- /dev/fd/63  2014-12-24 15:12:33.000000000 +1100
-+++ /dev/fd/62  2014-12-24 15:12:33.000000000 +1100
-@@ -113,7 +113,7 @@
-         "t2.micro",
-         "t2.small"
-       ],
--      "Default": "m3.large",
-+      "Default": "m3.small",
-       "Description": "The type of the EC2 instance you want",
-       "Type": "String"
-     },
-```
+$ stack-diff example-dev
+template for stack (example) and contents of file (example-dev.json) are the same
 
+e--- params
++++ example-params-dev.json
+@@ -4,7 +4,7 @@
+         "ParameterKey": "slipGeneratorRolePath"
+     },
+     {
+-        "ParameterValue": "something",
++        "ParameterValue": "something-else",
+         "ParameterKey": "storageBucketName"
+     },
+     {
 
 #### Updating a stack
 
