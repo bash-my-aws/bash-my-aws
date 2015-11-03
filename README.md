@@ -5,17 +5,12 @@ bash-my-aws
 
 ![caveman](/doc/caveman.jpg)
 
-Written to make my life easier, bash-my-aws assists Infrastructure Jockeys using 
-Amazon Web Services from the command line.
+bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the command line.
 
-This project provides easily memorable commands for realtime control of resources
+This project provides short, memorable commands for realtime control of resources
 in Amazon AWS. The goal is to reduce the time between intention and effect.
 
-The functions are just as happy being called from your scripts as they are being
-tapped out on the keyboard.
-
-They make extensive use of the incredibly powerful AWSCLI. It's hoped they may
-also provide a useful reference to its use.
+These functions make extensive use of the incredibly powerful AWSCLI.
 
 
 ## Prerequisites
@@ -48,7 +43,7 @@ Add the bash_completion scripts: (optional)
 $ source <(~/.bash-my-aws/bin/generate_bash_completion)
 ```
 
-Typing stack[TAB][TAB] will list available functions for CloudFormation:
+**Typing stack[TAB][TAB] will list available functions for CloudFormation:**
 
 ```ShellSession
 $ stack
@@ -57,9 +52,33 @@ stack-asgs        stack-events      stack-resources   stack-validate
 stack-create      stack-failure     stack-status      stacks
 stack-delete      stack-instances   stack-tail
 stack-diff        stack-outputs     stack-template
+
+$ instance
+instance-asg          instance-ip           instance-start        instance-terminate    instances
+instance-console      instance-ssh          instance-state        instance-type
+instance-dns          instance-ssh-details  instance-stop         instance-userdata
+instance-iam-profile  instance-stack        instance-tags         instance-volumes
+
+$ asg
+asg-capacity             asg-max-size-set         asg-resume               asgs
+asg-desired-size-set     asg-min-size-set         asg-suspend
+asg-instances            asg-processes_suspended  asgard
 ```
 
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
+
+** Piping output between functions **
+
+We're very excited to announce this functionality.  
+
+Most bash-my-aws functions will accept AWS Resource Ids from STDIN. This means
+you can pipe output from many functions into other functions.
+
+```
+$ instances | grep splunk | instance-stack | stack-status
+splunk-forwarder  UPDATE_COMPLETE
+splunk-forwarder-role CREATE_COMPLETE
+```
 
 
 ### Usage examples
@@ -167,3 +186,6 @@ $ stack-tail my-stack
 |  2015-07-25T23:13:28.769Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_COMPLETE                               |
 +--------------------------+-------------------------------+-------------------------------------------+------------------------------------------------+
 ```
+
+
+
