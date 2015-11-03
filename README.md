@@ -144,6 +144,7 @@ e--- params
          "ParameterKey": "storageBucketName"
      },
      {
+```
 
 #### Updating a stack
 
