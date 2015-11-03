@@ -74,7 +74,7 @@ We're very excited to announce this functionality.
 Most bash-my-aws functions will accept AWS Resource Ids from STDIN. This means
 you can pipe output from many functions into other functions.
 
-```
+```ShellSession
 $ instances | grep splunk | instance-stack | stack-status
 splunk-forwarder  UPDATE_COMPLETE
 splunk-forwarder-role CREATE_COMPLETE
