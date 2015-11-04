@@ -92,6 +92,7 @@ asg-suspend() {
 }
 
 asg-desired-size-set() {
+  [[ -z "$2" ]] && __bma_usage "auto-scaling-group capacity" && return 1
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
@@ -115,6 +116,7 @@ asg-desired-size-set() {
 }
 
 asg-min-size-set() {
+  [[ -z "$2" ]] && __bma_usage "auto-scaling-group capacity" && return 1
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
@@ -138,6 +140,7 @@ asg-min-size-set() {
 }
 
 asg-max-size-set() {
+  [[ -z "$2" ]] && __bma_usage "auto-scaling-group capacity" && return 1
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
