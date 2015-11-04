@@ -32,6 +32,7 @@ asgs() {
 
 asg-capacity() {
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   local query='
     AutoScalingGroups[][
       {
@@ -63,6 +64,7 @@ asg-instances() {
 asg-processes_suspended() {
   # TODO: fix the output
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   local query='
     AutoScalingGroups[][
       {
