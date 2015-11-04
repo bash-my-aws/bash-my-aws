@@ -23,8 +23,7 @@ _bma_instances_completion() {
 _bma_asgs_completion() {
     local command="$1"
     local word="$2"
-    local options=$(asgs)
-
+    local options=$(asgs --query 'AutoScalingGroups[][{"AutoScalingGroupName": AutoScalingGroupName}][]')
     COMPREPLY=($(compgen -W "${options}" -- ${word}))
     return 0
 }
