@@ -216,7 +216,8 @@ stack-elbs() {
 }
 
 stack-instances() {
-  stack-resources $@ | grep AWS::EC2::Instance | instances
+  instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | cut -f1)
+  [[ -n "$instance_ids" ]] && instances $instance_ids
 }
 
 stack-parameters() {
