@@ -92,15 +92,13 @@ asg-suspend() {
 }
 
 asg-desired-size-set() {
-  [[ -z "$2" ]] && __bma_usage "auto-scaling-group capacity" && return 1
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
-    true
-  else
-    __bma_error "You must provide a capacity"
+  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
+     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+    __bma_usage "auto-scaling-group capacity"
     return 1
   fi
 
@@ -114,15 +112,13 @@ asg-desired-size-set() {
 }
 
 asg-min-size-set() {
-  [[ -z "$2" ]] && __bma_usage "auto-scaling-group capacity" && return 1
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
-    true
-  else
-    __bma_error "You must provide a minimum capacity"
+  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
+     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+    __bma_usage "auto-scaling-group capacity"
     return 1
   fi
 
@@ -136,15 +132,13 @@ asg-min-size-set() {
 }
 
 asg-max-size-set() {
-  [[ -z "$2" ]] && __bma_usage "auto-scaling-group capacity" && return 1
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  if echo "${capacity}" | grep -E "^[0-9]+$" &> /dev/null; then
-    true
-  else
-    __bma_error "You must provide a minimum capacity"
+  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
+     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+    __bma_usage "auto-scaling-group capacity"
     return 1
   fi
 
