@@ -5,10 +5,12 @@ bash-my-aws
 
 ![caveman](/doc/caveman.jpg)
 
-bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the command line.
+bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the
+command line.
 
-This project provides short, memorable commands for realtime control of resources
-in Amazon AWS. The goal is to reduce the time between intention and effect.
+This project provides short, memorable commands for realtime control of
+resources in Amazon AWS. The goal is to reduce the time between intention and
+effect.
 
 These functions make extensive use of the incredibly powerful AWSCLI.
 
@@ -194,7 +196,8 @@ $ stack-tail my-stack
 
 #### Default Outputs
 
-You can customise your outputs by overriding the default query using the `--query` option.
+You can customise your outputs by overriding the default query using the
+`--query` option.
 
 ```ShellSession
 $ instances --query 'Reservations[].Instances[][InstanceId,[Tags[?Key==`Name`].Value][0][0]]'
@@ -206,7 +209,8 @@ i-0000004      cache
 i-0000005      database
 ```
 
-To make `instances` always output the preferred columns, you can create an alias like this:
+To make `instances` always output the preferred columns, you can create an
+alias like this:
 
 ```Shell
 alias instances="instances --query 'Reservations[].Instances[][InstanceId,[Tags[?Key==\`Name\`].Value][0][0]]'"
