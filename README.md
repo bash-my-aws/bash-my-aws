@@ -42,7 +42,7 @@ $ for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
 
 Add the bash_completion scripts: (optional)
 ```ShellSession
-$ source <(~/.bash-my-aws/bin/generate_bash_completion)
+$ eval "$(~/.bash-my-aws/bin/generate_bash_completion)"
 ```
 
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
