@@ -173,4 +173,8 @@ describe "bma_expand_switches:" "$(
     str="$(echo -e "--one 1\n--two 2")"
     expect $(__bma_expand_switches "${str}" | wc -l) to_be "2"
   )"
+
+  context "without switches" "$(
+    expect $(__bma_expand_switches "" | wc -l) to_be "0"
+  )"
 )"

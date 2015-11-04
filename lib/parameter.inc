@@ -56,7 +56,7 @@ __bma_arg_types() {
 
 __bma_expand_switches() {
   # this function is for expanding or rewriting switches.
-  echo "$@"                             |
+  echo -n "$@"                          |
     sed -E 's/^--json/--output json/'   |
     sed -E 's/^--table/--output table/' |
     sed -E 's/^--text/--output text/'   |
