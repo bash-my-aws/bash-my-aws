@@ -106,11 +106,9 @@ asg-desired-size-set() {
 
   for asg in $(__bma_read_resources ${inputs}); do
     [[ ${asg} == ${capacity} ]] && continue
-    __bma_exec_aws "
-      aws autoscaling set-desired-capacity  \
-        --auto-scaling-group-name ${asg}    \
-        --desired-capacity ${capacity}
-    "
+    aws autoscaling set-desired-capacity  \
+      --auto-scaling-group-name ${asg}    \
+      --desired-capacity ${capacity}
   done
   return ${BMA_STATUS}
 }
@@ -130,11 +128,9 @@ asg-min-size-set() {
 
   for asg in $(__bma_read_resources ${inputs}); do
     [[ ${asg} == ${capacity} ]] && continue
-    __bma_exec_aws "
-      aws autoscaling update-auto-scaling-group   \
-        --auto-scaling-group-name ${asg}          \
-        --min-size ${capacity}
-    "
+    aws autoscaling update-auto-scaling-group   \
+      --auto-scaling-group-name ${asg}          \
+      --min-size ${capacity}
   done
   return ${BMA_STATUS}
 }
@@ -154,11 +150,9 @@ asg-max-size-set() {
 
   for asg in $(__bma_read_resources ${inputs}); do
     [[ ${asg} == ${capacity} ]] && continue
-    __bma_exec_aws "
-      aws autoscaling update-auto-scaling-group   \
-        --auto-scaling-group-name ${asg}          \
-        --max-size ${capacity}
-    "
+    aws autoscaling update-auto-scaling-group   \
+      --auto-scaling-group-name ${asg}          \
+      --max-size ${capacity}
   done
   return ${BMA_STATUS}
 }
