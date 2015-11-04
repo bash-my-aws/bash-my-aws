@@ -233,7 +233,7 @@ stack-parameters() {
   aws cloudformation describe-stacks        \
     --stack-name ${stack}                   \
     --query "${query}"                      \
-    --output ${output:-"json"}
+    --output ${output:-json}
 }
 
 stack-status() {
