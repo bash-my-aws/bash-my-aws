@@ -305,8 +305,9 @@ stack-outputs() {
 }
 
 stack-validate() {
-  [[ -z "$1" ]] && __bma_usage "template-file" && return 1
-  aws cloudformation validate-template --template-body file://$1
+  local inputs=$(__bma_read_inputs $@ | cut -f1)
+  [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
+  aws cloudformation validate-template --template-body file://$inputs
 }
 
 # Show differences between CloudFormation template and Stack
