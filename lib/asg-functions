@@ -76,6 +76,7 @@ asg-processes_suspended() {
 }
 
 asg-resume() {
+  [[ -z "$1" ]] && __bma_usage "auto-scaling-group" && return 1
   local inputs=$(__bma_read_inputs $@)
   for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling resume-processes --auto-scaling-group-name $asg
@@ -83,6 +84,7 @@ asg-resume() {
 }
 
 asg-suspend() {
+  [[ -z "$1" ]] && __bma_usage "auto-scaling-group" && return 1
   local inputs=$(__bma_read_inputs $@)
   for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling suspend-processes --auto-scaling-group-name $asg
