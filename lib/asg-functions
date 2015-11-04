@@ -47,6 +47,7 @@ asg-capacity() {
 }
 
 asg-instances() {
+  [[ -z "$1" ]] && __bma_usage "auto-scaling-group" && return 1
   local inputs=$(__bma_read_inputs $@)
   local asg_names=$(__bma_read_resources ${inputs})
   local filters="
