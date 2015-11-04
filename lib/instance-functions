@@ -155,7 +155,7 @@ instance-ssh() {
 
 instance-ssh-details() {
   local inputs="$(__bma_read_inputs $@)"
-  [[ -z "${inputs}" ]] && bma_usage "instance_id" && return 1
+  [[ -z "${inputs}" ]] && __bma_usage "instance_id" && return 1
 
   local query='
     Reservations[].Instances[][
@@ -183,7 +183,7 @@ instance-stack() {
 }
 
 instance-start() {
-  [[ -z "$1" ]] && bma_usage "instance-id" && return 1
+  [[ -z "$1" ]] && __bma_usage "instance-id" && return 1
   aws ec2 start-instances --instance-id $1
 }
 
@@ -202,7 +202,7 @@ instance-state() {
 }
 
 instance-stop() {
-  [[ -z "$1" ]] && bma_usage "instance-id" && return 1
+  [[ -z "$1" ]] && __bma_usage "instance-id" && return 1
   aws ec2 stop-instances --instance-id $1
 }
 
