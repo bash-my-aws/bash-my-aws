@@ -27,7 +27,7 @@ _bma_instances_completion() {
 _bma_asgs_completion() {
     local command="\$1"
     local word="\$2"
-    local options=\$(asg)
+    local options=\$(asgs)
 
     COMPREPLY=(\$(compgen -W "\${options}" -- \${word}))
     return 0
