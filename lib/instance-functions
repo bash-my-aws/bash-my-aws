@@ -183,8 +183,9 @@ instance-stack() {
 }
 
 instance-start() {
-  [[ -z "$1" ]] && __bma_usage "instance-id" && return 1
-  aws ec2 start-instances --instance-id $1
+  local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id" && return 1
+  aws ec2 start-instances --instance-id $inputs
 }
 
 instance-state() {
@@ -202,8 +203,9 @@ instance-state() {
 }
 
 instance-stop() {
-  [[ -z "$1" ]] && __bma_usage "instance-id" && return 1
-  aws ec2 stop-instances --instance-id $1
+  local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id" && return 1
+  aws ec2 stop-instances --instance-id $inputs
 }
 
 # Replaces two older functions
