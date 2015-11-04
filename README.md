@@ -216,6 +216,8 @@ alias like this:
 alias instances="instances --query 'Reservations[].Instances[][InstanceId,[Tags[?Key==\`Name\`].Value][0][0]]'"
 ```
 
+And to use the original `instances` function again, you can call `\instances`.
+
 #### Output Style
 
 The `bash-my-aws` commands support all the outputs of `awscli`. As of version
