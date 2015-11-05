@@ -256,13 +256,22 @@ instance-userdata() {
 }
 
 instance-volumes() {
-  # detail
-  # FIXME: The logical json doesn't map well to text.
   local inputs=$(__bma_read_inputs $@)
   local query='
     Reservations[].Instances[][
         InstanceId,
         join(` `, BlockDeviceMappings[].Ebs[].VolumeId)
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
+instance-vpc() {
+  local inputs=$(__bma_read_inputs $@)
+  local query='
+    Reservations[].Instances[][
+        VpcId,
+        InstanceId
     ][]
   '
   instances ${inputs} --query ${query}
