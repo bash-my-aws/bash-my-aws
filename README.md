@@ -193,31 +193,6 @@ $ stack-tail my-stack
 
 ### Advanced Options
 
-
-#### Default Outputs
-
-You can customise your outputs by overriding the default query using the
-`--query` option.
-
-```ShellSession
-$ instances --query 'Reservations[].Instances[][InstanceId,[Tags[?Key==`Name`].Value][0][0]]'
-i-0000000      web
-i-0000001      web
-i-0000002      web
-i-0000003      web
-i-0000004      cache
-i-0000005      database
-```
-
-To make `instances` always output the preferred columns, you can create an
-alias like this:
-
-```Shell
-alias instances="instances --query 'Reservations[].Instances[][InstanceId,[Tags[?Key==\`Name\`].Value][0][0]]'"
-```
-
-And to use the original `instances` function again, you can call `\instances`.
-
 #### Output Style
 
 The `bash-my-aws` commands support all the outputs of `awscli`. As of version
