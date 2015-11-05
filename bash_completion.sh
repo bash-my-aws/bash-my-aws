@@ -27,6 +27,7 @@ _bma_asgs_completion() {
 }
 
 complete -F _bma_instances_completion instances
+complete -F _bma_instances_completion instance-ami
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-console
 complete -F _bma_instances_completion instance-dns

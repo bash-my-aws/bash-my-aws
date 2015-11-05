@@ -50,6 +50,21 @@ instances() {
     --output ${output:-"text"}
 }
 
+instance-ami() {
+  ## detail
+  local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local query='
+    Reservations[].Instances[][
+      {
+        "InstanceId": InstanceId,
+        "ImageId": ImageId
+      }
+    ][]
+  '
+  instances ${inputs} --query ${query}
+}
+
 instance-asg() {
   # type: query
   # returns the autoscaling group an instances is a member of
