@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# ebs-functions
+
+ebss() {
+  # type: query
+  # returns instance id's and the name tag.
+  local inputs=$(__bma_read_inputs $@)
+
+  local default_query='
+    Volumes[].[
+      [
+        VolumeId,
+        Size,
+        State
+      ]
+    ][]
+  '
+
+  local volume_ids=$(__bma_read_resources $inputs)
+  local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  [[ -z $query ]] && query=$default_query
+
+  aws ec2 describe-volumes                                        \
+    $([[ -n ${volume_ids} ]] && echo --volume-ids)   \
+    $(for x in ${volume_ids}; do echo $x; done)                    \
+    $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
+    --query "${query}"                                            \
+    --output ${output:-"text"}
+}
+
+# vim: ft=sh
