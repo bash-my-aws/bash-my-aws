@@ -55,7 +55,6 @@ complete -F _bma_asgs_completion asg-desired-size-set
 complete -F _bma_asgs_completion asg-min-size-set
 complete -F _bma_asgs_completion asg-max-size-set
 complete -F _bma_stacks_completion stacks
-complete -F _bma_stacks_completion stack-create
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stack-delete
 complete -F _bma_stacks_completion stack-failure
