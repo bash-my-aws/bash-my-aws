@@ -52,6 +52,7 @@ instances() {
 
 instance-asg() {
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       {
@@ -66,6 +67,7 @@ instance-asg() {
 instance-console() {
   # detail
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   for instance_id in $(__bma_read_resources ${inputs}); do
     echo Console output for EC2 Instance $instance_id
     aws ec2 get-console-output    \
@@ -79,6 +81,7 @@ instance-console() {
 instance-dns() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       {
@@ -94,6 +97,7 @@ instance-dns() {
 instance-iam-profile() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       [
@@ -108,6 +112,7 @@ instance-iam-profile() {
 instance-ip() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       {
@@ -171,6 +176,7 @@ instance-ssh-details() {
 
 instance-stack() {
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       [
@@ -191,6 +197,7 @@ instance-start() {
 instance-state() {
   ## detail
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       {
@@ -215,6 +222,7 @@ instance-stop() {
 #
 instance-tags() {
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[].[
       InstanceId,
@@ -231,6 +239,7 @@ instance-terminate() {
 
 instance-type() {
   local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
       [
@@ -245,6 +254,7 @@ instance-type() {
 instance-userdata() {
   # detail
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   for instance_id in $(__bma_read_resources ${inputs}); do
     aws ec2 describe-instance-attribute \
       --attribute userData              \
@@ -257,6 +267,7 @@ instance-userdata() {
 
 instance-volumes() {
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
         InstanceId,
@@ -268,6 +279,7 @@ instance-volumes() {
 
 instance-vpc() {
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
     Reservations[].Instances[][
         VpcId,
