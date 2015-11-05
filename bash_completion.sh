@@ -26,6 +26,19 @@ _bma_asgs_completion() {
     return 0
 }
 
+_bma_ebss_completion() {
+    local command="$1"
+    local word="$2"
+
+    case $word in
+      "") options="vol-a vol-b" ;;
+      *) options=$(ebss) ;;
+    esac
+
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
 complete -F _bma_instances_completion instances
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-console
@@ -68,4 +81,5 @@ complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
 complete -F _bma_stacks_completion stack-outputs
 complete -F _bma_stacks_completion stack-diff
+complete -F _bma_ebss_completion ebss
 complete -f stack-validate
