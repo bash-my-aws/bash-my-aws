@@ -15,9 +15,7 @@ _bma_instances_completion() {
 
     case \$word in
       "") options="i-a i-b" ;;
-      *)
-        options=\$(instances)
-      ;;
+      *)  options=\$(instances) ;;
     esac
 
     COMPREPLY=(\$(compgen -W "\${options}" -- \${word}))
