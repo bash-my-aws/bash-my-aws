@@ -43,6 +43,7 @@ for type in instance asg stack; do
 
   for function in ${functions}; do
     [[ "${function}" == "stack-validate" ]] && continue
+    [[ "${function}" == "stack-create" ]] && continue
     echo "complete -F _bma_${type}s_completion ${function}"
   done
 done
