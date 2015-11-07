@@ -1,19 +1,18 @@
+#!/bin/bash
+#
 # parameter.inc
 #
-# Deal with stdin and arguments.
+# Used by bash-my-aws functions to work with stdin and arguments.
 
 __bma_read_inputs() {
-  echo "$(__bma_read_stdin) $@" |
-    sed -E 's/\ +$//'           |
+  echo $(__bma_read_stdin) $@ | 
+    sed -E 's/\ +$//'         | 
     sed -E 's/^\ +//'
 }
 
 __bma_read_stdin() {
   [[ -t 0 ]] ||
-    cat /dev/stdin       |
-      awk '{ print $1 }' |
-      tr '\n' ' '        |
-      sed 's/\ $//'
+    cat | awk '{ print $1 }' | sed 's/\ $//'
 }
 
 __bma_read_resources() {
@@ -26,13 +25,18 @@ __bma_read_switches() {
   result="$(
     __bma_arg_types "$@"    |
       grep '^s:'            |
-      sort                  |
       cut -d: -f2-          |
       sort
   )"
   __bma_expand_switches "${result}"
 }
 
+# Prepend arguments with their type
+# r:resource
+# s:switch
+#
+# Resources cannot be included after switches
+#
 __bma_arg_types() {
   local switched=false
 
