@@ -134,9 +134,9 @@ stack-update() {
 
 stack-delete() {
   local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local first_resource=$(__bma_read_resources ${inputs} | head -1)
   local stack=$(_stack_name_arg $first_resource)
-  [[ -z ${stack} ]]; __bma_usage "stack" && return 1
+  [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   if aws cloudformation delete-stack --stack-name $stack; then
     stack-tail $stack
@@ -146,10 +146,9 @@ stack-delete() {
 stack-failure() {
   # FIXME: only grab the latest failure
   local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local first_resource=$(__bma_read_resources ${inputs} | head -1)
   local stack=$(_stack_name_arg $first_resource)
-
-  if [[ -z ${stack} ]]; then __bma_error "Usage: $FUNCNAME stack" || return 1; fi
+  [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   local query='
     StackEvents[?contains(ResourceStatus,`FAILED`)].[
@@ -168,7 +167,7 @@ stack-failure() {
 
 stack-events() {
   local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local first_resource=$(__bma_read_resources ${inputs} | head -1)
   local stack=$(_stack_name_arg $first_resource)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -194,7 +193,7 @@ stack-events() {
 
 stack-resources() {
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local stack=$(__bma_read_resources ${inputs} | head -1)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='StackResources[].[ PhysicalResourceId, ResourceType ]'
@@ -222,7 +221,7 @@ stack-instances() {
 
 stack-parameters() {
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local stack=$(__bma_read_resources ${inputs} | head -1)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='
