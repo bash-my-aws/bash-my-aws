@@ -3,7 +3,7 @@
 bash-my-aws
 ===========
 
-![caveman](/doc/caveman.jpg)
+![caveman](./doc/caveman.jpg)
 
 bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the
 command line.
