@@ -49,6 +49,28 @@ asg-capacity() {
   asgs ${inputs} --query ${query}
 }
 
+asg-desired-size-set() {
+  # type: action
+  # sets the desired capacity of an autoscaling group
+  local inputs=$(__bma_read_inputs $@)
+  __bma_read_switches ${inputs}
+  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
+
+  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
+     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+    __bma_usage "auto-scaling-group capacity"
+    return 1
+  fi
+
+  for asg in $(__bma_read_resources ${inputs}); do
+    [[ ${asg} == ${capacity} ]] && continue
+    aws autoscaling set-desired-capacity  \
+      --auto-scaling-group-name ${asg}    \
+      --desired-capacity ${capacity}
+  done
+  return ${BMA_STATUS}
+}
+
 asg-instances() {
   # type: query
   # returns the instances of an autoscaling group
@@ -63,6 +85,50 @@ asg-instances() {
   instances                             \
     --filters ${filters}                \
     $(__bma_read_switches ${inputs})
+}
+
+asg-max-size-set() {
+  # type: action
+  # sets the maximum size of an autoscaling group
+  local inputs=$(__bma_read_inputs $@)
+  __bma_read_switches ${inputs}
+  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
+
+  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
+     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+    __bma_usage "auto-scaling-group capacity"
+    return 1
+  fi
+
+  for asg in $(__bma_read_resources ${inputs}); do
+    [[ ${asg} == ${capacity} ]] && continue
+    aws autoscaling update-auto-scaling-group   \
+      --auto-scaling-group-name ${asg}          \
+      --max-size ${capacity}
+  done
+  return ${BMA_STATUS}
+}
+
+asg-min-size-set() {
+  # type: action
+  # sets the minimum size of an autoscaling group
+  local inputs=$(__bma_read_inputs $@)
+  __bma_read_switches ${inputs}
+  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
+
+  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
+     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+    __bma_usage "auto-scaling-group capacity"
+    return 1
+  fi
+
+  for asg in $(__bma_read_resources ${inputs}); do
+    [[ ${asg} == ${capacity} ]] && continue
+    aws autoscaling update-auto-scaling-group   \
+      --auto-scaling-group-name ${asg}          \
+      --min-size ${capacity}
+  done
+  return ${BMA_STATUS}
 }
 
 asg-processes_suspended() {
@@ -101,72 +167,6 @@ asg-suspend() {
   for asg in $(__bma_read_resources ${inputs}); do
     aws autoscaling suspend-processes --auto-scaling-group-name $asg
   done
-}
-
-asg-desired-size-set() {
-  # type: action
-  # sets the desired capacity of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  __bma_read_switches ${inputs}
-  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-
-  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
-     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
-    __bma_usage "auto-scaling-group capacity"
-    return 1
-  fi
-
-  for asg in $(__bma_read_resources ${inputs}); do
-    [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling set-desired-capacity  \
-      --auto-scaling-group-name ${asg}    \
-      --desired-capacity ${capacity}
-  done
-  return ${BMA_STATUS}
-}
-
-asg-min-size-set() {
-  # type: action
-  # sets the minimum size of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  __bma_read_switches ${inputs}
-  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-
-  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
-     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
-    __bma_usage "auto-scaling-group capacity"
-    return 1
-  fi
-
-  for asg in $(__bma_read_resources ${inputs}); do
-    [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling update-auto-scaling-group   \
-      --auto-scaling-group-name ${asg}          \
-      --min-size ${capacity}
-  done
-  return ${BMA_STATUS}
-}
-
-asg-max-size-set() {
-  # type: action
-  # sets the maximum size of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  __bma_read_switches ${inputs}
-  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-
-  if [[ $(__bma_read_resources ${inputs} | wc -l) -ne 2 ]] ||
-     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
-    __bma_usage "auto-scaling-group capacity"
-    return 1
-  fi
-
-  for asg in $(__bma_read_resources ${inputs}); do
-    [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling update-auto-scaling-group   \
-      --auto-scaling-group-name ${asg}          \
-      --max-size ${capacity}
-  done
-  return ${BMA_STATUS}
 }
 
 # vim: ft=sh
