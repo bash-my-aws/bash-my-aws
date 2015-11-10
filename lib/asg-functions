@@ -31,6 +31,8 @@ asgs() {
 }
 
 asg-capacity() {
+  # type: detail
+  # returns min, desired and maximum capacities of autoscaling group
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   local query='
@@ -48,6 +50,8 @@ asg-capacity() {
 }
 
 asg-instances() {
+  # type: query
+  # returns the instances of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   local asg_names=$(__bma_read_resources ${inputs})
@@ -62,6 +66,8 @@ asg-instances() {
 }
 
 asg-processes_suspended() {
+  # type: detail
+  # returns the suspended processes of an autoscaling group
   # TODO: fix the output
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
@@ -78,6 +84,8 @@ asg-processes_suspended() {
 }
 
 asg-resume() {
+  # type: action
+  # resumes all processes of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   for asg in $(__bma_read_resources ${inputs}); do
@@ -86,6 +94,8 @@ asg-resume() {
 }
 
 asg-suspend() {
+  # type: action
+  # suspends all processes of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   for asg in $(__bma_read_resources ${inputs}); do
@@ -94,6 +104,8 @@ asg-suspend() {
 }
 
 asg-desired-size-set() {
+  # type: action
+  # sets the desired capacity of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
@@ -114,6 +126,8 @@ asg-desired-size-set() {
 }
 
 asg-min-size-set() {
+  # type: action
+  # sets the minimum size of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
@@ -134,6 +148,8 @@ asg-min-size-set() {
 }
 
 asg-max-size-set() {
+  # type: action
+  # sets the maximum size of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   __bma_read_switches ${inputs}
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
