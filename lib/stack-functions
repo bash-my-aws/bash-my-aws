@@ -43,8 +43,9 @@ source $(dirname ${BASH_SOURCE[0]})/shared.inc
 #
 # To make it fly we omit stacks with status of DELETE_COMPLETE
 stacks() {
-  # TODO: allow filtering for resources
   # type: query
+  # list the stacks
+  # TODO: allow filtering for resources
   local inputs=$(__bma_read_inputs $@)
 
   if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
@@ -95,6 +96,8 @@ stacks() {
 }
 
 stack-create() {
+  # type: action
+  # create a new stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg $inputs)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
@@ -114,6 +117,8 @@ stack-create() {
 }
 
 stack-update() {
+  # type: action
+  # update an existing stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg $inputs)
   [[ -z ${stack} ]] && __bma_usage "stack [template-file] [params-file]" && return 1
@@ -133,6 +138,8 @@ stack-update() {
 }
 
 stack-delete() {
+  # type: action
+  # delete an existing stack
   local inputs=$(__bma_read_inputs $@)
   local first_resource=$(__bma_read_resources ${inputs} | head -1)
   local stack=$(_stack_name_arg $first_resource)
@@ -144,6 +151,8 @@ stack-delete() {
 }
 
 stack-failure() {
+  # type: detail
+  # return the reason a stack failed to update/create/delete
   # FIXME: only grab the latest failure
   local inputs=$(__bma_read_inputs $@)
   local first_resource=$(__bma_read_resources ${inputs} | head -1)
@@ -166,6 +175,8 @@ stack-failure() {
 }
 
 stack-events() {
+  # type: detail
+  # return the events a stack has experienced
   local inputs=$(__bma_read_inputs $@)
   local first_resource=$(__bma_read_resources ${inputs} | head -1)
   local stack=$(_stack_name_arg $first_resource)
@@ -192,6 +203,8 @@ stack-events() {
 }
 
 stack-resources() {
+  # type: detail
+  # return the resources managed by a stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | head -1)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
@@ -207,19 +220,27 @@ stack-resources() {
 }
 
 stack-asgs() {
+  # type: detail
+  # return the autoscaling groups managed by a stack
   stack-resources $@ | grep AWS::AutoScaling::AutoScalingGroup
 }
 
 stack-elbs() {
+  # type: detail
+  # return the elastic load balancers managed by a stack
   stack-resources $@ | grep AWS::ElasticLoadBalancing::LoadBalancer
 }
 
 stack-instances() {
+  # type: detail
+  # return the instances managed by a stack
   instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | cut -f1)
   [[ -n "$instance_ids" ]] && instances $instance_ids
 }
 
 stack-parameters() {
+  # type: detail
+  # return the parameters applied to a stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | head -1)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
@@ -236,7 +257,8 @@ stack-parameters() {
 }
 
 stack-status() {
-  ## detail
+  # type: detail
+  # return the current status of a stack
   local inputs=$(__bma_read_inputs $@)
   local query='
     StackSummaries[][
@@ -251,6 +273,8 @@ stack-status() {
 
 # Show all events for CF stack until update completes or fails.
 stack-tail() {
+  # type: detail
+  # follow the events occuring for a stack
   local stack=$(__bma_read_inputs $@ | cut -f1)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
   local current
@@ -279,6 +303,8 @@ stack-tail() {
 }
 
 stack-template() {
+  # type: detail
+  # return the template applied to a stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
 
@@ -288,6 +314,8 @@ stack-template() {
 }
 
 stack-outputs() {
+  # type: detail
+  # return the outputs of a stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
@@ -304,14 +332,16 @@ stack-outputs() {
 }
 
 stack-validate() {
+  # type: detail
+  # validate a json stack template
   local inputs=$(__bma_read_inputs $@ | cut -f1)
   [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
   aws cloudformation validate-template --template-body file://$inputs
 }
 
-# Show differences between CloudFormation template and Stack
-
 stack-diff(){
+  # type: detail
+  # return differences between a template and Stack
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "stack [template-file]" && return 1
   _stack_diff_template $inputs
@@ -319,11 +349,11 @@ stack-diff(){
   _stack_diff_params $inputs
 }
 
-# Report on what changes would be made to stack by applying template
 #
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_template() {
+  # report changes which would be made to stack if template were applied
   [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
@@ -346,11 +376,11 @@ _stack_diff_template() {
   fi
 }
 
-# Report on what changes would be made to stack by applying params
 #
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
 _stack_diff_params() {
+  # report on what changes would be made to stack by applying params
   [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
   local stack="$(_stack_name_arg $@)"
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
@@ -380,13 +410,13 @@ _stack_diff_params() {
   fi
 }
 
-# extract the stack name from the template file
 _stack_name_arg() {
+  # extract the stack name from the template file
   basename "$1" .json
 }
 
-# determine name of template to use
 _stack_template_arg() {
+  # determine name of template to use
   local stack="$(_stack_name_arg $@)"
   local template=$2
   if [ -z "$template" ]; then
@@ -399,8 +429,8 @@ _stack_template_arg() {
   echo $template
 }
 
-# determine name of params file to use
 _stack_params_arg() {
+  # determine name of params file to use
   local stack="$(_stack_name_arg $@)"
   local template="$(_stack_template_arg $@)"
   local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)\(.*\)/\1-params\2.json/")};
