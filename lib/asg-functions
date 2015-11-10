@@ -35,12 +35,12 @@ asg-capacity() {
   [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
   local query='
     AutoScalingGroups[][
-      {
-        "AutoScalingGroupName": AutoScalingGroupName,
-        "MinSize": MinSize,
-        "DesiredCapacity": DesiredCapacity,
-        "MaxSize": MaxSize
-      }
+      [
+        AutoScalingGroupName,
+        MinSize,
+        DesiredCapacity,
+        MaxSize
+      ]
     ][]
   '
 
