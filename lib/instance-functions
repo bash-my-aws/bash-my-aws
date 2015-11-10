@@ -51,6 +51,8 @@ instances() {
 }
 
 instance-asg() {
+  # type: query
+  # returns the autoscaling group an instances is a member of
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -65,7 +67,8 @@ instance-asg() {
 }
 
 instance-console() {
-  # detail
+  # type: detail
+  # returns the console output of an instance
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   for instance_id in $(__bma_read_resources ${inputs}); do
@@ -79,7 +82,8 @@ instance-console() {
 }
 
 instance-dns() {
-  ## detail
+  # type: detail
+  # returns the dns name of an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -95,7 +99,8 @@ instance-dns() {
 }
 
 instance-iam-profile() {
-  ## detail
+  # type: detail
+  # returns the iam-profile of an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -110,7 +115,8 @@ instance-iam-profile() {
 }
 
 instance-ip() {
-  ## detail
+  # type: detail
+  # returns the ip address of an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -126,6 +132,8 @@ instance-ip() {
 }
 
 instance-ssh() {
+  # type: action
+  # connects to an instance via SSH
   # XXX Does not work with input from STDIN
 
   # TODO: this may be cleaner
@@ -159,6 +167,8 @@ instance-ssh() {
 }
 
 instance-ssh-details() {
+  # type: detail
+  # returns the details needed to SSH into an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "${inputs}" ]] && __bma_usage "instance_id" && return 1
 
@@ -175,6 +185,8 @@ instance-ssh-details() {
 }
 
 instance-stack() {
+  # type: detail
+  # returns the stack an instances is a member of
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -189,13 +201,16 @@ instance-stack() {
 }
 
 instance-start() {
+  # type: action
+  # starts a stopped instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id" && return 1
   aws ec2 start-instances --instance-id $inputs
 }
 
 instance-state() {
-  ## detail
+  # type: detail
+  # returns the state of an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -210,6 +225,8 @@ instance-state() {
 }
 
 instance-stop() {
+  # type: action
+  # stops a running instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id" && return 1
   aws ec2 stop-instances --instance-id $inputs
@@ -221,6 +238,8 @@ instance-stop() {
 # instances_without_tag() # instance_tags | grep -v expiry=
 #
 instance-tags() {
+  # type: detail
+  # returns the tags applied instances
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -233,11 +252,15 @@ instance-tags() {
 }
 
 instance-terminate() {
+  # type: action
+  # terminates an instance
   aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
   aws ec2 terminate-instances --instance-id $1
 }
 
 instance-type() {
+  # type: detail
+  # returns the type of an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -252,7 +275,8 @@ instance-type() {
 }
 
 instance-userdata() {
-  # detail
+  # type: detail
+  # returns the userdata of an instance
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   for instance_id in $(__bma_read_resources ${inputs}); do
@@ -266,6 +290,8 @@ instance-userdata() {
 }
 
 instance-volumes() {
+  # type: detail
+  # returns the volumes of an instance
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
@@ -280,6 +306,8 @@ instance-volumes() {
 }
 
 instance-vpc() {
+  # type: detail
+  # returns the vpc of an instance
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
