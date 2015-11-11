@@ -12,7 +12,10 @@ __bma_read_inputs() {
 
 __bma_read_stdin() {
   [[ -t 0 ]] ||
-    cat | awk '{ print $1 }' | sed 's/\ $//'
+    cat                  |
+      awk '{ print $1 }' |
+      tr '\n' ' '        |
+      sed 's/\ $//'
 }
 
 __bma_read_resources() {
