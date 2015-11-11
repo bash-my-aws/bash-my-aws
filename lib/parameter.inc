@@ -5,8 +5,8 @@
 # Used by bash-my-aws functions to work with stdin and arguments.
 
 __bma_read_inputs() {
-  echo $(__bma_read_stdin) $@ | 
-    sed -E 's/\ +$//'         | 
+  echo $(__bma_read_stdin) $@ |
+    sed -E 's/\ +$//'         |
     sed -E 's/^\ +//'
 }
 
