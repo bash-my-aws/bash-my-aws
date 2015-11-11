@@ -51,7 +51,8 @@ instances() {
 }
 
 instance-ami() {
-  ## detail
+  # type: detail
+  # returns the ami used by an instance
   local inputs="$(__bma_read_inputs $@)"
   [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local query='
