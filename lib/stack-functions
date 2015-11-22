@@ -99,7 +99,7 @@ stack-create() {
   # type: action
   # create a new stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $inputs)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
 
   local template=$(_stack_template_arg $inputs)
@@ -120,7 +120,7 @@ stack-update() {
   # type: action
   # update an existing stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $inputs)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
 
   local template=$(_stack_template_arg $inputs)
@@ -141,8 +141,7 @@ stack-delete() {
   # type: action
   # delete an existing stack
   local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | head -1)
-  local stack=$(_stack_name_arg $first_resource)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   if aws cloudformation delete-stack --stack-name $stack; then
@@ -155,8 +154,7 @@ stack-failure() {
   # return the reason a stack failed to update/create/delete
   # FIXME: only grab the latest failure
   local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | head -1)
-  local stack=$(_stack_name_arg $first_resource)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   local query='
@@ -178,8 +176,7 @@ stack-events() {
   # type: detail
   # return the events a stack has experienced
   local inputs=$(__bma_read_inputs $@)
-  local first_resource=$(__bma_read_resources ${inputs} | head -1)
-  local stack=$(_stack_name_arg $first_resource)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='
@@ -206,7 +203,7 @@ stack-resources() {
   # type: detail
   # return the resources managed by a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | head -1)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='StackResources[].[ PhysicalResourceId, ResourceType ]'
@@ -242,7 +239,7 @@ stack-parameters() {
   # type: detail
   # return the parameters applied to a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | head -1)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='sort_by(Stacks[].Parameters[], &ParameterKey)'
@@ -274,8 +271,10 @@ stack-status() {
 stack-tail() {
   # type: detail
   # follow the events occuring for a stack
-  local stack=$(__bma_read_inputs $@ | cut -f1)
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
   local current
   local final_line
   local output
@@ -316,7 +315,7 @@ stack-outputs() {
   # type: detail
   # return the outputs of a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(__bma_read_resources ${inputs} | awk '{print $1}')
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local query='
