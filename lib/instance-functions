@@ -204,8 +204,8 @@ instance-start() {
   # type: action
   # starts a stopped instance
   local inputs="$(__bma_read_inputs $@)"
-  [[ -z "$inputs" ]] && __bma_usage "instance-id" && return 1
-  aws ec2 start-instances --instance-id $inputs
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  aws ec2 start-instances --instance-ids $inputs
 }
 
 instance-state() {
@@ -228,8 +228,8 @@ instance-stop() {
   # type: action
   # stops a running instance
   local inputs="$(__bma_read_inputs $@)"
-  [[ -z "$inputs" ]] && __bma_usage "instance-id" && return 1
-  aws ec2 stop-instances --instance-id $inputs
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  aws ec2 stop-instances --instance-ids $inputs
 }
 
 # Replaces two older functions
@@ -254,8 +254,25 @@ instance-tags() {
 instance-terminate() {
   # type: action
   # terminates an instance
-  aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $1
-  aws ec2 terminate-instances --instance-id $1
+  local inputs="$(__bma_read_inputs $@)"
+  local instance_ids="$(__bma_read_resources $inputs)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  echo "You are about to terminate the following instances:"
+  echo "$instance_ids"
+  if [ -t 0 ]; then
+    read -p "Are you sure you want to continue? " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+      for instance_id in $instance_ids; do
+        aws ec2 modify-instance-attribute --attribute disableApiTermination --value false --instance-id $instance_id
+      done
+      aws ec2 terminate-instances --instance-ids $instance_ids
+    fi
+  else
+    echo "Warning. Piped input is disabled for this function for the time being"
+  fi
 }
 
 instance-type() {
@@ -320,31 +337,6 @@ instance-vpc() {
   '
   instances ${inputs} --query ${query} | grep -v ^None
 }
-
-#instance-role() {
-#  local inputs=$(__bma_read_inputs $@ | base64 -D)
-#
-#  local query='
-#    Reservations[].Instances[][
-#      {
-#        "AutoscalingGroupName": [Tags[?Key==`aws:autoscaling:groupName`].Value][0][0],
-#        "InstanceId": InstanceId
-#      }
-#    ][]
-#  '
-#  instances ${inputs} --query ${query}
-#
-#
-#
-#  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id"; return 1; fi
-#  local instance_id=$1
-#  local profile_id=$(aws ec2 describe-instances --instance-id $instance_id \
-#    --query "Reservations[].Instances[].IamInstanceProfile.Id"             \
-#    --output text)
-#  aws iam list-instance-profiles                                                     \
-#    --query "InstanceProfiles[?InstanceProfileId==\`$profile_id\`].Roles[].RoleName" \
-#    --output text
-#}
 
 
 # vim: ft=sh
