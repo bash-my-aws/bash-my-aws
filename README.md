@@ -5,6 +5,8 @@ bash-my-aws
 
 ![caveman](./doc/caveman.jpg)
 
+** 22 Nov 2015 - In breaking (change) news, we're proud to release the complete rework! **
+
 bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the
 command line.
 
@@ -13,7 +15,6 @@ resources in Amazon AWS. The goal is to reduce the time between intention and
 effect.
 
 These functions make extensive use of the incredibly powerful AWSCLI.
-
 
 ## Prerequisites
 
