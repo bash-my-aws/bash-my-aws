@@ -245,15 +245,14 @@ stack-parameters() {
   local stack=$(__bma_read_resources ${inputs} | head -1)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local query='
-    Stacks[].Parameters[]
-  '
+  local query='sort_by(Stacks[].Parameters[], &ParameterKey)'
   local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
   aws cloudformation describe-stacks        \
     --stack-name ${stack}                   \
     --query "${query}"                      \
-    --output ${output:-json}
+    --output ${output:-json}                \
+    jq --sort-keys
 }
 
 stack-status() {
@@ -404,7 +403,7 @@ _stack_diff_params() {
   else
     local DIFF_CMD=diff
   fi
-  $DIFF_CMD -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys . | jp.py 'sort_by(@,&ParameterKey)') --label $params <(jq --sort-keys . $params | jp.py 'sort_by(@,&ParameterKey)' );
+  $DIFF_CMD -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys 'sort_by(.ParameterKey)') --label $params <(jq --sort-keys 'sort_by(.ParameterKey)' $params);
   if [ $? -eq 0 ]; then
     echo "params for stack ($stack) and contents of file ($params) are the same" >&2
   fi

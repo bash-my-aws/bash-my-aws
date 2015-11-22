@@ -17,9 +17,8 @@ These functions make extensive use of the incredibly powerful AWSCLI.
 
 ## Prerequisites
 
-* bash
 * [awscli](http://aws.amazon.com/cli/)
-* jp (installed automatically if you used python-pip to install awscli)
+* [bash](https://www.gnu.org/software/bash/)
 * [jq-1.4](http://stedolan.github.io/jq/download/) or later (for stack-diff)
 
 
