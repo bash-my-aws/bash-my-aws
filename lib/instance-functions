@@ -63,7 +63,7 @@ instance-asg() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 instance-console() {
@@ -95,7 +95,7 @@ instance-dns() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 instance-iam-profile() {
@@ -111,7 +111,7 @@ instance-iam-profile() {
       ]
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 instance-ip() {
@@ -128,7 +128,7 @@ instance-ip() {
       }
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 instance-ssh() {
@@ -197,7 +197,7 @@ instance-stack() {
       ]
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 instance-start() {
@@ -302,7 +302,7 @@ instance-volumes() {
       ]
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 instance-vpc() {
@@ -318,7 +318,7 @@ instance-vpc() {
       ]
     ][]
   '
-  instances ${inputs} --query ${query}
+  instances ${inputs} --query ${query} | grep -v ^None
 }
 
 #instance-role() {
