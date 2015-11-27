@@ -95,6 +95,14 @@ stacks() {
     grep --color=never ${grep_filter:-".*"}
 }
 
+
+stack-cancel-update() {
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
+  aws cloudformation cancel-update-stack --stack-name $stack
+}
+
 stack-create() {
   # type: action
   # create a new stack
