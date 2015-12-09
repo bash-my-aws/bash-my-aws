@@ -157,6 +157,20 @@ stack-delete() {
   fi
 }
 
+stack-recreate() {
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
+
+  local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
+  cd $tmpdir
+  stack-template $stack > $stack.json
+  stack-parameters $stack > $stack-params.json
+  stack-delete $stack
+  stack-create $stack
+  # rm -fr $tmpdir
+}
+
 stack-failure() {
   # type: detail
   # return the reason a stack failed to update/create/delete
