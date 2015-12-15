@@ -2,7 +2,7 @@ _bma_stacks_completion() {
   local command="$1"
   local word="$2"
 
-  case "" in
+  case "${COMP_CWORD}" in
     1)
       COMPREPLY=( $(compgen -W "$(stacks)" -- ${word}) )
       return 0
@@ -37,6 +37,7 @@ _bma_asgs_completion() {
 
 complete -F _bma_instances_completion instances
 complete -F _bma_instances_completion instance-asg
+complete -F _bma_instances_completion instance-az
 complete -F _bma_instances_completion instance-console
 complete -F _bma_instances_completion instance-dns
 complete -F _bma_instances_completion instance-iam-profile

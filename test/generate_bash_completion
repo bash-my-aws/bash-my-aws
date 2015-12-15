@@ -6,7 +6,7 @@ _bma_stacks_completion() {
   local command="\$1"
   local word="\$2"
 
-  case "${COMP_CWORD}" in
+  case "\${COMP_CWORD}" in
     1)
       COMPREPLY=( \$(compgen -W "\$(stacks)" -- \${word}) )
       return 0
