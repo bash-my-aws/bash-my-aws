@@ -66,6 +66,22 @@ instance-asg() {
   instances ${inputs} --query ${query} | grep -v ^None
 }
 
+instance-az() {
+  # type: query
+  # returns the availability zone of an instance
+  local inputs="$(__bma_read_inputs $@)"
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local query='
+    Reservations[].Instances[][
+      [
+        InstanceId,
+        Placement.AvailabilityZone
+      ]
+    ][]
+  '
+  instances ${inputs} --query ${query} | grep -v ^None
+}
+
 instance-console() {
   # type: detail
   # returns the console output of an instance
