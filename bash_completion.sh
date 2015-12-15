@@ -1,8 +1,17 @@
 _bma_stacks_completion() {
-    local command="$1"
-    local word="$2"
-    COMPREPLY=($(compgen -W "$(stacks)" -- ${word}))
-    return 0
+  local command="$1"
+  local word="$2"
+
+  case "" in
+    1)
+      COMPREPLY=( $(compgen -W "$(stacks)" -- ${word}) )
+      return 0
+      ;;
+    *)
+      COMPREPLY=( $(compgen -f ${word}) )
+      return 0
+      ;;
+  esac
 }
 
 _bma_instances_completion() {
@@ -54,6 +63,7 @@ complete -F _bma_stacks_completion stacks
 complete -F _bma_stacks_completion stack-cancel-update
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stack-delete
+complete -F _bma_stacks_completion stack-recreate
 complete -F _bma_stacks_completion stack-failure
 complete -F _bma_stacks_completion stack-events
 complete -F _bma_stacks_completion stack-resources

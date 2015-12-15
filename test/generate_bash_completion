@@ -3,10 +3,19 @@ ROOT_DIR="$(dirname $0)/../"
 
 cat <<EOF
 _bma_stacks_completion() {
-    local command="\$1"
-    local word="\$2"
-    COMPREPLY=(\$(compgen -W "\$(stacks)" -- \${word}))
-    return 0
+  local command="\$1"
+  local word="\$2"
+
+  case "${COMP_CWORD}" in
+    1)
+      COMPREPLY=( \$(compgen -W "\$(stacks)" -- \${word}) )
+      return 0
+      ;;
+    *)
+      COMPREPLY=( \$(compgen -f \${word}) )
+      return 0
+      ;;
+  esac
 }
 
 _bma_instances_completion() {
@@ -42,6 +51,9 @@ for type in instance asg stack; do
   for function in ${functions}; do
     [[ "${function}" == "stack-validate" ]] && continue
     [[ "${function}" == "stack-create" ]] && continue
+    [[ "${function}" == "asg-desired-size-set" ]] && continue
+    [[ "${function}" == "asg-min-size-set" ]] && continue
+    [[ "${function}" == "asg-max-size-set" ]] && continue
     echo "complete -F _bma_${type}s_completion ${function}"
   done
 done
