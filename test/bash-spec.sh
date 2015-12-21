@@ -29,7 +29,7 @@ function output_results {
   local passes=$(printf '%s' "$results" | grep -F PASS | wc -l)
   local fails=$(printf '%s' "$results" | grep -F '**** FAIL' | wc -l )
   printf '%s\n--SUMMARY\n%d PASSED\n%d FAILED\n' "$results" "$passes" "$fails"
-  [[ ${fails:-1} -gt 0 ]]
+  [[ ${fails:-1} -eq 0 ]]
   exit $?
 }
 
