@@ -169,4 +169,17 @@ asg-suspend() {
   done
 }
 
+asg-scaling-activities() {
+  # type: query
+  # show all scaling activities
+  local inputs=$(__bma_read_inputs $@)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
+  for asg in $(__bma_read_resources ${inputs}); do
+    aws autoscaling describe-scaling-activities \
+      --auto-scaling-group-name $asg            \
+      --output ${output:-json}
+  done
+}
+
 # vim: ft=sh
