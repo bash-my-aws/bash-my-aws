@@ -303,7 +303,7 @@ stack-tail() {
   local previous
   until echo "$current" | tail -1 | egrep -q "${stack}.*_(COMPLETE|FAILED)"
   do
-    if ! output=$(stack-events $stack); then
+    if ! output=$(stack-events "$inputs"); then
       # Something went wrong with stack-events (like stack not known)
       return 1
     fi
