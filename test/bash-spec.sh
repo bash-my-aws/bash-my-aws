@@ -74,7 +74,7 @@ function pass {
 }
 
 function fail {
-  echo "**** FAIL - expected:$( if [[ '$_negation_' == true ]]; then echo ' NOT'; fi; ) '$_expected_' | actual: '${_actual_[@]}'"
+  echo "**** FAIL - expected:$( if [[ "$_negation_" == true ]]; then echo ' NOT'; fi; ) '$_expected_' | actual: '${_actual_[@]}'"
 }
 
 function expect {
@@ -114,7 +114,7 @@ function to_be_true {
 function to_match {
   _expected_="$1"
   _pass_=false
-  [[ "${_actual_[0]}" =~ "$_expected_" ]] && _pass_=true
+  [[ "${_actual_[0]}" =~ $_expected_ ]] && _pass_=true
   _negation_check_
 }
 
@@ -128,10 +128,11 @@ function to_contain {
 function to_exist {
   _pass_=false
   _expected_="$_actual_ EXISTS"
-  _actual_="File not found"
   if [[ -e "${_actual_[0]}" ]]; then
     _pass_=true
     [[ "$_negation_" == true ]] && _expected_="$_actual_ EXISTS"
+  else
+    _actual_="File not found"
   fi
   _negation_check_
 }
