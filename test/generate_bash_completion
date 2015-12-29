@@ -39,9 +39,17 @@ _bma_asgs_completion() {
     return 0
 }
 
+_bma_dbs_completion() {
+    local command="\$1"
+    local word="\$2"
+    local options=\$(db-instances --query 'DBInstances[][DBInstanceIdentifier]')
+    COMPREPLY=(\$(compgen -W "\${options}" -- \${word}))
+    return 0
+}
+
 EOF
 
-for type in instance asg stack; do
+for type in instance asg stack db; do
   functions=$(
     cat ${ROOT_DIR}/lib/${type}-functions |
     grep -e "^[^_#][^\ ]*()\ \?{" |

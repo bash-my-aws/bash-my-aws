@@ -1,0 +1,129 @@
+#!/bin/bash
+#
+# rds-functions
+#
+# List Amazon AWS RDS instances
+
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
+
+db-instances() {
+  # type: query
+  # returns db instances and state
+  local inputs=$(__bma_read_inputs $@)
+
+  if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
+    BMA_DEBUG=true
+  else
+    BMA_DEBUG=false
+  fi
+
+  local default_query='
+    DBInstances[][
+        DBInstanceIdentifier,
+        Engine,
+        DBInstanceClass,
+        DBInstanceStatus,
+        MultiAZ,
+        InstanceCreateTime
+    ]
+  '
+
+  local grep_args=$(__bma_read_resources $inputs)
+  local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+
+  if ${BMA_DEBUG}; then
+    echo "inputs: ${inputs}"
+    echo "grep_args: ${grep_args}"
+    echo "filters: ${filters}"
+    echo "query: ${query}"
+    echo "output: ${output}"
+  fi
+
+  [[ -z $query ]] && local query=$default_query
+
+  grep_filter=""
+  for arg in ${grep_args}; do
+    grep_filter+="-e ${arg} "
+  done
+
+  aws rds describe-db-instances                                            \
+    $([[ -n ${filters} ]] && echo "--filters ${filters}")               \
+    --query "${query}"                                                  \
+    --output ${output:-"text"}                                          |
+  grep --color=never ${grep_filter:-".*"}
+}
+
+db-events() {
+  # type: query
+  # returns DB event messages
+
+  local inputs=$(__bma_read_inputs $@)
+
+  if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
+    BMA_DEBUG=true
+  else
+    BMA_DEBUG=false
+  fi
+
+  local grep_args=$(__bma_read_resources $inputs)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  local duration=$(__bma_read_switches $inputs | grep ^--duration | cut -d\  -f2-)
+
+  local default_query='
+    Events[][
+        SourceIdentifier,
+        Date,
+        Message
+    ]
+  '
+  grep_filter=""
+  for arg in ${grep_args}; do
+    grep_filter+="-e ${arg} "
+  done
+
+
+  if ${BMA_DEBUG}; then
+    echo "grep_args: ${grep_args}"
+    echo "duration": ${duration}
+    echo "query: ${query}"
+    echo "output: ${output}"
+  fi
+
+  [[ -z $query ]] && local query=$default_query
+
+  aws rds describe-events                                                   \
+    --query "${query}"                                                      \
+    --duration ${duration:-"60"}                                            \
+    --output ${output:-"text"}                                              |
+  grep --color=never ${grep_filter:-".*"}
+}
+
+db-instance-az() {
+  # type: query
+  # returns the availability zone of a db instance
+  local inputs="$(__bma_read_inputs $@)"
+  local query='
+    DBInstances[][
+        DBInstanceIdentifier,
+        AvailabilityZone
+    ]
+  '
+  db-instances ${inputs} --query ${query}
+}
+
+db-instance-dns() {
+  # type: detail
+  # returns the dns endpoint
+  local inputs="$(__bma_read_inputs $@)"
+  local query='
+    DBInstances[][
+        [Endpoint][*][]]
+  '
+  db-instances ${inputs} --query ${query}
+}
+
+
+# vim: ft=sh
