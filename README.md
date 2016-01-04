@@ -62,9 +62,11 @@ instance-dns          instance-ssh-details  instance-stop         instance-userd
 instance-iam-profile  instance-stack        instance-tags         instance-volumes
 
 $ asg
-asg-capacity             asg-max-size-set         asg-resume               asgs
-asg-desired-size-set     asg-min-size-set         asg-suspend
-asg-instances            asg-processes_suspended  asgard
+asg-capacity             asg-instances
+asg-processes_suspended
+asg-cpu                  asg-ips                  asg-resume
+asg-desired-size-set     asg-max-size-set         asgs
+asg-elb                  asg-min-size-set         asg-suspend
 ```
 
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
