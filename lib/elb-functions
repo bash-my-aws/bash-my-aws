@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# elb-functions
+
+elbs() {
+  # type: query
+  # returns a list of ELBS
+  local inputs=$(__bma_read_inputs $@)
+
+  local default_query='
+    LoadBalancerDescriptions[][
+      {
+        "Name": LoadBalancerName
+      }
+    ][]
+  '
+
+  local elb_names=$(__bma_read_resources $inputs)
+  local filters=$(__bma_read_switches $inputs | grep ^--filters | cut -d\  -f2-)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  [[ -z $query ]] && query=$default_query
+
+  aws elb describe-load-balancers                                 \
+    $([[ -n ${elb_names} ]] && echo --load-balancer-names)        \
+    $(for x in ${elb_names}; do echo $x; done)                    \
+    $([[ -n ${filters} ]] && echo "--filters ${filters}")         \
+    --query "${query}"                                            \
+    --output ${output:-"text"}
+}
