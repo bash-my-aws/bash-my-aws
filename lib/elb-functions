@@ -5,7 +5,8 @@
 elbs() {
   # type: query
   # returns a list of ELBS
-  local inputs=$(__bma_read_inputs $@)
+  # FIXME: support regex against the inputs
+  [[ $# -ne 0 ]] && __bma_usage "" && return 1
 
   local default_query='
     LoadBalancerDescriptions[][
