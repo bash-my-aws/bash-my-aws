@@ -35,6 +35,14 @@ _bma_asgs_completion() {
     return 0
 }
 
+_bma_dbs_completion() {
+    local command="$1"
+    local word="$2"
+    local options=$(db-instances --query 'DBInstances[][DBInstanceIdentifier]')
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
 complete -F _bma_instances_completion instances
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
@@ -77,4 +85,8 @@ complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
 complete -F _bma_stacks_completion stack-outputs
 complete -F _bma_stacks_completion stack-diff
+complete -F _bma_dbs_completion db-instances
+complete -F _bma_dbs_completion db-events
+complete -F _bma_dbs_completion db-instance-az
+complete -F _bma_dbs_completion db-instance-dns
 complete -f stack-validate
