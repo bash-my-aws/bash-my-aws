@@ -35,8 +35,8 @@ elb-instances() {
   # returns launch configuration of an elb
 
   # FIXME: doesn't support multiple ELB names
-  [[ $# -ne 1 ]] && __bma_usage "load-balancer" && return 1
   local inputs=$(__bma_read_inputs $@)
+  [[ -z "${inputs}" ]] && __bma_usage "load-balancer" && return 1
 
   local default_query='
     InstanceStates[][
