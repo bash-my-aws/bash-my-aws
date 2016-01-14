@@ -169,4 +169,20 @@ asg-suspend() {
   done
 }
 
+asg-elb() {
+  # type: detail
+  # returns ELBs associated with an autoscaling group
+  local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
+  local query='
+    AutoScalingGroups[][
+      [
+        LoadBalancerNames
+      ]
+    ]
+  '
+
+  asgs ${inputs} --query ${query}
+}
+
 # vim: ft=sh
