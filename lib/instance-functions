@@ -354,5 +354,23 @@ instance-vpc() {
   instances ${inputs} --query ${query} | grep -v ^None
 }
 
+instance-credits() {
+  # type: detail
+  # returns the number of CPU credits available
+  local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  for instance_id  in $(__bma_read_resources ${inputs}); do
+    local balance=$(aws cloudwatch get-metric-statistics \
+      --dimensions "Name=InstanceId,Value=${instance_id}" \
+      --namespace 'AWS/EC2' \
+      --metric-name 'CPUCreditBalance' \
+      --start-time $(date -u '+%FT%TZ' -d '10 mins ago') \
+      --end-time $(date -u '+%FT%TZ') \
+      --period 300 \
+      --statistics Average \
+      --output text | head -2 | tail -1 | awk '{print $2}' )
+    echo "${instance_id} ${balance}"
+  done
+}
 
 # vim: ft=sh
