@@ -1,3 +1,11 @@
+_bma_elbs_completion() {
+    local command="$1"
+    local word="$2"
+    local options=$(elbs)
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
 _bma_stacks_completion() {
   local command="$1"
   local word="$2"
@@ -60,6 +68,7 @@ complete -F _bma_asgs_completion asg-instances
 complete -F _bma_asgs_completion asg-processes_suspended
 complete -F _bma_asgs_completion asg-resume
 complete -F _bma_asgs_completion asg-suspend
+complete -F _bma_asgs_completion asg-scaling-activities
 complete -F _bma_stacks_completion stacks
 complete -F _bma_stacks_completion stack-cancel-update
 complete -F _bma_stacks_completion stack-update
@@ -77,4 +86,5 @@ complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
 complete -F _bma_stacks_completion stack-outputs
 complete -F _bma_stacks_completion stack-diff
+complete -F _bma_elbs_completion elb-instances
 complete -f stack-validate
