@@ -43,11 +43,19 @@ instances() {
 
   [[ -z $query ]] && local query=$default_query
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
-    $([[ -n ${filters} ]] && echo "--filters ${filters}")               \
-    --query "${query}"                                                  \
-    --output ${output:-"text"}
+  data=$(
+    aws ec2 describe-instances                                            \
+      $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+      $([[ -n ${filters} ]] && echo "--filters ${filters}")               \
+      --query "${query}"                                                  \
+      --output ${output:-"text"}
+  )
+
+  case ${output:-"text"} in
+    "text") echo "${data}" | column -s$'\t' -t ;;
+    "json") echo "${data}" | jq . ;;
+    *)      echo "${data}" ;;
+  esac
 }
 
 instance-asg() {
