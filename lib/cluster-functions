@@ -1,0 +1,125 @@
+#!/bin/bash
+#
+# emr-functions
+
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
+
+clusters() {
+  # type: query
+
+  local default_query='
+    Clusters[][
+      {
+        "Id": Id,
+        "Name": Name,
+        "State": Status.State
+      }
+    ]
+  '
+
+  local inputs=$(__bma_read_inputs $@)
+  local grep_args=$(__bma_read_resources $inputs)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  [[ -z $query ]] && query=$default_query
+
+  local state_switches=$(__bma_read_switches $inputs | grep -E '^--(active|terminated|failed)$')
+  local states=$(__bma_read_switches $inputs | grep ^--states | cut -d\  -f2-)
+  [[ -n $states ]] && state_switches+=" --cluster-states $state"
+
+  local grep_filter=""
+  for arg in ${grep_args}; do
+    grep_filter+="-e ${arg}"
+  done
+
+  aws emr list-clusters \
+    --query "${query}" \
+    $state_switches \
+    --output ${output:-"text"} |
+  grep --color=never ${grep_filter:-".*"}
+}
+
+cluster-instances() {
+  # type: query
+
+  local inputs=$(__bma_read_inputs $@)
+  local clusters=$(__bma_read_resources $inputs)
+  [[ -z "$clusters" ]] && __bma_usage "cluster-id" && return 1
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  local query='
+    Instances[][
+      {
+        "InstanceId": Ec2InstanceId,
+        "State": Status.State,
+        "Ip": PrivateIpAddress
+      }
+    ]
+  '
+
+  # Need to come through instance-groups if you want the InstanceGroupType
+  for cluster in $clusters; do
+    aws emr list-instances \
+      --query "${query}" \
+      --cluster-id "$cluster" \
+      --output ${output:-"text"}
+  done
+}
+
+cluster-instance-groups() {
+  # type: query
+
+  local inputs=$(__bma_read_inputs $@)
+  local clusters=$(__bma_read_resources $inputs)
+  [[ -z "$clusters" ]] && __bma_usage "cluster-id" && return 1
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  local query='
+    Cluster.InstanceGroups[][
+      {
+        "Id": Id,
+        "Name": Name,
+        "InstanceGroupType": InstanceGroupType,
+        "InstanceType": InstanceType,
+        "Market": Market,
+        "RequestedInstanceCount": RequestedInstanceCount,
+        "RunningInstanceCount": RunningInstanceCount
+      }
+    ]
+  '
+  for cluster in $clusters; do
+    aws emr describe-cluster \
+      --query "${query}" \
+      --cluster-id "$cluster" \
+      --output ${output:-"text"}
+  done
+}
+
+cluster-steps() {
+  # type: query
+
+  local inputs=$(__bma_read_inputs $@)
+  local clusters=$(__bma_read_resources $inputs)
+  [[ -z "$clusters" ]] && __bma_usage "cluster-id" && return 1
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  local query='
+    Steps[][
+      {
+        "Id": Id,
+        "Name": Name,
+        "State": Status.State,
+        "Command": {
+          "Jar": Config.Jar,
+          "JarArgs": join('"'"' '"'"', Config.Args)
+        }
+      }
+    ]
+  '
+
+  for cluster in $clusters; do
+    aws emr list-steps \
+      --query "$query" \
+      --cluster-id "$cluster" \
+      --output ${output:-"text"}
+  done
+}
+
+# vim: ft=sh
