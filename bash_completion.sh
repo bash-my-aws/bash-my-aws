@@ -43,6 +43,14 @@ _bma_asgs_completion() {
     return 0
 }
 
+_bma_cluster_completion() {
+    local command="$1"
+    local word="$2"
+    local options=$(clusters --query 'Clusters[][{"Id": Id}][]')
+    COMPREPLY=($(compgen -W "${options}" -- ${word}))
+    return 0
+}
+
 complete -F _bma_instances_completion instances
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
@@ -88,3 +96,7 @@ complete -F _bma_stacks_completion stack-outputs
 complete -F _bma_stacks_completion stack-diff
 complete -F _bma_elbs_completion elb-instances
 complete -f stack-validate
+complete -F _bma_cluster_completion clusters
+complete -F _bma_cluster_completion cluster-instance-groups
+complete -F _bma_cluster_completion cluster-instances
+complete -F _bma_cluster_completion cluster-steps
