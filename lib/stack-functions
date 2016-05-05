@@ -67,7 +67,7 @@ stacks() {
 
   [[ -z $query ]] && local query='StackSummaries[][ StackName ]'
 
-  grep_filter=""
+  local grep_filter=""
   for arg in ${grep_args}; do
     grep_filter+="-e ${arg} "
   done
@@ -253,7 +253,7 @@ stack-elbs() {
 stack-instances() {
   # type: detail
   # return the instances managed by a stack
-  instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | cut -f1)
+  local instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | cut -f1)
   [[ -n "$instance_ids" ]] && instances $instance_ids
 }
 
