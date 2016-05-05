@@ -65,6 +65,9 @@ $ asg
 asg-capacity             asg-max-size-set         asg-resume               asgs
 asg-desired-size-set     asg-min-size-set         asg-suspend
 asg-instances            asg-processes_suspended  asgard
+
+$ cluster
+cluster-instance-groups  cluster-instances        cluster-steps            clusters
 ```
 
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
