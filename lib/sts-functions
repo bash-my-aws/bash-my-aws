@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# sts-functions
+#
+# AWS Simple Token Service functions
+
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
+
+sts-assume-role() {
+  local role_arn=$1
+  [[ -z "${role_arn}" ]] && __bma_usage "role_arn" && return 1
+  aws sts assume-role        \
+    --role-arn $role_arn     \
+    --role-session-name mike \
+    --duration-seconds 900   \
+    --query 'Credentials.[
+               [join(`=`, [`AWS_ACCESS_KEY_ID`, AccessKeyId])],
+               [join(`=`, [`AWS_SECRET_ACCESS_KEY`, SecretAccessKey])],
+               [join(`=`, [`AWS_SESSION_TOKEN`, SessionToken])]
+               ]'            \
+    --output text
+}
