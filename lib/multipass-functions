@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# multipass-functions
+#
+# Assume different IAM Roles and run command
+
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
+
+export BMA_MULTIPASS_DIR=${BMA_MULTIPASS_DIR:-~/.bash-my-aws/multipass-role-arns}
+
+multipass() {
+  [[ -z "$BMA_MULTIPASS_ROLE_ARNS" ]] && echo >&2 "No roles loaded. See multipass-use" && return 1
+  [[ -z "$1" ]] && __bma_usage "'command you want to run as each role'" && return 1
+  for role_arn in $BMA_MULTIPASS_ROLE_ARNS; do
+    echo -n "Account: "
+    echo "$role_arn" | cut -d: -f5
+    env -u AWS_SECURITY_TOKEN $(sts-assume-role "$role_arn") $@
+    echo
+  done
+}
+
+multipass-edit() {
+  mkdir -p "$BMA_MULTIPASS_DIR"
+  "${EDITOR:-vi}" "${BMA_MULTIPASS_DIR}/${1}"
+}
+
+multipass-list() {
+  mkdir -p "$BMA_MULTIPASS_DIR"
+  ls -1 "$BMA_MULTIPASS_DIR"
+}
+
+multipass-use() {
+  [[ -z "$1" ]] && echo >&2 __bma_usage "multipass_role_list" && return 1
+  # tab completion for files
+  export BMA_MULTIPASS_ROLE_ARNS="$(cat "${BMA_MULTIPASS_DIR}/${1}")"
+}
