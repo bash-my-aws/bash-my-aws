@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# bma
+#
+# Provides alternative to loading the functions into your
+# shell environment.
+#
+# Useful for calling a function from another process (like 'env')
+#
+# e.g. env FOO=BAR bma instances
+#
+# Add it to your PATH or copy/link it to somewhere that is
+#
+# Assumes you have installed bash-my-aws to standard location
+
+for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+
+$@
