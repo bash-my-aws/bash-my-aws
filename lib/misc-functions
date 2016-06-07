@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# miscellaneous functions that don't belong anywhere else
+
+regions() {
+  aws ec2 describe-regions --query "Regions[].[RegionName]" --output text
+}
