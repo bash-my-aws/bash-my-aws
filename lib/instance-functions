@@ -3,8 +3,11 @@
 # instance-functions
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
-
-source $(dirname ${BASH_SOURCE[0]})/shared.inc
+if [[ $(basename ${SHELL}) == "zsh" ]]; then
+  source $(dirname ${(%):-%N})/shared.inc
+else
+  source $(dirname ${BASH_SOURCE[0]})/shared.inc
+fi
 
 instances() {
   # type: query

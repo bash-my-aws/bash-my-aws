@@ -4,7 +4,11 @@
 #
 # AWS Simple Token Service functions
 
-source $(dirname ${BASH_SOURCE[0]})/shared.inc
+if [[ $(basename ${SHELL}) == "zsh" ]]; then
+  source $(dirname ${(%):-%N})/shared.inc
+else
+  source $(dirname ${BASH_SOURCE[0]})/shared.inc
+fi
 
 sts-assume-role() {
   local role_arn=$1
