@@ -269,7 +269,7 @@ instance-tags() {
   local query='
     Reservations[].Instances[].[
       InstanceId,
-      join(`" "`, Tags[].[join(`=`,[Key,Value])][])
+      join(`" "`, [Tags[].[join(`=`,[Key,Value])][]][])
     ]
   '
   instances ${inputs} --query ${query}
