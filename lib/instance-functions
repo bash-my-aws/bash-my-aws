@@ -266,7 +266,12 @@ instance-tags() {
   # type: detail
   # returns the tags applied instances
   local inputs="$(__bma_read_inputs $@)"
-  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  if [[ -z "$inputs" ]]; then
+    # Only return error if STDIN is a terminal
+    [[ -t 0 ]] && __bma_usage "instance-id [instance-id]" && return 1
+    # Piping a list of no instances should not return an error
+    return 0 
+  fi
   local query='
     Reservations[].Instances[].[
       InstanceId,
