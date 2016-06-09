@@ -5,17 +5,14 @@
 # Used by bash-my-aws functions to work with stdin and arguments.
 
 __bma_read_inputs() {
+  # combine STDIN with arguments
   echo $(__bma_read_stdin) $@ |
-    sed -E 's/\ +$//'         |
-    sed -E 's/^\ +//'
+    sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
 
 __bma_read_stdin() {
-  [[ -t 0 ]] ||
-    cat                  |
-      awk '{ print $1 }' |
-      tr '\n' ' '        |
-      sed 's/\ $//'
+  # return first item from each line of STDIN if not a terminal
+  [[ -t 0 ]] || awk '{ print $1 }'
 }
 
 __bma_read_resources() {
