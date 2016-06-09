@@ -24,7 +24,8 @@ instances() {
         InstanceType,
         State.Name,
         [Tags[?Key==`Name`].Value][0][0],
-        LaunchTime
+        LaunchTime,
+        Placement.AvailabilityZone
     ]
   '
 
