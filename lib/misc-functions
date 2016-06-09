@@ -5,3 +5,12 @@
 regions() {
   aws ec2 describe-regions --query "Regions[].[RegionName]" --output text
 }
+
+region() {
+  local inputs=$(__bma_read_inputs $@)
+  if [[ -z "$inputs" ]]; then
+    echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
+  else
+    AWS_DEFAULT_REGION="$inputs"
+  fi
+}
