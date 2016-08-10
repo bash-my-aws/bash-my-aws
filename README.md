@@ -31,7 +31,7 @@ $ git clone https://github.com/realestate-com-au/bash-my-aws.git ~/.bash-my-aws
 
 ## Usage
 
-Source the functions you want with something like:
+Source the functions with something like:
 ```ShellSession
 $ for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
 ```
