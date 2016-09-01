@@ -118,7 +118,7 @@ stack-create() {
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
-  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM --disable-rollback
+  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --disable-rollback
   then
     stack-tail $stack
   fi
