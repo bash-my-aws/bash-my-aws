@@ -61,3 +61,27 @@ elb-instances() {
     --output ${output:-"text"}
 }
 
+elb-security-policy() {
+  # type: detail
+  # returns security policy of an elb
+
+  local inputs=$(__bma_read_inputs $@)
+  [[ -z "$inputs" ]] && __bma_usage "[elb]" && return 1
+
+  local default_query='
+    LoadBalancerDescriptions[].{
+      "LoadBalancerName": LoadBalancerName,
+      "PolicyNames": join(` `, ListenerDescriptions[].PolicyNames[])
+    }[]
+  '
+
+  local elb_name=$(__bma_read_resources $inputs)
+  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
+  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
+  [[ -z $query ]] && query=$default_query
+
+  aws elb describe-load-balancers \
+    $([[ -n ${elb_name} ]] && echo --load-balancer-name ${elb_name}) \
+    --query "${query}"                                               \
+    --output ${output:-"text"}
+}
