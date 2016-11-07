@@ -129,20 +129,24 @@ stack-update() {
   # update an existing stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack [template-file or template-s3-url] [parameters-file]" && return 1
 
   local template=$(_stack_template_arg $inputs)
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template}). You can specify alternative template as second argument."
-    return 1
+  # If we don't find the template file, assume the reference is to an s3 bucket
+  if [ -f "$template" ]; then
+    local templatereference="--template-file file://$template"
+  else
+    local templatereference="--template-url $template"
   fi
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
-  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_IAM
+
+  if aws cloudformation update-stack --stack-name $stack $templatereference $parameters --capabilities CAPABILITY_IAM
   then
     stack-tail $stack
   fi
+
 }
 
 stack-delete() {
