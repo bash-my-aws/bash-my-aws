@@ -202,8 +202,8 @@ instance-ssh-details() {
       InstanceId,
       KeyName,
       (PublicIpAddress || PrivateIpAddress),
-      join(` `, [Tags[?Key==`Name`].Value][] || [`not-named`]),
-      join(` `, [Tags[?Key==`default-user`].Value][] || [``])
+      join(`" "`, [Tags[?Key==`Name`].Value][] || [`not-named`]),
+      join(`" "`, [Tags[?Key==`default-user`].Value][] || [``])
     ]
   '
   instances ${inputs} --query ${query}
@@ -345,7 +345,7 @@ instance-volumes() {
     Reservations[].Instances[][
       [
         InstanceId,
-        join(` `, BlockDeviceMappings[].Ebs[].VolumeId)
+        join(`" "`, BlockDeviceMappings[].Ebs[].VolumeId)
       ]
     ][]
   '
