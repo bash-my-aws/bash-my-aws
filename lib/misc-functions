@@ -14,3 +14,7 @@ region() {
     AWS_DEFAULT_REGION="$inputs"
   fi
 }
+
+aws-account-alias() {
+  aws iam list-account-aliases --query AccountAliases --output text
+}
