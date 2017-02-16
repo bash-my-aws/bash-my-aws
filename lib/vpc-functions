@@ -13,5 +13,6 @@ vpcs() {
       Tags[?Key==`aws:cloudformation:stack-name`].Value, 
       Tags[?Key==`version`].Value][]
       ][]' \
-    --output text
+    --output text |
+    column -s$'\t' -t
 }
