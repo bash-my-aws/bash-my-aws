@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# vpc-functions
+
+source $(dirname ${BASH_SOURCE[0]})/shared.inc
+
+vpcs() {
+  aws ec2 describe-vpcs \
+    --query 'Vpcs[].[
+      [VpcId, 
+      ((IsDefault==`false`)&&`not-default`)||`default-vpc`, 
+      Tags[?Key==`Name`].Value, 
+      Tags[?Key==`aws:cloudformation:stack-name`].Value, 
+      Tags[?Key==`version`].Value][]
+      ][]' \
+    --output text
+}
