@@ -6,6 +6,17 @@ regions() {
   aws ec2 describe-regions --query "Regions[].[RegionName]" --output text | sort
 }
 
+region-each() {
+  local old_aws_default_region="$AWS_DEFAULT_REGION"
+  for AWS_DEFAULT_REGION in $(regions); do
+    $@ | sed "s/$/ #${AWS_DEFAULT_REGION}/"
+  done
+  function restore-region(){
+    AWS_DEFAULT_REGION="$old_aws_default_region"
+  }
+  trap restore-region EXIT
+}
+
 region() {
   local inputs=$(__bma_read_inputs $@)
   if [[ -z "$inputs" ]]; then
