@@ -330,7 +330,7 @@ stack-template() {
 
   aws cloudformation get-template   \
     --stack-name ${stack}           \
-    --query TemplateBody | jq -r --sort-keys .
+    --query TemplateBody | jq --raw-output --sort-keys .
 }
 
 stack-outputs() {
