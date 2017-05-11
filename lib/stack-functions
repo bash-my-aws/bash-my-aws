@@ -356,7 +356,13 @@ stack-validate() {
   # validate a json stack template
   local inputs=$(__bma_read_inputs $@ | cut -f1)
   [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
-  aws cloudformation validate-template --template-body file://$inputs
+  size=$(wc -c <"$inputs")
+  if [[ $size -gt 51200 ]]; then
+    # TODO: upload s3 + --template-url
+    __bma_error "template too large: $size bytes, 51200 max"
+  else
+    aws cloudformation validate-template --template-body file://$inputs
+  fi
 }
 
 stack-diff(){
