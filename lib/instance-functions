@@ -25,7 +25,8 @@ instances() {
         State.Name,
         [Tags[?Key==`Name`].Value][0][0],
         LaunchTime,
-        Placement.AvailabilityZone
+        Placement.AvailabilityZone,
+        VpcId
     ]
   '
 
