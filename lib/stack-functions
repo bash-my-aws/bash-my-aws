@@ -103,6 +103,59 @@ stack-cancel-update() {
   aws cloudformation cancel-update-stack --stack-name $stack
 }
 
+stack-change-set-create() {
+  # type: action
+  # create a new stack
+  local change_set_name=$1
+  shift
+  local inputs=$@
+
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  [[ -z ${stack} ]] && __bma_usage "change-set-name stack [template-file] [parameters-file]" && return 1
+
+  local template=$(_stack_template_arg $inputs)
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
+    return 1
+  fi
+  local params=$(_stack_params_arg $inputs)
+  if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
+
+  aws cloudformation create-change-set   \
+    --change-set-name "$change_set_name" \
+    --stack-name "$stack"                \
+    --template-body "file://$template"   \
+    $parameters                       
+}
+
+stack-change-set-details(){
+  local stack=$(_stack_name_arg $1)
+  local change_set=$2
+  [[ -z ${stack} ]] || [[ -z ${change_set} ]] && __bma_usage "stack change-set" && return 1
+  aws cloudformation describe-change-set \
+    --stack-name "$stack"                \
+    --change-set-name "$change_set"
+}
+
+stack-change-set-execute(){
+  local stack=$(_stack_name_arg $1)
+  local change_set=$2
+  [[ -z ${stack} ]] || [[ -z ${change_set} ]] && __bma_usage "stack change-set" && return 1
+  if aws cloudformation execute-change-set \
+    --stack-name "$stack"                  \
+    --change-set-name "$change_set"
+  then
+    stack-tail "$stack"
+  fi
+}
+
+stack-change-sets() {
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+  aws cloudformation list-change-sets --stack-name "$stack"
+}
+
 stack-create() {
   # type: action
   # create a new stack
