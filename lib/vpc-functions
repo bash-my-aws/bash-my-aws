@@ -54,17 +54,7 @@ vpc-igw() {
   done | column -s$'\t' -t
 }
 
-# vpc-instances(){
-#   local vpc_ids="$(__bma_read_inputs $@)"
-#   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
-# 
-#   local vpc_id
-#   for vpc_id in $vpc_ids; do 
-#     aws ec2 describe-instances --filters "Name=vpc-id,Values=vpc-234ce346" --query "Reservations[].Instances[].InstanceId" --output text
-#   done 
-# }
-
-vpc-route-table(){
+vpc-route-tables(){
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
