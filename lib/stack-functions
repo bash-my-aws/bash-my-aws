@@ -210,6 +210,16 @@ stack-delete() {
   fi
 }
 
+# Returns key,value pairs for exports from *all* stacks
+# This breaks from convention for bash-my-aws functions
+# TODO Find a way to make it more consistent
+stack-exports() {
+  aws cloudformation list-exports     \
+    --query 'Exports[].[Name, Value]' \
+    --output text                     |
+  column -s$'\t' -t
+}
+
 stack-recreate() {
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
