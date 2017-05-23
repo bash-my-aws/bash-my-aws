@@ -403,15 +403,11 @@ stack-outputs() {
   local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local query='
-    Stacks[].Outputs[]
-  '
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
-  aws cloudformation describe-stacks        \
-    --stack-name ${stack}                   \
-    --query "${query}"                      \
-    --output ${output:-"text"}
+  aws cloudformation describe-stacks \
+    --stack-name ${stack}            \
+    --query 'Stacks[].Outputs[]'     \
+    --output text                    |
+  column -s$'\t' -t
 }
 
 stack-validate() {
