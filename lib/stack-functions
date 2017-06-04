@@ -2,8 +2,6 @@
 #
 # stack-functions
 
-source $(dirname ${BASH_SOURCE[0]})/shared.inc
-
 ##
 # Suggested stack/template/params naming conventions
 # These are completely optional.
@@ -37,40 +35,10 @@ source $(dirname ${BASH_SOURCE[0]})/shared.inc
 ##
 
 
-# List CF stacks. Optionally filter on stack name.
-# e.g.
-#      stacks foo
+# List CF stacks
 #
 # To make it fly we omit stacks with status of DELETE_COMPLETE
 stacks() {
-  # type: query
-  # list the stacks
-  # TODO: allow filtering for resources
-  local inputs=$(__bma_read_inputs $@)
-
-  if __bma_read_switches ${inputs} | grep ^--debug > /dev/null; then
-    BMA_DEBUG=true
-  else
-    BMA_DEBUG=false
-  fi
-
-  local grep_args=$(__bma_read_resources $inputs)
-  local query=$(__bma_read_switches $inputs | grep ^--query | cut -d\  -f2-)
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
-  if ${BMA_DEBUG}; then
-    echo "inputs: ${inputs}"
-    echo "instance_ids: ${instance_ids}"
-    echo "query: ${query}"
-    echo "output: ${output}"
-  fi
-
-  [[ -z $query ]] && local query='StackSummaries[][ StackName ]'
-
-  local grep_filter=""
-  for arg in ${grep_args}; do
-    grep_filter+="-e ${arg} "
-  done
 
   aws cloudformation list-stacks                      \
     --stack-status                                    \
@@ -89,25 +57,24 @@ stacks() {
       UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS    \
       UPDATE_ROLLBACK_FAILED                          \
       UPDATE_ROLLBACK_IN_PROGRESS                     \
-    --query "${query}"                                \
-    --output ${output:-"text"}                        |
-    sort                                              |
-    grep --color=never ${grep_filter:-".*"}
+    --query "StackSummaries[][ StackName ]"           \
+    --output text                                     |
+    sort
 }
-
 
 stack-cancel-update() {
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
+  local stack=$(_stack_name_arg $(__bma_read_inputs $@))
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
   aws cloudformation cancel-update-stack --stack-name $stack
 }
+
 
 stack-create() {
   # type: action
   # create a new stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
 
   local template=$(_stack_template_arg $inputs)
@@ -118,17 +85,20 @@ stack-create() {
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
-  if aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_NAMED_IAM --disable-rollback
+  if aws cloudformation create-stack             \
+    --stack-name $stack                          \
+    --template-body file://$template $parameters \
+    --capabilities CAPABILITY_NAMED_IAM          \
+    --disable-rollback
   then
     stack-tail $stack
   fi
 }
 
 stack-update() {
-  # type: action
   # update an existing stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg  ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
 
   local template=$(_stack_template_arg $inputs)
@@ -139,7 +109,11 @@ stack-update() {
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
-  if aws cloudformation update-stack --stack-name $stack --template-body file://$template $parameters --capabilities CAPABILITY_NAMED_IAM
+  if aws cloudformation update-stack \
+    --stack-name $stack              \
+    --template-body file://$template \
+    $parameters                      \
+    --capabilities CAPABILITY_NAMED_IAM
   then
     stack-tail $stack
   fi
@@ -149,7 +123,7 @@ stack-delete() {
   # type: action
   # delete an existing stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   if aws cloudformation delete-stack --stack-name $stack; then
@@ -157,9 +131,19 @@ stack-delete() {
   fi
 }
 
+# Returns key,value pairs for exports from *all* stacks
+# This breaks from convention for bash-my-aws functions
+# TODO Find a way to make it more consistent
+stack-exports() {
+  aws cloudformation list-exports     \
+    --query 'Exports[].[Name, Value]' \
+    --output text                     |
+  column -s$'\t' -t
+}
+
 stack-recreate() {
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
@@ -176,66 +160,51 @@ stack-failure() {
   # return the reason a stack failed to update/create/delete
   # FIXME: only grab the latest failure
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
-
-  local query='
-    StackEvents[?contains(ResourceStatus,`FAILED`)].[
-      PhysicalResourceId,
-      Timestamp,
-      ResourceStatusReason
-    ]
-  '
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
 
   aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
-    --query "${query}"                     \
-    --output ${output:-"text"}
+    --query "
+      StackEvents[?contains(ResourceStatus,'FAILED')].[
+        PhysicalResourceId,
+        Timestamp,
+        ResourceStatusReason
+      ]"
+    --output text
 }
 
 stack-events() {
   # type: detail
   # return the events a stack has experienced
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local query='
-    sort_by(StackEvents, &Timestamp)[].[
-      Timestamp,
-      LogicalResourceId,
-      ResourceType,
-      ResourceStatus
-    ]
-  '
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
-  if output=$(aws cloudformation describe-stack-events \
-    --stack-name ${stack}                              \
-    --query "${query}"                                 \
-    --output ${output:-"table"}); then
-    echo "$output" | uniq -u
-  else
-    return $?
-  fi
+  aws cloudformation describe-stack-events \
+    --stack-name ${stack}                  \
+    --query "
+      sort_by(StackEvents, &Timestamp)[].[
+        Timestamp,
+        LogicalResourceId,
+        ResourceType,
+        ResourceStatus
+      ]"                                   \
+    --output table                         | 
+    uniq -u
 }
 
 stack-resources() {
   # type: detail
   # return the resources managed by a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local query='StackResources[].[ PhysicalResourceId, ResourceType ]'
-
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
-  aws cloudformation describe-stack-resources \
-    --stack-name ${stack}                     \
-    --query "${query}"                        \
-    --output ${output:-"text"}
+  aws cloudformation describe-stack-resources                       \
+    --stack-name ${stack}                                           \
+    --query "StackResources[].[ PhysicalResourceId, ResourceType ]" \
+    --output text                                                   
 }
 
 stack-asgs() {
@@ -258,19 +227,15 @@ stack-instances() {
 }
 
 stack-parameters() {
-  # type: detail
   # return the parameters applied to a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local query='sort_by(Stacks[].Parameters[], &ParameterKey)'
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
-  aws cloudformation describe-stacks        \
-    --stack-name ${stack}                   \
-    --query "${query}"                      \
-    --output ${output:-json}                |
+  aws cloudformation describe-stacks                        \
+    --stack-name ${stack}                                   \
+    --query 'sort_by(Stacks[].Parameters[], &ParameterKey)' \
+    --output json                                           |
     jq --sort-keys .
 }
 
@@ -294,7 +259,7 @@ stack-tail() {
   # type: detail
   # follow the events occuring for a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local current
@@ -326,29 +291,25 @@ stack-template() {
   # type: detail
   # return the template applied to a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
 
   aws cloudformation get-template   \
     --stack-name ${stack}           \
-    --query TemplateBody | jq --sort-keys .
+    --query TemplateBody | jq --raw-output --sort-keys .
 }
 
 stack-outputs() {
   # type: detail
   # return the outputs of a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg $(__bma_read_resources ${inputs}))
+  local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local query='
-    Stacks[].Outputs[]
-  '
-  local output=$(__bma_read_switches $inputs | grep ^--output | cut -d\  -f2-)
-
-  aws cloudformation describe-stacks        \
-    --stack-name ${stack}                   \
-    --query "${query}"                      \
-    --output ${output:-"text"}
+  aws cloudformation describe-stacks \
+    --stack-name ${stack}            \
+    --query 'Stacks[].Outputs[]'     \
+    --output text                    |
+  column -s$'\t' -t
 }
 
 stack-validate() {
@@ -356,7 +317,14 @@ stack-validate() {
   # validate a json stack template
   local inputs=$(__bma_read_inputs $@ | cut -f1)
   [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
-  aws cloudformation validate-template --template-body file://$inputs
+  size=$(wc -c <"$inputs")
+  if [[ $size -gt 51200 ]]; then
+    # TODO: upload s3 + --template-url
+    __bma_error "template too large: $size bytes, 51200 max"
+    return 1
+  else
+    aws cloudformation validate-template --template-body file://$inputs
+  fi
 }
 
 stack-diff(){
@@ -390,7 +358,16 @@ _stack_diff_template() {
   else
     local DIFF_CMD=diff
   fi
-  $DIFF_CMD -u --label stack <(aws cloudformation get-template  --stack-name $stack --query TemplateBody | jq --sort-keys .) --label $template <(jq --sort-keys . $template)
+
+  $DIFF_CMD -u \
+    --label stack \
+      <(aws cloudformation get-template  \
+          --stack-name $stack            \
+          --query TemplateBody           | 
+        jq --sort-keys .)                \
+     --label $template                   \
+       <(jq --sort-keys . $template)
+
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
   fi
@@ -424,19 +401,30 @@ _stack_diff_params() {
   else
     local DIFF_CMD=diff
   fi
-  $DIFF_CMD -u --label params <(aws cloudformation describe-stacks --query "Stacks[].Parameters[]" --stack-name $stack | jq --sort-keys 'sort_by(.ParameterKey)') --label $params <(jq --sort-keys 'sort_by(.ParameterKey)' $params);
+
+  $DIFF_CMD -u                                   \
+    --label params                               \
+      <(aws cloudformation describe-stacks       \
+          --query "Stacks[].Parameters[]"        \
+          --stack-name $stack                    | 
+        jq --sort-keys 'sort_by(.ParameterKey)') \
+    --label $params                              \
+      <(jq --sort-keys 'sort_by(.ParameterKey)' $params)
+
   if [ $? -eq 0 ]; then
     echo "params for stack ($stack) and contents of file ($params) are the same" >&2
   fi
 }
 
 _stack_name_arg() {
-  # extract the stack name from the template file
-  basename "$1" .json
+  # Extract the stack name from the template file
+  # Allows us to specify template name as stack name
+  # File extension gets stripped off
+  basename "$1" | sed 's/[.].*$//' # remove file extension
 }
 
 _stack_template_arg() {
-  # determine name of template to use
+  # Determine name of template to use
   local stack="$(_stack_name_arg $@)"
   local template=$2
   if [ -z "$template" ]; then

@@ -11,7 +11,7 @@ describe "_stack_name_arg:" "$(
     expect "$(_stack_name_arg "argument")" to_be "argument"
   )"
 
-  context "with a json file" "$(
+  context "with a file extension" "$(
     expect "$(_stack_name_arg "file.json")" to_be "file"
   )"
 
@@ -19,8 +19,20 @@ describe "_stack_name_arg:" "$(
     expect "$(_stack_name_arg "/path/to/file.json")" to_be "file"
   )"
 
+  context "with a yaml file" "$(
+    expect "$(_stack_name_arg "file.yaml")" to_be "file"
+  )"
+
+  context "with a yml file" "$(
+    expect "$(_stack_name_arg "file.yml")" to_be "file"
+  )"
+
+  context "with a full yaml path" "$(
+    expect "$(_stack_name_arg "/path/to/file.yaml")" to_be "file"
+  )"
+
   context "with a full xml path" "$(
-    expect "$(_stack_name_arg "/path/to/file.xml")" to_be "file.xml"
+    expect "$(_stack_name_arg "/path/to/file.xml")" to_be "file"
   )"
 )"
 

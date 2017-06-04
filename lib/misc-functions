@@ -3,7 +3,10 @@
 # miscellaneous functions that don't belong anywhere else
 
 regions() {
-  aws ec2 describe-regions --query "Regions[].[RegionName]" --output text | sort
+  aws ec2 describe-regions           \
+    --query "Regions[].[RegionName]" \
+    --output text                    | 
+  sort
 }
 
 region-each() {
@@ -11,10 +14,7 @@ region-each() {
   for AWS_DEFAULT_REGION in $(regions); do
     $@ | sed "s/$/ #${AWS_DEFAULT_REGION}/"
   done
-  function restore-region(){
-    AWS_DEFAULT_REGION="$old_aws_default_region"
-  }
-  trap restore-region EXIT
+  AWS_DEFAULT_REGION="$old_aws_default_region"
 }
 
 region() {
@@ -27,5 +27,7 @@ region() {
 }
 
 aws-account-alias() {
-  aws iam list-account-aliases --query AccountAliases --output text
+  aws iam list-account-aliases \
+    --query AccountAliases     \
+    --output text
 }
