@@ -24,16 +24,6 @@ There are some great things about `bash-my-aws` which I would hate to lose.
 * Simple tasks have simple commands.
 * It's really easy to extend.
 
-However, that only goes as far as making me excited about working on the
-project. I want to make it more consistent and more intuitive.
-
-`bash-my-aws` should work *with* `awscli`, not against it. It should behave
-more like a wrapper and less like a separate tool. When you pass in default
-`awscli` [arguments](http://docs.aws.amazon.com/cli/latest/reference/#options)
-options, you should expect them to work. Likewise, if you set [environment
-variables](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html),
-they should always work too.
-
 stdin should always be supported. You should be able to pipe one function into
 the next with ease. If an action function cannot be piped the output of a query
 function and have it work, without manipulation though other tools, then
@@ -104,8 +94,6 @@ Some example usage of this function would be:
 
 Detail functions are always namespaced under the singular of the resource.
 
-TODO: lets talk about the details.
-
 Some example usage of this function would be:
 
     $ <resource> <resource_id>
@@ -135,8 +123,6 @@ Some example responses:
 
 Action functions are always namespaced under the singular of the resource and are suffixed with the action they are responsible for undertaking.
 
-TODO: lets talk about the details.
-
 Some example usage of this function would be:
 
     $ <resource>_<action> <resource_id>
@@ -147,16 +133,7 @@ Some example usage of this function would be:
 You can start the test suite by running the command `make test`.
 
 
-# Parameters
-
-bash-my-aws is very but specific about how parameters are passed into it.
-
 ## STDIN
 
 * The first word of each line must be a resource.
 * Additional information will be disregarded.
-
-## ARGV
-
-* Switches are specified by their long name of --switch-name.
-* The thing immediately after a switch-name is the switch value unless it starts with a '--'.
