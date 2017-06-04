@@ -43,16 +43,6 @@ _bma_asgs_completion() {
     return 0
 }
 
-_bma_multipass_completion() {
-    local command="$1"
-    local word="$2"
-    local options="$(ls $BMA_MULTIPASS_DIR)"
-    COMPREPLY=($(compgen -W "${options}" -- ${word}))
-}
-
-complete -F _bma_multipass_completion multipass-edit
-complete -F _bma_multipass_completion multipass-use
-
 complete -F _bma_instances_completion instances
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
@@ -83,6 +73,7 @@ complete -F _bma_stacks_completion stacks
 complete -F _bma_stacks_completion stack-cancel-update
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stack-delete
+complete -F _bma_stacks_completion stack-exports
 complete -F _bma_stacks_completion stack-recreate
 complete -F _bma_stacks_completion stack-failure
 complete -F _bma_stacks_completion stack-events
