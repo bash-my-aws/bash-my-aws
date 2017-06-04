@@ -62,9 +62,7 @@ stacks() {
     sort
 }
 
-# XXX test
 stack-cancel-update() {
-  local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg $(__bma_read_inputs $@))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
