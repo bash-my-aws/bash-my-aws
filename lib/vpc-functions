@@ -2,8 +2,6 @@
 #
 # vpc-functions
 
-source $(dirname ${BASH_SOURCE[0]})/shared.inc
-
 vpcs() {
   local vpc_ids="$(__bma_read_inputs $@)"
 

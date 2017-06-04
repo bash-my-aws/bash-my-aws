@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# internal-functions
+#
+# Used by bash-my-aws functions to work with stdin and arguments.
+
+__bma_read_inputs() {
+  echo $(__bma_read_stdin) $@ |
+    sed -E 's/\ +$//'         |
+    sed -E 's/^\ +//'
+}
+
+__bma_read_stdin() {
+  [[ -t 0 ]] ||
+    cat                  |
+      awk '{ print $1 }' |
+      tr '\n' ' '        |
+      sed 's/\ $//'
+}
+
+__bma_error() {
+  echo "ERROR: $@" > /dev/stderr
+  return 1
+}
+
+__bma_usage() {
+  echo "USAGE: ${FUNCNAME[1]} $@" > /dev/stderr
+}
+
+## vim: ft=sh

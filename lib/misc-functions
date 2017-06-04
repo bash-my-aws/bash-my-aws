@@ -3,7 +3,10 @@
 # miscellaneous functions that don't belong anywhere else
 
 regions() {
-  aws ec2 describe-regions --query "Regions[].[RegionName]" --output text | sort
+  aws ec2 describe-regions           \
+    --query "Regions[].[RegionName]" \
+    --output text                    | 
+  sort
 }
 
 region-each() {
@@ -24,5 +27,7 @@ region() {
 }
 
 aws-account-alias() {
-  aws iam list-account-aliases --query AccountAliases --output text
+  aws iam list-account-aliases \
+    --query AccountAliases     \
+    --output text
 }
