@@ -72,6 +72,7 @@ complete -F _bma_instances_completion instance-type
 complete -F _bma_instances_completion instance-userdata
 complete -F _bma_instances_completion instance-volumes
 complete -F _bma_instances_completion instance-vpc
+complete -F _bma_instances_completion instance-credits
 complete -F _bma_asgs_completion asgs
 complete -F _bma_asgs_completion asg-capacity
 complete -F _bma_asgs_completion asg-instances
