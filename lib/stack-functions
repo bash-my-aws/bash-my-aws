@@ -2,7 +2,11 @@
 #
 # stack-functions
 
-source $(dirname ${BASH_SOURCE[0]})/shared.inc
+if [[ $(basename ${SHELL}) == "zsh" ]]; then
+  source $(dirname ${(%):-%N})/shared.inc
+else
+  source $(dirname ${BASH_SOURCE[0]})/shared.inc
+fi
 
 ##
 # Suggested stack/template/params naming conventions

@@ -1,8 +1,11 @@
 # shared.inc
 #
 # Source in the internal functions
-
-source $(dirname ${BASH_SOURCE[0]})/parameter.inc
+if [[ $(basename ${SHELL}) == "zsh" ]]; then
+  source $(dirname ${(%):-%N})/parameter.inc
+else
+  source $(dirname ${BASH_SOURCE[0]})/parameter.inc
+fi
 
 __bma_error() {
   echo "ERROR: $@" > /dev/stderr

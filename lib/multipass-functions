@@ -4,7 +4,11 @@
 #
 # Assume different IAM Roles and run command
 
-source $(dirname ${BASH_SOURCE[0]})/shared.inc
+if [[ $(basename ${SHELL}) == "zsh" ]]; then
+  source $(dirname ${(%):-%N})/shared.inc
+else
+  source $(dirname ${BASH_SOURCE[0]})/shared.inc
+fi
 
 export BMA_MULTIPASS_DIR=${BMA_MULTIPASS_DIR:-~/.bash-my-aws/multipass-role-arns}
 
