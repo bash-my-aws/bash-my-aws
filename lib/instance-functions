@@ -213,8 +213,8 @@ instance-start() {
 
 instance-state() {
   # returns the state of an instance
-  local inputs="$(__bma_read_inputs $@)"
-  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
   
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
@@ -285,10 +285,9 @@ instance-terminate() {
 
 instance-type() {
   # returns the type of an instance
-  local inputs="$(__bma_read_inputs $@)"
-  [[ -z "$inputs" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  local query='
-  '
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
