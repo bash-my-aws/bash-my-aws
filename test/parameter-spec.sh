@@ -11,13 +11,6 @@ describe "bma_read_stdin:" "$(
     expect "$(echo "a blah" | __bma_read_stdin)" to_be "a"
   )"
 
-  context "single word on multi line" "$(
-    expect "$(printf "a\nb" | __bma_read_stdin)" to_be "a b"
-  )"
-
-  context "multi word on a single line" "$(
-    expect "$(printf "a blah\nb else\n" | __bma_read_stdin)" to_be "a b"
-  )"
 )"
 
 describe "bma_read_inputs:" "$(
