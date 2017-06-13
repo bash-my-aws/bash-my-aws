@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# cloudtrail-functions
+
+function cloudtrails() {
+  aws cloudtrail describe-trails --query " \
+    trailList[].[
+      Name, 
+      S3BucketName, 
+      HomeRegion, 
+      join('=', ['IsMultiRegionTrail', to_string(IsMultiRegionTrail)]), 
+      join('=', ['IsMultiRegionTrail', to_string(IncludeGlobalServiceEvents)])
+    ]
+  " \
+  --output text
+}
+
