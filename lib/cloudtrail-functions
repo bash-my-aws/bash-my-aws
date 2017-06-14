@@ -9,7 +9,7 @@ function cloudtrails() {
       S3BucketName, 
       HomeRegion, 
       join('=', ['IsMultiRegionTrail', to_string(IsMultiRegionTrail)]), 
-      join('=', ['IsMultiRegionTrail', to_string(IncludeGlobalServiceEvents)])
+      join('=', ['IncludeGlobalServiceEvents', to_string(IncludeGlobalServiceEvents)])
     ]
   " \
   --output text
