@@ -170,7 +170,7 @@ stack-failure() {
         PhysicalResourceId,
         Timestamp,
         ResourceStatusReason
-      ]"
+      ]" \
     --output text
 }
 
