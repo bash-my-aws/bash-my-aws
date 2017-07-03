@@ -181,7 +181,7 @@ stack-events() {
   local stack=$(_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  aws cloudformation describe-stack-events \
+  if output=$(aws cloudformation describe-stack-events \
     --stack-name ${stack}                  \
     --query "
       sort_by(StackEvents, &Timestamp)[].[
@@ -190,8 +190,11 @@ stack-events() {
         ResourceType,
         ResourceStatus
       ]"                                   \
-    --output table                         | 
-    uniq -u
+    --output table); then 
+    echo "$output" | uniq -u
+  else
+    return $?
+  fi
 }
 
 stack-resources() {
