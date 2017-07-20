@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# s3-functions
+
+buckets() {
+  aws s3api list-buckets \
+    --query "Buckets[].[Name, CreationDate]" \
+    --output text | 
+  column -t
+}
+
+bucket-acls() {
+  local buckets=$(__bma_read_inputs $@)
+  [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
+
+  local bucket
+  for bucket in $buckets; do
+    aws s3api get-bucket-acl \
+      --bucket "$bucket"     \
+      --query "[
+         '$bucket', 
+         join(' ', Grants[?Grantee.Type=='Group'].[join('=',[Permission, Grantee.URI])][])
+      ]" \
+      --output text |
+      sed 's#http://acs.amazonaws.com/groups/##g' 
+  done | column -t
+}
+
