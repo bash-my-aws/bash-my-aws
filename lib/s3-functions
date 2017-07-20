@@ -23,6 +23,6 @@ bucket-acls() {
       ]" \
       --output text |
       sed 's#http://acs.amazonaws.com/groups/##g' 
-  done | column -t
+  done
 }
 
