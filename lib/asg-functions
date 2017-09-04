@@ -19,8 +19,8 @@ asgs() {
 
 asg-capacity() {
   # returns min, desired and maximum capacities of autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names=$(__bma_read_inputs $@)
+  [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
 
   aws autoscaling describe-auto-scaling-groups                             \
     $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names $asg_names) \
