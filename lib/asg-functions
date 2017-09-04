@@ -38,10 +38,10 @@ asg-capacity() {
 asg-desired-size-set() {
   # sets the desired capacity of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
+  local asg_names="$(echo ${inputs} | awk '{$NF=""; print $0}')"
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  if [[ $(echo ${inputs} | wc -l) -ne 2 ]] ||
-     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+  if [[ -z "${asg_names}" ]] || [[ "${capacity}" =~ [^0-9]+ ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
   fi
