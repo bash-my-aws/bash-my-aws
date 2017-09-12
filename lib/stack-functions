@@ -75,7 +75,7 @@ stack-create() {
   # create a new stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=VALUE | --role-arn=VALUE]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=OPTIONAL_VALUE] [--arn=OPTIONAL_VALUE]" && return 1
 
   local template=$(_stack_template_arg $inputs)
   if [ ! -f "$template" ]; then
@@ -104,15 +104,13 @@ stack-create() {
     fi
   done
 
-  echo "aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters $capabilities $arn"
-
-  #if aws cloudformation create-stack                                   \
-  #  --stack-name $stack                                                \
-  #  --template-body file://$template $parameters $capabilities $arn    \
-  #  --disable-rollback
-  #then
-  #  stack-tail $stack
-  #fi
+  if aws cloudformation create-stack                                   \
+    --stack-name $stack                                                \
+    --template-body file://$template $parameters $capabilities $arn    \
+    --disable-rollback
+  then
+    stack-tail $stack
+  fi
 }
 
 stack-update() {
