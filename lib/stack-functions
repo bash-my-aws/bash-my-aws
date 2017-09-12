@@ -90,7 +90,7 @@ stack-create() {
   local capabilities=''
   local inputs_array=($inputs)
 
-  IFS='='
+  local IFS='='
   for index in "${inputs_array[@]}" ; do
     if [[ "$index" =~ ^\-\-arn=.* ]] ; then
       read arn_opt arn_arg <<< "$index" # ignore anything after
