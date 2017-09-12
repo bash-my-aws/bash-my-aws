@@ -75,24 +75,44 @@ stack-create() {
   # create a new stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=VALUE | --role-arn=VALUE]" && return 1
 
   local template=$(_stack_template_arg $inputs)
   if [ ! -f "$template" ]; then
     echo "Could not find template (${template}). You can specify alternative template as second argument."
     return 1
   fi
+
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
-  if aws cloudformation create-stack             \
-    --stack-name $stack                          \
-    --template-body file://$template $parameters \
-    --capabilities CAPABILITY_NAMED_IAM          \
-    --disable-rollback
-  then
-    stack-tail $stack
-  fi
+  local arn=''
+  local capabilities=''
+  local inputs_array=($inputs)
+
+  IFS='='
+  for index in "${inputs_array[@]}" ; do
+    if [[ "$index" =~ ^\-\-arn=.* ]] ; then
+      read arn_opt arn_arg <<< "$index" # ignore anything after
+      arn="--role-arn $arn_arg"
+      inputs_array=("${inputs_array[@]:1}") # shift
+    fi
+    if [[ "$index" =~ ^\-\-capabilities=.* ]] ; then
+      read caps_opt caps_arg <<< "$index" # ignore anything after
+      capabilities="--capabilities $caps_arg"
+      inputs_array=("${inputs_array[@]:1}") # shift
+    fi
+  done
+
+  echo "aws cloudformation create-stack --stack-name $stack --template-body file://$template $parameters $capabilities $arn"
+
+  #if aws cloudformation create-stack                                   \
+  #  --stack-name $stack                                                \
+  #  --template-body file://$template $parameters $capabilities $arn    \
+  #  --disable-rollback
+  #then
+  #  stack-tail $stack
+  #fi
 }
 
 stack-update() {
@@ -109,11 +129,14 @@ stack-update() {
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
+  local caps=$(aws cloudformation describe-stacks --stack-name "$stack" --output text | awk /CAPABILITIES/'{print $2}')
+  if [ "$caps" != "" ] ; then local capabilities="--capabilities $caps" ; fi
+
   if aws cloudformation update-stack \
     --stack-name $stack              \
     --template-body file://$template \
     $parameters                      \
-    --capabilities CAPABILITY_NAMED_IAM
+    $capabilities
   then
     stack-tail $stack
   fi
@@ -207,7 +230,7 @@ stack-resources() {
   aws cloudformation describe-stack-resources                       \
     --stack-name ${stack}                                           \
     --query "StackResources[].[ PhysicalResourceId, ResourceType ]" \
-    --output text                                                   
+    --output text
 }
 
 stack-asgs() {
