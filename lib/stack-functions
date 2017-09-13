@@ -473,7 +473,7 @@ _stack_params_arg() {
 
 _get_stack_capabilities() {
   # determine what (if any) capabilities a given stack was deployed with
-  local capabilities=$(aws cloudformation describe-stacks --stack-name "$1" --output text | awk /CAPABILITIES/'{print $2}')
+  local capabilities=$(aws cloudformation describe-stacks --stack-name "$1" --query 'Stacks[].Capabilities' --output text)
   echo $capabilities
 }
 
