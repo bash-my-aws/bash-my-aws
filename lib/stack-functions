@@ -126,8 +126,8 @@ stack-update() {
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
   local capabilities=''
-  local caps=$(_get_stack_capabilities $stack)
-  if [ "$caps" != "" ] ; then capabilities="--capabilities $caps" ; fi
+  local capabilities_value=$(_get_stack_capabilities $stack)
+  if [ "$capabilities_value" != "" ] ; then capabilities="--capabilities $capabilities_value" ; fi
 
   if aws cloudformation update-stack \
     --stack-name $stack              \
