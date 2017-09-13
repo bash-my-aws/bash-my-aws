@@ -73,7 +73,7 @@ stack-create() {
   # create a new stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=OPTIONAL_VALUE] [--arn=OPTIONAL_VALUE]" && return 1
+  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]" && return 1
 
   local template=$(_stack_template_arg $inputs)
   if [ ! -f "$template" ]; then
@@ -90,7 +90,7 @@ stack-create() {
   local IFS='=' # override default field separator in the scope of this function only
 
   for index in "${inputs_array[@]}" ; do
-    if [[ "$index" =~ ^\-\-arn=.* ]] ; then
+    if [[ "$index" =~ ^\-\-role\-arn=.* ]] ; then
       read arn_opt arn_arg <<< "$index" # ignore anything after option + arg
       arn="--role-arn $arn_arg"
     elif [[ "$index" =~ ^\-\-capabilities=.* ]] ; then
@@ -442,7 +442,7 @@ _stack_name_arg() {
   # Extract the stack name from the template file
   # Allows us to specify template name as stack name
   # File extension gets stripped off
-  if [[ $1 =~ ^\-\-arn=.*|^\-\-capabilities=.* ]] ; then
+  if [[ $1 =~ ^\-\-role\-arn=.*|^\-\-capabilities=.* ]] ; then
     return 1
   fi
   basename "$1" | sed 's/[.].*$//' # remove file extension
@@ -459,7 +459,7 @@ _stack_template_arg() {
       template="${stack%-*}.json"
     fi
   fi
-  if [[ $template =~ ^\-\-arn=.*|^\-\-capabilities=.* ]] ; then
+  if [[ $template =~ ^\-\-role\-arn=.*|^\-\-capabilities=.* ]] ; then
     return 1
   fi
   echo $template
