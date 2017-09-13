@@ -93,17 +93,18 @@ stack-create() {
     if [[ "$index" =~ ^\-\-arn=.* ]] ; then
       read arn_opt arn_arg <<< "$index" # ignore anything after option + arg
       arn="--role-arn $arn_arg"
-      inputs_array=("${inputs_array[@]:1}") # shift
     elif [[ "$index" =~ ^\-\-capabilities=.* ]] ; then
       read caps_opt caps_arg <<< "$index" # ignore anything after option + arg
       capabilities="--capabilities $caps_arg"
-      inputs_array=("${inputs_array[@]:1}") # shift
     fi
   done
 
-  if aws cloudformation create-stack                                   \
-    --stack-name $stack                                                \
-    --template-body file://$template $parameters $capabilities $arn    \
+  if aws cloudformation create-stack \
+    --stack-name $stack              \
+    --template-body file://$template \
+    $parameters                      \
+    $capabilities                    \
+    $arn                             \
     --disable-rollback
   then
     stack-tail $stack
@@ -126,7 +127,7 @@ stack-update() {
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
   local capabilities=''
-  local capabilities_value=$(_get_stack_capabilities $stack)
+  local capabilities_value=$(_stack_capabilities $stack)
   if [ "$capabilities_value" != "" ] ; then capabilities="--capabilities $capabilities_value" ; fi
 
   if aws cloudformation update-stack \
@@ -267,7 +268,7 @@ stack-status() {
   # return the current status of a stack
   local stack=$(__bma_read_inputs $@)
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
-  
+
   aws cloudformation describe-stacks                   \
     --stack-name ${stack}                              \
     --query "Stacks[][ [ StackName, StackStatus ] ][]" \
@@ -441,6 +442,9 @@ _stack_name_arg() {
   # Extract the stack name from the template file
   # Allows us to specify template name as stack name
   # File extension gets stripped off
+  if [[ $1 =~ ^\-\-arn=.*|^\-\-capabilities=.* ]] ; then
+    return 1
+  fi
   basename "$1" | sed 's/[.].*$//' # remove file extension
 }
 
@@ -456,7 +460,7 @@ _stack_template_arg() {
     fi
   fi
   if [[ $template =~ ^\-\-arn=.*|^\-\-capabilities=.* ]] ; then
-    __bma_usage "when supplying --arn or --capabilities you must first supply (at least) a stack name and a template file" && return 1
+    return 1
   fi
   echo $template
 }
@@ -471,10 +475,9 @@ _stack_params_arg() {
   fi
 }
 
-_get_stack_capabilities() {
+_stack_capabilities() {
   # determine what (if any) capabilities a given stack was deployed with
-  local capabilities=$(aws cloudformation describe-stacks --stack-name "$1" --query 'Stacks[].Capabilities' --output text)
-  echo $capabilities
+  aws cloudformation describe-stacks --stack-name "$1" --query 'Stacks[].Capabilities' --output text
 }
 
 ## vim: ft=sh
