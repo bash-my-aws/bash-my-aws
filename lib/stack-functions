@@ -39,7 +39,6 @@
 #
 # To make it fly we omit stacks with status of DELETE_COMPLETE
 stacks() {
-
   aws cloudformation list-stacks                      \
     --stack-status                                    \
       CREATE_COMPLETE                                 \
@@ -69,7 +68,6 @@ stack-cancel-update() {
   aws cloudformation cancel-update-stack --stack-name $stack
 }
 
-
 stack-create() {
   # type: action
   # create a new stack
@@ -89,16 +87,15 @@ stack-create() {
   local arn=''
   local capabilities=''
   local inputs_array=($inputs)
+  local IFS='=' # override default field separator in the scope of this function only
 
-  local IFS='='
   for index in "${inputs_array[@]}" ; do
     if [[ "$index" =~ ^\-\-arn=.* ]] ; then
-      read arn_opt arn_arg <<< "$index" # ignore anything after
+      read arn_opt arn_arg <<< "$index" # ignore anything after option + arg
       arn="--role-arn $arn_arg"
       inputs_array=("${inputs_array[@]:1}") # shift
-    fi
-    if [[ "$index" =~ ^\-\-capabilities=.* ]] ; then
-      read caps_opt caps_arg <<< "$index" # ignore anything after
+    elif [[ "$index" =~ ^\-\-capabilities=.* ]] ; then
+      read caps_opt caps_arg <<< "$index" # ignore anything after option + arg
       capabilities="--capabilities $caps_arg"
       inputs_array=("${inputs_array[@]:1}") # shift
     fi
@@ -124,11 +121,13 @@ stack-update() {
     echo "Could not find template (${template}). You can specify alternative template as second argument."
     return 1
   fi
+
   local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
-  local caps=$(aws cloudformation describe-stacks --stack-name "$stack" --output text | awk /CAPABILITIES/'{print $2}')
-  if [ "$caps" != "" ] ; then local capabilities="--capabilities $caps" ; fi
+  local capabilities=''
+  local caps=$(_get_stack_capabilities $stack)
+  if [ "$caps" != "" ] ; then capabilities="--capabilities $caps" ; fi
 
   if aws cloudformation update-stack \
     --stack-name $stack              \
@@ -456,6 +455,9 @@ _stack_template_arg() {
       template="${stack%-*}.json"
     fi
   fi
+  if [[ $template =~ ^\-\-arn=.*|^\-\-capabilities=.* ]] ; then
+    __bma_usage "when supplying --arn or --capabilities you must first supply (at least) a stack name and a template file" && return 1
+  fi
   echo $template
 }
 
@@ -467,6 +469,12 @@ _stack_params_arg() {
   if [ -f "${params}" ]; then
     echo $params
   fi
+}
+
+_get_stack_capabilities() {
+  # determine what (if any) capabilities a given stack was deployed with
+  local capabilities=$(aws cloudformation describe-stacks --stack-name "$1" --output text | awk /CAPABILITIES/'{print $2}')
+  echo $capabilities
 }
 
 ## vim: ft=sh
