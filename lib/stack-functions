@@ -99,6 +99,7 @@ stack-create() {
     fi
   done
 
+  unset IFS # to prevent it from breaking things later
   if aws cloudformation create-stack \
     --stack-name $stack              \
     --template-body file://$template \
