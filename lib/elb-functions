@@ -14,8 +14,25 @@ elbs() {
   column -s$'\t' -t
 }
 
+elb-dnsname(){
+  local elb_names=$(__bma_read_inputs $@)
+  [[ -z "${elb_names}" ]] && __bma_usage "load-balancer" && return 1
+
+  local elb_name
+  for elb_name in $elb_names; do
+    aws elb describe-load-balancers    \
+      --load-balancer-name ${elb_name} \
+      --query "
+        LoadBalancerDescriptions[][
+          '${elb_name}',
+          DNSName
+        ]"                             \
+      --output text                    |
+      column -s$'\t' -t
+  done 
+}
+
 elb-instances() {
-  # returns launch configuration of an elb
   local elb_names=$(__bma_read_inputs $@)
   [[ -z "${elb_names}" ]] && __bma_usage "load-balancer" && return 1
 
