@@ -6,11 +6,12 @@
 
 sts-assume-role() {
   local role_arn=$1
+  local time_stamp=$(date +%s)
   [[ -z "${role_arn}" ]] && __bma_usage "role_arn" && return 1
-  aws sts assume-role        \
-    --role-arn $role_arn     \
-    --role-session-name mike \
-    --duration-seconds 900   \
+  aws sts assume-role               \
+    --role-arn $role_arn            \
+    --role-session-name $time_stamp \
+    --duration-seconds 900          \
     --query 'Credentials.[
                [join(`=`, [`AWS_ACCESS_KEY_ID`, AccessKeyId])],
                [join(`=`, [`AWS_SECRET_ACCESS_KEY`, SecretAccessKey])],
