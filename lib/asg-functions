@@ -59,11 +59,15 @@ asg-instances() {
   local asg_names=$(__bma_read_inputs $@)
   [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
 
-  aws autoscaling describe-auto-scaling-groups             \
-    --auto-scaling-group-names $asg_names                  \
-    --query "AutoScalingGroups[].Instances[].[InstanceId]" \
-    --output text                                          |
-  instances
+  local instance_ids="$(
+    aws autoscaling describe-auto-scaling-groups             \
+      --auto-scaling-group-names $asg_names                  \
+      --query "AutoScalingGroups[].Instances[].[InstanceId]" \
+      --output text
+  )"
+  if [[ -n "$instance_ids" ]]; then
+    echo "$instance_ids" | instances
+  fi
 }
 
 asg-max-size-set() {
