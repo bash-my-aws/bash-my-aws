@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# sqs-functions
+
+# List SQS Queues
+queues() {
+  local queue_urls
+  local name
+  queue_urls=$(
+    aws sqs list-queues        \
+      --query "QueueUrls[]"    \
+      --output text            |
+      tr '\t' '\r'
+  )
+
+  IFS=$'\r'
+  for url in ${queue_urls}; do
+    name=$(echo "${url}" | awk -F / '{ print $5 }')
+    echo -e "${name}\t${url}"
+  done | column -t
+  unset IFS
+}
+
+## vim: ft=sh
