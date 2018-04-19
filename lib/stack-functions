@@ -285,11 +285,7 @@ stack-tags() {
 
   aws cloudformation describe-stacks                                   \
     --stack-name ${stack}                                              \
-    --query "
-      Stacks[].[
-        StackName,
-        join(' ', [Tags[].[join('=',[Key,Value])][]][])
-      ]"                                                               \
+    --query "join(' ', [Stacks[].Tags[].[join('=',[Key,Value])][]][])" \
     --output text                                                      |
   column -s$'\t' -t
 }
