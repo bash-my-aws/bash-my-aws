@@ -82,6 +82,7 @@ complete -F _bma_stacks_completion stack-asgs
 complete -F _bma_stacks_completion stack-elbs
 complete -F _bma_stacks_completion stack-instances
 complete -F _bma_stacks_completion stack-parameters
+complete -F _bma_stacks_completion stack-tags
 complete -F _bma_stacks_completion stack-status
 complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template

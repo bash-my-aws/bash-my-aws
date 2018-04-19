@@ -37,10 +37,10 @@ OK. bash-my-aws reduces my keystrokes. We'll work something out if this becomes
 a problem.
 
 ```
-stack-asgs        stack-elbs        stack-outputs     stack-tail      stacks
-stack-create      stack-events      stack-parameters  stack-template
-stack-delete      stack-failure     stack-resources   stack-update
-stack-diff        stack-instances   stack-status      stack-validate
+stack-asgs        stack-elbs        stack-outputs     stack-tags      stack-validate
+stack-create      stack-events      stack-parameters  stack-tail      stacks
+stack-delete      stack-failure     stack-resources   stack-template
+stack-diff        stack-instances   stack-status      stack-update
 ```
 
 ```
