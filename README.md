@@ -45,11 +45,11 @@ $ source ~/.bash-my-aws/bash_completion.sh
 
 ```ShellSession
 $ stack
-stack             stack-elbs        stack-parameters  stack-update
-stack-asgs        stack-events      stack-resources   stack-validate
-stack-create      stack-failure     stack-status      stacks
-stack-delete      stack-instances   stack-tail
-stack-diff        stack-outputs     stack-template
+stack             stack-elbs        stack-parameters  stack-template
+stack-asgs        stack-events      stack-resources   stack-update
+stack-create      stack-failure     stack-status      stack-validate
+stack-delete      stack-instances   stack-tags        stacks
+stack-diff        stack-outputs     stack-tail
 
 $ instance
 instance-asg          instance-ip           instance-start        instance-terminate    instances

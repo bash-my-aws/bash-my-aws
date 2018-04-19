@@ -277,6 +277,19 @@ stack-status() {
   column -s$'\t' -t
 }
 
+stack-tags() {
+  # return the tags applied to a stack
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg ${inputs})
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
+  aws cloudformation describe-stacks                                   \
+    --stack-name ${stack}                                              \
+    --query "join(' ', [Stacks[].Tags[].[join('=',[Key,Value])][]][])" \
+    --output text                                                      |
+  column -s$'\t' -t
+}
+
 # Show all events for CF stack until update completes or fails.
 stack-tail() {
   # type: detail
