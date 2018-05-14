@@ -153,14 +153,24 @@ stack-delete() {
   fi
 }
 
-# Returns key,value pairs for exports from *all* stacks
-# This breaks from convention for bash-my-aws functions
-# TODO Find a way to make it more consistent
+# Returns key,value pairs for exports from stacks
+# specified in the input.
+# Note: This script may take a while to run over large numbers of stacks.
 stack-exports() {
-  aws cloudformation list-exports     \
-    --query 'Exports[].[Name, Value]' \
-    --output text                     |
-  column -s$'\t' -t
+  local inputs=$(__bma_read_inputs ${@})
+  local stacks=$(_stack_name_arg ${inputs})
+  [[ -z ${stacks} ]] && __bma_usage "stack" && return 1
+  for stack in $stacks; do
+    local stack_id=$(
+      aws cloudformation list-stacks                                      \
+      --query "StackSummaries[?StackName == '${stack}'].StackId"          \
+      --output text
+    )
+    aws cloudformation list-exports                                       \
+    --query "Exports[?ExportingStackId == '${stack_id}'].[Name, Value]"   \
+    --output text                                                         |
+    column -s$'\t' -t
+  done
 }
 
 stack-recreate() {
@@ -212,7 +222,7 @@ stack-events() {
         ResourceType,
         ResourceStatus
       ]"                                   \
-    --output table); then 
+    --output table); then
     echo "$output" | uniq -u
   else
     return $?
@@ -222,14 +232,15 @@ stack-events() {
 stack-resources() {
   # type: detail
   # return the resources managed by a stack
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
-
-  aws cloudformation describe-stack-resources                       \
-    --stack-name ${stack}                                           \
-    --query "StackResources[].[ PhysicalResourceId, ResourceType ]" \
-    --output text
+  local inputs=$(__bma_read_inputs ${@})
+  local stacks=$(_stack_name_arg ${inputs})
+  [[ -z ${stacks} ]] && __bma_usage "stack" && return 1
+  for stack in $stacks; do
+    aws cloudformation describe-stack-resources                       \
+      --stack-name ${stack}                                           \
+      --query "StackResources[].[ PhysicalResourceId, ResourceType ]" \
+      --output text
+  done
 }
 
 stack-asgs() {
@@ -453,13 +464,15 @@ _stack_diff_params() {
 }
 
 _stack_name_arg() {
-  # Extract the stack name from the template file
+  # Extract the stack name(s) from the template file
   # Allows us to specify template name as stack name
   # File extension gets stripped off
   if [[ $1 =~ ^\-\-role\-arn=.*|^\-\-capabilities=.* ]] ; then
     return 1
   fi
-  basename "$1" | sed 's/[.].*$//' # remove file extension
+  for arg in "${@}"; do
+    basename "${arg}" | sed 's/[.].*$//' # remove file extension
+  done
 }
 
 _stack_template_arg() {
