@@ -63,7 +63,7 @@ asg-instances            asg-processes_suspended  asgard
 
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
 
-** Piping output between functions **
+**Piping output between functions**
 
 We're very excited to announce this functionality.  
 
