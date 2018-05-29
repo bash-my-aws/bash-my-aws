@@ -112,6 +112,49 @@ stack-create() {
   fi
 }
 
+stack-deploy() {
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg ${inputs})
+  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]" && return 1
+
+  local template=$(_stack_template_arg $inputs)
+  if [ ! -f "$template" ]; then
+    echo "Could not find template (${template}). You can specify alternative template as second argument."
+    return 1
+  fi
+
+  local params_file=$(_stack_params_arg $inputs)
+  if [ -n "$params_file" ]; then 
+    local parameters=$(jp --unquoted --filename $params_file "join(' ', @[].join('=', [ParameterKey, ParameterValue])[])")
+    local arg_parameter_overrides="--parameter-overrides $parameters"; 
+  fi
+
+  local arn=''
+  local capabilities=''
+  local inputs_array=($inputs)
+  local IFS='=' # override default field separator in the scope of this function only
+
+  for index in "${inputs_array[@]}" ; do
+    if [[ "$index" =~ ^\-\-role\-arn=.* ]] ; then
+      read arn_opt arn_arg <<< "$index" # ignore anything after option + arg
+      arg_role_arn="--role-arn $arn_arg"
+    elif [[ "$index" =~ ^\-\-capabilities=.* ]] ; then
+      read caps_opt caps_arg <<< "$index" # ignore anything after option + arg
+      arg_capabilities="--capabilities $caps_arg"
+    fi
+  done
+
+  unset IFS # to prevent it from breaking things later
+
+  aws cloudformation deploy      \
+    --stack-name "$stack"        \
+    --template-file "$template"  \
+    $arg_parameter_overrides     \
+    $arg_role_arn                \
+    $arg_capabilities            \
+    --no-fail-on-empty-changeset
+}
+
 stack-update() {
   # update an existing stack
   local inputs=$(__bma_read_inputs $@)
