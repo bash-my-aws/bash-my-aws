@@ -184,13 +184,3 @@ $ stack-tail my-stack
 +--------------------------+-------------------------------+-------------------------------------------+------------------------------------------------+
 ```
 
-
-### Advanced Options
-
-#### Output Style
-
-The `bash-my-aws` commands support all the outputs of `awscli`. As of version
-1.7.36, the supported outputs are `json`, `tables`, or `text`.
-
-`bash-my-aws` supports a shorthand switch of `--json`, `--table`, or `--text`.
-
