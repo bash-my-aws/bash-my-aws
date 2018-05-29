@@ -4,8 +4,6 @@ bash-my-aws
 bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the
 command line.
 
-[2017-06-13 Breaking changes - rewrite of functions to simplify them]
-
 This project provides short, memorable commands for realtime control of
 resources in Amazon AWS. The goal is to reduce the time between intention and
 effect.
