@@ -38,3 +38,22 @@ images() {
     --output text |
     column -s$'\t' -t
 }
+
+
+image-deregister() {
+  local image_ids=$(__bma_read_inputs $@)
+  [[ -z "${image_ids}" ]] && __bma_usage "image_id" && return 1
+
+  local image_id
+  for image_id in $image_ids; do
+    aws ec2 deregister-image --image-id "$image_id"
+  done
+}
+
+# List block devices
+# $ aws ec2 describe-images --image-ids ami-5f5b883d --query Images[].BlockDeviceMappings[].Ebs.SnapshotId --output text
+# snap-0f4773dcf6511308a
+
+
+# List snapshots
+# aws ec2 describe-snapshots --owner-ids self
