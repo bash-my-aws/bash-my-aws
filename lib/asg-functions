@@ -143,6 +143,24 @@ asg-suspend() {
   done
 }
 
+asg-stack() {
+  # returns CloudFormation stack for asg(s)
+  local asg_names="$(__bma_read_inputs $@)"
+  [[ -z "$asg_names" ]] && __bma_usage "asg-name [asg-name]" && return 1
+
+  aws autoscaling describe-auto-scaling-groups                          \
+    $([[ -n "$asgs" ]] && echo --auto-scaling-group-names "$asg_names") \
+    --query "
+      AutoScalingGroups[][
+        [
+          [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
+          AutoScalingGroupName
+        ]
+      ][]"                                                              \
+    --output text                                                       |
+  column -s$'\t' -t
+}
+
 asg-scaling-activities() {
   # show all scaling activities
   local inputs=$(__bma_read_inputs $@)
