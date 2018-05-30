@@ -73,6 +73,7 @@ complete -F _bma_stacks_completion stacks
 complete -F _bma_stacks_completion stack-cancel-update
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stack-delete
+complete -F _bma_stacks_completion stack-deploy
 complete -F _bma_stacks_completion stack-exports
 complete -F _bma_stacks_completion stack-recreate
 complete -F _bma_stacks_completion stack-failure
