@@ -79,6 +79,7 @@ complete -F _bma_stacks_completion stack-recreate
 complete -F _bma_stacks_completion stack-failure
 complete -F _bma_stacks_completion stack-events
 complete -F _bma_stacks_completion stack-resources
+complete -F _bma_stacks_completion stack-asg-instances
 complete -F _bma_stacks_completion stack-asgs
 complete -F _bma_stacks_completion stack-elbs
 complete -F _bma_stacks_completion stack-instances

@@ -239,6 +239,18 @@ stack-asgs() {
   stack-resources $@ | grep AWS::AutoScaling::AutoScalingGroup
 }
 
+stack-asg-instances() {
+  # return instances for asg(s) in stack
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg ${inputs})
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
+  local asgs=$(stack-asgs "$stack")
+  if [[ -n $asgs ]]; then
+    asg-instances $asgs
+  fi
+}
+
 stack-elbs() {
   # type: detail
   # return the elastic load balancers managed by a stack
