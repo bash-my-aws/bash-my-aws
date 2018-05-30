@@ -38,6 +38,7 @@
 # List CF stacks
 #
 # To make it fly we omit stacks with status of DELETE_COMPLETE
+# Output sorted by CreationTime
 stacks() {
   aws cloudformation list-stacks                      \
     --stack-status                                    \
@@ -56,9 +57,15 @@ stacks() {
       UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS    \
       UPDATE_ROLLBACK_FAILED                          \
       UPDATE_ROLLBACK_IN_PROGRESS                     \
-    --query "StackSummaries[][ StackName ]"           \
+    --query "StackSummaries[][
+               StackName ,
+               StackStatus,
+               CreationTime,
+               LastUpdatedTime
+             ]"                                       \
     --output text                                     |
-    sort
+  sort -b -k 3                                        |
+  column -s$'\t' -t
 }
 
 stack-cancel-update() {
