@@ -229,7 +229,8 @@ stack-resources() {
   aws cloudformation describe-stack-resources                       \
     --stack-name ${stack}                                           \
     --query "StackResources[].[ PhysicalResourceId, ResourceType ]" \
-    --output text
+    --output text                                                   |
+  column -s$'\t' -t
 }
 
 stack-asgs() {
