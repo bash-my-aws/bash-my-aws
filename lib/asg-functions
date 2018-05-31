@@ -40,8 +40,8 @@ asg-desired-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local asg_names="$(echo ${inputs} | awk '{$NF=""; print $0}')"
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-
-  if [[ -z "${asg_names}" ]] || [[ "${capacity}" =~ [^0-9]+ ]]; then
+  local regex_non_numerals="[^0-9]+"
+  if [[ -z "${asg_names}" ]] || [[ "${capacity}" =~ $regex_non_numerals ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
   fi
@@ -74,9 +74,9 @@ asg-max-size-set() {
   # sets maximum size of autoscaling group(s)
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-
+  local regex_non_numerals="[^0-9]+"
   if [[ $(echo "$inputs" | wc -l) -ne 2 ]] ||
-     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+     [[ "${capacity}" =~ $regex_non_numerals ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
   fi
@@ -93,9 +93,9 @@ asg-min-size-set() {
   # sets the minimum size of an autoscaling group
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-
+  local regex_non_numerals="[^0-9]+"
   if [[ $(echo "$inputs" | wc -l) -ne 2 ]] ||
-     [[ "$capacity" =~ ^[^0-9]+$ ]]; then
+     [[ "$capacity" =~ $regex_non_numerals ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
   fi
