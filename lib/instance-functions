@@ -134,36 +134,34 @@ instance-ip() {
 
 instance-ssh() {
   # connects to an instance via SSH
-  # XXX Does not work with input from STDIN
 
-  # TODO: this may be cleaner
-  #if [[ ! -t 0 ]] || [[ -z "$1" ]]; then
-  #  __bma_usage "instance_id [login-template-file]"
-  #  return 1
-  #fi
-  if ! [[ -t 0 ]]; then echo "Usage: $FUNCNAME instance_id [login]"; return 1; fi
-  if [ -z "$1" ] ; then echo "Usage: $FUNCNAME instance_id [login]"; return 1; fi
+  local inputs="$(__bma_read_inputs $@)"
+  local instance_ids=$(echo "$inputs" | tr " " "\n" | grep "^i-" | tr "\n" " ")
+  local user=$(echo "$inputs" | tr " " "\n" | grep -v "^i-" | tr "\n" " ")
+  if [ -z "$instance_ids" ] ; then echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"; return 1; fi
 
-  local instance_id=$1
-  if [ -n "$2" ]; then local user="$2"; fi
-  local instance_details="$(instance-ssh-details $1)"
-  local instance_id=$(echo $instance_details | awk '{print $1}');
-  local keyname=$(echo $instance_details | awk '{print $2}');
-  local private_ip=$(echo $instance_details | awk '{print $3}');
-  local instance_name=$(echo $instance_details | awk '{print $4}');
-  local instance_default_user=$(echo $instance_details | awk '{print $5}');
+  exec </dev/tty # reattach keyboard to STDIN
 
-  local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
-  echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
+  for instance_id in $instance_ids; do
+    local instance_details="$(instance-ssh-details $instance_id)"
+    local instance_id=$(echo $instance_details | awk '{print $1}');
+    local keyname=$(echo $instance_details | awk '{print $2}');
+    local private_ip=$(echo $instance_details | awk '{print $3}');
+    local instance_name=$(echo $instance_details | awk '{print $4}');
+    local instance_default_user=$(echo $instance_details | awk '{print $5}');
 
-  ssh                                  \
-    -t                                \
-    -i ${BMA_SSH_DIR:-~/.ssh/}$keyname \
-    -o LogLevel=error                  \
-    -o StrictHostKeyChecking=no        \
-    -o UserKnownHostsFile=/dev/null    \
-    -l $USERNAME                       \
-    $private_ip
+    local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
+    echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
+
+    ssh                                  \
+      -t                                \
+      -i ${BMA_SSH_DIR:-~/.ssh/}$keyname \
+      -o LogLevel=error                  \
+      -o StrictHostKeyChecking=no        \
+      -o UserKnownHostsFile=/dev/null    \
+      -l $USERNAME                       \
+      $private_ip
+  done
 }
 
 instance-ssh-details() {

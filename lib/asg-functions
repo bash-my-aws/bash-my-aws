@@ -75,7 +75,7 @@ asg-max-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
   local regex_non_numerals="[^0-9]+"
-  if [[ $(echo "$inputs" | wc -l) -ne 2 ]] ||
+  if [[ $(echo "$inputs" | wc -w) -ne 2 ]] ||
      [[ "${capacity}" =~ $regex_non_numerals ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
@@ -94,7 +94,7 @@ asg-min-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
   local regex_non_numerals="[^0-9]+"
-  if [[ $(echo "$inputs" | wc -l) -ne 2 ]] ||
+  if [[ $(echo "$inputs" | wc -w) -ne 2 ]] ||
      [[ "$capacity" =~ $regex_non_numerals ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
@@ -149,7 +149,7 @@ asg-stack() {
   [[ -z "$asg_names" ]] && __bma_usage "asg-name [asg-name]" && return 1
 
   aws autoscaling describe-auto-scaling-groups                          \
-    $([[ -n "$asgs" ]] && echo --auto-scaling-group-names "$asg_names") \
+    $([[ -n "$asg_names" ]] && echo --auto-scaling-group-names "$asg_names") \
     --query "
       AutoScalingGroups[][
         [
