@@ -237,7 +237,9 @@ stack-resources() {
 stack-asgs() {
   # type: detail
   # return the autoscaling groups managed by a stack
-  stack-resources $@ | grep AWS::AutoScaling::AutoScalingGroup
+  stack-resources $@                      | 
+  grep AWS::AutoScaling::AutoScalingGroup |
+  column -t
 }
 
 stack-asg-instances() {
