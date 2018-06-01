@@ -1,0 +1,146 @@
+cmd __bma_error
+cmd __bma_read_inputs
+cmd __bma_read_stdin
+cmd __bma_usage
+cmd _stack_capabilities
+cmd _stack_diff_params
+cmd _stack_diff_template
+cmd _stack_name_arg
+cmd _stack_params_arg
+cmd _stack_template_arg
+cmd asg-capacity
+cmd asg-capacity my-auto-scaling-group
+cmd asg-desired-size-set
+cmd asg-desired-size-set my-auto-scaling-group 123
+cmd asg-desired-size-set my-auto-scaling-group 123a
+cmd asg-desired-size-set my-auto-scaling-group a123
+cmd asg-instances
+cmd asg-instances my-auto-scaling-group
+cmd asg-max-size-set
+cmd asg-max-size-set my-auto-scaling-group
+cmd asg-max-size-set my-auto-scaling-group 123
+cmd asg-max-size-set my-auto-scaling-group 123a
+cmd asg-max-size-set my-auto-scaling-group a123
+cmd asg-max-size-set my-auto-scaling-group abc
+cmd asg-min-size-set
+cmd asg-min-size-set my-auto-scaling-group
+cmd asg-min-size-set my-auto-scaling-group 123
+cmd asg-min-size-set my-auto-scaling-group 123a
+cmd asg-min-size-set my-auto-scaling-group a123
+cmd asg-min-size-set my-auto-scaling-group abc
+cmd asg-processes_suspended
+cmd asg-processes_suspended my-auto-scaling-group
+cmd asg-resume
+cmd asg-resume my-auto-scaling-group
+cmd asg-scaling-activities
+cmd asg-scaling-activities my-auto-scaling-group
+cmd asg-stack
+cmd asg-stack asg-name1 asg-name2
+cmd asg-suspend
+cmd asg-suspend my-auto-scaling-group
+cmd asgs
+cmd aws-account-alias
+cmd bucket-acls
+cmd bucket-acls bucket1 bucket2
+cmd buckets
+cmd cloudtrails
+cmd elb-dnsname
+cmd elb-dnsname my-load-balancer
+cmd elb-instances
+cmd elb-instances my-load-balancer
+cmd elbs
+cmd instance-asg
+cmd instance-asg i-11111111 i-22222222
+cmd instance-az
+cmd instance-az i-11111111 i-22222222
+cmd instance-console
+cmd instance-console i-11111111 i-22222222
+cmd instance-dns
+cmd instance-dns i-11111111 i-22222222
+cmd instance-iam-profile
+cmd instance-iam-profile i-11111111 i-22222222
+cmd instance-ip
+cmd instance-ip i-11111111 i-22222222
+cmd instance-ssh
+cmd instance-ssh-details
+cmd instance-ssh-details i-11111111
+cmd instance-stack
+cmd instance-stack i-11111111 i-22222222
+cmd instance-start
+cmd instance-start i-11111111 i-22222222
+cmd instance-state
+cmd instance-state i-11111111 i-22222222
+cmd instance-stop
+cmd instance-stop i-11111111 i-22222222
+cmd instance-tags
+cmd instance-tags i-11111111 i-22222222
+cmd instance-terminate
+cmd instance-terminate i-11111111 i-22222222
+cmd instance-type
+cmd instance-type i-11111111 i-22222222
+cmd instance-userdata
+cmd instance-userdata i-11111111 i-22222222
+cmd instance-volumes
+cmd instance-volumes i-11111111 i-22222222
+cmd instance-vpc
+cmd instance-vpc i-11111111 i-22222222
+cmd instances
+cmd region
+cmd region-each
+cmd regions
+cmd stack-asg-instances
+cmd stack-asg-instances my-stack
+cmd stack-asgs
+cmd stack-cancel-update
+cmd stack-cancel-update my-stack
+cmd stack-create
+cmd stack-create my-stack template-file parameters-file --capabilities=OPTIONAL_VALUE --role-arn=OPTIONAL_VALUE
+cmd stack-delete
+cmd stack-delete my-stack
+cmd stack-diff
+cmd stack-diff stack template-file
+cmd stack-elbs
+cmd stack-events
+cmd stack-exports
+cmd stack-failure
+cmd stack-failure my-stack
+cmd stack-instances
+cmd stack-outputs
+cmd stack-outputs my-stack
+cmd stack-parameters
+cmd stack-parameters my-stack
+cmd stack-recreate
+cmd stack-recreate my-stack
+cmd stack-resources
+cmd stack-resources my-stack
+cmd stack-status
+cmd stack-status my-stack
+cmd stack-tags
+cmd stack-tags my-stack
+cmd stack-tail
+cmd stack-tail my-stack
+cmd stack-template
+cmd stack-update
+cmd stack-update my-stack template-file parameters-file
+cmd stack-validate
+cmd stack-validate template-file
+cmd stacks
+cmd sts-assume-role
+cmd sts-assume-role role_arn
+cmd vpc-default-delete
+cmd vpc-dhcp-options-ntp
+cmd vpc-igw
+cmd vpc-igw vpc-11111111 vpc-22222222
+cmd vpc-lambda-functions
+cmd vpc-lambda-functions vpc-11111111 vpc-22222222
+cmd vpc-nat-gateways
+cmd vpc-nat-gateways vpc-11111111 vpc-22222222
+cmd vpc-network-acls
+cmd vpc-network-acls vpc-11111111 vpc-22222222
+cmd vpc-rds
+cmd vpc-rds vpc-11111111 vpc-22222222
+cmd vpc-route-tables
+cmd vpc-route-tables vpc-11111111 vpc-22222222
+cmd vpc-subnets
+cmd vpc-subnets vpc-11111111 vpc-22222222
+cmd vpcs
