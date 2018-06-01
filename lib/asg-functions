@@ -75,8 +75,8 @@ asg-max-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  if [[ $(echo "$inputs" | wc -l) -ne 2 ]] ||
-     [[ "${capacity}" =~ ^[^0-9]+$ ]]; then
+  if [[ $(echo "$inputs" | wc -w) -ne 2 ]] ||
+     [[ "${capacity}" =~ [^0-9]+ ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
   fi
@@ -94,7 +94,7 @@ asg-min-size-set() {
   local inputs=$(__bma_read_inputs $@)
   local capacity="$(echo ${inputs} | awk '{ print $NF }')"
 
-  if [[ $(echo "$inputs" | wc -l) -ne 2 ]] ||
+  if [[ $(echo "$inputs" | wc -w) -ne 2 ]] ||
      [[ "$capacity" =~ ^[^0-9]+$ ]]; then
     __bma_usage "auto-scaling-group capacity"
     return 1
