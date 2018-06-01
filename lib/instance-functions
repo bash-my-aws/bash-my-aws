@@ -264,9 +264,10 @@ instance-terminate() {
   echo "You are about to terminate the following instances:"
   echo "$instance_ids"
   if [ -t 0 ]; then
+    local regex_yes="^[Yy]$"
     read -p "Are you sure you want to continue? " -n 1 -r
     echo
-    if [[ $REPLY =~ ^[Yy]$ ]]
+    if [[ $REPLY =~ $regex_yes ]]
     then
       for instance_id in $instance_ids; do
         aws ec2 modify-instance-attribute   \
