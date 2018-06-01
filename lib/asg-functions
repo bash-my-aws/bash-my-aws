@@ -149,7 +149,7 @@ asg-stack() {
   [[ -z "$asg_names" ]] && __bma_usage "asg-name [asg-name]" && return 1
 
   aws autoscaling describe-auto-scaling-groups                          \
-    $([[ -n "$asgs" ]] && echo --auto-scaling-group-names "$asg_names") \
+    $([[ -n "$asg_names" ]] && echo --auto-scaling-group-names "$asg_names") \
     --query "
       AutoScalingGroups[][
         [
