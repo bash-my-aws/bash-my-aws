@@ -284,7 +284,7 @@ stack-status() {
   # type: detail
   # return the current status of a stack
   local stacks=$(__bma_read_inputs $@)
-  [[ -z ${stacks} ]] && __bma_usage "stack" && return 1
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   local stack
   for stack in $stacks; do
