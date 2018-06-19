@@ -283,27 +283,32 @@ stack-parameters() {
 stack-status() {
   # type: detail
   # return the current status of a stack
-  local stack=$(__bma_read_inputs $@)
-  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
-  aws cloudformation describe-stacks                   \
-    --stack-name ${stack}                              \
-    --query "Stacks[][ [ StackName, StackStatus ] ][]" \
-    --output text                                      |
-  column -s$'\t' -t
+  local stack
+  for stack in $stacks; do
+    aws cloudformation describe-stacks                   \
+      --stack-name "${stack}"                            \
+      --query "Stacks[][ [ StackName, StackStatus ] ][]" \
+      --output text
+  done
 }
 
 stack-tags() {
   # return the tags applied to a stack
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
-
-  aws cloudformation describe-stacks                                   \
-    --stack-name ${stack}                                              \
-    --query "join(' ', [Stacks[].Tags[].[join('=',[Key,Value])][]][])" \
-    --output text                                                      |
-  column -s$'\t' -t
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+  local stack
+  for stack in $stacks; do
+    aws cloudformation describe-stacks                                      \
+      --stack-name "${stack}"                                               \
+      --query "Stacks[].[
+                 StackName, 
+                 join(' ', [Tags[$tag_filter].[join('=',[Key,Value])][]][])
+               ]"                                                           \
+      --output text
+  done
 }
 
 # Show all events for CF stack until update completes or fails.
