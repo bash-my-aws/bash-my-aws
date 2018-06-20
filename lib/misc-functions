@@ -11,7 +11,7 @@
 aws-panopticon() {
   local aws_account_ids="$(__bma_read_inputs)"
   local cmd=$@
-  local assumed_role_name="${AWS_PANOPTICON_ROLE_NAME:-Auditor}"
+  local assumed_role_name="${AWS_PANOPTICON_ROLE_NAME:-SecurityAuditor}"
   [[ -z "${aws_account_ids}" ]] && __bma_usage "cmd # pipe in AWS_ACCOUNT_IDS" && return 1
 
   echo "#command=${cmd}"
