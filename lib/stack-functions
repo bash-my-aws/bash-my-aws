@@ -143,15 +143,15 @@ stack-update() {
 }
 
 stack-delete() {
-  # type: action
   # delete an existing stack
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
-  [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
-
-  if aws cloudformation delete-stack --stack-name $stack; then
-    stack-tail $stack
-  fi
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+  local stack
+  for stack in $stacks; do
+    if aws cloudformation delete-stack --stack-name $stack; then
+      stack-tail "$stack"
+    fi
+  done
 }
 
 # Returns key,value pairs for exports from *all* stacks
