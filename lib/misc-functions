@@ -29,6 +29,18 @@ aws-panopticon() {
   done
 }
 
+# columnise(): Handy function to columnise output
+#
+# Leaving the command itself in functions (for now) to be explicit but
+# I'm finding it handy to have this function at the CLI for formatting
+# output from commands run in a loop.
+#
+# Looped commands (such as those with multiple resources piped in) do
+# not delay output by sending the aggregate through `column`.
+columnise() {
+  column -s$'\t' -t
+}
+
 regions() {
   aws ec2 describe-regions           \
     --query "Regions[].[RegionName]" \
