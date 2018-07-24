@@ -22,7 +22,7 @@ aws-panopticon() {
     [[ -z "$assumed_env" ]] && continue # AWSCLI prints error if assuming role fails
     local aws_account_alias="$(export $assumed_env && aws-account-alias)"
     echo "#account=$aws_account_id alias=${aws_account_alias}"
-    if ! output="$(export $assumed_env && eval $cmd)"; then
+    if ! output=$(export $assumed_env && eval "$cmd"); then
       : # something went wrong
     fi
     [ -z "$output" ] || printf '%s\n\n' "${output%$'\n'}"
@@ -37,6 +37,7 @@ aws-panopticon() {
 #
 # Looped commands (such as those with multiple resources piped in) do
 # not delay output by sending the aggregate through `column`.
+#
 columnise() {
   column -s$'\t' -t
 }
@@ -51,7 +52,7 @@ regions() {
 region-each() {
   local old_aws_default_region="$AWS_DEFAULT_REGION"
   for AWS_DEFAULT_REGION in $(regions); do
-    $@ | sed "s/$/ #${AWS_DEFAULT_REGION}/"
+    eval "$@" | sed "s/$/ #${AWS_DEFAULT_REGION}/"
   done
   AWS_DEFAULT_REGION="$old_aws_default_region"
 }
