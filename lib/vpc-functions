@@ -105,7 +105,8 @@ vpc-subnets(){
         CidrBlock,
         VpcId
       ]"                                                            \
-      --output text
+      --output text                                                 |
+    sort -k 2 # sort by name as resource-id is pretty random
   done | column -s$'\t' -t
 }
 
