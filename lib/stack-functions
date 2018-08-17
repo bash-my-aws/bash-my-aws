@@ -7,7 +7,7 @@
 # These are completely optional.
 #
 #   stack   : token-env
-#   template: token.json
+#   template: token.yml
 #   params  : token-params-env.json
 #
 # Where:
@@ -22,7 +22,7 @@
 #
 #      is equivalent (if files present) to:
 #
-#      stack-create mywebsite-test mywebsite.json mywebsite-params-test.json
+#      stack-create mywebsite-test mywebsite.yml mywebsite-params-test.json
 #
 # Other benefits include:
 #
@@ -189,10 +189,10 @@ stack-recreate() {
 
   local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
   cd $tmpdir
-  stack-template $stack > $stack.json
-  stack-parameters $stack > $stack-params.json
+  stack-template $stack > "${stack}.template"
+  stack-parameters $stack > "${stack}-params.json"
   stack-delete $stack
-  stack-create $stack
+  stack-create $stack "${stack}.template" "${stack}-params.json"
   # rm -fr $tmpdir
 }
 
@@ -293,8 +293,7 @@ stack-parameters() {
 
   aws cloudformation describe-stacks                        \
     --stack-name ${stack}                                   \
-    --query 'sort_by(Stacks[].Parameters[], &ParameterKey)' \
-    --output json                                           |
+    --query 'sort_by(Stacks[].Parameters[], &ParameterKey)' |
     jq --sort-keys .
 }
 
@@ -335,7 +334,8 @@ stack-tag() {
 stack-tags() {
   # return all stack tags
   local stacks=$(__bma_read_inputs $@)
-  [[ -z ${stacks} && -t 0 ]] && __bma_usage "stack [stack]" && return 1
+
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   local stack
   for stack in $stacks; do
     aws cloudformation describe-stacks                                  \
@@ -490,7 +490,7 @@ stack-outputs() {
 
 stack-validate() {
   # type: detail
-  # validate a json stack template
+  # validate a stack template
   local inputs=$(__bma_read_inputs $@ | cut -f1)
   [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
   size=$(wc -c <"$inputs")
@@ -535,14 +535,13 @@ _stack_diff_template() {
     local DIFF_CMD=diff
   fi
 
-  $DIFF_CMD -u \
-    --label stack \
-      <(aws cloudformation get-template  \
-          --stack-name $stack            \
-          --query TemplateBody           |
-        jq --sort-keys .)                \
-     --label $template                   \
-       <(jq --sort-keys . $template)
+  local template_content=$(jq --exit-status --sort-keys . $template || < $template)
+
+  $DIFF_CMD -u                     \
+    --label stack                  \
+      <( stack-template $stack)    \
+     --label $template             \
+       <(echo "$template_content")
 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
@@ -607,17 +606,23 @@ _stack_template_arg() {
   # Determine name of template to use
   local stack="$(_stack_name_arg $@)"
   local template=$2
-  if [ -z "$template" ]; then
-    if [ -f "${stack}.json" ]; then
-      template="${stack}.json"
-    elif [ -f "${stack%-*}.json" ]; then
-      template="${stack%-*}.json"
+  for extension in json yaml yml; do
+    if [ -z "$template" ]; then
+      if [ -f "${stack}.${extension}" ]; then
+        template="${stack}.${extension}"
+        break
+      elif [ -f "${stack%-*}.${extension}" ]; then
+        template="${stack%-*}.${extension}"
+        break
+      fi
     fi
-  fi
+  done
+
   local regex_role_arn_or_capabilities="^\-\-role\-arn=.*|^\-\-capabilities=.*"
   if [[ $template =~ $regex_role_arn_or_capabilities ]] ; then
     return 1
   fi
+
   echo $template
 }
 
