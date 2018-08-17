@@ -535,13 +535,11 @@ _stack_diff_template() {
     local DIFF_CMD=diff
   fi
 
-  local template_content=$(jq --exit-status --sort-keys . $template || < $template)
-
   $DIFF_CMD -u                     \
     --label stack                  \
       <( stack-template $stack)    \
      --label $template             \
-       <(echo "$template_content")
+       <(jq --sort-keys $template 2>/dev/null || cat $template )
 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
