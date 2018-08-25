@@ -539,7 +539,7 @@ _stack_diff_template() {
     --label stack                  \
       <( stack-template $stack)    \
      --label $template             \
-       <(jq --sort-keys $template 2>/dev/null || cat $template )
+       <(jq --sort-keys . $template 2>/dev/null || cat $template )
 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
