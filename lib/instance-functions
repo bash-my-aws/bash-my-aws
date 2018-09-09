@@ -20,8 +20,9 @@ instances() {
         Placement.AvailabilityZone,
         VpcId
       ]"                                                               \
-    --output text |
-    column -s$'\t' -t
+    --output text                      |
+  sort --ignore-leading-blanks --key=6 |
+  column -s$'\t' -t
 }
 
 instance-asg() {
