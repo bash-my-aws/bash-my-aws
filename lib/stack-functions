@@ -187,13 +187,20 @@ stack-recreate() {
   local stack=$(_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
+  local capabilities=''
+  local capabilities_value=$(_stack_capabilities $stack)
+  [[ -z "${capabilities_value}" ]] || capabilities="--capabilities=${capabilities_value}"
+
   local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
   cd $tmpdir
   stack-template $stack > "${stack}.template"
   stack-parameters $stack > "${stack}-params.json"
   stack-delete $stack
-  stack-create $stack "${stack}.template" "${stack}-params.json"
-  # rm -fr $tmpdir
+  stack-create $stack \
+              "${stack}.template" \
+              "${stack}-params.json" \
+              $capabilities
+  #rm -fr $tmpdir
 }
 
 stack-failure() {
