@@ -125,7 +125,8 @@ stack-create() {
     $parameters                      \
     $capabilities                    \
     $arn                             \
-    --disable-rollback
+    --disable-rollback               \
+    --output text
   then
     stack-tail $stack
   fi
@@ -154,7 +155,8 @@ stack-update() {
     --stack-name $stack              \
     --template-body file://$template \
     $parameters                      \
-    $capabilities
+    $capabilities                    \
+    --output text
   then
     stack-tail $stack
   fi
@@ -166,7 +168,10 @@ stack-delete() {
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   local stack
   for stack in $stacks; do
-    if aws cloudformation delete-stack --stack-name $stack; then
+    if aws cloudformation delete-stack \
+         --stack-name $stack           \
+         --output text
+    then
       stack-tail "$stack"
     fi
   done
