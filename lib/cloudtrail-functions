@@ -3,6 +3,9 @@
 # cloudtrail-functions
 
 function cloudtrails() {
+
+  local filters=$(__bma_read_filters $@)
+
   aws cloudtrail describe-trails --query " \
     trailList[].[
       Name, 
@@ -11,7 +14,9 @@ function cloudtrails() {
       join('=', ['IsMultiRegionTrail', to_string(IsMultiRegionTrail)]), 
       join('=', ['IncludeGlobalServiceEvents', to_string(IncludeGlobalServiceEvents)])
     ]
-  " \
-  --output text
+    " \
+    --output text    |
+  grep -E "$filters"
+
 }
 

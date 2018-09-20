@@ -4,13 +4,15 @@
 
 elbs() {
   # returns a list of ELBS
-  local elb_names=$(__bma_read_inputs $@)
+  local elb_names=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
 
   aws elb describe-load-balancers                                     \
     $([[ -n ${elb_names} ]] && echo --load-balancer-names $elb_names) \
     --query "LoadBalancerDescriptions[][ LoadBalancerName ]"          \
-    --output text                                                     |
-  sort                                                                |
+    --output text    |
+  grep -E "$filters" |
+  sort               |
   column -s$'\t' -t
 }
 
