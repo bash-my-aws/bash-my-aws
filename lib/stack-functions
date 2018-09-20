@@ -292,7 +292,9 @@ stack-asg-instances() {
 stack-elbs() {
   # type: detail
   # return the elastic load balancers managed by a stack
-  stack-resources $@ | grep AWS::ElasticLoadBalancing::LoadBalancer
+  stack-resources $@ | 
+  grep AWS::ElasticLoadBalancing::LoadBalancer |
+  column -t
 }
 
 stack-instances() {
