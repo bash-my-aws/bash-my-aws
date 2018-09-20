@@ -15,8 +15,8 @@ function cloudtrails() {
       join('=', ['IncludeGlobalServiceEvents', to_string(IncludeGlobalServiceEvents)])
     ]
     " \
-    --output text    |
-  grep -E "$filters"
+    --output text       |
+  grep -E -- "$filters"
 
 }
 

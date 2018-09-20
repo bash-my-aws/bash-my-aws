@@ -1,0 +1,16 @@
+#!/bin/bash
+
+zone-rr-sets() {
+  aws route53 list-resource-record-sets                               \
+    --hosted-zone-id $1                                               \
+    --query "ResourceRecordSets[?Type=='NS'].ResourceRecords[].Value" \
+    --output text
+}
+
+zone-ns(){
+  local hosted_zone_id="$(__bma_read_inputs $@)"
+  [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
+
+  name=$(aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query "ResourceRecordSets[?Type=='NS'].Name" --output text)
+  aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --query "ResourceRecordSets[?Type=='NS'].ResourceRecords[].['$name 300 IN NS', Value]" --output text
+}

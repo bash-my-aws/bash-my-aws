@@ -7,8 +7,8 @@ buckets() {
 
   aws s3api list-buckets \
     --query "Buckets[].[Name, CreationDate]" \
-    --output text    |
-  grep -E "$filters" |
+    --output text       |
+  grep -E -- "$filters" |
   column -t
 }
 

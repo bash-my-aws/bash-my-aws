@@ -13,8 +13,8 @@ asgs() {
         AutoScalingGroupName,
         [Tags[?Key=='Name'].Value][0][0]
       ]"                                                                   \
-    --output text    |
-  grep -E "$filters" |
+    --output text       |
+  grep -E -- "$filters" |
   column -s$'\t' -t 
 }
 

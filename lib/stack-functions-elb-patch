@@ -130,8 +130,7 @@ stack-create() {
     $parameters                      \
     $capabilities                    \
     $arn                             \
-    --disable-rollback               \
-    --output text
+    --disable-rollback
   then
     stack-tail $stack
   fi
@@ -160,8 +159,7 @@ stack-update() {
     --stack-name $stack              \
     --template-body file://$template \
     $parameters                      \
-    $capabilities                    \
-    --output text
+    $capabilities
   then
     stack-tail $stack
   fi
@@ -173,10 +171,7 @@ stack-delete() {
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   local stack
   for stack in $stacks; do
-    if aws cloudformation delete-stack \
-         --stack-name $stack           \
-         --output text
-    then
+    if aws cloudformation delete-stack --stack-name $stack; then
       stack-tail "$stack"
     fi
   done
@@ -197,20 +192,13 @@ stack-recreate() {
   local stack=$(_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
-  local capabilities=''
-  local capabilities_value=$(_stack_capabilities $stack)
-  [[ -z "${capabilities_value}" ]] || capabilities="--capabilities=${capabilities_value}"
-
   local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
   cd $tmpdir
   stack-template $stack > "${stack}.template"
   stack-parameters $stack > "${stack}-params.json"
   stack-delete $stack
-  stack-create $stack \
-              "${stack}.template" \
-              "${stack}-params.json" \
-              $capabilities
-  #rm -fr $tmpdir
+  stack-create $stack "${stack}.template" "${stack}-params.json"
+  # rm -fr $tmpdir
 }
 
 stack-failure() {
@@ -292,7 +280,7 @@ stack-asg-instances() {
 stack-elbs() {
   # type: detail
   # return the elastic load balancers managed by a stack
-  stack-resources $@ | grep AWS::ElasticLoadBalancing::LoadBalancer
+  stack-resources $@ | grep AWS::ElasticLoadBalancing::LoadBalancer | column -t
 }
 
 stack-instances() {
@@ -473,6 +461,12 @@ stack-tail() {
       echo "$current"
     elif [ "$current" != "$previous" ]; then
       comm -13 <(echo "$previous") <(echo "$current")
+      if [ $? != 0 ]; then
+        echo >&2 "*****"
+        echo >&2 "not sorted. dumping current"
+        echo >&2 "$current"
+        echo >&2 "*****"
+      fi
     fi
     previous="$current"
     sleep 1
@@ -556,7 +550,7 @@ _stack_diff_template() {
     --label stack                  \
       <( stack-template $stack)    \
      --label $template             \
-       <(jq --sort-keys . $template 2>/dev/null || cat $template )
+       <(jq --sort-keys $template 2>/dev/null || cat $template )
 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2

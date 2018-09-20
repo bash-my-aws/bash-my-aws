@@ -10,9 +10,9 @@ elbs() {
   aws elb describe-load-balancers                                     \
     $([[ -n ${elb_names} ]] && echo --load-balancer-names $elb_names) \
     --query "LoadBalancerDescriptions[][ LoadBalancerName ]"          \
-    --output text    |
-  grep -E "$filters" |
-  sort               |
+    --output text       |
+  grep -E -- "$filters" |
+  sort                  |
   column -s$'\t' -t
 }
 
