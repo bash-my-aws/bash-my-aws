@@ -3,8 +3,8 @@
 # asg-functions
 
 asgs() {
-  # returns instance id's and the name tag.
-  local asg_names=$(__bma_read_inputs $@)
+  local asg_names=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
 
   aws autoscaling describe-auto-scaling-groups                             \
     $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names $asg_names) \
@@ -13,7 +13,8 @@ asgs() {
         AutoScalingGroupName,
         [Tags[?Key=='Name'].Value][0][0]
       ]"                                                                   \
-    --output text                                                          |
+    --output text    |
+  grep -E "$filters" |
   column -s$'\t' -t 
 }
 

@@ -5,7 +5,8 @@
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
 instances() {
-  local instance_ids=$(__bma_read_inputs $@)
+  local instance_ids=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
 
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
@@ -21,6 +22,7 @@ instances() {
         VpcId
       ]"                                                               \
     --output text                      |
+  grep -E "$filters"                   |
   sort --ignore-leading-blanks --key=6 |
   column -s$'\t' -t
 }

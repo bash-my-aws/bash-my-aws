@@ -18,6 +18,13 @@ __bma_read_stdin() {
       sed 's/\ $//'
 }
 
+# Construct a string to be passed to `grep -E`
+__bma_read_filters() {
+  local IFS_SAVED="$IFS"; IFS=$'|'
+  printf "$*"
+  IFS=$IFS_SAVED
+}
+
 __bma_error() {
   echo "ERROR: $@" > /dev/stderr
   return 1

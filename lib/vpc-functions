@@ -3,7 +3,8 @@
 # vpc-functions
 
 vpcs() {
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$(__bma_read_inputs)"
+  local filters=$(__bma_read_filters $@)
 
   aws ec2 describe-vpcs \
     $([[ -n ${vpc_ids} ]] && echo --vpc-ids ${vpc_ids})     \
@@ -15,8 +16,9 @@ vpcs() {
       Tags[?Key==`aws:cloudformation:stack-name`].Value, 
       Tags[?Key==`version`].Value][]
       ][]'                                                  \
-    --output text                                           |
-    column -s$'\t' -t
+    --output text    |
+  grep -E "$filters" |
+  column -s$'\t' -t
 }
 
 vpc-lambda-functions(){

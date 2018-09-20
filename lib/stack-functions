@@ -34,23 +34,14 @@
 # And don't forget, these naming conventions are completely optional.
 ##
 
-stack-arn() {
-  local stacks=$(__bma_read_inputs $@)
-  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
-  local stack
-  for stack in $stacks; do
-    aws cloudformation describe-stacks \
-      --stack-name "$stack"            \
-      --query "Stacks[].StackId" \
-      --output text
-  done
-}
-
 # List CF stacks
 #
 # To make it fly we omit stacks with status of DELETE_COMPLETE
 # Output sorted by CreationTime
 stacks() {
+
+  local filters=$(__bma_read_filters $@)
+
   aws cloudformation list-stacks                      \
     --stack-status                                    \
       CREATE_COMPLETE                                 \
@@ -74,9 +65,23 @@ stacks() {
                CreationTime,
                LastUpdatedTime
              ]"                                       \
-    --output text                                     |
-  sort -b -k 3                                        |
+    --output text    |
+  grep -E "$filters" |
+  sort -b -k 3       |
   column -s$'\t' -t
+}
+
+
+stack-arn() {
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+  local stack
+  for stack in $stacks; do
+    aws cloudformation describe-stacks \
+      --stack-name "$stack"            \
+      --query "Stacks[].StackId" \
+      --output text
+  done
 }
 
 stack-cancel-update() {

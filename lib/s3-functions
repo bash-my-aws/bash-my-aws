@@ -3,9 +3,12 @@
 # s3-functions
 
 buckets() {
+  local filters=$(__bma_read_filters $@)
+
   aws s3api list-buckets \
     --query "Buckets[].[Name, CreationDate]" \
-    --output text | 
+    --output text    |
+  grep -E "$filters" |
   column -t
 }
 
