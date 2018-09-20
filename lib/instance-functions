@@ -22,7 +22,7 @@ instances() {
         VpcId
       ]"                                                               \
     --output text                      |
-  grep -E "$filters"                   |
+  grep -E -- "$filters"                |
   sort --ignore-leading-blanks --key=6 |
   column -s$'\t' -t
 }

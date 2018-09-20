@@ -65,9 +65,9 @@ stacks() {
                CreationTime,
                LastUpdatedTime
              ]"                                       \
-    --output text    |
-  grep -E "$filters" |
-  sort -b -k 3       |
+    --output text       |
+  grep -E -- "$filters" |
+  sort -b -k 3          |
   column -s$'\t' -t
 }
 

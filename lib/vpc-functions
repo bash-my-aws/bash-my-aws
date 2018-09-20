@@ -16,8 +16,8 @@ vpcs() {
       Tags[?Key==`aws:cloudformation:stack-name`].Value, 
       Tags[?Key==`version`].Value][]
       ][]'                                                  \
-    --output text    |
-  grep -E "$filters" |
+    --output text       |
+  grep -E -- "$filters" |
   column -s$'\t' -t
 }
 
