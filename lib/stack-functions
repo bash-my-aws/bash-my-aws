@@ -130,7 +130,8 @@ stack-create() {
     $parameters                      \
     $capabilities                    \
     $arn                             \
-    --disable-rollback
+    --disable-rollback               \
+    --output text
   then
     stack-tail $stack
   fi
@@ -159,7 +160,8 @@ stack-update() {
     --stack-name $stack              \
     --template-body file://$template \
     $parameters                      \
-    $capabilities
+    $capabilities                    \
+    --output text
   then
     stack-tail $stack
   fi
@@ -171,7 +173,10 @@ stack-delete() {
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   local stack
   for stack in $stacks; do
-    if aws cloudformation delete-stack --stack-name $stack; then
+    if aws cloudformation delete-stack \
+         --stack-name $stack           \
+         --output text
+    then
       stack-tail "$stack"
     fi
   done
@@ -192,13 +197,20 @@ stack-recreate() {
   local stack=$(_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
+  local capabilities=''
+  local capabilities_value=$(_stack_capabilities $stack)
+  [[ -z "${capabilities_value}" ]] || capabilities="--capabilities=${capabilities_value}"
+
   local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
   cd $tmpdir
   stack-template $stack > "${stack}.template"
   stack-parameters $stack > "${stack}-params.json"
   stack-delete $stack
-  stack-create $stack "${stack}.template" "${stack}-params.json"
-  # rm -fr $tmpdir
+  stack-create $stack \
+              "${stack}.template" \
+              "${stack}-params.json" \
+              $capabilities
+  #rm -fr $tmpdir
 }
 
 stack-failure() {
@@ -544,7 +556,7 @@ _stack_diff_template() {
     --label stack                  \
       <( stack-template $stack)    \
      --label $template             \
-       <(jq --sort-keys $template 2>/dev/null || cat $template )
+       <(jq --sort-keys . $template 2>/dev/null || cat $template )
 
   if [ $? -eq 0 ]; then
     echo "template for stack ($stack) and contents of file ($template) are the same" >&2
