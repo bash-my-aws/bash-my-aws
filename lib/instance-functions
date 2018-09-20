@@ -260,28 +260,73 @@ instance-tags() {
 }
 
 instance-terminate() {
-  # terminates an instance
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   echo "You are about to terminate the following instances:"
-  echo "$instance_ids"
-  if [ -t 0 ]; then
-    local regex_yes="^[Yy]$"
-    read -p "Are you sure you want to continue? " -n 1 -r
-    echo
-    if [[ $REPLY =~ $regex_yes ]]
-    then
-      for instance_id in $instance_ids; do
-        aws ec2 modify-instance-attribute   \
-          --attribute disableApiTermination \
-          --value false                     \
-          --instance-id $instance_id
-      done
-      aws ec2 terminate-instances --instance-ids $instance_ids
-    fi
-  else
-    echo "Warning. Piped input is disabled for this function for the time being"
+  instances "$instance_ids"
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+    aws ec2 terminate-instances --instance-ids $instance_ids
+  fi
+}
+
+instance-termination-protection() {
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  for instance_id in $instance_ids; do
+    aws ec2 describe-instance-attribute \
+      --attribute disableApiTermination \
+      --instance-id "$instance_id"      \
+      --query "[InstanceId, join('=', ['DisableApiTermination', to_string(DisableApiTermination.Value)])]" \
+      --output text
+  done
+}
+
+instance-termination-protection-disable() {
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  echo "You are about to disable termination protection on the following instances:"
+  instances "$instance_ids"
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+    for instance_id in $instance_ids; do
+      aws ec2 modify-instance-attribute   \
+        --attribute disableApiTermination \
+        --value false                     \
+        --instance-id $instance_id
+    done
+  fi
+}
+
+instance-termination-protection-enable() {
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  echo "You are about to enable termination protection on the following instances:"
+  instances "$instance_ids"
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+    for instance_id in $instance_ids; do
+      aws ec2 modify-instance-attribute   \
+        --attribute disableApiTermination \
+        --value true                      \
+        --instance-id $instance_id
+    done
   fi
 }
 
