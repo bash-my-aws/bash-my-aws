@@ -135,6 +135,40 @@ instance-ip() {
   column -s$'\t' -t
 }
 
+instance-public-ip() {
+  # returns the public ip address of an instance
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  
+  aws ec2 describe-instances                                            \
+    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+    --query "
+      Reservations[].Instances[][
+        {
+          "Public": PublicIpAddress
+        }
+      ][]"                                                              \
+    --output text                                                       |
+  column -s$'\t' -t
+}
+
+instance-private-ip() {
+  # returns the private ip address of an instance
+  local instance_ids="$(__bma_read_inputs $@)"
+  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  
+  aws ec2 describe-instances                                            \
+    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+    --query "
+      Reservations[].Instances[][
+        {
+          "Private": PrivateIpAddress
+        }
+      ][]"                                                              \
+    --output text                                                       |
+  column -s$'\t' -t
+}
+
 instance-ssh() {
   # connects to an instance via SSH
 
