@@ -300,7 +300,7 @@ stack-elbs() {
 stack-instances() {
   # type: detail
   # return the instances managed by a stack
-  local instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | cut -f1)
+  local instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | awk '{ print $1 }')
   [[ -n "$instance_ids" ]] && instances $instance_ids
 }
 
