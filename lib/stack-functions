@@ -350,23 +350,6 @@ stack-tag() {
   done
 }
 
-stack-tags() {
-  # return all stack tags
-  local stacks=$(__bma_read_inputs $@)
-
-  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
-  local stack
-  for stack in $stacks; do
-    aws cloudformation describe-stacks                                  \
-      --stack-name "${stack}"                                           \
-      --query "Stacks[].[
-                 StackName,
-                 join(' ', [Tags[].[join('=',[Key,Value])][]][])
-               ]"                                                       \
-      --output text
-  done
-}
-
 stack-tag-apply() {
   # apply a stack tag
   local tag_key=$1
@@ -483,15 +466,50 @@ stack-tail() {
 }
 
 stack-template() {
-  # type: detail
   # return the template applied to a stack
   local inputs=$(__bma_read_inputs $@)
   local stack=$(_stack_name_arg ${inputs})
 
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
   aws cloudformation get-template   \
-    --stack-name ${stack}           \
-    --query TemplateBody | jq --raw-output --sort-keys .
+    --stack-name "$stack"           \
+    --query TemplateBody            |
+  jq --raw-output --sort-keys .
 }
+
+stack-tags() {
+  # return the stack-tags applied to a stack
+  local inputs=$(__bma_read_inputs $@)
+  local stack=$(_stack_name_arg ${inputs})
+
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
+  aws cloudformation describe-stacks \
+    --stack-name "$stack"            \
+    --query 'Stacks[0].Tags'         |
+  jq --sort-keys .
+
+}
+
+stack-tags-text() {
+  # return all stack tags on a single line
+  local stacks=$(__bma_read_inputs $@)
+
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+  local stack
+  for stack in $stacks; do
+    aws cloudformation describe-stacks                                  \
+      --stack-name "${stack}"                                           \
+      --query "Stacks[].[
+                 StackName,
+                 join(' ', [Tags[].[join('=',[Key,Value])][]][])
+               ]"                                                       \
+      --output text
+  done
+}
+
+
 
 stack-outputs() {
   # type: detail
