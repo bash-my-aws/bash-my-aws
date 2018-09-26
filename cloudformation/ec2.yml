@@ -1,0 +1,28 @@
+# Use public SSM Parameter for latest Amazon Linux 2 AMI ID
+Parameters:
+  InstanceType:
+    Type: String
+    Description: EC2 Instance Type to use
+    Default: t3.nano
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+  KeyName:
+    Type: String
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Default: ''
+
+Conditions:
+  UseKeyPair: !Not [!Equals [ !Ref KeyName, '' ] ]
+
+Resources:
+ Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: t3.nano
+      KeyName: !If [UseKeyPair, !Ref KeyName, !Ref "AWS::NoValue"]
+      Tags:
+        -
+          Key: Name
+          Value: !Ref AWS::StackName
