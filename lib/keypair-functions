@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# keypair-functions
+#
+# list, create and delete EC2 ssh keypairs
+
+keypairs(){
+  local keypairs=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
+
+  aws ec2 describe-key-pairs                                \
+    $([[ -n ${keypairs} ]] && echo --key-names ${keypairs}) \
+    --query 'KeyPairs[].[KeyName, KeyFingerprint]'          \
+    --output text       |
+  grep -E -- "$filters" |
+  column -s$'\t' -t
+}
+
+keypair-create(){
+  KEY_NAME=${1:-"$(aws-account-alias)-$(region)"}
+  KEY_DIR=${2:-"$HOME/.ssh"}
+
+  ssh-keygen -t rsa -b 4096 -o -a 100 -f "${KEY_DIR}/${KEY_NAME}"
+  chmod 0600 "${KEY_DIR}/${KEY_NAME}"
+  aws ec2 import-key-pair                                 \
+    --key-name "$KEY_NAME"                                \
+    --public-key-material "file://${KEY_DIR}/${KEY_NAME}.pub"
+}
+
+keypair-delete(){
+  local keypairs=$(__bma_read_inputs $@)
+  local keypair
+  [[ -z ${keypairs} ]] && __bma_usage "key_name [key_name]" && return 1
+  echo "You are about to delete the following EC2 SSH KeyPairs:"
+  echo "$keypairs" | tr ' ' "\n"
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+    for keypair in $keypairs; do
+      aws ec2 delete-key-pair --key-name "$keypair"
+    done
+  fi
+}

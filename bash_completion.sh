@@ -22,6 +22,22 @@ _bma_stacks_completion() {
   esac
 }
 
+_bma_keypairs_completion() {
+  local command="$1"
+  local word="$2"
+
+  case "${COMP_CWORD}" in
+    1)
+      COMPREPLY=( $(compgen -W "$(keypairs | awk '{ print $1 }')" -- ${word}) )
+      return 0
+      ;;
+    *)
+      COMPREPLY=( $(compgen -f ${word}) )
+      return 0
+      ;;
+  esac
+}
+
 _bma_instances_completion() {
     local command="$1"
     local word="$2"
@@ -62,6 +78,7 @@ complete -F _bma_instances_completion instance-type
 complete -F _bma_instances_completion instance-userdata
 complete -F _bma_instances_completion instance-volumes
 complete -F _bma_instances_completion instance-vpc
+complete -F _bma_keypairs_completion keypair-delete
 complete -F _bma_asgs_completion asgs
 complete -F _bma_asgs_completion asg-capacity
 complete -F _bma_asgs_completion asg-instances
