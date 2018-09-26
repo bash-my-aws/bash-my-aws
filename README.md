@@ -42,23 +42,59 @@ $ source ~/.bash-my-aws/bash_completion.sh
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
 
 ```ShellSession
-$ stack
-stack             stack-elbs        stack-parameters  stack-template
-stack-asgs        stack-events      stack-resources   stack-update
-stack-create      stack-failure     stack-status      stack-validate
-stack-delete      stack-instances   stack-tags        stacks
-stack-diff        stack-outputs     stack-tail
+$ stacks # lists CloudFormation stacks
 
-$ instance
-instance-asg          instance-ip           instance-start        instance-terminate    instances
-instance-console      instance-ssh          instance-state        instance-type
-instance-dns          instance-ssh-details  instance-stop         instance-userdata
-instance-iam-profile  instance-stack        instance-tags         instance-volumes
+$ stack-[TAB][TAB]
+stack-arn            stack-elbs           stack-recreate       stack-tags-text
+stack-asg-instances  stack-events         stack-resources      stack-tail
+stack-asgs           stack-exports        stack-status         stack-template
+stack-cancel-update  stack-failure        stack-tag            stack-update
+stack-create         stack-instances      stack-tag-apply      stack-validate
+stack-delete         stack-outputs        stack-tag-delete     
+stack-diff           stack-parameters     stack-tags   
 
-$ asg
-asg-capacity             asg-max-size-set         asg-resume               asgs
-asg-desired-size-set     asg-min-size-set         asg-suspend
-asg-instances            asg-processes_suspended  asgard
+$ asgs # lists Autoscaling groups
+
+$ asg-[TAB][TAB]
+asg-capacity             asg-min-size-set         asg-stack
+asg-desired-size-set     asg-processes_suspended  asg-suspend
+asg-instances            asg-resume               
+asg-max-size-set         asg-scaling-activities  
+
+$ buckets # lists S3 buckets
+bucket-acls   
+
+$ elbs # lists Elastic Load Balancers (classic)
+$ elb-[TAB][TAB]
+elb-dnsname    elb-instances 
+
+$ instances # lists EC2 instances
+
+$ instance-[TAB][TAB]
+instance-asg                             instance-stop
+instance-az                              instance-tags
+instance-console                         instance-terminate
+instance-dns                             instance-termination-protection
+instance-iam-profile                     instance-termination-protection-disable
+instance-ip                              instance-termination-protection-enable
+instance-ssh                             instance-type
+instance-ssh-details                     instance-userdata
+instance-stack                           instance-volumes
+instance-start                           instance-vpc
+instance-state                            
+
+$ keypairs # lists EC2 SSH KeyPairs
+
+$ keypair-[TAB][TAB]
+keypair-create  keypair-delete 
+
+$ vpcs $ lists VPCs
+
+$ vpc-[TAB][TAB]
+vpc-default-delete    vpc-lambda-functions  vpc-rds
+vpc-dhcp-options-ntp  vpc-nat-gateways      vpc-route-tables
+vpc-igw               vpc-network-acls      vpc-subnets
+
 ```
 
 For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
