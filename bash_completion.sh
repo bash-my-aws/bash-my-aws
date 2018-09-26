@@ -12,7 +12,7 @@ _bma_stacks_completion() {
 
   case "${COMP_CWORD}" in
     1)
-      COMPREPLY=( $(compgen -W "$(stacks)" -- ${word}) )
+      COMPREPLY=( $(compgen -W "$(stacks | awk '{ print $1 }')" -- ${word}) )
       return 0
       ;;
     *)
