@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  AsgMinSize:
+    Type: Number
+    Description: Minimum size of the ASG
+    Default: '1'
+  AsgMaxSize:
+    Type: Number
+    Description: Maximum size of the ASG
+    Default: '3'
+  InstanceType:
+    Type: String
+    Description: EC2 Instance Type to use
+    Default: t3.nano
+  KeyName:
+    Type: String
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Default: ''
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+  VPCZoneIdentifier:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of subnet-ids for the instances
+    Default: ''
+
+Resources:
+
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      AssociatePublicIpAddress: true
+      ImageId: !Ref 'LatestAmiId'
+      InstanceType: !Ref 'InstanceType'
+      KeyName: !Ref 'KeyName'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -xeuo pipefail
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          echo "I have booted"
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier: !Ref VPCZoneIdentifier
+      LaunchConfigurationName: !Ref 'LaunchConfiguration'
+      MinSize: !Ref 'AsgMinSize'
+      MaxSize: !Ref 'AsgMaxSize'
+      DesiredCapacity: !Ref 'AsgMinSize'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}'
+          PropagateAtLaunch: 'true'
