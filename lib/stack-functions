@@ -457,7 +457,7 @@ stack-tail() {
     if [ -z "$previous" ]; then
       echo "$current"
     elif [ "$current" != "$previous" ]; then
-      comm -13 <(echo "$previous") <(echo "$current")
+      comm -13 <(echo "$previous") <(echo "$current") 2> >(grep -v "not in sorted order")
     fi
     previous="$current"
     sleep 1
