@@ -125,6 +125,16 @@ vpc-azs() {
   done
 }
 
+vpc-az-count() {
+  local vpc_ids="$(__bma_read_inputs $@)"
+  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+
+  local vpc_id
+  for vpc_id in $vpc_ids; do
+    echo "$vpc_id $(( $(vpc-azs $vpc_id | wc -w) - 1 ))"
+  done
+}
+
 vpc-network-acls(){
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
