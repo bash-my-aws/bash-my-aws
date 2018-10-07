@@ -113,6 +113,18 @@ vpc-subnets(){
   done | column -s$'\t' -t
 }
 
+vpc-azs() {
+  local vpc_ids="$(__bma_read_inputs $@)"
+  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+
+  local vpc_id
+  for vpc_id in $vpc_ids; do
+    echo -n "$vpc_id "
+    echo "$vpc_id" | vpc-subnets | awk '{print $3}' | sort -u | tr "\n" ' '
+    echo
+  done
+}
+
 vpc-network-acls(){
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
