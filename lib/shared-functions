@@ -4,6 +4,17 @@
 #
 # Used by bash-my-aws functions to work with stdin and arguments.
 
+__bma_read_char_stdin() {
+  if [ -t 0 ]; then
+    saved_tty_settings=$(stty -g)
+    stty -icanon min 1 time 0
+    eval "$1=\$(dd bs=1 count=1 2> /dev/null)"
+    stty "$saved_tty_settings"
+  else
+    eval "$1=n"
+  fi
+}
+
 __bma_read_inputs() {
   echo $(__bma_read_stdin) $@ |
     sed -E 's/\ +$//'         |
