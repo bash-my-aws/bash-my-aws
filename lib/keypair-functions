@@ -34,7 +34,7 @@ keypair-delete(){
   echo "You are about to delete the following EC2 SSH KeyPairs:"
   echo "$keypairs" | tr ' ' "\n"
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
-  local regex_yes="^[Yy]$"z
+  local regex_yes="^[Yy]$"
   printf "Are you sure you want to continue? "
   __bma_read_char_stdin REPLY
   echo
