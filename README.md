@@ -88,7 +88,7 @@ $ keypairs # lists EC2 SSH KeyPairs
 $ keypair-[TAB][TAB]
 keypair-create  keypair-delete 
 
-$ vpcs $ lists VPCs
+$ vpcs # lists VPCs
 
 $ vpc-[TAB][TAB]
 vpc-default-delete    vpc-lambda-functions  vpc-rds
