@@ -172,11 +172,11 @@ stack-delete() {
   local stacks=$(__bma_read_inputs $@)
   local stack
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
-  echo "You are about to delete the following stacks:"
-  echo "$stacks" | tr ' ' "\n"
   if ! [ -t 0 ] ; then # if STDIN is not a terminal...
     exec </dev/tty # reattach terminal to STDIN
     local regex_yes="^[Yy]$"
+    echo "You are about to delete the following stacks:"
+    echo "$stacks" | tr ' ' "\n"
     read -p "Are you sure you want to continue? " -n 1 -r
     echo
     [[ $REPLY =~ $regex_yes ]] || return 0
