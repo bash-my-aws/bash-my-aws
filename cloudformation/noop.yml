@@ -1,0 +1,8 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Simple CloudFormation template to quickly create a stack.
+  Used to test bash-my-aws stack-functions
+  
+Resources:
+  WaitConditionHandle:
+    Type: "AWS::CloudFormation::WaitConditionHandle"
