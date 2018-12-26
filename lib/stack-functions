@@ -174,21 +174,21 @@ stack-delete() {
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   echo "You are about to delete the following stacks:"
   echo "$stacks" | tr ' ' "\n"
-  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
-  local regex_yes="^[Yy]$"
-  read -p "Are you sure you want to continue? " -n 1 -r
-  echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
-    for stack in $stacks; do
-      if aws cloudformation delete-stack \
-           --stack-name $stack           \
-           --output text
-      then
-        stack-tail "$stack"
-      fi
-    done
+  if ! [ -t 0 ] ; then # if STDIN is not a terminal...
+    exec </dev/tty # reattach terminal to STDIN
+    local regex_yes="^[Yy]$"
+    read -p "Are you sure you want to continue? " -n 1 -r
+    echo
+    [[ $REPLY =~ $regex_yes ]] || return 0
   fi
+  for stack in $stacks; do
+    if aws cloudformation delete-stack \
+         --stack-name $stack           \
+         --output text
+    then
+      stack-tail "$stack"
+    fi
+  done
 }
 
 # Returns key,value pairs for exports from *all* stacks
