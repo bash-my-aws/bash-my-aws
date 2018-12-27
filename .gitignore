@@ -6,3 +6,4 @@ cloudformation/params
 !cloudformation/params/.keep
 cloudformation/tags
 !cloudformation/tags/.keep
+test/cloudformation
