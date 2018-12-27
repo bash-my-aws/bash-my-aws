@@ -125,12 +125,13 @@ vpc-subnets(){
     aws ec2 describe-subnets                                        \
       --query "Subnets[?VpcId=='$vpc_id'].[
         SubnetId,
-        join(' ', [Tags[?Key=='Name'].Value][] || ['not-named']),
+        VpcId,
+        AvailabilityZone,
         CidrBlock,
-        VpcId
+        join(' ', [Tags[?Key=='Name'].Value][] || ['not-named'])
       ]"                                                            \
       --output text                                                 |
-    sort -k 2 # sort by name as resource-id is pretty random
+    sort -k 5
   done | column -s$'\t' -t
 }
 
