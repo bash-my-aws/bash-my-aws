@@ -9,10 +9,11 @@ asgs() {
   aws autoscaling describe-auto-scaling-groups                             \
     $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names $asg_names) \
     --query "
-      AutoScalingGroups[][
+      AutoScalingGroups[].[[
         AutoScalingGroupName,
-        [Tags[?Key=='Name'].Value][0][0]
-      ]"                                                                   \
+        join(' ', Tags[?Key=='Name'].Value),
+        join(',' sort(AvailabilityZones))
+      ]]"                                                                \
     --output text       |
   grep -E -- "$filters" |
   column -s$'\t' -t 
@@ -69,6 +70,53 @@ asg-instances() {
   if [[ -n "$instance_ids" ]]; then
     echo "$instance_ids" | instances
   fi
+}
+
+asg-launch-configuration() {
+  local asg_names=$(__bma_read_inputs $@)
+  [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
+
+  local launch_configuration_names="$(
+    aws autoscaling describe-auto-scaling-groups              \
+      --auto-scaling-group-names $asg_names                   \
+      --query "AutoScalingGroups[].[LaunchConfigurationName]" \
+      --output text)"
+
+  if [[ -n "$launch_configuration_names" ]]; then
+    echo "$launch_configuration_names" | launch-configurations
+  fi
+}
+
+launch-configurations() {
+  local launch_configuration_names=$(__bma_read_inputs $@)
+
+  aws autoscaling describe-launch-configurations                \
+    $([[ -n ${launch_configuration_names} ]] && echo --launch-configuration-names  "$launch_configuration_names" ) \
+    --query "
+        LaunchConfigurations[].[
+          LaunchConfigurationName,
+          ImageId,
+          InstanceType
+        ]"  \
+    --output text |
+  column -s$'\t' -t
+}
+
+launch-configuration-asgs() {
+  local launch_configuration_names=$(__bma_read_inputs $@)
+  [[ -z "$launch_configuration_names=" ]] && __bma_usage "launch-configuration" && return 1
+
+  local launch_configuration_name
+  for launch_configuration_name in $launch_configuration_names; do
+    echo -n "$launch_configuration_name "
+    aws autoscaling describe-auto-scaling-groups                                  \
+      --query "join(',',
+        AutoScalingGroups[?LaunchConfigurationName=='$launch_configuration_name'].
+          AutoScalingGroupName
+        )"                                                                        \
+      --output text
+  done |
+  column -s$'\t' -t
 }
 
 asg-max-size-set() {
