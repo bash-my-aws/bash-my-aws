@@ -2,6 +2,10 @@
 #
 # miscellaneous functions that don't belong anywhere else
 
+# Returns AWS Account ID of caller
+aws-account-id() {
+  aws sts get-caller-identity --query Account --output text
+}
 
 # aws-panopticon - Run command on multiple AWS Accounts
 #
