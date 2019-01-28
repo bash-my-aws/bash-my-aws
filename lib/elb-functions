@@ -4,7 +4,8 @@
 
 elbs() {
   # returns a list of ELBS
-  local elb_names=$(__bma_read_inputs)
+  # Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names 
+  local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
   local filters=$(__bma_read_filters $@)
 
   aws elb describe-load-balancers                                     \
@@ -17,7 +18,7 @@ elbs() {
 }
 
 elb-dnsname(){
-  local elb_names=$(__bma_read_inputs $@)
+  local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
   [[ -z "${elb_names}" ]] && __bma_usage "load-balancer" && return 1
 
   local elb_name
@@ -31,7 +32,7 @@ elb-dnsname(){
         ]"                             \
       --output text                    |
       column -s$'\t' -t
-  done 
+  done
 }
 
 elb-instances() {
@@ -51,6 +52,22 @@ elb-instances() {
         ]"                             \
       --output text                    |
       column -s$'\t' -t
-  done 
+  done
+}
+
+elb-stack() {
+  # returns CloudFormation stack for asg(s)
+  local elb_names=$(__bma_read_inputs $@ | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
+  [[ -z "$elb_names" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  aws elb describe-tags                                            \
+    --load-balancer-names ${elb_names}                             \
+    --query "
+      TagDescriptions[].[
+        [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
+        LoadBalancerName
+      ]"                                                            \
+    --output text |
+  column -s$'\t' -t
 }
 
