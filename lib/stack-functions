@@ -8,7 +8,7 @@
 #
 #   stack   : token-env
 #   template: token.yml
-#   params  : token-params-env.json
+#   params  : token-params-env.json or params/token-params-env.json
 #
 # Where:
 #
@@ -85,27 +85,22 @@ stack-arn() {
 }
 
 stack-cancel-update() {
-  local stack=$(_stack_name_arg $(__bma_read_inputs $@))
+  local stack=$(_bma_stack_name_arg $(__bma_read_inputs $@))
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   aws cloudformation cancel-update-stack --stack-name $stack
 }
 
 stack-create() {
-  # type: action
-  # create a new stack
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file] [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]" && return 1
-
-  local template=$(_stack_template_arg $inputs)
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template}). You can specify alternative template as second argument."
+  local stack template params # values set by _bma_stack_args()
+  _bma_stack_args $@
+  if [[ $? -ne 0 ]]; then
+    __bma_usage "stack [template-file] [parameters-file] \
+                   [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]"
     return 1
   fi
 
-  local params=$(_stack_params_arg $inputs)
-  if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
+  if [[ -n "$params" ]]; then local parameters="--parameters file://$params"; fi
 
   local arn=''
   local capabilities=''
@@ -122,8 +117,8 @@ stack-create() {
       capabilities="--capabilities $caps_arg"
     fi
   done
-
   unset IFS # to prevent it from breaking things later
+
   if aws cloudformation create-stack \
     --stack-name $stack              \
     --template-body file://$template \
@@ -138,22 +133,18 @@ stack-create() {
 }
 
 stack-update() {
-  # update an existing stack
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg  ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack [template-file] [parameters-file]" && return 1
-
-  local template=$(_stack_template_arg $inputs)
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template}). You can specify alternative template as second argument."
+  local stack template params # values set by _bma_stack_args()
+  _bma_stack_args $@
+  if [[ $? -ne 0 ]]; then
+    __bma_usage "stack [template-file] [parameters-file] \
+                   [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]"
     return 1
   fi
 
-  local params=$(_stack_params_arg $inputs)
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
   local capabilities=''
-  local capabilities_value=$(_stack_capabilities $stack)
+  local capabilities_value=$(_bma_stack_capabilities $stack)
   [[ -z "${capabilities_value}" ]] || capabilities="--capabilities ${capabilities_value}"
 
   if aws cloudformation update-stack \
@@ -203,11 +194,11 @@ stack-exports() {
 
 stack-recreate() {
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   local capabilities=''
-  local capabilities_value=$(_stack_capabilities $stack)
+  local capabilities_value=$(_bma_stack_capabilities $stack)
   [[ -z "${capabilities_value}" ]] || capabilities="--capabilities=${capabilities_value}"
 
   local tmpdir=`mktemp -d /tmp/bash-my-aws.XXXX`
@@ -227,7 +218,7 @@ stack-failure() {
   # return the reason a stack failed to update/create/delete
   # FIXME: only grab the latest failure
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
   aws cloudformation describe-stack-events \
@@ -245,7 +236,7 @@ stack-events() {
   # type: detail
   # return the events a stack has experienced
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   if output=$(aws cloudformation describe-stack-events \
@@ -268,7 +259,7 @@ stack-resources() {
   # type: detail
   # return the resources managed by a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   aws cloudformation describe-stack-resources                       \
@@ -289,7 +280,7 @@ stack-asgs() {
 stack-asg-instances() {
   # return instances for asg(s) in stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local asgs=$(stack-asgs "$stack")
@@ -316,7 +307,7 @@ stack-instances() {
 stack-parameters() {
   # return the parameters applied to a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   aws cloudformation describe-stacks                        \
@@ -391,7 +382,7 @@ stack-tag-apply() {
            }')
 
     local capabilities=''
-    local capabilities_value=$(_stack_capabilities $stack)
+    local capabilities_value=$(_bma_stack_capabilities $stack)
     [[ -z "${capabilities_value}" ]] || capabilities="--capabilities ${capabilities_value}"
 
      $([[ -n $DRY_RUN ]] && echo echo) aws cloudformation update-stack \
@@ -446,7 +437,7 @@ stack-tail() {
   # type: detail
   # follow the events occuring for a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   local current
@@ -477,7 +468,7 @@ stack-tail() {
 stack-template() {
   # return the template applied to a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
 
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -490,7 +481,7 @@ stack-template() {
 stack-tags() {
   # return the stack-tags applied to a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
 
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -518,13 +509,11 @@ stack-tags-text() {
   done
 }
 
-
-
 stack-outputs() {
   # type: detail
   # return the outputs of a stack
   local inputs=$(__bma_read_inputs $@)
-  local stack=$(_stack_name_arg ${inputs})
+  local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
   aws cloudformation describe-stacks \
@@ -554,26 +543,24 @@ stack-diff(){
   # return differences between a template and Stack
   local inputs=$(__bma_read_inputs $@)
   [[ -z "$inputs" ]] && __bma_usage "stack [template-file]" && return 1
-  _stack_diff_template $inputs
+  _bma_stack_diff_template $inputs
+  [[ $? -ne 0 ]] && __bma_usage "stack [template-file]" && return 1
   echo
-  _stack_diff_params $inputs
+  _bma_stack_diff_params $inputs
+  [[ $? -ne 0 ]] && __bma_usage "stack [template-file]" && return 1
 }
 
 #
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
-_stack_diff_template() {
+_bma_stack_diff_template() {
   # report changes which would be made to stack if template were applied
-  [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
-  local stack="$(_stack_name_arg $@)"
+  local stack template params # values set by _bma_stack_args()
+  _bma_stack_args $@
+  [[ $? -ne 0 ]] && return 1
+
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
-  fi
-  local template="$(_stack_template_arg $stack $2)"
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template})." >&2
-    echo "You can specify alternative template as second argument." >&2
-    return 1
   fi
   if [ "x$( type -P colordiff )" != "x" ]; then
     local DIFF_CMD=colordiff
@@ -595,19 +582,15 @@ _stack_diff_template() {
 #
 # Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
 #
-_stack_diff_params() {
+_bma_stack_diff_params() {
   # report on what changes would be made to stack by applying params
-  [[ -z "$1" ]] && __bma_usage "stack [template-file]" && return 1
-  local stack="$(_stack_name_arg $@)"
+  local stack template params # values set by _bma_stack_args()
+  _bma_stack_args $@
+  [[ $? -ne 0 ]] && return 1
+
   if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
     return 1;
   fi
-  local template="$(_stack_template_arg $stack $2)"
-  if [ ! -f "$template" ]; then
-    echo "Could not find template (${template}). You can specify alternative template as second argument." >&2
-    return 1
-  fi
-  local params="$(_stack_params_arg $stack $template $3)"
   if [ -z "$params" ]; then
     echo "No params file provided. Skipping" >&2
     return 0
@@ -635,23 +618,218 @@ _stack_diff_params() {
   fi
 }
 
-_stack_name_arg() {
-  # Extract the stack name from the template file
-  # Allows us to specify template name as stack name
-  # File extension gets stripped off
-  local regex_role_arn_or_capabilities="^\-\-role\-arn=.*|^\-\-capabilities=.*"
-  if [[ $1 =~ $regex_role_arn_or_capabilities ]] ; then
+# Derive and check arguments for:
+#
+# - stack-create
+# - stack-delete
+# - stack-diff
+#
+# In the interests of making the functions simple and a shallow read,
+# it's unusual for us to abstract out shared code like this.
+# This bit is doing some funky stuff though and I think it deserves
+# to go in it's own function to DRY (Don't Repeat Yourself) it up a bit.
+#
+# This function takes the unusual approach of writing to variables of the
+# calling function:
+#
+# - stack
+# - template
+# - params
+#
+# This is generally not good practice for readability and unexpected outcomes.
+# To contain this, the calling functions all clearly declare these three
+# variables as local and contain a comment that they will be set by this function.
+#
+_bma_stack_args(){
+  # If we are working from a single argument
+  if [[ $# -eq 1 ]]; then # XXX Don't send through --capabilities
+    [[ -n "${BMA_DEBUG:-}" ]] && echo "Single arg magic!"
+
+    # XXX Should this be a params file?
+    # $ _bma_stack_args params/foo-bar.json
+    # template!
+
+    # If it's a params file
+    if [[ $1 =~ -params[-.] ]]; then
+      [[ -n "${BMA_DEBUG:-}" ]] && echo params!
+      stack=$(_bma_derive_stack_from_params ${params:-$1})
+      template=$(_bma_derive_template_from_params ${params:-$1})
+      params="${1}"
+
+    # If it's a stack
+    elif [[ ! $1 =~ [.] ]]; then
+      [[ -n "${BMA_DEBUG:-}" ]] && echo stack!
+      stack="${1}"
+      template=$(_bma_derive_template_from_stack $stack)
+      params=$(_bma_derive_params_from_stack_and_template $stack $template)
+
+    # If it's a template
+    elif [[ ! $1 =~ -params[-.] && $1 =~ .json|.yaml|.yml  ]]; then
+      [[ -n "${BMA_DEBUG:-}" ]] && echo template!
+      stack=$(_bma_derive_stack_from_template ${template:-$1})
+      template=${1}
+      params=$(_bma_derive_params_from_template $template)
+    fi
+
+  else
+    # There are some other shortcuts available if you use BMA's naming convention
+    # See explanation at top of this file
+    stack=$(_bma_stack_name_arg $@)
+    template=$(_bma_stack_template_arg $@)
+    params=$(_bma_stack_params_arg $@)
+  fi
+
+  [[ -n "${BMA_DEBUG:-}" ]] && echo "stack='$stack' template='$template' params='$params'"
+
+  if [[ -z ${stack} ]]; then
+    __bma_error "Stack name not provided."
+  elif [[ ! -f "$template" ]]; then
+    __bma_error "Could not find template (${template})."
+  elif [[ -n $params && ! -f "$params" ]]; then
+    __bma_error "Could not find params file (${params})."
+  else
+    # Display calling (or current if none) with expanded arguments
+    echo "${FUNCNAME[1]:-$FUNCNAME} $stack $template $params"
+  fi
+
+
+}
+
+
+##
+## Single argument helpers
+##
+
+# Look for params file based on stack and template
+_bma_derive_params_from_stack_and_template() {
+  local stack=$1
+  local template=$2
+  [[ -z ${stack} || -z ${template} ]] && __bma_usage "stack template" && return 1
+  # XXX Usage
+
+  # Strip path and extension from template
+  local template_slug=$(basename $template | sed 's/\.[^.]*//')
+  # Deduce params filename from stack and template names
+  local params_file="${template_slug}-params-${stack#${template_slug}-}.json"
+
+  local target_dir
+
+  while true; do
+    for target_dir in . params; do
+      candidate="${target_dir}/$params_file"
+      if [[ -f "$candidate" ]]; then
+        echo $candidate
+        break 2
+      fi
+      [[ ${stack_name%-*} == $stack_name ]] && break 2
+      stack_name=${stack_name%-*};
+    done
+  done
+}
+
+
+_bma_derive_params_from_template(){
+  local template=$1
+  local target_dir
+
+  # Strip path and extension from template
+  local template_slug=$(basename $template | sed 's/\.[^.]*//')
+
+  while true; do
+    for target_dir in . params; do
+      candidate="${target_dir}/${template_slug}-params.json"
+      if [[ -f "$candidate" ]]; then
+        echo $candidate
+        break 2
+      fi
+    done
+    [[ ${stack_name%-*} == $stack_name ]] && break 2
+    stack_name=${stack_name%-*}
+  done
+}
+
+
+_bma_derive_stack_from_params(){
+  local params=$1
+  # XXX Usage
+  basename $params .json | sed 's/-params//'
+}
+
+
+_bma_derive_stack_from_template(){
+  local template=$1
+  # XXX Usage
+  basename "${template%.*}"
+}
+
+
+_bma_derive_template_from_params(){
+  local params=$1
+  # XXX Usage
+
+  local template_slug="$(basename ${params%-params*} .json)"
+
+  local target_dir
+  if [[ $PWD =~ params$ ]]; then
+    target_dir='..'
+  else
+    target_dir='.'
+  fi
+
+  local extension
+  for extension in json yml yaml; do
+    candidate="${target_dir}/${template_slug}.${extension}"
+    if [[ -f "$candidate" ]]; then
+      echo $candidate
+      break
+    fi
+  done
+}
+
+
+# Look for template file by repeatedly dropping off last '-*' from stack-name
+_bma_derive_template_from_stack() {
+  local stack_name=$1
+
+  local target_dir
+  if [[ $PWD =~ params$ ]]; then
+    target_dir='..'
+  else
+    target_dir='.'
+  fi
+
+  local extension
+  while true; do
+    for extension in json yml yaml; do
+      candidate="${target_dir}/${stack_name}.${extension}"
+      if [[ -f "$candidate" ]]; then
+        echo $candidate
+        break 2
+      fi
+    done
+    [[ ${stack_name%-*} == $stack_name ]] && break 2
+    stack_name=${stack_name%-*};
+  done
+}
+
+#
+# Multi-argument helpers
+#
+
+_bma_stack_name_arg() {
+  # File extension gets stripped off if template name provided as stack name
+  if [[ $1 =~ \-\-role\-arn=.*|^\-\-capabilities=.*  ]] ; then
     return 1
   fi
   basename "$1" | sed 's/[.].*$//' # remove file extension
 }
 
-_stack_template_arg() {
+_bma_stack_template_arg() {
   # Determine name of template to use
-  local stack="$(_stack_name_arg $@)"
+  local stack="$(_bma_stack_name_arg $@)"
   local template=$2
-  for extension in json yaml yml; do
-    if [ -z "$template" ]; then
+  if [[ -z "$template" || $template =~ ^\-\-role\-arn=.*|^\-\-capabilities=.* ]]; then
+    for extension in json yaml yml; do
       if [ -f "${stack}.${extension}" ]; then
         template="${stack}.${extension}"
         break
@@ -659,30 +837,28 @@ _stack_template_arg() {
         template="${stack%-*}.${extension}"
         break
       fi
-    fi
-  done
-
-  local regex_role_arn_or_capabilities="^\-\-role\-arn=.*|^\-\-capabilities=.*"
-  if [[ $template =~ $regex_role_arn_or_capabilities ]] ; then
-    return 1
+    done
   fi
+
+  [[ -z $template ]] && return 1
 
   echo $template
 }
 
-_stack_params_arg() {
+_bma_stack_params_arg() {
   # determine name of params file to use
-  local stack="$(_stack_name_arg $@)"
-  local template="$(_stack_template_arg $@)"
+  local stack="$(_bma_stack_name_arg $@)"
+  local template="$(_bma_stack_template_arg $@)"
   local params=${3:-$(echo $stack | sed "s/\($(basename $template .json)\)\(.*\)/\1-params\2.json/")};
   if [ -f "${params}" ]; then
     echo $params
   fi
 }
 
-_stack_capabilities() {
+_bma_stack_capabilities() {
   # determine what (if any) capabilities a given stack was deployed with
   aws cloudformation describe-stacks --stack-name "$1" --query 'Stacks[].Capabilities' --output text
 }
+
 
 ## vim: ft=sh
