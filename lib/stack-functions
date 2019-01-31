@@ -689,7 +689,7 @@ _bma_stack_args(){
     __bma_error "Could not find params file (${params})."
   else
     # Display calling (or current if none) with expanded arguments
-    echo "${FUNCNAME[1]:-$FUNCNAME} $stack $template $params"
+    echo "Resolved arguments: $stack $template $params"
   fi
 
 
@@ -714,16 +714,12 @@ _bma_derive_params_from_stack_and_template() {
 
   local target_dir
 
-  while true; do
-    for target_dir in . params; do
-      candidate="${target_dir}/$params_file"
-      if [[ -f "$candidate" ]]; then
-        echo $candidate
-        break 2
-      fi
-      [[ ${stack_name%-*} == $stack_name ]] && break 2
-      stack_name=${stack_name%-*};
-    done
+  for target_dir in . params; do
+    candidate="${target_dir}/$params_file"
+    if [[ -f "$candidate" ]]; then
+      echo $candidate
+      break 2
+    fi
   done
 }
 
@@ -735,16 +731,12 @@ _bma_derive_params_from_template(){
   # Strip path and extension from template
   local template_slug=$(basename $template | sed 's/\.[^.]*//')
 
-  while true; do
-    for target_dir in . params; do
-      candidate="${target_dir}/${template_slug}-params.json"
-      if [[ -f "$candidate" ]]; then
-        echo $candidate
-        break 2
-      fi
-    done
-    [[ ${stack_name%-*} == $stack_name ]] && break 2
-    stack_name=${stack_name%-*}
+  for target_dir in . params; do
+    candidate="${target_dir}/${template_slug}-params.json"
+    if [[ -f "$candidate" ]]; then
+      echo $candidate
+      break 2
+    fi
   done
 }
 
