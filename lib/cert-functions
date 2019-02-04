@@ -19,7 +19,7 @@ certs() {
         length(InUseBy)==\`0\` && 'not-in-use' || 'in-use',
         NotBefore,
         NotAfter,
-        join(', ', [DomainValidationOptions[].ValidationMethod][])
+        join(',', [DomainValidationOptions[].ValidationMethod][])
       ]" \
       --output text
   done |
