@@ -23,7 +23,7 @@ certs() {
       --output text
   done |
   grep -E -- "$filters" |
-  sort -b --key=5 | # sort by NotAfter
+  sort -b -k 5 | # sort by NotAfter
   column -t
 }
 

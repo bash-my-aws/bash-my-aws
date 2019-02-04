@@ -23,7 +23,7 @@ instances() {
       ]"                                                               \
     --output text                      |
   grep -E -- "$filters"                |
-  sort -b --key=6 |
+  sort -b -k 6 |
   column -s$'\t' -t
 }
 
