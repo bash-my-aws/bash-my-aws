@@ -5,7 +5,8 @@
 certs() {
   local filters=$(__bma_read_filters $@)
 
-  [[ -n ${include_arn:-} ]] && local include_arn_bit="CertificateArn,"
+  local include_arn_bit
+  [[ -n ${include_arn:-} ]] && include_arn_bit="CertificateArn,"
   local cert_arns=$(aws acm list-certificates --output text | cut -f2)
   local cert_arn
   for cert_arn in $cert_arns; do
