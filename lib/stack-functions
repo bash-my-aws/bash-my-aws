@@ -104,7 +104,7 @@ stack-create() {
 
   local arn=''
   local capabilities=''
-  local inputs_array=($inputs)
+  local inputs_array=($@)
   local IFS='=' # override default field separator in the scope of this function only
   local regex_role_arn="^\-\-role\-arn=.*"
   local regex_capabilities="^\-\-capabilities=.*"
@@ -691,8 +691,6 @@ _bma_stack_args(){
     # Display calling (or current if none) with expanded arguments
     echo "Resolved arguments: $stack $template $params"
   fi
-
-
 }
 
 
