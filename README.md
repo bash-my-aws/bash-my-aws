@@ -64,6 +64,8 @@ asg-max-size-set         asg-scaling-activities
 $ buckets # lists S3 buckets
 bucket-acls   
 
+$ ecr-login # performs docker logins to ECR
+
 $ elbs # lists Elastic Load Balancers (classic)
 $ elb-[TAB][TAB]
 elb-dnsname    elb-instances 

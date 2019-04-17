@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# ecr-functions
+
+ecr-login(){
+  # Usage:
+  # ecr-login [account] [region]
+  #
+  # Defaults:
+  # - account: $(aws-account-id)
+  # - region: $(region)
+  #
+  # Supports multiple [account], but only one [region]
+
+  local inputs=$(__bma_read_inputs $@)
+
+  local ecr_accounts=''
+  for input in $(echo -n "$inputs" | tr ' ' '\n'); do
+    if [[ $input =~ ^-?[0-9]+$ ]]; then
+      ecr_accounts="${ecr_accounts:-} $input"
+    else
+      local ecr_region="${input}"
+    fi
+  done
+
+  local ecr_login_command
+  local docker_login_commands
+  local each_docker_login
+
+  if ecr_login_command="aws ecr get-login \
+    --no-include-email \
+    --region ${ecr_region:-$(region)} \
+    --registry-ids ${ecr_accounts:-$(aws-account-id)}"; then
+
+    if docker_login_commands="$($ecr_login_command)"; then
+      if command -v docker >/dev/null; then
+        while read -r each_docker_login; do
+          echo "Logging in to ECR $(echo "${each_docker_login}" | cut -d' ' -f7)"
+          $each_docker_login
+        done <<< "$docker_login_commands"
+      else
+        echo "$docker_login_commands"
+      fi
+    fi
+  fi
+}
