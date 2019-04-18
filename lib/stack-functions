@@ -646,8 +646,8 @@ _bma_stack_diff_params() {
 # variables as local and contain a comment that they will be set by this function.
 #
 _bma_stack_args(){
-  # If we are working from a single argument
-  if [[ $# -eq 1 ]]; then # XXX Don't send through --capabilities
+  # If we are working from a single argument (ignore args starting with `--`)
+  if [[ $# -eq 1 ]] || [[ $2 =~ ^-- ]] ; then
     [[ -n "${BMA_DEBUG:-}" ]] && echo "Single arg magic!"
 
     # XXX Should this be a params file?
