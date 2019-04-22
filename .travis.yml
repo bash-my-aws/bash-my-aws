@@ -1,8 +1,0 @@
-language: bash
-script:
-  - ./test/parameter-spec.sh
-notifications:
-  email: false
-  os:
-    - linux
-    - osx
