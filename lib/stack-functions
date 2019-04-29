@@ -518,7 +518,11 @@ stack-outputs() {
 
   aws cloudformation describe-stacks \
     --stack-name ${stack}            \
-    --query 'Stacks[].Outputs[]'     \
+    --query "Stacks[].Outputs[].[
+               OutputKey,
+               OutputValue,
+               Description || ''
+             ]"                      \
     --output text                    |
   column -s$'\t' -t
 }
