@@ -101,15 +101,15 @@ describe "_bma_stack_args:" "$(
   )"
 
   context "with a stack" "$(
-    expect "$(_bma_stack_args great-app)" to_be "main great-app ./great-app.json "
+    expect "$(_bma_stack_args great-app)" to_be "Resolved arguments: great-app ./great-app.json "
   )"
 
   context "with a template" "$(
-    expect "$(_bma_stack_args great-app.yaml)" to_be "main great-app great-app.yaml ./great-app-params.json"
+    expect "$(_bma_stack_args great-app.yaml)" to_be "Resolved arguments: great-app great-app.yaml ./great-app-params.json"
   )"
 
   context "with a params file" "$(
-    expect "$(_bma_stack_args params/great-app-params-staging.json)" to_be "main great-app-staging ./great-app.json params/great-app-params-staging.json"
+    expect "$(_bma_stack_args params/great-app-params-staging.json)" to_be "Resolved arguments: great-app-staging ./great-app.json params/great-app-params-staging.json"
   )"
 
 )"
