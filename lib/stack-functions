@@ -524,6 +524,7 @@ stack-outputs() {
                Description || ''
              ]"                      \
     --output text                    |
+  sort              |
   column -s$'\t' -t
 }
 
