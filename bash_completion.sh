@@ -100,9 +100,9 @@ _bma_subcommands_completion() {
   word="$2"
 
   subcommand_completion=$(
-    complete -p                         |
-    command grep "_bma_"                |
-    command grep "\s${subcommand:-}$"   |
+    complete -p                       |
+    command grep "_bma_"              |
+    command grep "\s${subcommand:-}$" |
     command awk '{print $3}'
   )
 
