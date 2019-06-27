@@ -4,19 +4,38 @@
 
 function cloudtrails() {
 
+  local cloudtrails="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@)
 
-  aws cloudtrail describe-trails --query " \
-    trailList[].[
-      Name, 
-      S3BucketName, 
-      HomeRegion, 
-      join('=', ['IsMultiRegionTrail', to_string(IsMultiRegionTrail)]), 
-      join('=', ['IncludeGlobalServiceEvents', to_string(IncludeGlobalServiceEvents)])
-    ]
-    " \
+  aws cloudtrail describe-trails                                                         \
+    $([[ -n ${cloudtrails} ]] && echo --trail-name-list ${cloudtrails})                 \
+    --query "
+      trailList[].[
+        Name,
+        S3BucketName,
+        HomeRegion,
+        join('=', ['IsMultiRegionTrail', to_string(IsMultiRegionTrail)]),
+        join('=', ['IncludeGlobalServiceEvents', to_string(IncludeGlobalServiceEvents)])
+      ] "                                                                                \
     --output text       |
   grep -E -- "$filters"
 
+}
+
+cloudtrail-status() {
+  local cloudtrails="$(__bma_read_inputs $@)"
+  [[ -z "$cloudtrails" ]] && __bma_usage "cloudtrail [cloudtrail]" && return 1
+
+  local cloudtrail
+  for cloudtrail in $cloudtrails; do
+    aws cloudtrail get-trail-status              \
+      --name "$cloudtrail"                       \
+      --output text                              \
+      --query "[
+       '$cloudtrail',
+       (IsLogging && 'LOGGING' || 'NOT_LOGGING')
+      ]"
+  done              |
+  column -s$'\t' -t
 }
 
