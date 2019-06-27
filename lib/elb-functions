@@ -4,16 +4,19 @@
 
 elbs() {
   # returns a list of ELBS
-  # Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names 
+  # Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names
   local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
   local filters=$(__bma_read_filters $@)
 
   aws elb describe-load-balancers                                     \
     $([[ -n ${elb_names} ]] && echo --load-balancer-names $elb_names) \
-    --query "LoadBalancerDescriptions[][ LoadBalancerName ]"          \
+    --query "LoadBalancerDescriptions[][
+               LoadBalancerName,
+               CreatedTime
+             ]"          \
     --output text       |
   grep -E -- "$filters" |
-  sort                  |
+  sort -k 2             |
   column -s$'\t' -t
 }
 
