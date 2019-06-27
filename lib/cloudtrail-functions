@@ -33,7 +33,7 @@ cloudtrail-status() {
       --output text                              \
       --query "[
        '$cloudtrail',
-       (IsLogging && 'LOGGING' || 'NOT_LOGGING')
+        join('=', ['IsLogging', to_string(IsLogging)])
       ]"
   done              |
   column -s$'\t' -t
