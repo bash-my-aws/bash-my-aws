@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# ecr-functions
+
+ecr-repositories() {
+  local aws_account_id=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
+
+  aws ecr describe-repositories \
+      $([[ -n ${aws_account_id} ]] && echo --registry-id ${aws_account_id}) \
+    --query "
+      repositories[].[
+        repositoryName,
+        registryId,
+        repositoryUri
+      ]"                        \
+    --output text       |
+  grep -E -- "$filters" |
+  sort -b -k 1          |
+  column -s$'\t' -t
+}
+
+
+ecr-repository-images() {
+  if [[ $1 =~ registry ]]; then # XXX tidy this up!
+    local registry_id=${1#registry=}
+    shift
+  fi
+  local repository_names=$(__bma_read_inputs $@ )
+
+  # XXX Usage if no repository_names passed in
+  #
+  # ??? ImageDigest looks really interesting but is long!
+  #     Use short version (like github)?
+  #     Make need to use sed or awk
+  #     "imageDigest": "sha256:d9b6967fb1715a225efc8edd7e3658d4d0e663221618905c5f3cb1eecc1bf5a5",
+
+  local repository_name
+  for repository_name in $repository_names; do
+    echo '#'
+    aws ecr describe-images                                         \
+      $([[ -n $registry_id ]] && echo --registry-id "$registry_id") \
+      --repository-name "$repository_name"                          \
+      --output text                                                 \
+      --query "
+        imageDetails[].[
+          repositoryName,
+          registryId,
+          join('=', ['BYTES',to_string(imageSizeInBytes)]),
+          join('=', ['PUSHED_AT',to_string(imagePushedAt)]),
+          join('=', ['DIGEST',to_string(imageDigest)]),
+          join(',', imageTags)
+        ]" |
+    sort -b -k 4 |
+    sed -E 's/DIGEST=.*:(.{12})\S*/\1/g' # short sha
+  done |
+  column -s$'\t' -t
+}
