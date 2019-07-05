@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# load all the functions from bash-my-aws
+for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+
+# generate the aliases file
+type "$@"

@@ -46,7 +46,7 @@ NB: If there are new functions, you will need to regenerate the aliases file
 Generate the aliases:
 
 ```ShellSession
-$ ~/.bash-my-aws/generate_aliases.sh
+$ ~/.bash-my-aws/bin/generate_aliases
 ```
 
 Source the generated aliases:
