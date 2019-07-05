@@ -39,6 +39,28 @@ Add the bash_completion scripts: (optional)
 $ source ~/.bash-my-aws/bash_completion.sh
 ```
 
+### For non-bash users
+
+NB: If there are new functions, you will need to regenerate the aliases file
+
+Generate the aliases:
+
+```ShellSession
+$ ~/.bash-my-aws/generate_aliases.sh
+```
+
+Source the generated aliases:
+
+```ShellSession
+$ source ~/.bash-my-aws/aliases
+```
+
+And if you use `zsh` and want completion: (optional)
+
+```ShellSession
+$ source ~/.bash-my-aws/zsh_completion.sh
+```
+
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
 
 ```ShellSession
