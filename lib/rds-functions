@@ -1,0 +1,27 @@
+#!/bin/bash
+# shellcheck disable=SC2155
+#
+# rds-functions
+#
+# Amazon AWS RDS database instances
+
+# This is the second function refering to a type of `instance`
+# Perhaps EC2 `instance` functions should be aliased to `ec2-instances`
+# The original names would be deprecated but still supported for some time.
+
+rds-db-instances() {
+  local filters=$(__bma_read_filters "$@")
+
+  aws rds describe-db-instances \
+    --query "DBInstances[].[
+        DBInstanceIdentifier,
+        Engine,
+        EngineVersion,
+        DBInstanceStatus,
+        DBName
+      ]"                        \
+    --output text |
+  grep -E -- "$filters" |
+  sort -b -k 1 |
+  column -s$'\t' -t
+}
