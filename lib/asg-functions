@@ -1,66 +1,70 @@
 #!/bin/bash
+# shellcheck disable=SC2046
+# shellcheck disable=SC2155
 #
 # asg-functions
 
 asgs() {
   local asg_names=$(__bma_read_inputs)
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
-  aws autoscaling describe-auto-scaling-groups                             \
-    $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names $asg_names) \
+  # shellcheck disable=SC2086
+  aws autoscaling describe-auto-scaling-groups            \
+    ${asg_names:+'--auto-scaling-group-names' $asg_names} \
     --query "
       AutoScalingGroups[].[[
         AutoScalingGroupName,
         join(' ', Tags[?Key=='Name'].Value),
         join(',' sort(AvailabilityZones))
-      ]]"                                                                \
+      ]]"                                                 \
     --output text       |
   grep -E -- "$filters" |
-  column -s$'\t' -t 
+  column -s$'\t' -t
 }
 
 asg-capacity() {
   # returns min, desired and maximum capacities of autoscaling group
-  local asg_names=$(__bma_read_inputs $@)
-  [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names=$(__bma_read_inputs "$@")
+  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
 
-  aws autoscaling describe-auto-scaling-groups                             \
-    $([[ -n ${asg_names} ]] && echo --auto-scaling-group-names $asg_names) \
+  # shellcheck disable=SC2086
+  aws autoscaling describe-auto-scaling-groups \
+    --auto-scaling-group-names $asg_names      \
     --query "
     AutoScalingGroups[][
         AutoScalingGroupName,
         MinSize,
         DesiredCapacity,
         MaxSize
-    ]"                                                                     \
-    --output text                                                          |
-  column -s$'\t' -t 
+    ]"                                         \
+    --output text   |
+  column -s$'\t' -t
 }
 
 asg-desired-size-set() {
   # sets the desired capacity of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  local asg_names="$(echo ${inputs} | awk '{$NF=""; print $0}')"
-  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-  local regex_non_numerals="[^0-9]+"
-  if [[ -z "${asg_names}" ]] || [[ "${capacity}" =~ $regex_non_numerals ]]; then
-    __bma_usage "auto-scaling-group capacity"
+  local capacity="$1"
+  shift
+  local asg_names=$(__bma_read_inputs "$@")
+  if [[ -z $asg_names ]] || [[ -z $capacity ]] || [[ $capacity =~ [^0-9]+ ]]; then
+    __bma_usage "capacity asg_name [asg_name]"
     return 1
   fi
 
-  for asg in $inputs; do
-    [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling set-desired-capacity  \
-      --auto-scaling-group-name ${asg}    \
-      --desired-capacity ${capacity}
+  local asg_name
+  for asg_name in $asg_names; do
+    aws autoscaling set-desired-capacity    \
+      --auto-scaling-group-name "$asg_name" \
+      --desired-capacity "$capacity"
   done
 }
 
 asg-instances() {
   # returns instances of autoscaling group(s)
-  local asg_names=$(__bma_read_inputs $@)
+  local asg_names=$(__bma_read_inputs "$@")
   [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
 
+  # shellcheck disable=SC2086
   local instance_ids="$(
     aws autoscaling describe-auto-scaling-groups             \
       --auto-scaling-group-names $asg_names                  \
@@ -73,9 +77,10 @@ asg-instances() {
 }
 
 asg-launch-configuration() {
-  local asg_names=$(__bma_read_inputs $@)
+  local asg_names=$(__bma_read_inputs "$@")
   [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
 
+  # shellcheck disable=SC2086
   local launch_configuration_names="$(
     aws autoscaling describe-auto-scaling-groups              \
       --auto-scaling-group-names $asg_names                   \
@@ -83,28 +88,31 @@ asg-launch-configuration() {
       --output text)"
 
   if [[ -n "$launch_configuration_names" ]]; then
-    echo "$launch_configuration_names" | launch-configurations
+    launch-configurations "$launch_configuration_names"
   fi
 }
 
 launch-configurations() {
-  local launch_configuration_names=$(__bma_read_inputs $@)
+  local launch_configuration_names=$(__bma_read_inputs "$@")
 
   aws autoscaling describe-launch-configurations                \
-    $([[ -n ${launch_configuration_names} ]] && echo --launch-configuration-names  "$launch_configuration_names" ) \
+    ${launch_configuration_names:+'--launch-configuration-names' $launch_configuration_names} \
     --query "
         LaunchConfigurations[].[
           LaunchConfigurationName,
           ImageId,
           InstanceType
-        ]"  \
+        ]"                                                                                                       \
     --output text |
   column -s$'\t' -t
 }
 
 launch-configuration-asgs() {
-  local launch_configuration_names=$(__bma_read_inputs $@)
-  [[ -z "$launch_configuration_names=" ]] && __bma_usage "launch-configuration" && return 1
+  local launch_configuration_names=$(__bma_read_inputs "$@")
+  if [[ -z $launch_configuration_names ]] ; then
+    __bma_usage "launch_configuration [launch_configuration]"
+    return 1
+  fi
 
   local launch_configuration_name
   for launch_configuration_name in $launch_configuration_names; do
@@ -121,48 +129,47 @@ launch-configuration-asgs() {
 
 asg-max-size-set() {
   # sets maximum size of autoscaling group(s)
-  local inputs=$(__bma_read_inputs $@)
-  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-  local regex_non_numerals="[^0-9]+"
-  if [[ $(echo "$inputs" | wc -w) -ne 2 ]] ||
-     [[ "${capacity}" =~ $regex_non_numerals ]]; then
-    __bma_usage "auto-scaling-group capacity"
+  local capacity="$1"
+  shift
+  local asg_names=$(__bma_read_inputs "$@")
+  if [[ -z $asg_names ]] || [[ -z $capacity ]] || [[ $capacity =~ [^0-9]+ ]]; then
+    __bma_usage "capacity asg_name [asg_name]"
     return 1
   fi
 
-  for asg in $inputs; do
-    [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling update-auto-scaling-group   \
-      --auto-scaling-group-name ${asg}          \
-      --max-size ${capacity}
+  local asg_name
+  for asg_name in $asg_names; do
+    aws autoscaling update-auto-scaling-group \
+      --auto-scaling-group-name "$asg_name"   \
+      --max-size "$capacity"
   done
 }
 
 asg-min-size-set() {
   # sets the minimum size of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  local capacity="$(echo ${inputs} | awk '{ print $NF }')"
-  local regex_non_numerals="[^0-9]+"
-  if [[ $(echo "$inputs" | wc -w) -ne 2 ]] ||
-     [[ "$capacity" =~ $regex_non_numerals ]]; then
-    __bma_usage "auto-scaling-group capacity"
+  local capacity="$1"
+  shift
+  local asg_names=$(__bma_read_inputs "$@")
+  if [[ -z $asg_names ]] || [[ -z $capacity ]] || [[ $capacity =~ [^0-9]+ ]]; then
+    __bma_usage "capacity asg_name [asg_name]"
     return 1
   fi
 
-  for asg in $inputs; do
-    [[ ${asg} == ${capacity} ]] && continue
-    aws autoscaling update-auto-scaling-group   \
-      --auto-scaling-group-name ${asg}          \
-      --min-size ${capacity}
+  local asg_name
+  for asg_name in $asg_names; do
+    aws autoscaling update-auto-scaling-group \
+      --auto-scaling-group-name "$asg_name"   \
+      --min-size "$capacity"
   done
 }
 
 asg-processes_suspended() {
   # returns the suspended processes of an autoscaling group
   # TODO: fix the output
-  local asg_names=$(__bma_read_inputs $@)
-  [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names=$(__bma_read_inputs "$@")
+  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
 
+  # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups \
     --auto-scaling-group-names $asg_names      \
     --query "
@@ -170,53 +177,61 @@ asg-processes_suspended() {
         AutoScalingGroupName,
         SuspendedProcesses
       ]"                                       \
-    --output text                              |
-  column -s$'\t' -t 
+    --output text    |
+  column -s$'\t' -t
 }
 
 asg-resume() {
   # resumes all processes of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
-  for asg in $inputs; do
-    aws autoscaling resume-processes --auto-scaling-group-name $asg
+  local asg_names=$(__bma_read_inputs "$@")
+  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
+
+  local asg_name
+  for asg_name in $asg_names; do
+    aws autoscaling resume-processes --auto-scaling-group-name "$asg_name"
   done
 }
 
 asg-suspend() {
   # suspends all processes of an autoscaling group
-  local inputs=$(__bma_read_inputs $@)
-  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
-  for asg in $inputs; do
-    aws autoscaling suspend-processes --auto-scaling-group-name $asg
+  local asg_names=$(__bma_read_inputs "$@")
+  [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
+
+  local asg_name
+  for asg_name in $asg_names; do
+    aws autoscaling suspend-processes       \
+      --auto-scaling-group-name "$asg_name"
   done
 }
 
 asg-stack() {
   # returns CloudFormation stack for asg(s)
-  local asg_names="$(__bma_read_inputs $@)"
-  [[ -z "$asg_names" ]] && __bma_usage "asg-name [asg-name]" && return 1
+  local asg_names=$(__bma_read_inputs "$@")
+  [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
-  aws autoscaling describe-auto-scaling-groups                          \
-    $([[ -n "$asg_names" ]] && echo --auto-scaling-group-names "$asg_names") \
+  # shellcheck disable=SC2086
+  aws autoscaling describe-auto-scaling-groups                       \
+    --auto-scaling-group-names $asg_names                            \
     --query "
       AutoScalingGroups[][
         [
           [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
           AutoScalingGroupName
         ]
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"                                                           \
+    --output text   |
   column -s$'\t' -t
 }
 
 asg-scaling-activities() {
   # show all scaling activities
-  local inputs=$(__bma_read_inputs $@)
-  [[ -z "$inputs" ]] && __bma_usage "auto-scaling-group" && return 1
-  for asg in $inputs; do
+  local asg_names=$(__bma_read_inputs "$@")
+  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
+
+  local asg_name
+  for asg_name in $asg_names; do
     aws autoscaling describe-scaling-activities \
-      --auto-scaling-group-name $asg            \
+      --auto-scaling-group-name "$asg_name"     \
       --output json
   done
 }
