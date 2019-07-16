@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# region-functions
+#
+# region() must be sourced in order to update the AWS_DEFAULT_REGION
+# environment variable. It cannot set this when run via bin/bma.
+
+region() {
+  local inputs=$(__bma_read_inputs $@)
+  if [[ -z "$inputs" ]]; then
+    echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
+  else
+    AWS_DEFAULT_REGION="$inputs"
+  fi
+}
+
+region-each() {
+  local old_aws_default_region="$AWS_DEFAULT_REGION"
+  for AWS_DEFAULT_REGION in $(regions); do
+    eval "$@" | sed "s/$/ #${AWS_DEFAULT_REGION}/"
+  done
+  AWS_DEFAULT_REGION="$old_aws_default_region"
+}
+
+regions() {
+  aws ec2 describe-regions           \
+    --query "Regions[].[RegionName]" \
+    --output text                    |
+  sort
+}
+
