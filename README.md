@@ -39,20 +39,23 @@ Add the bash_completion scripts: (optional)
 $ source ~/.bash-my-aws/bash_completion.sh
 ```
 
-### For non-bash users
+### For ZSH  users
 
-NB: If there are new functions, you will need to regenerate the aliases file
-
-Generate the aliases:
+1. Generate the aliases:
 
 ```ShellSession
 $ ~/.bash-my-aws/bin/generate-aliases
 ```
 
-Source the generated aliases:
+NB: If there are new functions, run the previous command again. 
+
+2. Copy and paste the following into your `.zshrc`
 
 ```ShellSession
-$ source ~/.bash-my-aws/aliases
+source ~/.bash-my-aws/aliases
+
+# Comment out the next line to disable auto completion
+source ~/.bash-my-aws/zsh_completion.sh
 ```
 
 Source region functions:
@@ -64,7 +67,7 @@ $ source ~/.bash-my-aws/lib/region-functions
 And if you use `zsh` and want completion: (optional)
 
 ```ShellSession
-$ source ~/.bash-my-aws/zsh_completion.sh
+$ bma stacks 
 ```
 
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**

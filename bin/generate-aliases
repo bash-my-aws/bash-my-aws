@@ -1,21 +1,42 @@
 #!/bin/bash
+BMA_PATH="$(cd "$(dirname "$0")/.." && pwd)"
+ALIASES_DESTINATION="$BMA_PATH/aliases"
 
 # don't create aliases for existing functions
 pre_existing_functions=$(compgen -A function | sort)
 
 # load all the functions from bash-my-aws
-for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+for f in "${BMA_PATH}"/lib/*-functions; do source "$f"; done
 
 all_functions=$(compgen -A function | sort)
 
 # generate the aliases file
-echo "# GENERATED ALIASES FOR BASH-MY-AWS" > ~/.bash-my-aws/aliases
-echo -e "# to regenerate run: bin/generate_aliases.sh \n" >> ~/.bash-my-aws/aliases
-# generate the functions except for functions starting with _
-for fnc in $(echo "$pre_existing_functions $all_functions" | tr ' ' '\n' | sort | uniq -u); do
-  echo "alias $fnc='~/.bash-my-aws/bin/bma $fnc'" >> ~/.bash-my-aws/aliases
+{
+  echo "# GENERATED ALIASES FOR BASH-MY-AWS"
+  echo "# to regenerate run: bin/$(basename "$0")"
+  echo ""
+} > "$ALIASES_DESTINATION"
+
+# all functions in bma
+inclusions=$(compgen -A function)
+
+# functions not to alias
+exclusions=('region')
+
+# functions to alias
+fncs_to_alias=$(echo "${inclusions}" "${exclusions}" | tr ' ' '\n' | sort | uniq -u)
+
+# generate wrapper functions
+for fnc in $fncs_to_alias; do
+    echo "alias $fnc='${BMA_PATH}/bin/bma $fnc'" >> "$ALIASES_DESTINATION"
 done;
+
+# functions to clone
+fncs_to_clone=('region')
 
 # region() needs to be a function in order to let it set AWS_DEFAULT_REGION
 # in the current shell
-echo "unalias region" >> ~/.bash-my-aws/aliases
+for fnc_name in $fncs_to_clone; do
+    function_body=$(type "$fnc_name" | tail -n +3)
+    printf "%s() %s" "$fnc_name" "$function_body" >> "$ALIASES_DESTINATION"
+done;

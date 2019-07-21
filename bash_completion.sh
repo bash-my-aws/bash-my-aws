@@ -1,3 +1,5 @@
+BMA_PATH="$(cd "$(dirname "$0")" && pwd)"
+
 _bma_elbs_completion() {
     local command="$1"
     local word="$2"
@@ -9,33 +11,24 @@ _bma_elbs_completion() {
 _bma_stacks_completion() {
   local command="$1"
   local word="$2"
-
-  case "${COMP_CWORD}" in
-    1)
-      COMPREPLY=( $(compgen -W "$(stacks | awk '{ print $1 }')" -- ${word}) )
-      return 0
-      ;;
-    *)
-      COMPREPLY=( $(compgen -f ${word}) )
-      return 0
-      ;;
-  esac
+  if [ "${COMP_CWORD}" -eq 1 ] || [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
+    COMPREPLY=( $(compgen -W "$(stacks | awk '{ print $1 }')" -- "${word}") )
+  else
+    COMPREPLY=( $(compgen -f "${word}") )
+  fi
+  return 0
 }
 
 _bma_keypairs_completion() {
   local command="$1"
   local word="$2"
 
-  case "${COMP_CWORD}" in
-    1)
-      COMPREPLY=( $(compgen -W "$(keypairs | awk '{ print $1 }')" -- ${word}) )
-      return 0
-      ;;
-    *)
-      COMPREPLY=( $(compgen -f ${word}) )
-      return 0
-      ;;
-  esac
+  if [ "${COMP_CWORD}" -eq 1 ] || [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
+    COMPREPLY=( $(compgen -W "$(keypairs | awk '{ print $1 }')" -- ${word}) )
+  else
+    COMPREPLY=( $(compgen -f "${word}") )
+  fi
+  return 0
 }
 
 _bma_instances_completion() {
@@ -57,6 +50,44 @@ _bma_asgs_completion() {
     local options=$(asgs --query 'AutoScalingGroups[][{"AutoScalingGroupName": AutoScalingGroupName}][]')
     COMPREPLY=($(compgen -W "${options}" -- ${word}))
     return 0
+}
+
+_bma_completion() {
+  local word
+  word="$2"
+  if [ "${COMP_CWORD}" -eq 1 ]; then
+    _bma_functions_completion
+  else
+    _bma_subcommands_completion "${COMP_WORDS[1]}" "$word"
+  fi
+}
+
+_bma_functions_completion() {
+  COMPREPLY=($("${BMA_PATH}/bin/bma" compgen -A function))
+  return
+}
+
+_bma_subcommands_completion() {
+  local subcommand word subcommand_completion
+  subcommand="$1"
+  word="$2"
+
+  subcommand_completion=$(                \
+    complete -p                           \
+    | command grep "_bma_"                \
+    | command grep -w "${subcommand:-}"   \
+    | command awk '{print $3}'
+  )
+
+  if [ -n "${subcommand_completion}" ]; then
+    if [ -n "${AWS_DEFAULT_REGION}" ]; then
+      $subcommand_completion "bma" "${word:-0}"
+    else
+      COMPREPLY=""
+      return 0
+    fi
+  fi
+  return 0
 }
 
 complete -F _bma_instances_completion instances
@@ -109,3 +140,5 @@ complete -F _bma_stacks_completion stack-outputs
 complete -F _bma_stacks_completion stack-diff
 complete -F _bma_elbs_completion elb-instances
 complete -f stack-validate
+complete -F _bma_completion bma
+
