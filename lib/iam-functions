@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# iam-functions
+
+
+roles() {
+  local filters=$(__bma_read_filters $@)
+
+  aws iam list-roles    \
+    --query 'Roles[].[
+      RoleName,
+      RoleId,
+      CreateDate
+    ]'                  \
+    --output text       |
+  grep -E -- "$filters" |
+  sort -b -k 3          |
+  column -s$'\t' -t
+}
+
+
+role-principal(){
+  local role_names="$(__bma_read_inputs $@)"
+  [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
+
+  aws iam list-roles \
+    --query "
+      Roles[?contains('$role_names', RoleName)].[
+        RoleName,
+        AssumeRolePolicyDocument.Statement[0].Effect,
+        AssumeRolePolicyDocument.Statement[0].Action,
+        join('', keys(AssumeRolePolicyDocument.Statement[0].Principal)),
+        join(',', values(AssumeRolePolicyDocument.Statement[0].Principal)[])
+    ]" \
+    --output text   |
+  sort              |
+  column -s$'\t' -t
+}
+
+
+# [Redundant]
+#
+# This can now be achieved using `roles | role-principal | grep AROA`
+# When a trusted Role is recreated, the trust is broken.
+#
+# roles-with-orphans(){
+#   aws iam list-roles \
+#     --query 'Roles[
+#       ?contains(
+#         to_string([AssumeRolePolicyDocument.Statement[].Principal.AWS]), 'AROA'
+#       )
+#      ].[RoleName]'   \
+#   --output text
+# }
