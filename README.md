@@ -58,7 +58,7 @@ $ source ~/.bash-my-aws/aliases
 Source region functions:
 
 ```ShellSession
-$ source ~/.bash-my-aws/lib/misc-functions
+$ source ~/.bash-my-aws/lib/region-functions
 ```
 
 And if you use `zsh` and want completion: (optional)
