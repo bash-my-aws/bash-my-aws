@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# log-functions
+#
+# CloudWatch Logs
+
+log-groups() {
+  local filters=$(__bma_read_filters $@)
+
+  local column_command
+  if column --help | grep -- --table-right > /dev/null; then
+    column_command='column --table --table-right 3,4'
+  else
+    column_command='column --table'
+  fi
+
+  aws logs describe-log-groups    \
+    --query 'logGroups[].[
+               logGroupName,
+               creationTime,
+               metricFilterCount,
+               storedBytes]'      \
+    --output text |
+  grep -E -- "$filters" |
+  sort --key 2          |
+  $column_command
+}
+
+
