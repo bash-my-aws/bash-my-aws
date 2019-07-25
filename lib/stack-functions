@@ -40,7 +40,8 @@
 # Output sorted by CreationTime
 stacks() {
 
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters $@) # Filter output by arguments (optional)
+  local stack_names=$(__bma_read_inputs) # Filter by stack-names from STDIN (optional)
 
   aws cloudformation list-stacks                      \
     --stack-status                                    \
@@ -59,7 +60,7 @@ stacks() {
       UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS    \
       UPDATE_ROLLBACK_FAILED                          \
       UPDATE_ROLLBACK_IN_PROGRESS                     \
-    --query "StackSummaries[][
+    --query "StackSummaries[${stack_names:+?contains(['${stack_names// /"','"}'], StackName)}][
                StackName ,
                StackStatus,
                CreationTime,
@@ -70,7 +71,6 @@ stacks() {
   sort -b -k 3          |
   column -s$'\t' -t
 }
-
 
 stack-arn() {
   local stacks=$(__bma_read_inputs $@)
