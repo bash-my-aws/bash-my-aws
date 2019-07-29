@@ -1,5 +1,4 @@
 .DS_Store
-aliases
 lib/load.inc
 multipass-role-arns
 multipass-role-arns/*
