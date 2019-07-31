@@ -1,5 +1,5 @@
 # GENERATED ALIASES FOR BASH-MY-AWS
-# to regenerate run: bin/generate_aliases.sh
+# to regenerate run: bin/generate_aliases.sh 
 
 alias asg-capacity='~/.bash-my-aws/bin/bma asg-capacity'
 alias asg-desired-size-set='~/.bash-my-aws/bin/bma asg-desired-size-set'
@@ -45,6 +45,8 @@ alias cert-users='~/.bash-my-aws/bin/bma cert-users'
 alias cloudtrails='~/.bash-my-aws/bin/bma cloudtrails'
 alias cloudtrail-status='~/.bash-my-aws/bin/bma cloudtrail-status'
 alias columnise='~/.bash-my-aws/bin/bma columnise'
+alias ecr-repositories='~/.bash-my-aws/bin/bma ecr-repositories'
+alias ecr-repository-images='~/.bash-my-aws/bin/bma ecr-repository-images'
 alias elb-dnsname='~/.bash-my-aws/bin/bma elb-dnsname'
 alias elb-instances='~/.bash-my-aws/bin/bma elb-instances'
 alias elbs='~/.bash-my-aws/bin/bma elbs'
