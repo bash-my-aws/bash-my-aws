@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# lambda-functions
+
+lambda-functions() {
+  local filters=$(__bma_read_filters $@)
+
+  local column_command
+  if column --help | grep -- --table-right > /dev/null; then
+    column_command='column --table --table-right 3,4'
+  else
+    column_command='column -t'
+  fi
+
+  aws lambda list-functions \
+    --output text           \
+    --query "
+      Functions[].[
+        FunctionName,
+        LastModified,
+        Runtime,
+        MemorySize
+      ]"                |
+  grep -E -- "$filters" |
+  sort -b -k 2          |
+  $column_command
+}
+
+
+lambda-function-memory(){
+  # returns memorySize for function
+  local function_names="$(__bma_read_inputs $@)"
+  [[ -z "$function_names" ]] && __bma_usage "function [function]" && return 1
+
+  local column_command
+  if column --help | grep -- --table-right > /dev/null; then
+    column_command='column --table --table-right 2'
+  else
+    column_command='column -t'
+  fi
+
+  local function_name
+  for function_name in $function_names; do
+    aws lambda get-function                              \
+      --function-name "$function_name"                   \
+      --output text                                      \
+      --query 'Configuration.[FunctionName, MemorySize]'
+  done |
+  $column_command
+}
+
+
+lambda-function-memory-set(){
+  local memory=$1
+  shift 1
+  local usage_msg="memory function [function]"
+  [[ -z "${memory}" ]] && __bma_usage "$usage_msg" && return 1
+
+  local function_names=$(__bma_read_inputs $@)
+  [[ -z "${function_names}" && -t 0 ]] && __bma_usage "$usage_msg" && return 1
+
+  local function_name
+  for function_name in $function_names; do
+    aws lambda update-function-configuration  \
+      --function-name "$function_name"        \
+      --memory-size "$memory"            \
+      --query '[MemorySize, FunctionName]'    \
+      --output text
+  done
+}
+
+
+lambda-function-memory-step(){
+  local sleep_period=120
+  local memory_last=$1
+  shift 1
+  local usage_msg="memory function [function]"
+  [[ -z "${memory_last}" ]] && __bma_usage $usage_msg && return 1
+  # XXX check it's a valid memory size
+
+  local function_names=$(__bma_read_inputs $@)
+  [[ -z "${function_names}" && -t 0 ]] && __bma_usage $usage_msg && return 1
+
+  echo "You are about to step memory for following functions:"
+  echo $function_names | tr ' ' "\n"
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  [[ $REPLY =~ $regex_yes ]] || return 0
+
+  echo -n "Run time: "
+  date
+
+  local -A memory_old=()
+  local function_name
+  echo "Original memory settings for functions:"
+  for function_name in $function_names; do
+    memory_old[$function_name]=$(lambda-function-memory "$function_name" | awk '{print $2}')
+    echo "- $function_name ${memory_old[$function_name]}"
+  done # | column --table --table-right 2
+
+  local something_updated=''
+  for (( COUNTER=128; COUNTER<=$memory_last; COUNTER+=64 )); do
+    for function_name in $function_names; do
+      if (( ${memory_old[$function_name]} < $COUNTER )); then
+        lambda-function-memory-set "${COUNTER}" "$function_name"
+        something_updated=true
+      fi
+    done
+    if [[ -n $something_updated ]]; then
+      echo -n "Sleeping $sleep_period seconds"
+      sleep $sleep_period
+      echo
+    fi
+    something_updated=''
+  done
+
+  echo "Resetting to original values"
+  for function_name in $function_names; do
+    lambda-function-memory-set "${memory_old[$function_name]}" "$function_name"
+  done
+}

@@ -11,7 +11,7 @@ log-groups() {
   if column --help | grep -- --table-right > /dev/null; then
     column_command='column --table --table-right 3,4'
   else
-    column_command='column --table'
+    column_command='column -t'
   fi
 
   aws logs describe-log-groups    \

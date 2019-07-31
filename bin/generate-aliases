@@ -1,13 +1,18 @@
 #!/bin/bash
 
+# don't create aliases for existing functions
+pre_existing_functions=$(compgen -A function | sort)
+
 # load all the functions from bash-my-aws
 for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+
+all_functions=$(compgen -A function | sort)
 
 # generate the aliases file
 echo "# GENERATED ALIASES FOR BASH-MY-AWS" > ~/.bash-my-aws/aliases
 echo -e "# to regenerate run: bin/generate_aliases.sh \n" >> ~/.bash-my-aws/aliases
 # generate the functions except for functions starting with _
-for fnc in $(compgen -A function); do
+for fnc in $(echo "$pre_existing_functions $all_functions" | tr ' ' '\n' | sort | uniq -u); do
   echo "alias $fnc='~/.bash-my-aws/bin/bma $fnc'" >> ~/.bash-my-aws/aliases
 done;
 
