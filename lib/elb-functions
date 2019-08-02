@@ -12,7 +12,8 @@ elbs() {
     $([[ -n ${elb_names} ]] && echo --load-balancer-names $elb_names) \
     --query "LoadBalancerDescriptions[][
                LoadBalancerName,
-               CreatedTime
+               CreatedTime,
+               join(',', Subnets)
              ]"          \
     --output text       |
   grep -E -- "$filters" |

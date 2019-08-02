@@ -49,7 +49,7 @@ ecr-repository-images() {
           join('=', ['BYTES',to_string(imageSizeInBytes)]),
           join('=', ['PUSHED_AT',to_string(imagePushedAt)]),
           join('=', ['DIGEST',to_string(imageDigest)]),
-          join(',', imageTags)
+          join(',', [imageTags][])
         ]" |
     sort -b -k 4 |
     sed -E 's/DIGEST=.*:(.{12})\S*/\1/g' # short sha
