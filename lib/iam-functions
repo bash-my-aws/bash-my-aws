@@ -2,8 +2,12 @@
 #
 # iam-functions
 
+# [TIP] When a trusted Role is recreated, the trust is broken.
+# Broken trust relationships can be listed with:
+#
+# `iam-roles | iam-role-principal | grep AROA`
 
-roles() {
+iam-roles() {
   local filters=$(__bma_read_filters $@)
 
   aws iam list-roles    \
@@ -19,7 +23,7 @@ roles() {
 }
 
 
-role-principal(){
+iam-role-principal(){
   local role_names="$(__bma_read_inputs $@)"
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 
@@ -36,19 +40,3 @@ role-principal(){
   sort              |
   column -s$'\t' -t
 }
-
-
-# [Redundant]
-#
-# This can now be achieved using `roles | role-principal | grep AROA`
-# When a trusted Role is recreated, the trust is broken.
-#
-# roles-with-orphans(){
-#   aws iam list-roles \
-#     --query 'Roles[
-#       ?contains(
-#         to_string([AssumeRolePolicyDocument.Statement[].Principal.AWS]), 'AROA'
-#       )
-#      ].[RoleName]'   \
-#   --output text
-# }
