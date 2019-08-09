@@ -41,6 +41,7 @@ source ~/.bash-my-aws/bash_completion.sh
 
 ### Why the aliases?
 
+<<<<<<< HEAD
 `bash-my-aws` began as a collection of bash functions, sourced into your shell.
 More recently, the default suggestion has been to load aliases that execute a
 small wrapper script that loads the functions and executes the desired function.

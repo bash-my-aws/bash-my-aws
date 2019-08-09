@@ -13,6 +13,7 @@ asg-scaling-activities
 asg-stack
 asg-suspend
 aws-account-alias
+aws-account-each
 aws-account-id
 aws-panopticon
 _bma_derive_params_from_stack_and_template
