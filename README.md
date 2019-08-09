@@ -41,33 +41,23 @@ $ source ~/.bash-my-aws/bash_completion.sh
 
 ### For ZSH  users
 
-1. Generate the aliases:
-
-```ShellSession
-$ ~/.bash-my-aws/bin/generate-aliases
-```
-
-NB: If there are new functions, run the previous command again. 
-
-2. Copy and paste the following into your `.zshrc`
+1. Copy and paste the following into your `.zshrc`
 
 ```ShellSession
 source ~/.bash-my-aws/aliases
-
-# Comment out the next line to disable auto completion
-source ~/.bash-my-aws/zsh_completion.sh
 ```
 
-Source region functions:
+And if you use `zsh` and want completion:
 
 ```ShellSession
-$ source ~/.bash-my-aws/lib/region-functions
+autoload -U +X compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+
+source ~/.bash-my-aws/bash_completion.sh
 ```
 
-And if you use `zsh` and want completion: (optional)
-
 ```ShellSession
-$ bma stacks 
+$ bma stacks
 ```
 
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
@@ -81,23 +71,23 @@ stack-asg-instances  stack-events         stack-resources      stack-tail
 stack-asgs           stack-exports        stack-status         stack-template
 stack-cancel-update  stack-failure        stack-tag            stack-update
 stack-create         stack-instances      stack-tag-apply      stack-validate
-stack-delete         stack-outputs        stack-tag-delete     
-stack-diff           stack-parameters     stack-tags   
+stack-delete         stack-outputs        stack-tag-delete
+stack-diff           stack-parameters     stack-tags
 
 $ asgs # lists Autoscaling groups
 
 $ asg-[TAB][TAB]
 asg-capacity             asg-min-size-set         asg-stack
 asg-desired-size-set     asg-processes_suspended  asg-suspend
-asg-instances            asg-resume               
-asg-max-size-set         asg-scaling-activities  
+asg-instances            asg-resume
+asg-max-size-set         asg-scaling-activities
 
 $ buckets # lists S3 buckets
-bucket-acls   
+bucket-acls
 
 $ elbs # lists Elastic Load Balancers (classic)
 $ elb-[TAB][TAB]
-elb-dnsname    elb-instances 
+elb-dnsname    elb-instances
 
 $ instances # lists EC2 instances
 
@@ -112,12 +102,12 @@ instance-ssh                             instance-type
 instance-ssh-details                     instance-userdata
 instance-stack                           instance-volumes
 instance-start                           instance-vpc
-instance-state                            
+instance-state
 
 $ keypairs # lists EC2 SSH KeyPairs
 
 $ keypair-[TAB][TAB]
-keypair-create  keypair-delete 
+keypair-create  keypair-delete
 
 $ vpcs # lists VPCs
 
@@ -132,7 +122,7 @@ For more info on the query syntax used by AWSCLI, check out http://jmespath.org/
 
 **Piping output between functions**
 
-We're very excited to announce this functionality.  
+We're very excited to announce this functionality.
 
 Most bash-my-aws functions will accept AWS Resource Ids from STDIN. This means
 you can pipe output from many functions into other functions.

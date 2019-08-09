@@ -1,4 +1,4 @@
-BMA_PATH="${HOME}/.bash-my-aws"
+bma_path="$(cd "$(dirname "$0")" && pwd)"
 
 _bma_elbs_completion() {
     local command="$1"
@@ -65,7 +65,7 @@ _bma_completion() {
 _bma_functions_completion() {
   local word all_funcs
   word="$1"
-  all_funcs=$("${BMA_PATH}/bin/bma" compgen -A function)
+  all_funcs=$(cat "${bma_path}/functions")
   COMPREPLY=($(compgen -W "${all_funcs}" -- ${word}))
   return
 }
