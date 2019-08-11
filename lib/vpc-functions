@@ -42,7 +42,8 @@ subnets(){
       join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
     ]"                  |
   grep -E -- "$filters" |
-  sort -k 5
+  sort -k 5         |
+  column -s$'\t' -t
 }
 
 pcxs(){
@@ -61,7 +62,7 @@ pcxs(){
         AccepterVpcInfo.Region,
         AccepterVpcInfo.VpcId]
       ),
-      Tags[?Key==`Name`].Value || [`NOT_NAMED`]
+      Tags[?Key==`Name`].Value
     ]' \
      --output text      |
   grep -E -- "$filters" |
@@ -81,9 +82,16 @@ vpcs() {
       ((IsDefault==`false`)&&`not-default`)||`default-vpc`,
       join(`,`, [Tags[?Key==`Name`].Value || `NO_NAME`][]),
       CidrBlock,
+<<<<<<< HEAD
       join(`,`, [Tags[?Key==`aws:cloudformation:stack-name`].Value || `NO_STACK`][]),
       join(`,`, [Tags[?Key==`version`].Value || `NO_VERSION`][])
     ]'                  |
+=======
+      Tags[?Key==`aws:cloudformation:stack-name`].Value, 
+      Tags[?Key==`version`].Value][]
+      ]'                                                  \
+    --output text       |
+>>>>>>> WIP
   grep -E -- "$filters" |
   column -s$'\t' -t
 }
