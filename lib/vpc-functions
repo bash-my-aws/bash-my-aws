@@ -42,6 +42,29 @@ subnets(){
       join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
     ]"                  |
   grep -E -- "$filters" |
+  sort -k 5
+}
+
+pcxs(){
+  local filters=$(__bma_read_filters $@)
+  aws ec2 describe-vpc-peering-connections                     \
+    --query 'VpcPeeringConnections[].[
+      VpcPeeringConnectionId,
+      Status.Code,
+      join(`:`, [
+        RequesterVpcInfo.OwnerId,
+        RequesterVpcInfo.Region,
+        RequesterVpcInfo.VpcId]
+      ),
+      join(`:`, [
+        AccepterVpcInfo.OwnerId,
+        AccepterVpcInfo.Region,
+        AccepterVpcInfo.VpcId]
+      ),
+      Tags[?Key==`Name`].Value || [`NOT_NAMED`]
+    ]' \
+     --output text      |
+  grep -E -- "$filters" |
   sort -k 5             |
   column -s$'\t' -t
 }
