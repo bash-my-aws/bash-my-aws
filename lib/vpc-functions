@@ -148,15 +148,15 @@ vpc-nat-gateways(){
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    aws ec2 describe-nat-gateways                  \
-      --query "
-        NatGateways[?VpcId=='$vpc_id'].[
-          NatGatewayId,
-          VpcId,
-          join(' ', NatGatewayAddresses[].PublicIp)
-        ]"                                         \
-      --output text
-  done | column -s$'\t' -t
+    aws ec2 describe-nat-gateways                 \
+      --output text                               \
+      --query "NatGateways[?VpcId=='$vpc_id'].[
+        NatGatewayId,
+        VpcId,
+        join(',', NatGatewayAddresses[].PublicIp)
+      ]"
+  done              |
+  column -s$'\t' -t
 }
 
 vpc-subnets(){
