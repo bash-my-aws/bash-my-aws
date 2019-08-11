@@ -50,17 +50,17 @@ vpcs() {
   local vpc_ids="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@)
 
-  aws ec2 describe-vpcs \
-    $([[ -n ${vpc_ids} ]] && echo --vpc-ids ${vpc_ids})     \
+  aws ec2 describe-vpcs                                                 \
+    $([[ -n ${vpc_ids} ]] && echo --vpc-ids ${vpc_ids})                 \
+    --output text                                                       \
     --query 'Vpcs[].[
-      [VpcId, 
-      ((IsDefault==`false`)&&`not-default`)||`default-vpc`, 
-      Tags[?Key==`Name`].Value || [`not-named`],
+      VpcId,
+      ((IsDefault==`false`)&&`not-default`)||`default-vpc`,
+      join(`,`, [Tags[?Key==`Name`].Value || `NO_NAME`][]),
       CidrBlock,
-      Tags[?Key==`aws:cloudformation:stack-name`].Value, 
-      Tags[?Key==`version`].Value][]
-      ][]'                                                  \
-    --output text       |
+      join(`,`, [Tags[?Key==`aws:cloudformation:stack-name`].Value || `NO_STACK`][]),
+      join(`,`, [Tags[?Key==`version`].Value || `NO_VERSION`][])
+    ]'                  |
   grep -E -- "$filters" |
   column -s$'\t' -t
 }
