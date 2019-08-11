@@ -152,12 +152,11 @@ vpc-network-acls(){
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    aws ec2 describe-network-acls \
-      --query "NetworkAcls[?VpcId=='$vpc_id'].[NetworkAclId, VpcId]" \
-      --output text
+    aws ec2 describe-network-acls                                    \
+      --output text                                                  \
+      --query "NetworkAcls[?VpcId=='$vpc_id'].[NetworkAclId, VpcId]"
   done | column -s$'\t' -t
 }
-
 
 vpc-rds(){
   local vpc_ids="$(__bma_read_inputs $@)"
