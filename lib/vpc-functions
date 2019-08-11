@@ -131,15 +131,14 @@ vpc-route-tables(){
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    aws ec2 describe-route-tables          \
-      --query "
-        RouteTables[?VpcId=='$vpc_id'].[[
-          RouteTableId,
-          VpcId,
-          Tags[?Key=='Name'].Value
-        ][]]"                              \
-      --output text                        |
-      column -s$'\t' -t
+    aws ec2 describe-route-tables                             \
+      --output text                                           \
+      --query "RouteTables[?VpcId=='$vpc_id'].[
+        RouteTableId,
+        VpcId,
+        join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
+      ]"              |
+    column -s$'\t' -t
   done
 }
 
