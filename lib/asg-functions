@@ -29,13 +29,14 @@ asg-capacity() {
   # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups \
     --auto-scaling-group-names $asg_names      \
-    --output text                              \
-    --query "AutoScalingGroups[][
-      AutoScalingGroupName,
-      MinSize,
-      DesiredCapacity,
-      MaxSize
-    ]"              |
+    --query "
+    AutoScalingGroups[][
+        AutoScalingGroupName,
+        MinSize,
+        DesiredCapacity,
+        MaxSize
+    ]"                                         \
+    --output text   |
   column -s$'\t' -t
 }
 

@@ -53,11 +53,11 @@ vpcs() {
   aws ec2 describe-vpcs \
     $([[ -n ${vpc_ids} ]] && echo --vpc-ids ${vpc_ids})     \
     --query 'Vpcs[].[
-      [VpcId,
-      ((IsDefault==`false`)&&`not-default`)||`default-vpc`,
+      [VpcId, 
+      ((IsDefault==`false`)&&`not-default`)||`default-vpc`, 
       Tags[?Key==`Name`].Value || [`not-named`],
       CidrBlock,
-      join(``, [Tags[?Key==`aws:cloudformation:stack-name`].Value][]),
+      Tags[?Key==`aws:cloudformation:stack-name`].Value, 
       Tags[?Key==`version`].Value][]
       ][]'                                                  \
     --output text       |
