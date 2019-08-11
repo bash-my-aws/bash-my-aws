@@ -2,6 +2,31 @@
 #
 # vpc-functions
 
+
+pcxs(){
+  local filters=$(__bma_read_filters $@)
+  aws ec2 describe-vpc-peering-connections                     \
+    --query 'VpcPeeringConnections[].[
+      [VpcPeeringConnectionId,
+      Status.Code,
+      join(`:`, [
+        RequesterVpcInfo.OwnerId,
+        RequesterVpcInfo.Region,
+        RequesterVpcInfo.VpcId]
+      ),
+      join(`:`, [
+        AccepterVpcInfo.OwnerId,
+        AccepterVpcInfo.Region,
+        AccepterVpcInfo.VpcId]
+      ),
+      join(`,`, [Tags[?Key==`Name`].Value][] || [`not-named`])
+    ]]' \
+     --output text      |
+  grep -E -- "$filters" |
+  sort -k 5             |
+  column -s$'\t' -t
+}
+
 vpcs() {
   local vpc_ids="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@)
