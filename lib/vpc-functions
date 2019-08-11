@@ -166,8 +166,8 @@ vpc-subnets(){
   local vpc_id
   for vpc_id in $vpc_ids; do
     aws ec2 describe-subnets                            \
-      --query "Subnets[?VpcId=='$vpc_id'].[ SubnetId ]" \
-      --output text
+      --output text                                     \
+      --query "Subnets[?VpcId=='$vpc_id'].[ SubnetId ]"
   done | subnets
 }
 
