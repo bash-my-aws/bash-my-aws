@@ -48,7 +48,8 @@ subnets(){
 
 pcxs(){
   local filters=$(__bma_read_filters $@)
-  aws ec2 describe-vpc-peering-connections                     \
+  aws ec2 describe-vpc-peering-connections                  \
+    --output text                                           \
     --query 'VpcPeeringConnections[].[
       VpcPeeringConnectionId,
       Status.Code,
@@ -62,9 +63,8 @@ pcxs(){
         AccepterVpcInfo.Region,
         AccepterVpcInfo.VpcId]
       ),
-      Tags[?Key==`Name`].Value
-    ]' \
-     --output text      |
+      join(`,`, [Tags[?Key==`Name`].Value || `NO_NAME`][])
+    ]'                  |
   grep -E -- "$filters" |
   sort -k 5             |
   column -s$'\t' -t
