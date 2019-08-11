@@ -169,12 +169,11 @@ asg-processes_suspended() {
   # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups \
     --auto-scaling-group-names $asg_names      \
-    --query "
-      AutoScalingGroups[][
-        AutoScalingGroupName,
-        SuspendedProcesses
-      ]"                                       \
-    --output text    |
+    --output text                              \
+    --query "AutoScalingGroups[][
+      AutoScalingGroupName,
+      SuspendedProcesses
+    ]"              |
   column -s$'\t' -t
 }
 
