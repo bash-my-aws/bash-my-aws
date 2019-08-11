@@ -2,6 +2,25 @@
 #
 # vpc-functions
 
+subnets(){
+  local filters=$(__bma_read_filters $@)
+  local subnet_ids=$(__bma_read_inputs)
+
+  aws ec2 describe-subnets                                       \
+    $([[ -n ${subnet_ids} ]] && echo --subnet-ids ${subnet_ids}) \
+    --query "Subnets[].[
+      SubnetId,
+      VpcId,
+      AvailabilityZone,
+      CidrBlock,
+      join(' ', [Tags[?Key=='Name'].Value][] || ['not-named'])
+    ]"                                                           \
+    --output text   |
+  grep -E -- "$filters" |
+  sort -k 5         |
+  column -s$'\t' -t
+}
+
 vpcs() {
   local vpc_ids="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@)
@@ -121,18 +140,11 @@ vpc-subnets(){
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
-    aws ec2 describe-subnets                                        \
-      --query "Subnets[?VpcId=='$vpc_id'].[
-        SubnetId,
-        VpcId,
-        AvailabilityZone,
-        CidrBlock,
-        join(' ', [Tags[?Key=='Name'].Value][] || ['not-named'])
-      ]"                                                            \
-      --output text                                                 |
-    sort -k 5
-  done | column -s$'\t' -t
+  for vpc_id in $vpc_ids; do
+    aws ec2 describe-subnets                            \
+      --query "Subnets[?VpcId=='$vpc_id'].[ SubnetId ]" \
+      --output text
+  done | subnets
 }
 
 vpc-network-acls(){
