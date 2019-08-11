@@ -115,11 +115,11 @@ launch-configuration-asgs() {
   for launch_configuration_name in $launch_configuration_names; do
     echo -n "$launch_configuration_name "
     aws autoscaling describe-auto-scaling-groups                                  \
+      --output text                                                               \
       --query "join(',',
         AutoScalingGroups[?LaunchConfigurationName=='$launch_configuration_name'].
           AutoScalingGroupName
-        )"                                                                        \
-      --output text
+        )"
   done |
   column -s$'\t' -t
 }
