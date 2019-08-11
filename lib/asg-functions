@@ -9,15 +9,14 @@ asgs() {
   local filters=$(__bma_read_filters "$@")
 
   # shellcheck disable=SC2086
-  aws autoscaling describe-auto-scaling-groups            \
-    ${asg_names:+'--auto-scaling-group-names' $asg_names} \
-    --query "
-      AutoScalingGroups[].[[
-        AutoScalingGroupName,
-        join(' ', Tags[?Key=='Name'].Value),
-        join(',' sort(AvailabilityZones))
-      ]]"                                                 \
-    --output text       |
+  aws autoscaling describe-auto-scaling-groups              \
+    ${asg_names:+'--auto-scaling-group-names' $asg_names}   \
+    --output text                                           \
+    --query "AutoScalingGroups[].[
+      AutoScalingGroupName,
+      join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][]),
+      join(',' sort(AvailabilityZones))
+    ]"                  |
   grep -E -- "$filters" |
   column -s$'\t' -t
 }
