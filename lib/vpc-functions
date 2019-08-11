@@ -33,16 +33,16 @@ subnets(){
 
   aws ec2 describe-subnets                                       \
     $([[ -n ${subnet_ids} ]] && echo --subnet-ids ${subnet_ids}) \
+    --output text                                                \
     --query "Subnets[].[
       SubnetId,
       VpcId,
       AvailabilityZone,
       CidrBlock,
       join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
-    ]"                                                           \
-    --output text   |
+    ]"                  |
   grep -E -- "$filters" |
-  sort -k 5         |
+  sort -k 5             |
   column -s$'\t' -t
 }
 
