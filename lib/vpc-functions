@@ -67,7 +67,7 @@ vpc-lambda-functions(){
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
+  for vpc_id in $vpc_ids; do
     aws lambda list-functions --query "
       Functions[?VpcConfig.VpcId=='$vpc_id'].[
         VpcConfig.VpcId,
@@ -90,13 +90,13 @@ vpc-igw() {
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
+  for vpc_id in $vpc_ids; do
     aws ec2 describe-internet-gateways --query "
       InternetGateways[?contains(Attachments[].VpcId, '$vpc_id')].[
-          InternetGatewayId, 
-          join(' ', Attachments[].VpcId) 
+          InternetGatewayId,
+          join(' ', Attachments[].VpcId)
       ]" \
-    --output text 
+    --output text
   done | column -s$'\t' -t
 }
 
@@ -105,11 +105,11 @@ vpc-route-tables(){
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
+  for vpc_id in $vpc_ids; do
     aws ec2 describe-route-tables          \
       --query "
         RouteTables[?VpcId=='$vpc_id'].[[
-          RouteTableId, 
+          RouteTableId,
           VpcId,
           Tags[?Key=='Name'].Value
         ][]]"                              \
@@ -123,15 +123,15 @@ vpc-nat-gateways(){
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
+  for vpc_id in $vpc_ids; do
     aws ec2 describe-nat-gateways                  \
       --query "
         NatGateways[?VpcId=='$vpc_id'].[
-          NatGatewayId, 
-          VpcId, 
+          NatGatewayId,
+          VpcId,
           join(' ', NatGatewayAddresses[].PublicIp)
         ]"                                         \
-      --output text 
+      --output text
   done | column -s$'\t' -t
 }
 
@@ -152,10 +152,10 @@ vpc-network-acls(){
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
+  for vpc_id in $vpc_ids; do
     aws ec2 describe-network-acls \
       --query "NetworkAcls[?VpcId=='$vpc_id'].[NetworkAclId, VpcId]" \
-      --output text 
+      --output text
   done | column -s$'\t' -t
 }
 
@@ -165,11 +165,11 @@ vpc-rds(){
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
-  for vpc_id in $vpc_ids; do 
+  for vpc_id in $vpc_ids; do
     aws rds describe-db-instances --query "
       DBInstances[?DBSubnetGroup.VpcId=='${vpc_id}'].[
-        DBInstanceIdentifier, 
-        DBSubnetGroup.VpcId, 
+        DBInstanceIdentifier,
+        DBSubnetGroup.VpcId,
         DBName
       ]" \
     --output text
@@ -178,12 +178,12 @@ vpc-rds(){
 
 # Output commands to delete default VPC
 # Exclude default VPCs that contain:
-# - instances 
+# - instances
 # - lambda functions
 #
 vpc-default-delete() {
   local REGION=$AWS_DEFAULT_REGION
-  # local vpc=$1 
+  # local vpc=$1
   local VPCID SUBNETS IGW IG INSTANCES
 
   local abort=false
@@ -221,7 +221,7 @@ vpc-default-delete() {
         echo aws --region $REGION ec2 delete-subnet --subnet-id=$SUBNET
       done
     fi
-  
+
     # Internet Gateway - must detach and delete
     IGW=$(aws ec2 describe-internet-gateways --query "InternetGateways[?contains(Attachments[].VpcId, '$VPCID')].InternetGatewayId" --output text)
     if [ "$IGW" ] ; then
@@ -230,7 +230,7 @@ vpc-default-delete() {
         echo aws --region $REGION ec2 delete-internet-gateway --internet-gateway-id $IG
       done
     fi
-  
+
     # And finally the VPC
     echo aws --region $REGION ec2 delete-vpc --vpc-id=$VPCID
   fi
