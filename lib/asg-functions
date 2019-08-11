@@ -93,7 +93,7 @@ asg-launch-configuration() {
 launch-configurations() {
   local launch_configuration_names=$(__bma_read_inputs "$@")
 
-  aws autoscaling describe-launch-configurations                \
+  aws autoscaling describe-launch-configurations                                              \
     ${launch_configuration_names:+'--launch-configuration-names' $launch_configuration_names} \
     --output text                                                                             \
     --query "LaunchConfigurations[].[
