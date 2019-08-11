@@ -68,12 +68,12 @@ vpc-lambda-functions(){
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    aws lambda list-functions --query "
-      Functions[?VpcConfig.VpcId=='$vpc_id'].[
+    aws lambda list-functions
+      --output text                                     \
+      --query "Functions[?VpcConfig.VpcId=='$vpc_id'].[
         VpcConfig.VpcId,
         FunctionName
-      ]" \
-    --output text
+      ]"
   done | column -s$'\t' -t
 }
 
