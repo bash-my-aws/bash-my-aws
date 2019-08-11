@@ -116,12 +116,12 @@ vpc-igw() {
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    aws ec2 describe-internet-gateways --query "
-      InternetGateways[?contains(Attachments[].VpcId, '$vpc_id')].[
-          InternetGatewayId,
-          join(' ', Attachments[].VpcId)
-      ]" \
-    --output text
+    aws ec2 describe-internet-gateways                                       \
+      --output text                                                          \
+      --query "InternetGateways[?contains(Attachments[].VpcId, '$vpc_id')].[
+        InternetGatewayId,
+        join(',', Attachments[].VpcId)
+      ]"
   done | column -s$'\t' -t
 }
 
@@ -258,4 +258,3 @@ vpc-default-delete() {
     echo aws --region $REGION ec2 delete-vpc --vpc-id=$VPCID
   fi
 }
-
