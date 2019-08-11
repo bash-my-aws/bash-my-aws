@@ -208,14 +208,11 @@ asg-stack() {
   # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups                       \
     --auto-scaling-group-names $asg_names                            \
-    --query "
-      AutoScalingGroups[][
-        [
-          [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
-          AutoScalingGroupName
-        ]
-      ][]"                                                           \
-    --output text   |
+    --output text                                                    \
+    --query "AutoScalingGroups[].[
+      [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
+      AutoScalingGroupName
+    ]"              |
   column -s$'\t' -t
 }
 
