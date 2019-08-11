@@ -164,13 +164,13 @@ vpc-rds(){
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    aws rds describe-db-instances --query "
-      DBInstances[?DBSubnetGroup.VpcId=='${vpc_id}'].[
+    aws rds describe-db-instances                               \
+      --output text                                             \
+      --query "DBInstances[?DBSubnetGroup.VpcId=='${vpc_id}'].[
         DBInstanceIdentifier,
         DBSubnetGroup.VpcId,
         DBName
-      ]" \
-    --output text
+      ]"
   done | column -s$'\t' -t
 }
 
