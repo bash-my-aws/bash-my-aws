@@ -95,13 +95,12 @@ launch-configurations() {
 
   aws autoscaling describe-launch-configurations                \
     ${launch_configuration_names:+'--launch-configuration-names' $launch_configuration_names} \
-    --query "
-        LaunchConfigurations[].[
-          LaunchConfigurationName,
-          ImageId,
-          InstanceType
-        ]"                                                                                                       \
-    --output text |
+    --output text                                                                             \
+    --query "LaunchConfigurations[].[
+      LaunchConfigurationName,
+      ImageId,
+      InstanceType
+    ]"              |
   column -s$'\t' -t
 }
 
