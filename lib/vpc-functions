@@ -103,11 +103,11 @@ vpc-lambda-functions(){
 }
 
 vpc-dhcp-options-ntp(){
-  aws ec2 describe-dhcp-options \
+  aws ec2 describe-dhcp-options                                              \
+    --output text                                                            \
     --query "
       DhcpOptions[].DhcpConfigurations[?Key=='ntp-servers'].Values[][].Value
-    "                                                                        \
-    --output text
+    "
 }
 
 vpc-igw() {
