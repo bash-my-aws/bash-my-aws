@@ -65,7 +65,7 @@ stacks() {
                StackStatus,
                CreationTime,
                LastUpdatedTime || 'NEVER_UPDATED',
-               ( RootId && 'NESTED') || ''
+               ( RootId && 'NESTED') || 'NOT_NESTED'
              ]"                                       \
     --output text       |
   grep -E -- "$filters" |
