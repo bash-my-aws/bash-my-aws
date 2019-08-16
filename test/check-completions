@@ -1,0 +1,24 @@
+bma_path=$(cd $(dirname $0)/.. && pwd)
+
+# function in bma
+bma_funcs=$(
+  cat "${bma_path}/functions" \
+  | grep -vE "^__bma" \
+  | grep -vE "^_bma"
+)
+
+completions=$(
+  cat "${bma_path}/bash_completion.sh" \
+  | grep -E "^complete -F" \
+  | awk '{print $4}'
+)
+
+for func in $bma_funcs;do
+  # echo "xxx ${func}"
+  if [[ "${completions}" =~ "${func}" ]];then
+    printf "\033[32m\xE2\x9C\x94 %s\033[0m\n" "${func}"
+  else
+    printf "\033[31m\xE2\x9D\x8C %s\033[0m\n" "${func}"
+  fi
+done
+

@@ -1,57 +1,75 @@
 bma_path="$(cd "$(dirname "$0")" && pwd)"
-
-_bma_elbs_completion() {
-    local command="$1"
-    local word="$2"
-    local options=$(elbs)
-    COMPREPLY=($(compgen -W "${options}" -- ${word}))
-    return 0
+_bma_asgs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma asgs | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
 }
-
+_bma_buckets_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma buckets | awk '{ print $1 }')
+  COMPREPLY=( $(compgen -W "${options}" -- ${word}) )
+  return 0
+}
+_bma_certs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma certs-arn | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
+_bma_elbs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma elbs | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
 _bma_stacks_completion() {
   local command="$1"
   local word="$2"
   if [ "${COMP_CWORD}" -eq 1 ] || [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
-    COMPREPLY=( $(compgen -W "$(stacks | awk '{ print $1 }')" -- "${word}") )
+    COMPREPLY=($(compgen -W "$(bma stacks | awk '{ print $1 }')" -- "${word}"))
   else
-    COMPREPLY=( $(compgen -f "${word}") )
+    COMPREPLY=($(compgen -f "${word}"))
   fi
   return 0
 }
-
-_bma_keypairs_completion() {
+_bma_instances_completion() {
   local command="$1"
   local word="$2"
 
-  if [ "${COMP_CWORD}" -eq 1 ] || [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
-    COMPREPLY=( $(compgen -W "$(keypairs | awk '{ print $1 }')" -- ${word}) )
-  else
-    COMPREPLY=( $(compgen -f "${word}") )
-  fi
+  case $word in
+    "") options="i-a i-b" ;;
+    *)  options=$(bma instances) ;;
+  esac
+
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
   return 0
 }
-
-_bma_instances_completion() {
-    local command="$1"
-    local word="$2"
-
-    case $word in
-      "") options="i-a i-b" ;;
-      *)  options=$(instances) ;;
-    esac
-
-    COMPREPLY=($(compgen -W "${options}" -- ${word}))
-    return 0
+_bma_keypairs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma keypairs | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
 }
-
-_bma_asgs_completion() {
-    local command="$1"
-    local word="$2"
-    local options=$(asgs --query 'AutoScalingGroups[][{"AutoScalingGroupName": AutoScalingGroupName}][]')
-    COMPREPLY=($(compgen -W "${options}" -- ${word}))
-    return 0
+_bma_regions_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma regions)
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
 }
-
+_bma_vpcs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma vpcs | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
 _bma_completion() {
   local word
   word="$2"
@@ -83,17 +101,51 @@ _bma_subcommands_completion() {
   )
 
   if [ -n "${subcommand_completion}" ]; then
-    if [ -n "${AWS_DEFAULT_REGION}" ]; then
-      $subcommand_completion "bma" "${word:-0}"
-    else
-      COMPREPLY=""
-      return 0
-    fi
+    $subcommand_completion "bma" "${word:-0}"
   fi
   return 0
 }
-
-complete -F _bma_instances_completion instances
+complete -F _bma_asgs_completion asg-capacity
+complete -F _bma_asgs_completion asg-instances
+complete -F _bma_asgs_completion asg-launch-configuration
+complete -F _bma_asgs_completion asg-processes_suspended
+complete -F _bma_asgs_completion asg-resume
+complete -F _bma_asgs_completion asg-scaling-activities
+complete -F _bma_asgs_completion asg-stack
+complete -F _bma_asgs_completion asg-suspend
+complete -F _bma_asgs_completion asgs
+complete -F _bma_buckets_completion bucket-acls
+complete -F _bma_buckets_completion bucket-remove
+complete -F _bma_buckets_completion bucket-remove-force
+complete -F _bma_buckets_completion buckets
+complete -F _bma_certs_completion cert-delete
+complete -F _bma_certs_completion cert-users
+complete -F _bma_certs_completion certs
+complete -F _bma_certs_completion certs-arn
+complete -F _bma_elbs_completion elb-dnsname
+complete -F _bma_elbs_completion elb-instances
+complete -F _bma_elbs_completion elb-stack
+complete -F _bma_elbs_completion elbs
+complete -F _bma_stacks_completion stack-arn
+complete -F _bma_stacks_completion stack-asg-instances
+complete -F _bma_stacks_completion stack-asgs
+complete -F _bma_stacks_completion stack-cancel-update
+complete -F _bma_stacks_completion stack-delete
+complete -F _bma_stacks_completion stack-diff
+complete -F _bma_stacks_completion stack-elbs
+complete -F _bma_stacks_completion stack-events
+complete -F _bma_stacks_completion stack-exports
+complete -F _bma_stacks_completion stack-failure
+complete -F _bma_stacks_completion stack-instances
+complete -F _bma_stacks_completion stack-outputs
+complete -F _bma_stacks_completion stack-parameters
+complete -F _bma_stacks_completion stack-recreate
+complete -F _bma_stacks_completion stack-resources
+complete -F _bma_stacks_completion stack-status
+complete -F _bma_stacks_completion stack-tail
+complete -F _bma_stacks_completion stack-template
+complete -F _bma_stacks_completion stack-update
+complete -F _bma_stacks_completion stacks
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
 complete -F _bma_instances_completion instance-console
@@ -108,40 +160,26 @@ complete -F _bma_instances_completion instance-state
 complete -F _bma_instances_completion instance-stop
 complete -F _bma_instances_completion instance-tags
 complete -F _bma_instances_completion instance-terminate
+complete -F _bma_instances_completion instance-termination-protection
+complete -F _bma_instances_completion instance-termination-protection-disable
+complete -F _bma_instances_completion instance-termination-protection-enable
 complete -F _bma_instances_completion instance-type
 complete -F _bma_instances_completion instance-userdata
 complete -F _bma_instances_completion instance-volumes
 complete -F _bma_instances_completion instance-vpc
+complete -F _bma_instances_completion instances
 complete -F _bma_keypairs_completion keypair-delete
-complete -F _bma_asgs_completion asgs
-complete -F _bma_asgs_completion asg-capacity
-complete -F _bma_asgs_completion asg-instances
-complete -F _bma_asgs_completion asg-processes_suspended
-complete -F _bma_asgs_completion asg-resume
-complete -F _bma_asgs_completion asg-stack
-complete -F _bma_asgs_completion asg-suspend
-complete -F _bma_asgs_completion asg-scaling-activities
-complete -F _bma_stacks_completion stacks
-complete -F _bma_stacks_completion stack-cancel-update
-complete -F _bma_stacks_completion stack-update
-complete -F _bma_stacks_completion stack-delete
-complete -F _bma_stacks_completion stack-exports
-complete -F _bma_stacks_completion stack-recreate
-complete -F _bma_stacks_completion stack-failure
-complete -F _bma_stacks_completion stack-events
-complete -F _bma_stacks_completion stack-resources
-complete -F _bma_stacks_completion stack-asg-instances
-complete -F _bma_stacks_completion stack-asgs
-complete -F _bma_stacks_completion stack-elbs
-complete -F _bma_stacks_completion stack-instances
-complete -F _bma_stacks_completion stack-parameters
-complete -F _bma_stacks_completion stack-tags
-complete -F _bma_stacks_completion stack-status
-complete -F _bma_stacks_completion stack-tail
-complete -F _bma_stacks_completion stack-template
-complete -F _bma_stacks_completion stack-outputs
-complete -F _bma_stacks_completion stack-diff
-complete -F _bma_elbs_completion elb-instances
+complete -F _bma_keypairs_completion keypairs
+complete -F _bma_regions_completion region
+complete -F _bma_vpcs_completion vpc-az-count
+complete -F _bma_vpcs_completion vpc-azs
+complete -F _bma_vpcs_completion vpc-igw
+complete -F _bma_vpcs_completion vpc-lambda-functions
+complete -F _bma_vpcs_completion vpc-nat-gateways
+complete -F _bma_vpcs_completion vpc-network-acls
+complete -F _bma_vpcs_completion vpc-rds
+complete -F _bma_vpcs_completion vpc-route-tables
+complete -F _bma_vpcs_completion vpc-subnets
+complete -F _bma_vpcs_completion vpcs
 complete -f stack-validate
 complete -F _bma_completion bma
-

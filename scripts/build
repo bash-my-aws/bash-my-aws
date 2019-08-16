@@ -2,6 +2,7 @@
 bma_path="$(cd "$(dirname "$0")/.." && pwd)"
 aliases_destination="$bma_path/aliases"
 funcs_destination="$bma_path/functions"
+completion_destination="$bma_path/bash_completion.sh"
 
 # extract functions in the subshells
 pre_existing_functions=$(compgen -A function)
@@ -23,7 +24,6 @@ done;
 # generate the aliases file
 {
   echo "# GENERATED ALIASES FOR BASH-MY-AWS"
-  echo "# to regenerate run: bin/$(basename "$0")"
   echo ""
 } > "$aliases_destination"
 
@@ -44,3 +44,5 @@ for fnc_name in $fncs_to_clone; do
     function_body=$(type "$fnc_name" | tail -n +3)
     printf "function %s() %s" "$fnc_name" "$function_body" >> "$aliases_destination"
 done;
+
+${bma_path}/scripts/build-completions > "$completion_destination"

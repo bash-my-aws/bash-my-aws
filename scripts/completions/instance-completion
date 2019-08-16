@@ -1,0 +1,12 @@
+_bma_instances_completion() {
+  local command="$1"
+  local word="$2"
+
+  case $word in
+    "") options="i-a i-b" ;;
+    *)  options=$(bma instances) ;;
+  esac
+
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}

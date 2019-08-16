@@ -1,5 +1,4 @@
 # GENERATED ALIASES FOR BASH-MY-AWS
-# to regenerate run: bin/bma-build
 
 alias __bma_error='~/.bash-my-aws/bin/bma __bma_error'
 alias __bma_read_filters='~/.bash-my-aws/bin/bma __bma_read_filters'
