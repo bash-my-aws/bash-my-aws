@@ -73,7 +73,10 @@ _bma_vpcs_completion() {
 _bma_completion() {
   local word
   word="$2"
+
   if [ "${COMP_CWORD}" -eq 1 ]; then
+    _bma_functions_completion "$word"
+  elif [ "${COMP_CWORD}" -eq 2 ] && [ "$3" = "type" ]; then
     _bma_functions_completion "$word"
   else
     _bma_subcommands_completion "${COMP_WORDS[1]}" "$word"
