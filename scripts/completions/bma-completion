@@ -27,7 +27,7 @@ _bma_subcommands_completion() {
   subcommand_completion=$(                \
     complete -p                           \
     | command grep "_bma_"                \
-    | command grep -w "${subcommand:-}"   \
+    | command grep "\s${subcommand:-}$"   \
     | command awk '{print $3}'
   )
 
