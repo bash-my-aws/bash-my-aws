@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# parameter-store
+
+parameters-list() {
+  local filters=$(__bma_read_filters $@)
+
+  aws ssm describe-parameters \
+    --query "Parameters[][
+              Name,
+              Type,
+              Version,
+              KeyId,
+              LastModifiedDate,
+              LastModifiedUser
+            ]" \
+    --output text       |
+  grep -E -- "$filters" |
+  sort -b -k 2          |
+  column -s$'\t' -t
+}
+
+parameters-get() {
+  local parameter_names=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
+
+  aws ssm get-parameters          \
+    --names $parameter_names      \
+    --query "Parameters[][
+              Name,
+              Type,
+              Value,
+              Version
+            ]"                    \
+    --output text       |
+  grep -E -- "$filters" |
+  sort -b -k 2          |
+  column -s$'\t' -t
+}
+
+parameters-get-by-path() {
+  local path=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
+
+  aws ssm get-parameters-by-path  \
+    --path $path                  \
+    --query "Parameters[][
+              Name,
+              Type,
+              Value,
+              Version,
+              KeyId
+            ]"                    \
+    --output text       |
+  grep -E -- "$filters" |
+  sort -b -k 2          |
+  column -s$'\t' -t
+}
