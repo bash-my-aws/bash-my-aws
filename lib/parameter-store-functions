@@ -4,7 +4,6 @@
 
 parameters-list() {
   local filters=$(__bma_read_filters $@)
-
   aws ssm describe-parameters \
     --query "Parameters[][
               Name,
@@ -22,10 +21,10 @@ parameters-list() {
 
 parameters-get() {
   local parameter_names=$(__bma_read_inputs)
-  local filters=$(__bma_read_filters $@)
 
   aws ssm get-parameters          \
     --names $parameter_names      \
+    $@                            \
     --query "Parameters[][
               Name,
               Type,
@@ -33,17 +32,16 @@ parameters-get() {
               Version
             ]"                    \
     --output text       |
-  grep -E -- "$filters" |
   sort -b -k 2          |
   column -s$'\t' -t
 }
 
 parameters-get-by-path() {
   local path=$(__bma_read_inputs)
-  local filters=$(__bma_read_filters $@)
 
   aws ssm get-parameters-by-path  \
     --path $path                  \
+    $@                            \
     --query "Parameters[][
               Name,
               Type,
@@ -52,7 +50,11 @@ parameters-get-by-path() {
               KeyId
             ]"                    \
     --output text       |
-  grep -E -- "$filters" |
   sort -b -k 2          |
   column -s$'\t' -t
 }
+
+#
+# Multi-argument helpers
+#
+
