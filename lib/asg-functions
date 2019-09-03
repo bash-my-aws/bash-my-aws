@@ -15,9 +15,11 @@ asgs() {
     --query "AutoScalingGroups[].[
       AutoScalingGroupName,
       join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][]),
+      CreatedTime,
       join(',' sort(AvailabilityZones))
     ]"                  |
   grep -E -- "$filters" |
+  sort -k 3             |
   column -s$'\t' -t
 }
 
