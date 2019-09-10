@@ -14,12 +14,12 @@ aws-account-id() {
   aws sts get-caller-identity --query Account --output text
 }
 
-# aws-panopticon - Run command on multiple AWS Accounts
+# aws-account-each - Run command on multiple AWS Accounts
 #
 # Reads AWS Account IDs from STDIN
 # Assumes an IAM Role on each account and runs command given as arguments
 #
-aws-panopticon() {
+aws-account-each() {
   local aws_account_ids="$(__bma_read_inputs)"
   local cmd=$@
   local assumed_role_name="${AWS_PANOPTICON_ROLE_NAME:-SecurityAuditor}"
@@ -38,6 +38,11 @@ aws-panopticon() {
     fi
     [ -z "$output" ] || printf '%s\n\n' "${output%$'\n'}"
   done
+}
+
+# aws-panopticon was previous name for aws-account-each()
+aws-panopticon() {
+  aws-account-each $@
 }
 
 # columnise(): Handy function to columnise output
