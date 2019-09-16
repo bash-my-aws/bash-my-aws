@@ -125,7 +125,23 @@ vpc-endpoints(){
       ServiceName
     ]'                  |
   grep -E -- "$filters" |
+  sort -k 5             |
   column -s$'\t' -t
+}
+
+vpc-endpoint-services(){
+  local filters=$(__bma_read_filters $@)
+
+  aws ec2 describe-vpc-endpoint-services     \
+  --output text                              \
+  --query "
+    ServiceDetails[].[
+      ServiceName,
+      join(',', ServiceType[].ServiceType)
+    ]"                  |
+  grep -E -- "$filters" |
+  column -s$'\t' -t     |
+  sort
 }
 
 vpc-igw() {
