@@ -120,8 +120,8 @@ vpc-endpoints(){
     VpcEndpoints[].[
       VpcEndpointId,
       VpcId,
-      VpcEndpointType,
       State,
+      VpcEndpointType,
       ServiceName
     ]'                  |
   grep -E -- "$filters" |
