@@ -110,6 +110,24 @@ vpc-dhcp-options-ntp(){
     "
 }
 
+vpc-endpoints(){
+  local vpc_ids="$(__bma_read_inputs)"
+  local filters=$(__bma_read_filters $@ $vpc_ids)
+
+  aws ec2 describe-vpc-endpoints \
+  --output text                  \
+  --query '
+    VpcEndpoints[].[
+      VpcEndpointId,
+      VpcId,
+      VpcEndpointType,
+      State,
+      ServiceName
+    ]'                  |
+  grep -E -- "$filters" |
+  column -s$'\t' -t
+}
+
 vpc-igw() {
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
