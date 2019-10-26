@@ -63,14 +63,15 @@ Bash users can still source the functions instead of loading the aliases:
 ## Usage
 
 Authenticate to AWS in a terminal that has `bash-my-aws` loaded.
+You should now be able to explore the commands.
 
-
-
-With aliases :
+With aliases (or sourced functions) :
 
 ```ShellSession
 $ stacks
 ```
+
+Using the `bma` wrapper:
 
 ```ShellSession
 $ bma stacks
