@@ -132,6 +132,10 @@ alias vpc-rds='~/.bash-my-aws/bin/bma vpc-rds'
 alias vpc-route-tables='~/.bash-my-aws/bin/bma vpc-route-tables'
 alias vpc-subnets='~/.bash-my-aws/bin/bma vpc-subnets'
 alias vpcs='~/.bash-my-aws/bin/bma vpcs'
+
+# We'll find a less suprising place for this in future
+# region() needs to be a function in order to let it
+# set AWS_DEFAULT_REGION in the current shell
 function region() { 
     local inputs=$(__bma_read_inputs $@);
     if [[ -z "$inputs" ]]; then

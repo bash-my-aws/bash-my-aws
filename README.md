@@ -65,6 +65,9 @@ Bash users can still source the functions instead of loading the aliases:
 Authenticate to AWS in a terminal that has `bash-my-aws` loaded.
 You should now be able to explore the commands.
 
+We'll start off with `stack` commands as an example but there are many
+other resource types supported. Checkout the full list in `~/.bash-my-aws/functions`
+
 With aliases (or sourced functions) :
 
 ```ShellSession
