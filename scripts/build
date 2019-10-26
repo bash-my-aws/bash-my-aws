@@ -1,48 +1,55 @@
 #!/bin/bash
-bma_path="$(cd "$(dirname "$0")/.." && pwd)"
-aliases_destination="$bma_path/aliases"
-funcs_destination="$bma_path/functions"
-completion_destination="$bma_path/bash_completion.sh"
+LC_ALL=C
 
-# extract functions in the subshells
-pre_existing_functions=$(compgen -A function)
+project_root="$(cd "$(dirname "$0")/.." && pwd)"
+aliases_destination="$project_root/aliases"
+funcs_destination="$project_root/functions"
+completion_destination="$project_root/bash_completion.sh"
+
+# Generate a file with all BMA function names (used in bash completion)
+
+# functions in shell before loading BMA functions
+funcs_before_bma=$(compgen -A function)
 
 # load all the functions from bash-my-aws
-for f in ~/.bash-my-aws/lib/*-functions; do source "$f"; done
+for f in $project_root/lib/*-functions; do source "$f"; done
 
-# all functions in bma
-inclusions=$(compgen -A function)
+# all function after loading BMA functions
+funcs_after_bma=$(compgen -A function)
 
-# empty the function list file
-true > "$funcs_destination"
+echo "${funcs_before_bma}" "${funcs_after_bma}" |
+  tr ' ' '\n' |
+  sort |
+  uniq -u > "$funcs_destination"
 
-funcs=$(echo "${inclusions}" "${pre_existing_functions}" | tr ' ' '\n' | sort | uniq -u)
-for fnc in $funcs; do
-    echo "$fnc" >> "$funcs_destination"
-done;
 
-# generate the aliases file
+# Generate the aliases file
 {
   echo "# GENERATED ALIASES FOR BASH-MY-AWS"
   echo ""
 } > "$aliases_destination"
 
-# functions to alias
+# Don't create alias for these functions
 exclusions=('region')
 
-fncs_to_alias=$(echo "${inclusions}" "${pre_existing_functions}" "${exclusions}" | tr ' ' '\n' | sort | uniq -u)
-for fnc in $fncs_to_alias; do
-    echo "alias $fnc='~/.bash-my-aws/bin/bma $fnc'" >> "$aliases_destination"
+for fnc in $(echo "${funcs_before_bma}" "${funcs_after_bma}" "${exclusions}" | tr ' ' '\n' | LC_ALL=C sort | uniq -u); do
+  echo "alias $fnc='~/.bash-my-aws/bin/bma $fnc'" >> "$aliases_destination"
 done;
+
 
 # functions to clone
 fncs_to_clone=('region')
 
-# region() needs to be a function in order to let it set AWS_DEFAULT_REGION
-# in the current shell
+{
+  echo
+  echo "# We'll find a less suprising place for this in future"
+  echo "# region() needs to be a function in order to let it"
+  echo "# set AWS_DEFAULT_REGION in the current shell"
+} >> "$aliases_destination"
+
 for fnc_name in $fncs_to_clone; do
     function_body=$(type "$fnc_name" | tail -n +3)
     printf "function %s() %s" "$fnc_name" "$function_body" >> "$aliases_destination"
 done;
 
-${bma_path}/scripts/build-completions > "$completion_destination"
+${project_root}/scripts/build-completions > "$completion_destination"
