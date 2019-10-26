@@ -26,45 +26,28 @@ As shown below, you may simply clone the GitHub repo and source the files requir
 $ git clone https://github.com/bash-my-universe/bash-my-aws.git ~/.bash-my-aws
 ```
 
+Put the following in your shell's startup file:
 
+```ShellSession
+export PATH="$PATH:$HOME/.bash-my-aws/bin"
+source ~/.bash-my-aws/aliases
+
+# For ZSH users, uncomment the following two lines:
+# autoload -U +X compinit && compinit
+# autoload -U +X bashcompinit && bashcompinit
+
+source ~/.bash-my-aws/bash_completion.sh
+```
 ## Usage
 
-Source the functions with something like:
 ```ShellSession
-$ for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+$ bma stacks
 ```
 
-Add the bash_completion scripts: (optional)
-```ShellSession
-$ source ~/.bash-my-aws/bash_completion.sh
-```
-
-### For non-bash users
-
-NB: If there are new functions, you will need to regenerate the aliases file
-
-Generate the aliases:
+With aliases :
 
 ```ShellSession
-$ ~/.bash-my-aws/bin/generate-aliases
-```
-
-Source the generated aliases:
-
-```ShellSession
-$ source ~/.bash-my-aws/aliases
-```
-
-Source region functions:
-
-```ShellSession
-$ source ~/.bash-my-aws/lib/region-functions
-```
-
-And if you use `zsh` and want completion: (optional)
-
-```ShellSession
-$ source ~/.bash-my-aws/zsh_completion.sh
+$ stacks
 ```
 
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
@@ -78,23 +61,23 @@ stack-asg-instances  stack-events         stack-resources      stack-tail
 stack-asgs           stack-exports        stack-status         stack-template
 stack-cancel-update  stack-failure        stack-tag            stack-update
 stack-create         stack-instances      stack-tag-apply      stack-validate
-stack-delete         stack-outputs        stack-tag-delete     
-stack-diff           stack-parameters     stack-tags   
+stack-delete         stack-outputs        stack-tag-delete
+stack-diff           stack-parameters     stack-tags
 
 $ asgs # lists Autoscaling groups
 
 $ asg-[TAB][TAB]
 asg-capacity             asg-min-size-set         asg-stack
 asg-desired-size-set     asg-processes_suspended  asg-suspend
-asg-instances            asg-resume               
-asg-max-size-set         asg-scaling-activities  
+asg-instances            asg-resume
+asg-max-size-set         asg-scaling-activities
 
 $ buckets # lists S3 buckets
-bucket-acls   
+bucket-acls
 
 $ elbs # lists Elastic Load Balancers (classic)
 $ elb-[TAB][TAB]
-elb-dnsname    elb-instances 
+elb-dnsname    elb-instances
 
 $ instances # lists EC2 instances
 
@@ -109,12 +92,12 @@ instance-ssh                             instance-type
 instance-ssh-details                     instance-userdata
 instance-stack                           instance-volumes
 instance-start                           instance-vpc
-instance-state                            
+instance-state
 
 $ keypairs # lists EC2 SSH KeyPairs
 
 $ keypair-[TAB][TAB]
-keypair-create  keypair-delete 
+keypair-create  keypair-delete
 
 $ vpcs # lists VPCs
 
@@ -129,7 +112,7 @@ For more info on the query syntax used by AWSCLI, check out http://jmespath.org/
 
 **Piping output between functions**
 
-We're very excited to announce this functionality.  
+We're very excited to announce this functionality.
 
 Most bash-my-aws functions will accept AWS Resource Ids from STDIN. This means
 you can pipe output from many functions into other functions.

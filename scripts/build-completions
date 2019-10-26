@@ -1,0 +1,61 @@
+#!/bin/bash
+bma_path="$(cd "$(dirname "$0")/.." && pwd)"
+
+cat <<EOF
+bma_path="\$(cd "\$(dirname "\$0")" && pwd)"
+EOF
+
+available_completions=(
+  asg
+  bucket
+  cert
+  elb
+  stack
+  instance
+  keypair
+  region
+  vpc
+)
+
+# load in all the completion
+for type in "${available_completions[@]}"; do
+  cat "${bma_path}/scripts/completions/${type}-completion"
+done
+
+cat "${bma_path}/scripts/completions/bma-completion"
+
+# dont add auto_completions for these functions
+funcs_no_completion=(
+  asg-desired-size-set
+  asg-max-size-set
+  asg-min-size-set
+  keypair-create
+  region-each
+  regions
+  stack-validate
+  stack-create
+  stack-tag
+  stack-tag-apply
+  stack-tag-delete
+  vpc-default-delete
+  vpc-dhcp-options-ntp
+)
+
+# add completion for certain functions
+bma_funcs=$(
+  cat "${bma_path}/functions" \
+  | grep -v ^__bma \
+  | grep -vE "$(echo "${funcs_no_completion[*]}" | tr " " "|")"
+)
+
+for type in "${available_completions[@]}"; do
+  functions=$(echo "${bma_funcs}" | grep "^${type}")
+  for function in ${functions}; do
+    echo "complete -F _bma_${type}s_completion ${function}"
+  done
+done
+
+cat <<EOF
+complete -f stack-validate
+complete -F _bma_completion bma
+EOF

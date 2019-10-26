@@ -1,0 +1,7 @@
+_bma_certs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma certs-arn | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}

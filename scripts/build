@@ -1,0 +1,48 @@
+#!/bin/bash
+bma_path="$(cd "$(dirname "$0")/.." && pwd)"
+aliases_destination="$bma_path/aliases"
+funcs_destination="$bma_path/functions"
+completion_destination="$bma_path/bash_completion.sh"
+
+# extract functions in the subshells
+pre_existing_functions=$(compgen -A function)
+
+# load all the functions from bash-my-aws
+for f in ~/.bash-my-aws/lib/*-functions; do source "$f"; done
+
+# all functions in bma
+inclusions=$(compgen -A function)
+
+# empty the function list file
+true > "$funcs_destination"
+
+funcs=$(echo "${inclusions}" "${pre_existing_functions}" | tr ' ' '\n' | sort | uniq -u)
+for fnc in $funcs; do
+    echo "$fnc" >> "$funcs_destination"
+done;
+
+# generate the aliases file
+{
+  echo "# GENERATED ALIASES FOR BASH-MY-AWS"
+  echo ""
+} > "$aliases_destination"
+
+# functions to alias
+exclusions=('region')
+
+fncs_to_alias=$(echo "${inclusions}" "${pre_existing_functions}" "${exclusions}" | tr ' ' '\n' | sort | uniq -u)
+for fnc in $fncs_to_alias; do
+    echo "alias $fnc='~/.bash-my-aws/bin/bma $fnc'" >> "$aliases_destination"
+done;
+
+# functions to clone
+fncs_to_clone=('region')
+
+# region() needs to be a function in order to let it set AWS_DEFAULT_REGION
+# in the current shell
+for fnc_name in $fncs_to_clone; do
+    function_body=$(type "$fnc_name" | tail -n +3)
+    printf "function %s() %s" "$fnc_name" "$function_body" >> "$aliases_destination"
+done;
+
+${bma_path}/scripts/build-completions > "$completion_destination"
