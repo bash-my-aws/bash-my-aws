@@ -47,7 +47,8 @@ small wrapper script that loads the functions and executes the desired function.
 
 After years of `zsh` users asking for support, one stepped up and identified
 a changes that would eliminate any shell compatibility problems without compromising
-the functionaility, simplicity and discoverability of the project.
+the functionaility, simplicity and discoverability of the project. Massive thanks
+to @ninth-dev for this.
 
 Bash users can still source the functions instead of loading the aliases:
 
@@ -61,7 +62,7 @@ Bash users can still source the functions instead of loading the aliases:
 
 ## Usage
 
-Authenticate to AWS in a terminal that has `bash-my-aws` loaded. 
+Authenticate to AWS in a terminal that has `bash-my-aws` loaded.
 
 
 
