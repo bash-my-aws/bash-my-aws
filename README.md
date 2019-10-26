@@ -26,38 +26,28 @@ As shown below, you may simply clone the GitHub repo and source the files requir
 $ git clone https://github.com/bash-my-universe/bash-my-aws.git ~/.bash-my-aws
 ```
 
-
-## Usage
-
-Source the functions with something like:
-```ShellSession
-$ for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
-```
-
-Add the bash_completion scripts: (optional)
-```ShellSession
-$ source ~/.bash-my-aws/bash_completion.sh
-```
-
-### For ZSH  users
-
-1. Copy and paste the following into your `.zshrc`
+Put the following in your shell's startup file:
 
 ```ShellSession
+export PATH="$PATH:$HOME/.bash-my-aws/bin"
 source ~/.bash-my-aws/aliases
-```
 
-And if you use `zsh` and want completion:
-
-```ShellSession
-autoload -U +X compinit && compinit
-autoload -U +X bashcompinit && bashcompinit
+# For ZSH users, uncomment the following two lines:
+# autoload -U +X compinit && compinit
+# autoload -U +X bashcompinit && bashcompinit
 
 source ~/.bash-my-aws/bash_completion.sh
 ```
+## Usage
 
 ```ShellSession
 $ bma stacks
+```
+
+With aliases :
+
+```ShellSession
+$ stacks
 ```
 
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
