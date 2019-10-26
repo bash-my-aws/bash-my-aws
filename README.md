@@ -38,16 +38,41 @@ source ~/.bash-my-aws/aliases
 
 source ~/.bash-my-aws/bash_completion.sh
 ```
+
+### Why the aliases?
+
+`bash-my-aws` began as a collection of bash functions, sourced into your shell.
+More recently, the default suggestion has been to load aliases that execute a
+small wrapper script that loads the functions and executes the desired function.
+
+After years of `zsh` users asking for support, one stepped up and identified
+a changes that would eliminate any shell compatibility problems without compromising
+the functionaility, simplicity and discoverability of the project.
+
+Bash users can still source the functions instead of loading the aliases:
+
+  ```
+  # bash users may source the functions instead of loading the aliases
+  if [ -d ${HOME}/.bash-my-aws ]; then
+    for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+  fi
+  ```
+
+
 ## Usage
 
-```ShellSession
-$ bma stacks
-```
+Authenticate to AWS in a terminal that has `bash-my-aws` loaded. 
+
+
 
 With aliases :
 
 ```ShellSession
 $ stacks
+```
+
+```ShellSession
+$ bma stacks
 ```
 
 **Typing stack[TAB][TAB] will list available functions for CloudFormation:**
