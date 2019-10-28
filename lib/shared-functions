@@ -4,18 +4,19 @@
 #
 # Used by bash-my-aws functions to work with stdin and arguments.
 
+# XXX Check this simplification hard! Removed a lot
 __bma_read_inputs() {
-  echo $(__bma_read_stdin) $@ |
-    sed -E 's/\ +$//'         |
-    sed -E 's/^\ +//'
+  # I'd like to move the $@ to the start
+  # That way, we can use STDIN for resource identifiers only
+  # Functions with that require arguments from $@ that aren't
+  # resource identifiers can read and `shift` them off $@
+  # before calling this function
+  echo $(__bma_read_stdin) $@
 }
 
+# XXX Check this simplification hard! Removed a lot
 __bma_read_stdin() {
-  [[ -t 0 ]] ||
-    cat                  |
-      awk '{ print $1 }' |
-      tr '\n' ' '        |
-      sed 's/\ $//'
+  [[ -t 0 ]] || awk '{ print $1 }'
 }
 
 # Construct a string to be passed to `grep -E`
