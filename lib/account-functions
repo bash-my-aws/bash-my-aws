@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# account-functions
+
+# Functions to open URLs in AWS Web Console
+
+
+
+# View a list of AWS_ACCOUNT_IDs in AWS Cost Explorer
+#
+account-cost-explorer(){
+
+  local accounts_formatted="%22$(__bma_read_inputs $@ | sed 's/ /%22,%22/g')%22"
+
+  xdg-open "https://console.aws.amazon.com/cost-reports/home?#/custom?groupBy=None&hasBlended=false&hasAmortized=false&excludeDiscounts=true&excludeTaggedResources=false&chartStyle=Group&granularity=Monthly&reportType=CostUsage&isTemplate=false&filter=%5B%7B%22dimension%22:%22LinkedAccount%22,%22values%22:%5B$accounts_formatted%5D,%22include%22:true,%22children%22:null%7D%5D&usageAs=usageQuantity&forecastTimeRangeOption=None&&timeRangeOption=YearToDate&startDate=2019-01-01&endDate=2019-10-24"
+
+}
+
+
+# View a list of AWS_ACCOUNT_IDs in AWS Cost Recommendations
+
+account-cost-recommendations(){
+
+  local accounts_formatted="%22$(__bma_read_inputs | sed 's/ /%22,%22/g')%22"
+
+  xdg-open "https://console.aws.amazon.com/cost-reports/home?#/recommendations/rightsizing?isLoading&service=AmazonEC2&rightsizingType=%5B%22Terminate%22,%22Modify%22%5D&filter=%5B%7B%22dimension%22:%22LINKED_ACCOUNT%22,%22values%22:%5B$accounts_formatted%5D,%22include%22:true%7D%5D"
+
+}
+
