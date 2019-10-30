@@ -1,5 +1,3 @@
-account-cost-explorer
-account-cost-recommendations
 asg-capacity
 asg-desired-size-set
 asg-instances
@@ -13,6 +11,8 @@ asg-scaling-activities
 asg-stack
 asg-suspend
 aws-account-alias
+aws-account-cost-explorer
+aws-account-cost-recommendations
 aws-account-each
 aws-account-id
 aws-panopticon
