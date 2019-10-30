@@ -2,44 +2,6 @@
 #
 # miscellaneous functions that don't belong anywhere else
 
-# Returns the Account Alias
-aws-account-alias() {
-  aws iam list-account-aliases \
-    --query AccountAliases     \
-    --output text
-}
-
-# Returns AWS Account ID of caller
-aws-account-id() {
-  aws sts get-caller-identity --query Account --output text
-}
-
-# aws-panopticon - Run command on multiple AWS Accounts
-#
-# Reads AWS Account IDs from STDIN
-# Assumes an IAM Role on each account and runs command given as arguments
-#
-aws-panopticon() {
-  local aws_account_ids="$(__bma_read_inputs)"
-  local cmd=$@
-  local assumed_role_name="${AWS_PANOPTICON_ROLE_NAME:-SecurityAuditor}"
-  [[ -z "${aws_account_ids}" ]] && __bma_usage "cmd # pipe in AWS_ACCOUNT_IDS" && return 1
-
-  echo "#command=${cmd}"
-  echo "#"
-
-  for aws_account_id in $aws_account_ids; do
-    local assumed_env=$(sts-assume-role "arn:aws:iam::${aws_account_id}:role/${assumed_role_name}")
-    [[ -z "$assumed_env" ]] && continue # AWSCLI prints error if assuming role fails
-    local aws_account_alias="$(export $assumed_env && aws-account-alias)"
-    echo "#account=$aws_account_id alias=${aws_account_alias}"
-    if ! output=$(export $assumed_env && eval "$cmd"); then
-      : # something went wrong
-    fi
-    [ -z "$output" ] || printf '%s\n\n' "${output%$'\n'}"
-  done
-}
-
 # columnise(): Handy function to columnise output
 #
 # Leaving the command itself in functions (for now) to be explicit but

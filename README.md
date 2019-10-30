@@ -94,6 +94,10 @@ stack-create         stack-instances      stack-tag-apply      stack-validate
 stack-delete         stack-outputs        stack-tag-delete
 stack-diff           stack-parameters     stack-tags
 
+$ aws-[TAB][TAB]
+aws-account-alias                 aws-account-cost-recommendations  aws-account-id
+aws-account-cost-explorer         aws-account-each                  aws-panopticon
+
 $ asgs # lists Autoscaling groups
 
 $ asg-[TAB][TAB]
