@@ -41,7 +41,6 @@ source ~/.bash-my-aws/bash_completion.sh
 
 ### Why the aliases?
 
-<<<<<<< HEAD
 `bash-my-aws` began as a collection of bash functions, sourced into your shell.
 More recently, the default suggestion has been to load aliases that execute a
 small wrapper script that loads the functions and executes the desired function.
@@ -94,6 +93,10 @@ stack-cancel-update  stack-failure        stack-tag            stack-update
 stack-create         stack-instances      stack-tag-apply      stack-validate
 stack-delete         stack-outputs        stack-tag-delete
 stack-diff           stack-parameters     stack-tags
+
+$ aws-[TAB][TAB]
+aws-account-alias                 aws-account-cost-recommendations  aws-account-id
+aws-account-cost-explorer         aws-account-each                  aws-panopticon
 
 $ asgs # lists Autoscaling groups
 
