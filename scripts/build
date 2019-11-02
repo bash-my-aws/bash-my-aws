@@ -17,9 +17,8 @@ for f in $project_root/lib/*-functions; do source "$f"; done
 funcs_after_bma=$(compgen -A function)
 
 echo "${funcs_before_bma}" "${funcs_after_bma}" |
-  sed -E 's/\ +$//'                             |
-  sed -E 's/^\ +//'                             |
   tr ' ' '\n'                                   |
+  sed '/^[[:space:]]*$/d'                       |
   LC_ALL=C sort                                 |
   uniq -u > "$funcs_destination"
 
