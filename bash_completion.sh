@@ -30,11 +30,11 @@ _bma_elbs_completion() {
 _bma_instances_completion() {
   local command="$1"
   local word="$2"
+  local options="i-a i-b"
 
-  case $word in
-    "") options="i-a i-b" ;;
-    *)  options=$(bma instances) ;;
-  esac
+  if [[ $word != "--" ]] && [[ $word != "" ]]; then
+    options=$(bma instances)
+  fi
 
   COMPREPLY=($(compgen -W "${options}" -- ${word}))
   return 0
@@ -86,7 +86,7 @@ _bma_completion() {
 _bma_functions_completion() {
   local word all_funcs
   word="$1"
-  all_funcs=$(cat "${bma_path}/functions")
+  all_funcs=$(echo "type" && cat "${bma_path}/functions")
   COMPREPLY=($(compgen -W "${all_funcs}" -- ${word}))
   return
 }
