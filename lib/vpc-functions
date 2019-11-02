@@ -23,7 +23,7 @@ pcxs(){
     ]]' \
      --output text      |
   grep -E -- "$filters" |
-  sort -k 5             |
+  LC_ALL=C sort -k 5    |
   column -s$'\t' -t
 }
 
@@ -42,7 +42,7 @@ subnets(){
       join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
     ]"                  |
   grep -E -- "$filters" |
-  sort -k 5         |
+  LC_ALL=C sort -k 5    |
   column -s$'\t' -t
 }
 
@@ -72,7 +72,7 @@ vpc-azs() {
   local vpc_id
   for vpc_id in $vpc_ids; do
     echo -n "$vpc_id "
-    echo "$vpc_id" | vpc-subnets | awk '{print $3}' | sort -u | tr "\n" ' '
+    echo "$vpc_id" | vpc-subnets | awk '{print $3}' | LC_ALL=C sort -u | tr "\n" ' '
     echo
   done
 }

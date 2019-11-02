@@ -1,5 +1,4 @@
 #!/bin/bash
-LC_ALL=C
 
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 aliases_destination="$project_root/aliases"
@@ -19,7 +18,7 @@ funcs_after_bma=$(compgen -A function)
 
 echo "${funcs_before_bma}" "${funcs_after_bma}" |
   tr ' ' '\n'                                   |
-  sort                                          |
+  LC_ALL=C sort                                 |
   uniq -u > "$funcs_destination"
 
 

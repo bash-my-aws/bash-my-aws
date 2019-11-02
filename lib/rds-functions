@@ -22,6 +22,6 @@ rds-db-instances() {
       ]"                        \
     --output text |
   grep -E -- "$filters" |
-  sort -b -k 1 |
+  LC_ALL=C sort -b -k 1 |
   column -s$'\t' -t
 }

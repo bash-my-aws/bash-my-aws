@@ -16,7 +16,7 @@ ecr-repositories() {
       ]"                        \
     --output text       |
   grep -E -- "$filters" |
-  sort -b -k 1          |
+  LC_ALL=C sort -b -k 1 |
   column -s$'\t' -t
 }
 
@@ -50,8 +50,8 @@ ecr-repository-images() {
           join('=', ['PUSHED_AT',to_string(imagePushedAt)]),
           join('=', ['DIGEST',to_string(imageDigest)]),
           join(',', [imageTags][])
-        ]" |
-    sort -b -k 4 |
+        ]"                                           |
+    LC_ALL=C sort -b -k 4                            |
     sed -E 's/DIGEST=.*:(.{12})\S*/\1/g' # short sha
   done |
   column -s$'\t' -t
