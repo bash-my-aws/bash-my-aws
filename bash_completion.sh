@@ -30,11 +30,11 @@ _bma_elbs_completion() {
 _bma_instances_completion() {
   local command="$1"
   local word="$2"
+  local options="i-a i-b"
 
-  case $word in
-    "") options="i-a i-b" ;;
-    *)  options=$(bma instances) ;;
-  esac
+  if [[ $word != "--" ]] && [[ $word != "" ]]; then
+    options=$(bma instances)
+  fi
 
   COMPREPLY=($(compgen -W "${options}" -- ${word}))
   return 0
