@@ -24,7 +24,7 @@ certs() {
       --output text
   done |
   grep -E -- "$filters" |
-  sort -b -k 5 | # sort by NotAfter
+  LC_ALL=C sort -b -k 5 | # sort by NotAfter
   column -t
 }
 

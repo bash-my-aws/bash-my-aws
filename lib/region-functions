@@ -26,6 +26,6 @@ function regions() {
   aws ec2 describe-regions           \
     --query "Regions[].[RegionName]" \
     --output text                    |
-  sort
+  LC_ALL=C sort
 }
 

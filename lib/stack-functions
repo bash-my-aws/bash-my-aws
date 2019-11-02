@@ -69,7 +69,7 @@ stacks() {
              ]"                                       \
     --output text       |
   grep -E -- "$filters" |
-  sort -b -k 3          |
+  LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
 }
 
@@ -525,7 +525,7 @@ stack-outputs() {
                Description || ''
              ]"                      \
     --output text                    |
-  sort              |
+  LC_ALL=C sort              |
   column -s$'\t' -t
 }
 

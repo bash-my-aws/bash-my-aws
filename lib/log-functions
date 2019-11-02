@@ -22,7 +22,7 @@ log-groups() {
                storedBytes]'      \
     --output text |
   grep -E -- "$filters" |
-  sort --key 2          |
+  LC_ALL=C sort --key 2 |
   $column_command
 }
 

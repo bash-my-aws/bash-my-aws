@@ -21,9 +21,9 @@ instances() {
         Placement.AvailabilityZone,
         VpcId
       ]"                                                               \
-    --output text                      |
-  grep -E -- "$filters"                |
-  sort -b -k 6 |
+    --output text       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 6 |
   column -s$'\t' -t
 }
 
