@@ -1,5 +1,4 @@
 #!/bin/bash
-LC_ALL=C
 
 bma_path="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -12,7 +11,7 @@ available_completions=($(
   find "$bma_path/scripts/completions" -type f -exec basename {} ';' |
   grep -v bma-completion                                             |
   sed 's/-completion//g'                                             |
-  sort
+  LC_ALL=C sort
 ))
 
 # load in all the completion
