@@ -17,7 +17,7 @@ elbs() {
              ]"          \
     --output text       |
   grep -E -- "$filters" |
-  sort -k 2             |
+  LC_ALL=C sort -k 2    |
   column -s$'\t' -t
 }
 

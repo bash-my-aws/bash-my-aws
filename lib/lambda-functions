@@ -22,7 +22,7 @@ lambda-functions() {
         MemorySize
       ]"                |
   grep -E -- "$filters" |
-  sort -b -k 2          |
+  LC_ALL=C sort -b -k 2 |
   $column_command
 }
 
