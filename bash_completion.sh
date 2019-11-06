@@ -1,4 +1,4 @@
-bma_path="$(cd "$(dirname "$0")" && pwd)"
+bma_path="${HOME}/.bash-my-aws"
 _bma_asgs_completion() {
   local command="$1"
   local word="$2"

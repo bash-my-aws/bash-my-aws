@@ -3,7 +3,7 @@
 bma_path="$(cd "$(dirname "$0")/.." && pwd)"
 
 cat <<EOF
-bma_path="\$(cd "\$(dirname "\$0")" && pwd)"
+bma_path="\${HOME}/.bash-my-aws"
 EOF
 
 # load in all the completions from scripts/completions
