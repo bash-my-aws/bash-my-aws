@@ -1,7 +1,10 @@
 _bma_stacks_completion() {
   local command="$1"
   local word="$2"
-  if [ "${COMP_CWORD}" -eq 1 ] || [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
+
+  if [ "${COMP_CWORD}" -eq 1 ]; then
+    COMPREPLY=($(compgen -W "$(bma stacks | awk '{ print $1 }')" -- "${word}"))
+  elif [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
     COMPREPLY=($(compgen -W "$(bma stacks | awk '{ print $1 }')" -- "${word}"))
   else
     COMPREPLY=($(compgen -f "${word}"))

@@ -125,6 +125,7 @@ vpc-az-count
 vpc-azs
 vpc-default-delete
 vpc-dhcp-options-ntp
+vpc-endpoint-services
 vpc-endpoints
 vpc-igw
 vpc-lambda-functions
