@@ -56,7 +56,10 @@ _bma_regions_completion() {
 _bma_stacks_completion() {
   local command="$1"
   local word="$2"
-  if [ "${COMP_CWORD}" -eq 1 ] || [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
+
+  if [ "${COMP_CWORD}" -eq 1 ]; then
+    COMPREPLY=($(compgen -W "$(bma stacks | awk '{ print $1 }')" -- "${word}"))
+  elif [ "${COMP_CWORD}" -eq 2 ] && [ "${command}" = 'bma' ]; then
     COMPREPLY=($(compgen -W "$(bma stacks | awk '{ print $1 }')" -- "${word}"))
   else
     COMPREPLY=($(compgen -f "${word}"))
@@ -96,15 +99,15 @@ _bma_subcommands_completion() {
   subcommand="$1"
   word="$2"
 
-  subcommand_completion=$(                \
-    complete -p                           \
-    | command grep "_bma_"                \
-    | command grep "\s${subcommand:-}$"   \
-    | command awk '{print $3}'
+  subcommand_completion=$(
+    complete -p                         |
+    command grep "_bma_"                |
+    command grep "\s${subcommand:-}$"   |
+    command awk '{print $3}'
   )
 
   if [ -n "${subcommand_completion}" ]; then
-    $subcommand_completion "bma" "${word:-0}"
+    $subcommand_completion "bma" "${word:-}"
   fi
   return 0
 }

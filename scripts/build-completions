@@ -36,6 +36,7 @@ funcs_no_completion=(
   stack-tag-delete
   vpc-default-delete
   vpc-dhcp-options-ntp
+  vpc-endpoint-services
 )
 
 # add completion for certain functions

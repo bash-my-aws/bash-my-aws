@@ -24,15 +24,15 @@ _bma_subcommands_completion() {
   subcommand="$1"
   word="$2"
 
-  subcommand_completion=$(                \
-    complete -p                           \
-    | command grep "_bma_"                \
-    | command grep "\s${subcommand:-}$"   \
-    | command awk '{print $3}'
+  subcommand_completion=$(
+    complete -p                       |
+    command grep "_bma_"              |
+    command grep "\s${subcommand:-}$" |
+    command awk '{print $3}'
   )
 
   if [ -n "${subcommand_completion}" ]; then
-    $subcommand_completion "bma" "${word:-0}"
+    $subcommand_completion "bma" "${word:-}"
   fi
   return 0
 }
