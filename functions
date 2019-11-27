@@ -59,6 +59,7 @@ instance-asg
 instance-az
 instance-console
 instance-dns
+instance-health-set-unhealthy
 instance-iam-profile
 instance-ip
 instance-ssh
