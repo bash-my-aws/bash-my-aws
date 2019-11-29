@@ -283,22 +283,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#discovering-the-functions" class="md-nav__link">
-    Discovering the functions
+  <a href="#discovering-the-commands" class="md-nav__link">
+    Discovering the Commands
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#piping-between-functions" class="md-nav__link">
-    Piping between functions
+  <a href="#piping-between-commands" class="md-nav__link">
+    Piping Between Commands
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#inspecting-the-functions" class="md-nav__link">
-    Inspecting the functions
+  <a href="#inspecting-the-commands" class="md-nav__link">
+    Inspecting the commands
   </a>
   
 </li>
@@ -388,22 +388,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#discovering-the-functions" class="md-nav__link">
-    Discovering the functions
+  <a href="#discovering-the-commands" class="md-nav__link">
+    Discovering the Commands
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#piping-between-functions" class="md-nav__link">
-    Piping between functions
+  <a href="#piping-between-commands" class="md-nav__link">
+    Piping Between Commands
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#inspecting-the-functions" class="md-nav__link">
-    Inspecting the functions
+  <a href="#inspecting-the-commands" class="md-nav__link">
+    Inspecting the commands
   </a>
   
 </li>
@@ -508,7 +508,7 @@ blah
 </pre></div>
 
 
-<h3 id="discovering-the-functions">Discovering the functions<a class="headerlink" href="#discovering-the-functions" title="Permanent link">&para;</a></h3>
+<h3 id="discovering-the-commands">Discovering the Commands<a class="headerlink" href="#discovering-the-commands" title="Permanent link">&para;</a></h3>
 <p>For each resource type, there is a command to list them:</p>
 <div class="codehilite"><pre><span></span>$ instances
 foo DDDDDDDDDDDDDDDD
@@ -531,9 +531,9 @@ instance-ssh          instance-terminate    instance-vpc
 <p>Whether you're new to the tools or just have a bad memory, bash completion
 makes discovering these commands simple.</p>
 <div class="admonition note">
-<p class="admonition-title">See the <a href="/functions">Functions</a> page for a full list with usage examples</p>
+<p class="admonition-title">See the <a href="/commands">Functions</a> page for a full list with usage examples</p>
 </div>
-<h3 id="piping-between-functions">Piping between functions<a class="headerlink" href="#piping-between-functions" title="Permanent link">&para;</a></h3>
+<h3 id="piping-between-commands">Piping Between Commands<a class="headerlink" href="#piping-between-commands" title="Permanent link">&para;</a></h3>
 <p>This is where the magic happens!</p>
 <p>The first token on each line is almost always a resource identifier. When you pipe output
 between the commands they just take the first token from each line.</p>
@@ -543,7 +543,7 @@ splunk-forwarder-role CREATE_COMPLETE
 </pre></div>
 
 
-<h3 id="inspecting-the-functions">Inspecting the functions<a class="headerlink" href="#inspecting-the-functions" title="Permanent link">&para;</a></h3>
+<h3 id="inspecting-the-commands">Inspecting the commands<a class="headerlink" href="#inspecting-the-commands" title="Permanent link">&para;</a></h3>
 <p>For those interested in how it works:</p>
 <ul>
 <li>Each command is a bash function.</li>
