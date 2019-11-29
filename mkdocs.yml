@@ -1,0 +1,29 @@
+site_name: 'bash-my-aws'
+site_description: 'CLI Tools for Managing AWS'
+site_author: 'Mike Bailey'
+site_url: 'https://bash-my-aws.github.io/'
+
+nav:
+  - Home: index.md
+  # - Tour: tour.md
+  - Commands: commands.md
+
+theme:
+  name: material
+repo_name: 'bash-my-universe/bash-my-aws'
+repo_url: 'https://github.com/bash-my-universe/bash-my-aws'
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/bash-my-universe'
+    - type: 'twitter'
+      link: 'https://twitter.com/bashmyaws'
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+
+
+
