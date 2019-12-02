@@ -1,9 +1,9 @@
 # Getting Started
 
-`bash-my-aws` is a set of powerful yet simple command line tools for managing
+**`bash-my-aws`** is a set of powerful yet simple command line tools for managing
 Amazon Web Services.
 
-They wrap AWSCLI and provide a number of advantages that include:
+Most wrap AWSCLI commands and provide a number of advantages:
 
 - short, memorable commands
 - bash completion (including AWS resources)
@@ -80,7 +80,7 @@ $ instances
 ## Usage
 
 
-### Running the commands
+### Running Commands
 
 The default way to run the commands is using the aliases:
 
@@ -95,7 +95,7 @@ It's also possible to run them using the `bma` wrapper.
 $ bma instances
 ```
 
-### Discovering the Commands
+### Discovering Commands
 
 For each resource type, there is a command to list them:
 
@@ -138,7 +138,7 @@ splunk-forwarder-role CREATE_COMPLETE
 ```
 
 
-### Inspecting the commands
+### Inspecting Commands
 
 For those interested in how it works:
 

@@ -1,3 +1,44 @@
+
+
+
+
+
+## stack-commands
+
+Act on CloudFormation stacks.
+
+This was where `bash-my-aws` started back in 2014. A few of these functions do not yet
+accept multiple stacks as piped input.
+
+### stacks
+### stack-arn
+### stack-asg-instances
+### stack-asgs
+### stack-cancel-update
+### stack-create
+### stack-delete
+### stack-diff
+### stack-elbs
+### stack-events
+### stack-exports
+### stack-failure
+### stack-instances
+### stack-outputs
+### stack-parameters
+### stack-recreate
+### stack-resources
+### stack-status
+### stack-tag
+### stack-tag-apply
+### stack-tag-delete
+### stack-tags
+### stack-tags-text
+### stack-tail
+### stack-template
+### stack-update
+### stack-validate
+
+
 ## asg-functions
 ### asg-capacity
 ### asg-desired-size-set
@@ -162,40 +203,6 @@ Set $AWS_DEFAULT_REGION shell environment variable
 
 Run a command in every region. Any output lines will be appended with "#${REGION}".
 
-## stack-functions
-
-Acts on CloudFormation stacks.
-
-This was where `bash-my-aws` started back in 2014. A few of these functions do not yet
-accept multiple stacks as piped input.
-
-### stacks
-### stack-arn
-### stack-asg-instances
-### stack-asgs
-### stack-cancel-update
-### stack-create
-### stack-delete
-### stack-diff
-### stack-elbs
-### stack-events
-### stack-exports
-### stack-failure
-### stack-instances
-### stack-outputs
-### stack-parameters
-### stack-recreate
-### stack-resources
-### stack-status
-### stack-tag
-### stack-tag-apply
-### stack-tag-delete
-### stack-tags
-### stack-tags-text
-### stack-tail
-### stack-template
-### stack-update
-### stack-validate
 
 ### sts-assume-role
 ### subnets
