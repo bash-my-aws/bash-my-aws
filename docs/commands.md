@@ -1,4 +1,12 @@
-
+- commands expect that AWS_DEFAULT_REGION is set
+  - check/set with `region`
+  - list all with `regions`
+  - run and command across all regions with `region-each`
+- all resource list commands (stacks, instances, etc) filter on first arg
+  - `stacks blah` is equivalent to `stacks | grep blah`
+- commands assume first token of each line of STDIN to be resource identifiers
+- resources are generally listed in order of creation date
+  - most recently created resources will be closest to your flashing cursor
 
 
 
@@ -96,10 +104,33 @@ $ aws-account-id
 012345678901
 ```
 
+
 ## bucket-functions
 
 ### buckets
+
+List S3 Buckets
+
+```shell
+$ buckets
+example-bucket          2019-12-07  06:51:05.064372
+another-example-bucket  2019-12-07  06:51:12.022496
+```
+
 ### bucket-acls
+
+List S3 Bucket Access Control Lists.
+
+```shell
+$ bucket-acls another-example-bucket
+another-example-bucket
+```
+
+!!! Note
+    The only recommended use case for the bucket ACL is to grant write
+    permission to the Amazon S3 Log Delivery group to write access log objects to
+    your bucket. [AWS docs](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-alternatives-guidelines.html)
+
 ### bucket-remove
 ### bucket-remove-force
 
@@ -170,8 +201,75 @@ ACM Certificates
 List, create and delete EC2 SSH Keypairs
 
 ### keypairs
+
+List EC2 SSH Keypairs in current Region
+
+```shell
+$ keypairs
+alice  8f:85:9a:1e:6c:76:29:34:37:45:de:7f:8d:f9:70:eb
+bob    56:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
+```
+
 ### keypair-create
+
+Create SSH Keypair on local machine and import public key into new EC2 Keypair.
+
+Provides benefits over AWS creating the keypair:
+
+- Amazon never has access to private key
+- Private key is protected with passphrase before being written to disk
+- Keys is written to ~/.ssh with correct file permissions
+- You control the SSH Key type (algorithm, length, etc)
+
+```shell
+$ keypair-create yet-another-keypair
+Creating /home/m/.ssh/yet-another-keypair
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/m/.ssh/yet-another-keypair.
+Your public key has been saved in /home/m/.ssh/yet-another-keypair.pub.
+The key fingerprint is:
+SHA256:zIpbxLo7rpQvKyezOLATk96B1kSL0QP41q6x8tUrySk m@localhost.localdomain
+The key's randomart image is:
++---[RSA 4096]----+
+|..o              |
+|.. +             |
+| .+.o            |
+| .oo.. o         |
+| o+.  o S        |
+|=o.+.= .         |
+|+++==o+          |
+|XoE+*+ .         |
+|o@+**+.          |
++----[SHA256]-----+
+{
+    "KeyFingerprint": "21:82:f9:5b:79:d6:dc:0f:7b:79:43:7c:c5:34:6c:2d",
+    "KeyName": "yet-another-keypair"
+}
+```
+
+!!! Note
+    KeyPair Name defaults to "$(aws-account-alias)-$(region)" if none provided
+
 ### keypair-delete
+
+Delete EC2 SSH Keypairs by providing their names as arguments or via STDIN
+
+```shell
+$ keypair-delete alice bob
+You are about to delete the following EC2 SSH KeyPairs:
+alice
+bob
+Are you sure you want to continue? y
+```
+
+```shell
+$ keypairs | keypair-delete
+You are about to delete the following EC2 SSH KeyPairs:
+yet-another-keypair
+Are you sure you want to continue? y
+```
 
 
 ## lambda-functions
