@@ -49,6 +49,7 @@ Resources:
       MinSize: !Ref 'AsgMinSize'
       MaxSize: !Ref 'AsgMaxSize'
       DesiredCapacity: !Ref 'AsgMinSize'
+      VPCZoneIdentifier: [ subnet-32c97cca ] # XXX for localstack
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}'
