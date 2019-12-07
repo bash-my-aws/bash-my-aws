@@ -20,6 +20,12 @@ keypair-create(){
   KEY_NAME=${1:-"$(aws-account-alias)-$(region)"}
   KEY_DIR=${2:-"$HOME/.ssh"}
 
+  if aws ec2 describe-key-pairs --key-names "$KEY_NAME" &>/dev/null; then
+    __bma_error "Keypair already exists: '$KEY_NAME'"
+    return 1
+  fi
+
+  echo "Creating ${KEY_DIR}/${KEY_NAME}"
   ssh-keygen -t rsa -b 4096 -o -a 100 -f "${KEY_DIR}/${KEY_NAME}"
   chmod 0600 "${KEY_DIR}/${KEY_NAME}"
   aws ec2 import-key-pair                                 \
