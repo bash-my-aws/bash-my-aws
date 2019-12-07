@@ -17,11 +17,12 @@ for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
 
 # For testing with [localstack](https://github.com/localstack/localstack)
 #
-if [[ -n $BMA_USE_LOCALSTACK ]]; then
+if [[ $BMA_USE_LOCALSTACK == 'true' ]]; then
   function aws(){
     args=( "$@" )
     awslocal "${args[@]}"
   }
+  export aws
 fi
 
 $@
