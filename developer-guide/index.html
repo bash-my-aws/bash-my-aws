@@ -13,7 +13,7 @@
         <meta name="description" content="CLI Tools for Managing AWS">
       
       
-        <link rel="canonical" href="https://bash-my-aws.github.io/tour/">
+        <link rel="canonical" href="https://bash-my-aws.github.io/developer-guide/">
       
       
         <meta name="author" content="Mike Bailey">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Tour - bash-my-aws</title>
+        <title>bash-my-aws development guide. - bash-my-aws</title>
       
     
     
@@ -83,7 +83,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#tour" tabindex="1" class="md-skip">
+      <a href="#bash-my-aws-development-guide" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -109,7 +109,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Tour
+                bash-my-aws development guide.
               
             </span>
           
@@ -255,6 +255,77 @@
     
   
   
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#namespacing" class="md-nav__link">
+    Namespacing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    Resources
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-functions" class="md-nav__link">
+    Query Functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-query" class="md-nav__link">
+    Default Query
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detail-functions" class="md-nav__link">
+    Detail Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#action-functions" class="md-nav__link">
+    Action Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    Tests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stdin" class="md-nav__link">
+    STDIN
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -265,11 +336,123 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/bash-my-universe/bash-my-aws/edit/master/docs/tour.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/bash-my-universe/bash-my-aws/edit/master/docs/developer-guide.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="tour">Tour<a class="headerlink" href="#tour" title="Permanent link">&para;</a></h1>
-<p>Check this out!</p>
+                <h1 id="bash-my-aws-development-guide">bash-my-aws development guide.<a class="headerlink" href="#bash-my-aws-development-guide" title="Permanent link">&para;</a></h1>
+<p>There are three distinct classes of functions types within <code>bash-my-aws</code>;
+<em>query</em>, <em>detail</em>, and <em>action</em> functions.</p>
+<p>Query functions are responsible for requesting AWS return a list of resources
+by their unique identifier. That would mean that when querying EC2 instances,
+it should return a list of instance-ids. If we were to query CloudFormation,
+then stacks are what would be returned.</p>
+<p>Detail functions should provide you an output of one or more attributes.</p>
+<p>eg. instance-asg(), instance-state()</p>
+<p>Action functions should perform an action against a resource. An action for an
+EC2 instance may be something like <em>terminate</em> or <em>associate_eip</em>.</p>
+<p>e.g. stack-create(), instance-terminate(), asg-suspend()</p>
+<p>There are some great things about <code>bash-my-aws</code> which I would hate to lose.</p>
+<ul>
+<li>It's easy to look at the code and learn how <code>awscli</code> works.</li>
+<li>Simple tasks have simple commands.</li>
+<li>It's really easy to extend.</li>
+</ul>
+<p>stdin should always be supported. You should be able to pipe one function into
+the next with ease. If an action function cannot be piped the output of a query
+function and have it work, without manipulation though other tools, then
+something is wrong.</p>
+<h2 id="namespacing">Namespacing<a class="headerlink" href="#namespacing" title="Permanent link">&para;</a></h2>
+<p>We've decided to namespace functions by the resource they're concerned with.
+Yes, this may seem a bit like postgres naming their command createdb but that's
+OK. bash-my-aws reduces my keystrokes. We'll work something out if this becomes
+a problem.</p>
+<div class="codehilite"><pre><span></span>stack-asgs        stack-elbs        stack-outputs     stack-tags      stack-validate
+stack-create      stack-events      stack-parameters  stack-tail      stacks
+stack-delete      stack-failure     stack-resources   stack-template
+stack-diff        stack-instances   stack-status      stack-update
+</pre></div>
+
+
+<div class="codehilite"><pre><span></span>instance-asg          instance-ssh          instance-stop         instance-volumes
+instance-console      instance-ssh-details  instance-tags         instances
+instance-dns          instance-stack        instance-terminate
+instance-iam-profile  instance-start        instance-type
+instance-ip           instance-state        instance-userdata
+</pre></div>
+
+
+<div class="codehilite"><pre><span></span>asg-capacity             asg-max-size-set         asg-resume               asgs
+asg-desired-size-set     asg-min-size-set         asg-suspend
+asg-instances            asg-processes_suspended  asgard
+</pre></div>
+
+
+<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
+<p>This is a partial list of resources, with possible alternative names in brackets.</p>
+<ul>
+<li>asg               (autoscaling_group)</li>
+<li>bucket</li>
+<li>elb               (load_balancer)</li>
+<li>instance</li>
+<li>instance_type</li>
+<li>rds               (relational_database)</li>
+<li>dynamodb          (relational_database)</li>
+<li>sg                (security_group)</li>
+<li>stack             (cloudformation_stack)</li>
+</ul>
+<h2 id="query-functions">Query Functions<a class="headerlink" href="#query-functions" title="Permanent link">&para;</a></h2>
+<p>Query functions are always namespaced under the plural of the resource.</p>
+<h3 id="default-query">Default Query<a class="headerlink" href="#default-query" title="Permanent link">&para;</a></h3>
+<p>TODO: lets talk about the details.</p>
+<p>Some example usage of this function would be:</p>
+<div class="codehilite"><pre><span></span>$ &lt;resources&gt;
+resource_id1  attribute attribute
+resource_id2  attribute attribute
+resource_id3  attribute attribute
+</pre></div>
+
+
+<h2 id="detail-functions">Detail Functions<a class="headerlink" href="#detail-functions" title="Permanent link">&para;</a></h2>
+<p>Detail functions are always namespaced under the singular of the resource.</p>
+<p>Some example usage of this function would be:</p>
+<div class="codehilite"><pre><span></span>$ &lt;resource&gt; &lt;resource_id&gt;
+attribute1: value1
+attribute2: value2
+</pre></div>
+
+
+<p>Some example responses:</p>
+<div class="codehilite"><pre><span></span>$ instance_security_groups i-abcd1234
+sg-00000001 i-abcd1234
+sg-00000002 i-abcd1234
+sg-00000003 i-abcd1234
+sg-00000004 i-abcd1234
+
+$ security_group_rules
+TODO: I&#39;m not sure yet how to present a security group rule.
+
+$ instance_type i-abcd1234
+c3.large i-abcd1234
+
+$ instance_type_memory c3.large
+3.75 c3.large
+</pre></div>
+
+
+<h2 id="action-functions">Action Functions<a class="headerlink" href="#action-functions" title="Permanent link">&para;</a></h2>
+<p>Action functions are always namespaced under the singular of the resource and are suffixed with the action they are responsible for undertaking.</p>
+<p>Some example usage of this function would be:</p>
+<div class="codehilite"><pre><span></span>$ &lt;resource&gt;_&lt;action&gt; &lt;resource_id&gt;
+</pre></div>
+
+
+<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h2>
+<p>You can start the test suite by running the command <code>make test</code>.</p>
+<h2 id="stdin">STDIN<a class="headerlink" href="#stdin" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The first word of each line must be a resource.</li>
+<li>Additional information will be disregarded.</li>
+</ul>
                 
                   
                 
