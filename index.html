@@ -83,7 +83,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#getting-started" tabindex="1" class="md-skip">
+      <a href="#introduction" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -225,8 +225,6 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
-      
-    
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
         Home
@@ -240,23 +238,48 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#short-memorable-commands" class="md-nav__link">
+    Short, Memorable Commands
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+        
+          <li class="md-nav__item">
+  <a href="#shell-command-completion" class="md-nav__link">
+    Shell Command Completion
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unix-pipeline-friendly" class="md-nav__link">
+    Unix Pipeline Friendly
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convenient-shortcuts" class="md-nav__link">
+    Convenient Shortcuts
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -264,6 +287,26 @@
   <a href="#quickstart" class="md-nav__link">
     Quickstart
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -345,23 +388,48 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#short-memorable-commands" class="md-nav__link">
+    Short, Memorable Commands
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+        
+          <li class="md-nav__item">
+  <a href="#shell-command-completion" class="md-nav__link">
+    Shell Command Completion
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unix-pipeline-friendly" class="md-nav__link">
+    Unix Pipeline Friendly
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convenient-shortcuts" class="md-nav__link">
+    Convenient Shortcuts
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -369,6 +437,26 @@
   <a href="#quickstart" class="md-nav__link">
     Quickstart
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -432,23 +520,121 @@
                   <a href="https://github.com/bash-my-universe/bash-my-aws/edit/master/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<p><strong><code>bash-my-aws</code></strong> is a set of powerful yet simple command line tools for managing
-Amazon Web Services.</p>
-<p>Most wrap AWSCLI commands and provide a number of advantages:</p>
+                  <h1>Home</h1>
+                
+                <p>bash-my-aws is a simple but extremely powerful set of CLI commands for managing
+resources on Amazon Web Services.</p>
+<p>They harness the power of Amazon's AWSCLI, while abstracting away the verbosity.</p>
+<p>The project implements some innovative patterns but (arguably) remains simple,
+beautiful and readable.</p>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
-<li>short, memorable commands</li>
-<li>bash completion (including AWS resources)</li>
-<li>text output (instead of JSON)</li>
-<li>the ability to pipe output between commands</li>
+<li><a href="#short-memorable-commands">Short, Memorable Commands</a></li>
+<li><a href="#shell-command-completion">Shell Command Completion (including AWS resources)</a></li>
+<li><a href="#unix-pipeline-friendly">Unix Pipeline Friendly (instead of JSON)</a></li>
+<li><a href="#convenient-shortcuts">Convenient Shortcuts</a></li>
 </ul>
-<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<h3 id="short-memorable-commands">Short, Memorable Commands<a class="headerlink" href="#short-memorable-commands" title="Permanent link">&para;</a></h3>
+<p>There are two main types of commands.</p>
+<p><strong>1. Resource Listing Commands</strong></p>
+<p>These generally consist of the pluralised form of the resource name.</p>
+<div class="codehilite"><pre><span></span>$ buckets
+example-assets   <span class="m">2019</span>-12-08  <span class="m">02</span>:35:44.758551
+example-logs     <span class="m">2019</span>-12-08  <span class="m">02</span>:35:52.669771
+example-backups  <span class="m">2019</span>-12-08  <span class="m">02</span>:35:56.579434
+</pre></div>
+
+
+<div class="codehilite"><pre><span></span>$ stacks
+nagios      CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres01  CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02  CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+prometheus  CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+</pre></div>
+
+
+<div class="codehilite"><pre><span></span>$ keypairs
+alice  8f:85:9a:1e:6c:76:29:34:37:45:de:7f:8d:f9:70:eb
+bob    <span class="m">56</span>:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
+carol  <span class="m">29</span>:4e:1c:cb:ba:d4:85:0e:4f:b6:34:4c:d4:79:32:00
+</pre></div>
+
+
+<p><strong>2. Resource detail/action commands</strong></p>
+<p>These generally consist of a resource name and action separated by a hyphen.
+This makes discovering them via shell completion simple.</p>
+<p>Some retrieve information about resources while others make changes to them.</p>
+<div class="codehilite"><pre><span></span>$ keypair-delete alice bob
+You are about to delete the following EC2 SSH KeyPairs:
+alice
+bob
+Are you sure you want to <span class="k">continue</span>? y
+</pre></div>
+
+
+<p>See the <a href="command-reference/">Command Reference</a> for a full list of commands.</p>
+<h3 id="shell-command-completion">Shell Command Completion<a class="headerlink" href="#shell-command-completion" title="Permanent link">&para;</a></h3>
+<p>In the example above, shell autocompletion retrieved the existing EC2 Keypair
+names (<code>alice</code>, <code>bob</code>) from AWS. This helps avoid the need to rely on human
+memory or terminal copypasta.</p>
+<h3 id="unix-pipeline-friendly">Unix Pipeline Friendly<a class="headerlink" href="#unix-pipeline-friendly" title="Permanent link">&para;</a></h3>
+<p>The commands themselves are line oriented and work nicely in unix pipelines
+with other unix commands (e.g. <code>grep</code>, <code>awk</code>, etc).</p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> grep postgres
+postgres01  CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02  CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+</pre></div>
+
+
+<p>They also work incredibly well with each other due to the way they treat input
+from STDIN. The first token from each line of STDIN is taken to be a resource
+identifiers (and the rest is discarded).</p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> grep postgres <span class="p">|</span> stack-delete
+You are about to delete the following stacks:
+postgres01
+postgres02
+Are you sure you want to <span class="k">continue</span>? y
+</pre></div>
+
+
+<p><em>Some users have compared this User Experience to functionality in Windows Powershell.</em></p>
+<h3 id="convenient-shortcuts">Convenient Shortcuts<a class="headerlink" href="#convenient-shortcuts" title="Permanent link">&para;</a></h3>
+<p>bash-my-aws is insanely simple to pick up and start using but contains a lot of
+convenient shortcuts you can make use of.</p>
+<p>Example: resource listing commands accept a filter argument, removing the need
+for <code>| grep</code>.</p>
+<p>In the following example someone has given a CloudFormation stack a really long name:</p>
+<div class="codehilite"><pre><span></span>$ stacks
+nagios                             CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres01                         DELETE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02                         DELETE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+prometheus                         CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+stack-with-a-annoyingly-long-name  CREATE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+</pre></div>
+
+
+<p>This affects the output when we look at our postgress stacks:</p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> grep postgres
+postgres01                         DELETE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02                         DELETE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+</pre></div>
+
+
+<p>The resource listing command can filter output before applying <code>column</code>.</p>
+<div class="codehilite"><pre><span></span>$ stacks postgres
+postgres01  DELETE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02  DELETE_COMPLETE  <span class="m">2011</span>-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+</pre></div>
+
+
+<h2 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="http://aws.amazon.com/cli/">awscli</a></li>
 <li><a href="https://www.gnu.org/software/bash/">bash</a></li>
 <li><a href="http://stedolan.github.io/jq/download/">jq-1.4</a> or later (for stack-diff)</li>
 </ul>
-<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<h3 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h3>
 <p>As shown below, you may simply clone the GitHub repo and source the files required.
 (You should probably fork it instead to keep your customisations)</p>
 <div class="codehilite"><pre><span></span>$ git clone https://github.com/bash-my-universe/bash-my-aws.git ~/.bash-my-aws
@@ -476,43 +662,45 @@ small wrapper script that loads the functions and executes the desired function.
 a changes that would eliminate any shell compatibility problems without compromising
 the functionaility, simplicity and discoverability of the project. Massive thanks
 to @ninth-dev for this.</p>
-<p>Bash users can still source the functions instead of loading the aliases:</p>
-<p><code># bash users may source the functions instead of loading the aliases
-  if [ -d ${HOME}/.bash-my-aws ]; then
-    for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
-  fi</code></p>
+<div class="codehilite"><pre><span></span># bash users may source the functions instead of loading the aliases
+if [ -d ${HOME}/.bash-my-aws ]; then
+  for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+fi
+</pre></div>
+
+
 </div>
-<h2 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h2>
-<p>Authenticate the same way you would to use AWSCLI commands.</p>
-<div class="codehilite"><pre><span></span>$ stacks
-blah
-blah
-blah
-</pre></div>
-
-
-<div class="codehilite"><pre><span></span>$ instances
-</pre></div>
-
-
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <h3 id="running-commands">Running Commands<a class="headerlink" href="#running-commands" title="Permanent link">&para;</a></h3>
 <p>The default way to run the commands is using the aliases:</p>
 <div class="codehilite"><pre><span></span>$ instances
+i-e6f097f6ea4457757  ami-123456789012  t3.nano  running  example-ec2-ap-southeast-2  2019-12-07T08:12:00.000Z  ap-southeast-2a  None
+i-b983805b4b254f749  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:30.000Z  ap-southeast-2a  None
+i-fed39ebe7204dfd37  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:34.000Z  ap-southeast-2a  None
+i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus                  2019-12-07T08:27:02.000Z  ap-southeast-2a  None
+i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 2019-12-07T08:27:38.000Z  ap-southeast-2a  None
 </pre></div>
 
 
 <p>It's also possible to run them using the <code>bma</code> wrapper.
 (This is sometimes required when using a restrictive auth tool.)</p>
 <div class="codehilite"><pre><span></span>$ bma instances
+i-e6f097f6ea4457757  ami-123456789012  t3.nano  running  example-ec2-ap-southeast-2  2019-12-07T08:12:00.000Z  ap-southeast-2a  None
+i-b983805b4b254f749  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:30.000Z  ap-southeast-2a  None
+i-fed39ebe7204dfd37  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:34.000Z  ap-southeast-2a  None
+i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus                  2019-12-07T08:27:02.000Z  ap-southeast-2a  None
+i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 2019-12-07T08:27:38.000Z  ap-southeast-2a  None
 </pre></div>
 
 
 <h3 id="discovering-commands">Discovering Commands<a class="headerlink" href="#discovering-commands" title="Permanent link">&para;</a></h3>
 <p>For each resource type, there is a command to list them:</p>
 <div class="codehilite"><pre><span></span>$ instances
-foo DDDDDDDDDDDDDDDD
-bar EEEEEEEEEEEEEEEE
+i-e6f097f6ea4457757  ami-123456789012  t3.nano  running  example-ec2-ap-southeast-2  <span class="m">2019</span>-12-07T08:12:00.000Z  ap-southeast-2a  None
+i-b983805b4b254f749  ami-123456789012  t3.nano  running  postfix-prod                <span class="m">2019</span>-12-07T08:26:30.000Z  ap-southeast-2a  None
+i-fed39ebe7204dfd37  ami-123456789012  t3.nano  running  postfix-prod                <span class="m">2019</span>-12-07T08:26:34.000Z  ap-southeast-2a  None
+i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus                  <span class="m">2019</span>-12-07T08:27:02.000Z  ap-southeast-2a  None
+i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 <span class="m">2019</span>-12-07T08:27:38.000Z  ap-southeast-2a  None
 </pre></div>
 
 
@@ -531,18 +719,30 @@ instance-ssh          instance-terminate    instance-vpc
 <p>Whether you're new to the tools or just have a bad memory, bash completion
 makes discovering these commands simple.</p>
 <div class="admonition note">
-<p class="admonition-title">See the <a href="/commands">Functions</a> page for a full list with usage examples</p>
+<p class="admonition-title">See the <a href="/command-reference">Command Reference</a> for a full list with usage examples</p>
 </div>
 <h3 id="piping-between-commands">Piping Between Commands<a class="headerlink" href="#piping-between-commands" title="Permanent link">&para;</a></h3>
 <p>This is where the magic happens!</p>
 <p>The first token on each line is almost always a resource identifier. When you pipe output
 between the commands they just take the first token from each line.</p>
-<div class="codehilite"><pre><span></span>$ instances | grep splunk | instance-stack | stack-status
-splunk-forwarder      UPDATE_COMPLETE
-splunk-forwarder-role CREATE_COMPLETE
+<div class="codehilite"><pre><span></span>$ instances | grep postfix | instance-ip
+i-b983805b4b254f749  10.190.1.70    54.214.71.51
+i-fed39ebe7204dfd37  10.135.204.82  54.214.26.190
 </pre></div>
 
 
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Most commands that list resources (<code>stacks</code>, <code>instances</code> , etc) accept
+filter term as first arg. As well as reducing keystrokes, it can also
+improve output as columnisation is done after filtering.</p>
+<div class="codehilite"><pre><span></span>$ instances postfix | instance-ip
+i-b983805b4b254f749  10.190.1.70    54.214.71.51
+i-fed39ebe7204dfd37  10.135.204.82  54.214.26.190
+</pre></div>
+
+
+</div>
 <h3 id="inspecting-commands">Inspecting Commands<a class="headerlink" href="#inspecting-commands" title="Permanent link">&para;</a></h3>
 <p>For those interested in how it works:</p>
 <ul>
