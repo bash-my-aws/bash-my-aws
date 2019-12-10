@@ -2736,9 +2736,30 @@ i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  2019-12-10T
 <h3 id="instance-tags">instance-tags<a class="headerlink" href="#instance-tags" title="Permanent link">&para;</a></h3>
 <h3 id="instance-terminate">instance-terminate<a class="headerlink" href="#instance-terminate" title="Permanent link">&para;</a></h3>
 <h3 id="instance-termination-protection">instance-termination-protection<a class="headerlink" href="#instance-termination-protection" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: instance-termination-protection instance-id [instance-id]</code></p>
+<div class="codehilite"><pre><span></span>$ instances | instance-termination-protection
+i-4e15ece1de1a3f869 DisableApiTermination=true
+i-89cefa9403373d7a5 DisableApiTermination=false
+i-806d8f1592e2a2efd DisableApiTermination=false
+i-61e86ac6be1e2c193 DisableApiTermination=false
+</pre></div>
+
+
 <h3 id="instance-termination-protection-disable">instance-termination-protection-disable<a class="headerlink" href="#instance-termination-protection-disable" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: instance-termination-protection-disable instance-id [instance-id]</code></p>
 <h3 id="instance-termination-protection-enable">instance-termination-protection-enable<a class="headerlink" href="#instance-termination-protection-enable" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: instance-termination-protection-enable instance-id [instance-id]</code></p>
 <h3 id="instance-type">instance-type<a class="headerlink" href="#instance-type" title="Permanent link">&para;</a></h3>
+<p>List instance type for instances. <em>You could also just view output of <code>instances</code> command</em></p>
+<p><code>USAGE: instance-type instance-id [instance-id]</code></p>
+<div class="codehilite"><pre><span></span>[mike@work .bash-my-aws (mkdocs)]$ instances | instance-type
+i-4e15ece1de1a3f869  t3.nano
+i-89cefa9403373d7a5  t3.nano
+i-806d8f1592e2a2efd  t3.nano
+i-61e86ac6be1e2c193  t3.nano
+</pre></div>
+
+
 <h3 id="instance-userdata">instance-userdata<a class="headerlink" href="#instance-userdata" title="Permanent link">&para;</a></h3>
 <h3 id="instance-volumes">instance-volumes<a class="headerlink" href="#instance-volumes" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: instance-volumes instance-id [instance-id]</code></p>
