@@ -2735,6 +2735,32 @@ i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  2019-12-10T
 
 <h3 id="instance-tags">instance-tags<a class="headerlink" href="#instance-tags" title="Permanent link">&para;</a></h3>
 <h3 id="instance-terminate">instance-terminate<a class="headerlink" href="#instance-terminate" title="Permanent link">&para;</a></h3>
+<p>Terminate EC2 instance.</p>
+<p><em>This could probably do with some line oriented output.</em></p>
+<p><code>USAGE: instance-terminate instance-id [instance-id]</code></p>
+<div class="codehilite"><pre><span></span>$ instances | head -1 | instance-terminate
+You are about to terminate the following instances:
+i-4e15ece1de1a3f869  ami-123456789012  t3.nano  running  nagios  2019-12-10T08:17:18.000Z  ap-southeast-2a  None
+Are you sure you want to continue? y
+
+{
+    &quot;TerminatingInstances&quot;: [
+        {
+            &quot;CurrentState&quot;: {
+                &quot;Code&quot;: 32,
+                &quot;Name&quot;: &quot;shutting-down&quot;
+            },
+            &quot;InstanceId&quot;: &quot;i-4e15ece1de1a3f869&quot;,
+            &quot;PreviousState&quot;: {
+                &quot;Code&quot;: 16,
+                &quot;Name&quot;: &quot;running&quot;
+            }
+        }
+    ]
+}
+</pre></div>
+
+
 <h3 id="instance-termination-protection">instance-termination-protection<a class="headerlink" href="#instance-termination-protection" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: instance-termination-protection instance-id [instance-id]</code></p>
 <div class="codehilite"><pre><span></span>$ instances | instance-termination-protection
