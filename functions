@@ -51,6 +51,7 @@ elb-dnsname
 elb-instances
 elb-stack
 elbs
+hosted-zones
 iam-role-principal
 iam-roles
 image-deregister

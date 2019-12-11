@@ -1,0 +1,61 @@
+#!/bin/bash
+
+hosted-zones(){
+  local filters=$(__bma_read_filters $@)
+
+  aws route53 list-hosted-zones     \
+    --query "HostedZones[].[
+               Id,
+               ResourceRecordSetCount,
+               (Config.PrivateZone && 'PrivateZone') || 'NotPrivateZone',
+               Name
+             ]" \
+    --output text       |
+  sort -k 4             |
+  grep -E -- "$filters" |
+  column -s$'\t' -t
+}
+
+# # XXX Choose better function name
+# # XXX Is this generally useful?
+# # Use to generate NS records for delegating domain to AWS
+# #
+# # $ hosted-zones | head -1 | hosted-zone-ns
+# # aws.bash-my.com.au. 300 IN NS	ns-1234.awsdns-01.org.
+# # aws.bash-my.com.au. 300 IN NS	ns-1234.awsdns-02.co.uk.
+# # aws.bash-my.com.au. 300 IN NS	ns-1234.awsdns-03.com.
+# # aws-bash-my.com.au. 300 IN NS	ns-1234.awsdns-04.net.
+# #
+# hosted-zone-ns(){
+#   local hosted_zone_id="$(__bma_read_inputs $@)"
+#   [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
+# 
+#   local hosted_zone_name
+#   hosted_zone_name=$(
+#     aws route53 list-resource-record-sets            \
+#       --hosted-zone-id "$hosted_zone_id"             \
+#       --query "ResourceRecordSets[?Type=='NS'].Name" \
+#       --output text
+#   )
+# 
+#   aws route53 list-resource-record-sets                    \
+#     --hosted-zone-id $hosted_zone_id                       \
+#     --query "
+#       ResourceRecordSets[?Type=='NS'].ResourceRecords[].[
+#         '$hosted_zone_name 300 IN NS',
+#         Value
+#       ]"                                                   \
+#   --output text
+# }
+
+
+# # XXX Is this useful?
+# hosted-zone-rr-sets() {
+#   local hosted_zone_id="$(__bma_read_inputs $@)"
+#   [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
+# 
+#   aws route53 list-resource-record-sets                               \
+#     --hosted-zone-id "$hosted_zone_id"                                \
+#     --query "ResourceRecordSets[?Type=='NS'].ResourceRecords[].Value" \
+#     --output text
+# }
