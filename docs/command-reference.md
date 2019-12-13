@@ -326,38 +326,11 @@ Get IP Addresses for EC2 instances
 
 Start some existing stopped EC2 instances.
 
-*This could probably do with some line oriented output.*
-
 `USAGE: instance-stop instance-id [instance-id]`
 
-
     $ instances postgres | instance-start
-    {
-        "StartingInstances": [
-            {
-                "CurrentState": {
-                    "Code": 0,
-                    "Name": "pending"
-                },
-                "InstanceId": "i-89cefa9403373d7a5",
-                "PreviousState": {
-                    "Code": 16,
-                    "Name": "running"
-                }
-            },
-            {
-                "CurrentState": {
-                    "Code": 0,
-                    "Name": "pending"
-                },
-                "InstanceId": "i-806d8f1592e2a2efd",
-                "PreviousState": {
-                    "Code": 16,
-                    "Name": "running"
-                }
-            }
-        ]
-    }
+    i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
+    i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
 
 
 ### instance-state
@@ -381,37 +354,12 @@ Get current state of instances.
 
 Stop EC2 instances
 
-*This could probably do with some line oriented output.*
-
 `USAGE: instance-stop instance-id [instance-id]`
 
     $ instances postgres | instance-stop
-    {
-        "StoppingInstances": [
-            {
-                "CurrentState": {
-                    "Code": 64,
-                    "Name": "stopping"
-                },
-                "InstanceId": "i-89cefa9403373d7a5",
-                "PreviousState": {
-                    "Code": 16,
-                    "Name": "running"
-                }
-            },
-            {
-                "CurrentState": {
-                    "Code": 64,
-                    "Name": "stopping"
-                },
-                "InstanceId": "i-806d8f1592e2a2efd",
-                "PreviousState": {
-                    "Code": 16,
-                    "Name": "running"
-                }
-            }
-        ]
-    }
+
+    i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
+    i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
 
 
 ### instance-tags
