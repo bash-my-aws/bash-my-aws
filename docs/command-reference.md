@@ -194,11 +194,27 @@ arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb
 ### stack-events
 ### stack-exports
 ### stack-failure
+
 ### stack-instances
 ### stack-outputs
 ### stack-parameters
 ### stack-recreate
+
+
 ### stack-resources
+
+`USAGE: stack-resources stack [stack]`
+
+```shell
+$ stacks | stack-resources
+i-7d54924538baa7a1f  AWS::EC2::Instance  ec2
+i-c54279c6055c3c794  AWS::EC2::Instance  nagios
+i-a8b8dd6783e1a40cc  AWS::EC2::Instance  postgres01
+i-5d74753e210bfe04d  AWS::EC2::Instance  postgres02
+i-2aa95cc214a461398  AWS::EC2::Instance  prometheus-web
+```
+
+
 ### stack-status
 ### stack-tag
 ### stack-tag-apply
