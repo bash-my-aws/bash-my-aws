@@ -2474,20 +2474,61 @@ arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb
 
 
 <h3 id="stack-asg-instances">stack-asg-instances<a class="headerlink" href="#stack-asg-instances" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: stack-asg-instances stack [stack]</code></p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> stack-asg-instances
+i-06ee900565652ecc5  ami-0119aa4d67e59007c  t3.nano  running  asg-bash-my-aws  <span class="m">2019</span>-12-13T03:15:22.000Z  ap-southeast-2c  vpc-deb8edb9
+i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  running  asg2             <span class="m">2019</span>-12-13T03:37:51.000Z  ap-southeast-2c  vpc-deb8edb9
+</pre></div>
+
+
 <h3 id="stack-asgs">stack-asgs<a class="headerlink" href="#stack-asgs" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: stack-asgs stack [stack]</code></p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> stack-asgs
+asg-bash-my-aws-AutoScalingGroup-MSBCWRTI3PVM  AWS::AutoScaling::AutoScalingGroup  asg-bash-my-aws
+asg2-AutoScalingGroup-1FHUVUJ7SLPU7            AWS::AutoScaling::AutoScalingGroup  asg2
+</pre></div>
+
+
 <h3 id="stack-cancel-update">stack-cancel-update<a class="headerlink" href="#stack-cancel-update" title="Permanent link">&para;</a></h3>
 <h3 id="stack-create">stack-create<a class="headerlink" href="#stack-create" title="Permanent link">&para;</a></h3>
 <h3 id="stack-delete">stack-delete<a class="headerlink" href="#stack-delete" title="Permanent link">&para;</a></h3>
 <h3 id="stack-diff">stack-diff<a class="headerlink" href="#stack-diff" title="Permanent link">&para;</a></h3>
 <h3 id="stack-elbs">stack-elbs<a class="headerlink" href="#stack-elbs" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: stack-elbs stack [stack]</code></p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> stack-elbs
+elb-MyLoadBalancer-NA5S72MLA5KI   AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-1
+load-bala-MyLoadBa-11HZ0DHUHJZZI  AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-2
+</pre></div>
+
+
 <h3 id="stack-events">stack-events<a class="headerlink" href="#stack-events" title="Permanent link">&para;</a></h3>
 <h3 id="stack-exports">stack-exports<a class="headerlink" href="#stack-exports" title="Permanent link">&para;</a></h3>
 <h3 id="stack-failure">stack-failure<a class="headerlink" href="#stack-failure" title="Permanent link">&para;</a></h3>
 <h3 id="stack-instances">stack-instances<a class="headerlink" href="#stack-instances" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: stack-instances stack [stack]</code></p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> stack-instances
+i-7d54924538baa7a1f  ami-123456789012  t3.nano  stopped  ec2             <span class="m">2019</span>-12-11T09:31:03.000Z  ap-southeast-2a  None
+i-c54279c6055c3c794  ami-123456789012  t3.nano  running  nagios          <span class="m">2019</span>-12-13T02:24:30.000Z  ap-southeast-2a  None
+i-a8b8dd6783e1a40cc  ami-123456789012  t3.nano  running  postgres01      <span class="m">2019</span>-12-13T02:24:32.000Z  ap-southeast-2a  None
+i-5d74753e210bfe04d  ami-123456789012  t3.nano  running  postgres02      <span class="m">2019</span>-12-13T02:24:34.000Z  ap-southeast-2a  None
+i-2aa95cc214a461398  ami-123456789012  t3.nano  running  prometheus-web  <span class="m">2019</span>-12-13T02:24:36.000Z  ap-southeast-2a  None
+</pre></div>
+
+
 <h3 id="stack-outputs">stack-outputs<a class="headerlink" href="#stack-outputs" title="Permanent link">&para;</a></h3>
 <h3 id="stack-parameters">stack-parameters<a class="headerlink" href="#stack-parameters" title="Permanent link">&para;</a></h3>
 <h3 id="stack-recreate">stack-recreate<a class="headerlink" href="#stack-recreate" title="Permanent link">&para;</a></h3>
 <h3 id="stack-resources">stack-resources<a class="headerlink" href="#stack-resources" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: stack-resources stack [stack]</code></p>
+<div class="codehilite"><pre><span></span>$ stacks <span class="p">|</span> stack-resources
+i-7d54924538baa7a1f  AWS::EC2::Instance  ec2
+i-c54279c6055c3c794  AWS::EC2::Instance  nagios
+i-a8b8dd6783e1a40cc  AWS::EC2::Instance  postgres01
+i-5d74753e210bfe04d  AWS::EC2::Instance  postgres02
+i-2aa95cc214a461398  AWS::EC2::Instance  prometheus-web
+</pre></div>
+
+
 <h3 id="stack-status">stack-status<a class="headerlink" href="#stack-status" title="Permanent link">&para;</a></h3>
 <h3 id="stack-tag">stack-tag<a class="headerlink" href="#stack-tag" title="Permanent link">&para;</a></h3>
 <h3 id="stack-tag-apply">stack-tag-apply<a class="headerlink" href="#stack-tag-apply" title="Permanent link">&para;</a></h3>
@@ -2590,35 +2631,10 @@ postgres02  i-806d8f1592e2a2efd
 
 <h3 id="instance-start">instance-start<a class="headerlink" href="#instance-start" title="Permanent link">&para;</a></h3>
 <p>Start some existing stopped EC2 instances.</p>
-<p><em>This could probably do with some line oriented output.</em></p>
 <p><code>USAGE: instance-stop instance-id [instance-id]</code></p>
 <div class="codehilite"><pre><span></span>$ instances postgres | instance-start
-{
-    &quot;StartingInstances&quot;: [
-        {
-            &quot;CurrentState&quot;: {
-                &quot;Code&quot;: 0,
-                &quot;Name&quot;: &quot;pending&quot;
-            },
-            &quot;InstanceId&quot;: &quot;i-89cefa9403373d7a5&quot;,
-            &quot;PreviousState&quot;: {
-                &quot;Code&quot;: 16,
-                &quot;Name&quot;: &quot;running&quot;
-            }
-        },
-        {
-            &quot;CurrentState&quot;: {
-                &quot;Code&quot;: 0,
-                &quot;Name&quot;: &quot;pending&quot;
-            },
-            &quot;InstanceId&quot;: &quot;i-806d8f1592e2a2efd&quot;,
-            &quot;PreviousState&quot;: {
-                &quot;Code&quot;: 16,
-                &quot;Name&quot;: &quot;running&quot;
-            }
-        }
-    ]
-}
+i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
+i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
 </pre></div>
 
 
@@ -2640,35 +2656,11 @@ i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  2019-12-10T
 
 <h3 id="instance-stop">instance-stop<a class="headerlink" href="#instance-stop" title="Permanent link">&para;</a></h3>
 <p>Stop EC2 instances</p>
-<p><em>This could probably do with some line oriented output.</em></p>
 <p><code>USAGE: instance-stop instance-id [instance-id]</code></p>
 <div class="codehilite"><pre><span></span>$ instances postgres | instance-stop
-{
-    &quot;StoppingInstances&quot;: [
-        {
-            &quot;CurrentState&quot;: {
-                &quot;Code&quot;: 64,
-                &quot;Name&quot;: &quot;stopping&quot;
-            },
-            &quot;InstanceId&quot;: &quot;i-89cefa9403373d7a5&quot;,
-            &quot;PreviousState&quot;: {
-                &quot;Code&quot;: 16,
-                &quot;Name&quot;: &quot;running&quot;
-            }
-        },
-        {
-            &quot;CurrentState&quot;: {
-                &quot;Code&quot;: 64,
-                &quot;Name&quot;: &quot;stopping&quot;
-            },
-            &quot;InstanceId&quot;: &quot;i-806d8f1592e2a2efd&quot;,
-            &quot;PreviousState&quot;: {
-                &quot;Code&quot;: 16,
-                &quot;Name&quot;: &quot;running&quot;
-            }
-        }
-    ]
-}
+
+i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
+i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
 </pre></div>
 
 
@@ -2717,7 +2709,7 @@ i-61e86ac6be1e2c193 DisableApiTermination=false
 <h3 id="instance-type">instance-type<a class="headerlink" href="#instance-type" title="Permanent link">&para;</a></h3>
 <p>List instance type for instances. <em>You could also just view output of <code>instances</code> command</em></p>
 <p><code>USAGE: instance-type instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>[mike@work .bash-my-aws (mkdocs)]$ instances | instance-type
+<div class="codehilite"><pre><span></span>$ instances <span class="p">|</span> instance-type
 i-4e15ece1de1a3f869  t3.nano
 i-89cefa9403373d7a5  t3.nano
 i-806d8f1592e2a2efd  t3.nano
