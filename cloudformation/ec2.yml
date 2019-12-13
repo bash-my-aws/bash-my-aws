@@ -5,8 +5,9 @@ Parameters:
     Description: EC2 Instance Type to use
     Default: t3.nano
   LatestAmiId:
-    Type: string
-    Default: ami-123456789012 # XXX for localstack
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+    # Default: ami-123456789012 # XXX for localstack
   KeyName:
     Type: String
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance

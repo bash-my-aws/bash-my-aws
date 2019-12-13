@@ -297,6 +297,7 @@ instance-terminate() {
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
+
   echo "You are about to terminate the following instances:"
   instances "$instance_ids"
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
@@ -305,7 +306,16 @@ instance-terminate() {
   echo
   if [[ $REPLY =~ $regex_yes ]]
   then
-    aws ec2 terminate-instances --instance-ids $instance_ids
+    aws ec2 terminate-instances    \
+      --instance-ids $instance_ids \
+      --output text                \
+      --query "
+        TerminatingInstances[].[
+          InstanceId,
+          join('=', ['PreviousState', PreviousState.Name]),
+          join('=', ['CurrentState', CurrentState.Name])]
+      " |
+      column -t
   fi
 }
 
