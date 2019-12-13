@@ -367,9 +367,11 @@ Get IP Addresses for EC2 instances
 
 `USAGE: instance-ip instance-id [instance-id]`
 
-    $ instances postgres | instance-ip
-    i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
-    i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
+```shell
+$ instances postgres | instance-ip
+i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
+i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
+```
 
 
 ### instance-ssh
@@ -379,9 +381,11 @@ Get IP Addresses for EC2 instances
 
 `USAGE: instance-stack instance-id [instance-id]`
 
-    $ instances postgres | instance-stack
-    postgres01  i-89cefa9403373d7a5
-    postgres02  i-806d8f1592e2a2efd
+```shell
+$ instances postgres | instance-stack
+postgres01  i-89cefa9403373d7a5
+postgres02  i-806d8f1592e2a2efd
+```
 
 
 ### instance-start
@@ -390,9 +394,11 @@ Start some existing stopped EC2 instances.
 
 `USAGE: instance-stop instance-id [instance-id]`
 
-    $ instances postgres | instance-start
-    i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
-    i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
+```shell
+$ instances postgres | instance-start
+i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
+i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
+```
 
 
 ### instance-state
@@ -401,15 +407,19 @@ Get current state of instances.
 
 `USAGE: instance-state instance-id [instance-id]`
 
-    $ instances postgres | instance-state
-    i-89cefa9403373d7a5  running
-    i-806d8f1592e2a2efd  running
+```shell
+$ instances postgres | instance-state
+i-89cefa9403373d7a5  running
+i-806d8f1592e2a2efd  running
+```
 
 *You could also just get this from `instances` command:*
 
-    $ instances postgres
-    i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres01  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
-    i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
+```shell
+$ instances postgres
+i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres01  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
+i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
+```
 
 
 ### instance-stop
@@ -418,10 +428,12 @@ Stop EC2 instances
 
 `USAGE: instance-stop instance-id [instance-id]`
 
-    $ instances postgres | instance-stop
+```shell
+$ instances postgres | instance-stop
 
-    i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
-    i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
+i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
+i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
+```
 
 
 ### instance-tags
@@ -490,9 +502,11 @@ i-61e86ac6be1e2c193  t3.nano
 
 `USAGE: instance-volumes instance-id [instance-id]`
 
-    $ instances postgres | instance-volumes
-    i-89cefa9403373d7a5  vol-cf5ddae9
-    i-806d8f1592e2a2efd  vol-38fd45c3
+```shell
+$ instances postgres | instance-volumes
+i-89cefa9403373d7a5  vol-cf5ddae9
+i-806d8f1592e2a2efd  vol-38fd45c3
+```
 
 
 ### instance-vpc
@@ -574,10 +588,38 @@ ACM Certificates
 
 ## elb-commands
 
-### elb-dnsname
-### elb-instances
-### elb-stack
+EC2 Classic Load Balancers
+
 ### elbs
+```shell
+$ elbs
+elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
+another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
+```
+
+
+### elb-dnsname
+
+`USAGE: elb-dnsname load-balancer`
+
+```shell
+$ elbs | elb-dnsname
+elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
+another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
+```
+
+### elb-instances
+
+
+### elb-stack
+
+`USAGE: elb-stack load-balancer [load-balancer]`
+
+```shell
+$ elbs | elb-stack
+elb          elb-MyLoadBalancer-1FNISWJN0W6N9
+another-elb  another-e-MyLoadBa-171CPCZF2E84T
+```
 
 
 ## iam-commands
@@ -642,6 +684,7 @@ The key's randomart image is:
 !!! Note
     KeyPair Name defaults to "$(aws-account-alias)-$(region)" if none provided
 
+
 ### keypair-delete
 
 Delete EC2 SSH Keypairs by providing their names as arguments or via STDIN
@@ -668,8 +711,10 @@ Are you sure you want to continue? y
 
 List VPCs
 
-    $ vpcs
-    vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
+```shell
+$ vpcs
+vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
+```
 
 
 ### vpc-az-count
@@ -678,8 +723,10 @@ List number of Availability Zones for VPCs
 
 `USAGE: vpc-az-count vpc-id [vpc-id]`
 
-    $ vpcs | vpc-az-count
-    vpc-018d9739 3
+```shell
+$ vpcs | vpc-az-count
+vpc-018d9739 3
+```
 
 
 ### vpc-azs
@@ -689,21 +736,25 @@ List availability zones for VPCs
 $ vpc-azs
 USAGE: vpc-azs vpc-id [vpc-id]
 
-    $ vpcs | vpc-azs
-    vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
+```shell
+$ vpcs | vpc-azs
+vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
+```
 
 
 ### vpc-default-delete
 
 Prints commands you would need to run to delete that pesky default VPC
 
-    $ vpc-default-delete
+```shell
+$ vpc-default-delete
 
-    # Deleting default VPC vpc-018d9739 in ap-southeast-2
-    aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-8bb774fe
-    aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-9eea2c07
-    aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-34fd9cfa
-    aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
+# Deleting default VPC vpc-018d9739 in ap-southeast-2
+aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-8bb774fe
+aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-9eea2c07
+aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-34fd9cfa
+aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
+```
 
 
 ### vpc-dhcp-options-ntp
@@ -721,8 +772,10 @@ Prints commands you would need to run to delete that pesky default VPC
 
 `USAGE: vpc-network-acls vpc-id [vpc-id]`
 
-    $ vpcs | vpc-network-acls
-    acl-ff4914d1  vpc-018d9739
+```shell
+$ vpcs | vpc-network-acls
+acl-ff4914d1  vpc-018d9739
+```
 
 
 ### vpc-rds
@@ -732,8 +785,10 @@ Prints commands you would need to run to delete that pesky default VPC
 
 `USAGE: vpc-route-tables vpc-id [vpc-id]`
 
-    $ vpcs | vpc-route-tables
-    rtb-8e841c39  vpc-018d9739  NO_NAME
+```shell
+$ vpcs | vpc-route-tables
+rtb-8e841c39  vpc-018d9739  NO_NAME
+```
 
 
 ### vpc-subnets
@@ -742,21 +797,29 @@ List subnets for vpcs
 
 `USAGE: vpc-subnets vpc-id [vpc-id]`
 
-    $ vpcs | vpc-subnets
-    subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
-    subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
-    subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+```shell
+$ vpcs | vpc-subnets
+subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
+subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
+subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+```
+
 
 ### pcxs
+
+List VPC Peering Connections
+
 
 ### subnets
 
 List all subnets
 
-    $ subnets
-    subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
-    subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
-    subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+```shell
+$ subnets
+subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
+subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
+subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+```
 
 
 ## asg-commands
