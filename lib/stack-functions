@@ -281,35 +281,45 @@ stack-resources() {
 stack-asgs() {
   # type: detail
   # return the autoscaling groups managed by a stack
-  stack-resources $@                      |
+
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+
+  stack-resources $stacks                 |
   grep AWS::AutoScaling::AutoScalingGroup |
   column -t
 }
 
-stack-asg-instances() {
-  # return instances for asg(s) in stack
-  local inputs=$(__bma_read_inputs $@)
-  local stack=$(_bma_stack_name_arg ${inputs})
-  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  local asgs=$(stack-asgs "$stack")
+stack-asg-instances() {
+
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+
+  local asgs=$(stack-asgs $stacks)
   if [[ -n $asgs ]]; then
     asg-instances $asgs
   fi
 }
 
+
 stack-elbs() {
-  # type: detail
-  # return the elastic load balancers managed by a stack
-  stack-resources $@ | 
+  # return the elastic load balancers managed by stack(s)
+
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+
+  stack-resources $stacks                      |
   grep AWS::ElasticLoadBalancing::LoadBalancer |
   column -t
 }
 
 stack-instances() {
-  # type: detail
-  # return the instances managed by a stack
-  local instance_ids=$(stack-resources $@ | grep AWS::EC2::Instance | awk '{ print $1 }')
+  # return the instances managed by stack(s)
+  local stacks=$(__bma_read_inputs $@)
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+
+  local instance_ids=$(stack-resources $stacks | grep AWS::EC2::Instance | awk '{ print $1 }')
   [[ -n "$instance_ids" ]] && instances $instance_ids
 }
 

@@ -185,17 +185,63 @@ arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb
 
 
 ### stack-asg-instances
+
+`USAGE: stack-asg-instances stack [stack]`
+
+```shell
+$ stacks | stack-asg-instances
+i-06ee900565652ecc5  ami-0119aa4d67e59007c  t3.nano  running  asg-bash-my-aws  2019-12-13T03:15:22.000Z  ap-southeast-2c  vpc-deb8edb9
+i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  running  asg2             2019-12-13T03:37:51.000Z  ap-southeast-2c  vpc-deb8edb9
+```
+
+
 ### stack-asgs
+
+`USAGE: stack-asgs stack [stack]`
+
+```shell
+$ stacks | stack-asgs
+asg-bash-my-aws-AutoScalingGroup-MSBCWRTI3PVM  AWS::AutoScaling::AutoScalingGroup  asg-bash-my-aws
+asg2-AutoScalingGroup-1FHUVUJ7SLPU7            AWS::AutoScaling::AutoScalingGroup  asg2
+```
+
+
 ### stack-cancel-update
 ### stack-create
 ### stack-delete
 ### stack-diff
+
+
 ### stack-elbs
+
+`USAGE: stack-elbs stack [stack]`
+
+```shell
+$ stacks | stack-elbs
+elb-MyLoadBalancer-NA5S72MLA5KI   AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-1
+load-bala-MyLoadBa-11HZ0DHUHJZZI  AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-2
+```
+
+
 ### stack-events
 ### stack-exports
 ### stack-failure
 
+
 ### stack-instances
+
+`USAGE: stack-instances stack [stack]`
+
+```shell
+$ stacks | stack-instances
+i-7d54924538baa7a1f  ami-123456789012  t3.nano  stopped  ec2             2019-12-11T09:31:03.000Z  ap-southeast-2a  None
+i-c54279c6055c3c794  ami-123456789012  t3.nano  running  nagios          2019-12-13T02:24:30.000Z  ap-southeast-2a  None
+i-a8b8dd6783e1a40cc  ami-123456789012  t3.nano  running  postgres01      2019-12-13T02:24:32.000Z  ap-southeast-2a  None
+i-5d74753e210bfe04d  ami-123456789012  t3.nano  running  postgres02      2019-12-13T02:24:34.000Z  ap-southeast-2a  None
+i-2aa95cc214a461398  ami-123456789012  t3.nano  running  prometheus-web  2019-12-13T02:24:36.000Z  ap-southeast-2a  None
+```
+
+
 ### stack-outputs
 ### stack-parameters
 ### stack-recreate
@@ -439,11 +485,13 @@ List instance type for instances. *You could also just view output of `instances
 
 `USAGE: instance-type instance-id [instance-id]`
 
-    [mike@work .bash-my-aws (mkdocs)]$ instances | instance-type
-    i-4e15ece1de1a3f869  t3.nano
-    i-89cefa9403373d7a5  t3.nano
-    i-806d8f1592e2a2efd  t3.nano
-    i-61e86ac6be1e2c193  t3.nano
+```shell
+$ instances | instance-type
+i-4e15ece1de1a3f869  t3.nano
+i-89cefa9403373d7a5  t3.nano
+i-806d8f1592e2a2efd  t3.nano
+i-61e86ac6be1e2c193  t3.nano
+```
 
 
 ### instance-userdata
