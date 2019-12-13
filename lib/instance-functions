@@ -98,6 +98,22 @@ instance-dns() {
   column -s$'\t' -t
 }
 
+instance-health-set-unhealthy() {
+  local instances=$(__bma_read_inputs "$@");
+  local health_status=Unhealthy
+
+  if [[ -z $instances ]]; then
+      __bma_usage "instance [instance]";
+      return 1;
+  fi;
+  local instance;
+  for instance in $instances; do
+    aws autoscaling set-instance-health \
+      --instance-id "$instance"         \
+      --health-status "$health_status"
+  done
+}
+
 instance-iam-profile() {
   # returns the iam-profile of an instance
   local instance_ids="$(__bma_read_inputs $@)"

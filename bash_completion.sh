@@ -136,6 +136,7 @@ complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
 complete -F _bma_instances_completion instance-console
 complete -F _bma_instances_completion instance-dns
+complete -F _bma_instances_completion instance-health-set-unhealthy
 complete -F _bma_instances_completion instance-iam-profile
 complete -F _bma_instances_completion instance-ip
 complete -F _bma_instances_completion instance-ssh
