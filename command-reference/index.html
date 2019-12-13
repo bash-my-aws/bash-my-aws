@@ -823,6 +823,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#elbs" class="md-nav__link">
+    elbs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#elb-dnsname" class="md-nav__link">
     elb-dnsname
   </a>
@@ -839,13 +846,6 @@
           <li class="md-nav__item">
   <a href="#elb-stack" class="md-nav__link">
     elb-stack
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#elbs" class="md-nav__link">
-    elbs
   </a>
   
 </li>
@@ -1860,6 +1860,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#elbs" class="md-nav__link">
+    elbs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#elb-dnsname" class="md-nav__link">
     elb-dnsname
   </a>
@@ -1876,13 +1883,6 @@
           <li class="md-nav__item">
   <a href="#elb-stack" class="md-nav__link">
     elb-stack
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#elbs" class="md-nav__link">
-    elbs
   </a>
   
 </li>
@@ -2613,9 +2613,9 @@ i-806d8f1592e2a2efd  ip-10-178-243-63.ap-southeast-2.compute.internal  ec2-54-21
 <h3 id="instance-ip">instance-ip<a class="headerlink" href="#instance-ip" title="Permanent link">&para;</a></h3>
 <p>Get IP Addresses for EC2 instances</p>
 <p><code>USAGE: instance-ip instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances postgres | instance-ip
-i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
-i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
+<div class="codehilite"><pre><span></span>$ instances postgres <span class="p">|</span> instance-ip
+i-89cefa9403373d7a5  <span class="m">10</span>.155.35.61   <span class="m">54</span>.214.206.114
+i-806d8f1592e2a2efd  <span class="m">10</span>.178.243.63  <span class="m">54</span>.214.244.90
 </pre></div>
 
 
@@ -2623,7 +2623,7 @@ i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
 <h3 id="instance-ssh-details">instance-ssh-details<a class="headerlink" href="#instance-ssh-details" title="Permanent link">&para;</a></h3>
 <h3 id="instance-stack">instance-stack<a class="headerlink" href="#instance-stack" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: instance-stack instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances postgres | instance-stack
+<div class="codehilite"><pre><span></span>$ instances postgres <span class="p">|</span> instance-stack
 postgres01  i-89cefa9403373d7a5
 postgres02  i-806d8f1592e2a2efd
 </pre></div>
@@ -2632,16 +2632,16 @@ postgres02  i-806d8f1592e2a2efd
 <h3 id="instance-start">instance-start<a class="headerlink" href="#instance-start" title="Permanent link">&para;</a></h3>
 <p>Start some existing stopped EC2 instances.</p>
 <p><code>USAGE: instance-stop instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances postgres | instance-start
-i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
-i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
+<div class="codehilite"><pre><span></span>$ instances postgres <span class="p">|</span> instance-start
+i-a8b8dd6783e1a40cc  <span class="nv">PreviousState</span><span class="o">=</span>stopped  <span class="nv">CurrentState</span><span class="o">=</span>pending
+i-5d74753e210bfe04d  <span class="nv">PreviousState</span><span class="o">=</span>stopped  <span class="nv">CurrentState</span><span class="o">=</span>pending
 </pre></div>
 
 
 <h3 id="instance-state">instance-state<a class="headerlink" href="#instance-state" title="Permanent link">&para;</a></h3>
 <p>Get current state of instances.</p>
 <p><code>USAGE: instance-state instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances postgres | instance-state
+<div class="codehilite"><pre><span></span>$ instances postgres <span class="p">|</span> instance-state
 i-89cefa9403373d7a5  running
 i-806d8f1592e2a2efd  running
 </pre></div>
@@ -2649,18 +2649,18 @@ i-806d8f1592e2a2efd  running
 
 <p><em>You could also just get this from <code>instances</code> command:</em></p>
 <div class="codehilite"><pre><span></span>$ instances postgres
-i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres01  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
-i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
+i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres01  <span class="m">2019</span>-12-10T08:17:20.000Z  ap-southeast-2a  None
+i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres02  <span class="m">2019</span>-12-10T08:17:22.000Z  ap-southeast-2a  None
 </pre></div>
 
 
 <h3 id="instance-stop">instance-stop<a class="headerlink" href="#instance-stop" title="Permanent link">&para;</a></h3>
 <p>Stop EC2 instances</p>
 <p><code>USAGE: instance-stop instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances postgres | instance-stop
+<div class="codehilite"><pre><span></span>$ instances postgres <span class="p">|</span> instance-stop
 
-i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
-i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
+i-a8b8dd6783e1a40cc  <span class="nv">PreviousState</span><span class="o">=</span>running  <span class="nv">CurrentState</span><span class="o">=</span>stopping
+i-5d74753e210bfe04d  <span class="nv">PreviousState</span><span class="o">=</span>running  <span class="nv">CurrentState</span><span class="o">=</span>stopping
 </pre></div>
 
 
@@ -2707,7 +2707,7 @@ i-61e86ac6be1e2c193  t3.nano
 <h3 id="instance-userdata">instance-userdata<a class="headerlink" href="#instance-userdata" title="Permanent link">&para;</a></h3>
 <h3 id="instance-volumes">instance-volumes<a class="headerlink" href="#instance-volumes" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: instance-volumes instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances postgres | instance-volumes
+<div class="codehilite"><pre><span></span>$ instances postgres <span class="p">|</span> instance-volumes
 i-89cefa9403373d7a5  vol-cf5ddae9
 i-806d8f1592e2a2efd  vol-38fd45c3
 </pre></div>
@@ -2769,10 +2769,31 @@ remove_bucket: another-example-bucket
 <h3 id="ecr-repositories">ecr-repositories<a class="headerlink" href="#ecr-repositories" title="Permanent link">&para;</a></h3>
 <h3 id="ecr-repository-images">ecr-repository-images<a class="headerlink" href="#ecr-repository-images" title="Permanent link">&para;</a></h3>
 <h2 id="elb-commands">elb-commands<a class="headerlink" href="#elb-commands" title="Permanent link">&para;</a></h2>
+<p>EC2 Classic Load Balancers</p>
+<h3 id="elbs">elbs<a class="headerlink" href="#elbs" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>$ elbs
+elb-MyLoadBalancer-1FNISWJN0W6N9  <span class="m">2019</span>-12-13T10:24:55.220Z  subnet-eff2cf88
+another-e-MyLoadBa-171CPCZF2E84T  <span class="m">2019</span>-12-13T10:25:24.300Z  subnet-eff2cf88
+</pre></div>
+
+
 <h3 id="elb-dnsname">elb-dnsname<a class="headerlink" href="#elb-dnsname" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: elb-dnsname load-balancer</code></p>
+<div class="codehilite"><pre><span></span>$ elbs <span class="p">|</span> elb-dnsname
+elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
+another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
+</pre></div>
+
+
 <h3 id="elb-instances">elb-instances<a class="headerlink" href="#elb-instances" title="Permanent link">&para;</a></h3>
 <h3 id="elb-stack">elb-stack<a class="headerlink" href="#elb-stack" title="Permanent link">&para;</a></h3>
-<h3 id="elbs">elbs<a class="headerlink" href="#elbs" title="Permanent link">&para;</a></h3>
+<p><code>USAGE: elb-stack load-balancer [load-balancer]</code></p>
+<div class="codehilite"><pre><span></span>$ elbs <span class="p">|</span> elb-stack
+elb          elb-MyLoadBalancer-1FNISWJN0W6N9
+another-elb  another-e-MyLoadBa-171CPCZF2E84T
+</pre></div>
+
+
 <h2 id="iam-commands">iam-commands<a class="headerlink" href="#iam-commands" title="Permanent link">&para;</a></h2>
 <h3 id="iam-role-principal">iam-role-principal<a class="headerlink" href="#iam-role-principal" title="Permanent link">&para;</a></h3>
 <h3 id="iam-roles">iam-roles<a class="headerlink" href="#iam-roles" title="Permanent link">&para;</a></h3>
@@ -2848,15 +2869,15 @@ Are you sure you want to <span class="k">continue</span>? y
 <h3 id="vpcs">vpcs<a class="headerlink" href="#vpcs" title="Permanent link">&para;</a></h3>
 <p>List VPCs</p>
 <div class="codehilite"><pre><span></span>$ vpcs
-vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
+vpc-018d9739  default-vpc  NO_NAME  <span class="m">172</span>.31.0.0/16  NO_STACK  NO_VERSION
 </pre></div>
 
 
 <h3 id="vpc-az-count">vpc-az-count<a class="headerlink" href="#vpc-az-count" title="Permanent link">&para;</a></h3>
 <p>List number of Availability Zones for VPCs</p>
 <p><code>USAGE: vpc-az-count vpc-id [vpc-id]</code></p>
-<div class="codehilite"><pre><span></span>$ vpcs | vpc-az-count
-vpc-018d9739 3
+<div class="codehilite"><pre><span></span>$ vpcs <span class="p">|</span> vpc-az-count
+vpc-018d9739 <span class="m">3</span>
 </pre></div>
 
 
@@ -2864,7 +2885,7 @@ vpc-018d9739 3
 <p>List availability zones for VPCs</p>
 <p>$ vpc-azs
 USAGE: vpc-azs vpc-id [vpc-id]</p>
-<div class="codehilite"><pre><span></span>$ vpcs | vpc-azs
+<div class="codehilite"><pre><span></span>$ vpcs <span class="p">|</span> vpc-azs
 vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
 </pre></div>
 
@@ -2873,11 +2894,11 @@ vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
 <p>Prints commands you would need to run to delete that pesky default VPC</p>
 <div class="codehilite"><pre><span></span>$ vpc-default-delete
 
-# Deleting default VPC vpc-018d9739 in ap-southeast-2
-aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-8bb774fe
-aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-9eea2c07
-aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-34fd9cfa
-aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
+<span class="c1"># Deleting default VPC vpc-018d9739 in ap-southeast-2</span>
+aws --region ap-southeast-2 ec2 delete-subnet --subnet-id<span class="o">=</span>subnet-8bb774fe
+aws --region ap-southeast-2 ec2 delete-subnet --subnet-id<span class="o">=</span>subnet-9eea2c07
+aws --region ap-southeast-2 ec2 delete-subnet --subnet-id<span class="o">=</span>subnet-34fd9cfa
+aws --region ap-southeast-2 ec2 delete-vpc --vpc-id<span class="o">=</span>vpc-018d9739
 </pre></div>
 
 
@@ -2889,7 +2910,7 @@ aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
 <p><code>USAGE: vpc-nat-gateways vpc-id [vpc-id]</code></p>
 <h3 id="vpc-network-acls">vpc-network-acls<a class="headerlink" href="#vpc-network-acls" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: vpc-network-acls vpc-id [vpc-id]</code></p>
-<div class="codehilite"><pre><span></span>$ vpcs | vpc-network-acls
+<div class="codehilite"><pre><span></span>$ vpcs <span class="p">|</span> vpc-network-acls
 acl-ff4914d1  vpc-018d9739
 </pre></div>
 
@@ -2897,7 +2918,7 @@ acl-ff4914d1  vpc-018d9739
 <h3 id="vpc-rds">vpc-rds<a class="headerlink" href="#vpc-rds" title="Permanent link">&para;</a></h3>
 <h3 id="vpc-route-tables">vpc-route-tables<a class="headerlink" href="#vpc-route-tables" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: vpc-route-tables vpc-id [vpc-id]</code></p>
-<div class="codehilite"><pre><span></span>$ vpcs | vpc-route-tables
+<div class="codehilite"><pre><span></span>$ vpcs <span class="p">|</span> vpc-route-tables
 rtb-8e841c39  vpc-018d9739  NO_NAME
 </pre></div>
 
@@ -2905,20 +2926,21 @@ rtb-8e841c39  vpc-018d9739  NO_NAME
 <h3 id="vpc-subnets">vpc-subnets<a class="headerlink" href="#vpc-subnets" title="Permanent link">&para;</a></h3>
 <p>List subnets for vpcs</p>
 <p><code>USAGE: vpc-subnets vpc-id [vpc-id]</code></p>
-<div class="codehilite"><pre><span></span>$ vpcs | vpc-subnets
-subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
-subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
-subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+<div class="codehilite"><pre><span></span>$ vpcs <span class="p">|</span> vpc-subnets
+subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  <span class="m">172</span>.31.32.0/20  NO_NAME
+subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  <span class="m">172</span>.31.0.0/20   NO_NAME
+subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  <span class="m">172</span>.31.16.0/20  NO_NAME
 </pre></div>
 
 
 <h3 id="pcxs">pcxs<a class="headerlink" href="#pcxs" title="Permanent link">&para;</a></h3>
+<p>List VPC Peering Connections</p>
 <h3 id="subnets">subnets<a class="headerlink" href="#subnets" title="Permanent link">&para;</a></h3>
 <p>List all subnets</p>
 <div class="codehilite"><pre><span></span>$ subnets
-subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
-subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
-subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  <span class="m">172</span>.31.32.0/20  NO_NAME
+subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  <span class="m">172</span>.31.0.0/20   NO_NAME
+subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  <span class="m">172</span>.31.16.0/20  NO_NAME
 </pre></div>
 
 
