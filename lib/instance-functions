@@ -225,7 +225,16 @@ instance-start() {
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 start-instances --instance-ids $instance_ids
+  aws ec2 start-instances        \
+    --instance-ids $instance_ids \
+    --output text                \
+    --query "
+      StartingInstances[].[
+        InstanceId,
+        join('=', ['PreviousState', PreviousState.Name]),
+        join('=', ['CurrentState', CurrentState.Name])]
+    " |
+    column -t
 }
 
 instance-state() {
@@ -251,7 +260,16 @@ instance-stop() {
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 stop-instances --instance-ids $instance_ids
+  aws ec2 stop-instances         \
+    --instance-ids $instance_ids \
+    --output text                \
+    --query "
+      StoppingInstances[].[
+        InstanceId,
+        join('=', ['PreviousState', PreviousState.Name]),
+        join('=', ['CurrentState', CurrentState.Name])]
+    " |
+    column -t
 }
 
 # Replaces two older functions
