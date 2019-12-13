@@ -6,7 +6,7 @@ site_url: 'https://bash-my-aws.github.io/'
 nav:
   - Home: index.md
   # - Tour: tour.md
-  - Commands: commands.md
+  - Command Reference: command-reference.md
 
 theme:
   name: material
