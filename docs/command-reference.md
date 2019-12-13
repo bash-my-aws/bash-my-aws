@@ -429,44 +429,33 @@ Stop EC2 instances
 
 ### instance-terminate
 
-Terminate EC2 instance.
-
-*This could probably do with some line oriented output.*
+Terminate EC2 instance(s).
 
 `USAGE: instance-terminate instance-id [instance-id]`
 
-    $ instances | head -1 | instance-terminate
-    You are about to terminate the following instances:
-    i-4e15ece1de1a3f869  ami-123456789012  t3.nano  running  nagios  2019-12-10T08:17:18.000Z  ap-southeast-2a  None
-    Are you sure you want to continue? y
-
-    {
-        "TerminatingInstances": [
-            {
-                "CurrentState": {
-                    "Code": 32,
-                    "Name": "shutting-down"
-                },
-                "InstanceId": "i-4e15ece1de1a3f869",
-                "PreviousState": {
-                    "Code": 16,
-                    "Name": "running"
-                }
-            }
-        ]
-    }
-
+```shell
+$ instances | head -3 | instance-terminate
+You are about to terminate the following instances:
+i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  terminated  asg2  2019-12-13T03:37:51.000Z  ap-southeast-2c  None
+i-012dded46894dfa04  ami-0119aa4d67e59007c  t3.nano  running     ec2   2019-12-13T10:12:55.000Z  ap-southeast-2b  vpc-deb8edb9
+Are you sure you want to continue? y
+i-06ee900565652ecc5  PreviousState=terminated  CurrentState=terminated
+i-01c7edb986c18c16a  PreviousState=terminated  CurrentState=terminated
+i-012dded46894dfa04  PreviousState=running     CurrentState=shutting-down
+```
 
 
 ### instance-termination-protection
 
 `USAGE: instance-termination-protection instance-id [instance-id]`
 
-    $ instances | instance-termination-protection
-    i-4e15ece1de1a3f869	DisableApiTermination=true
-    i-89cefa9403373d7a5	DisableApiTermination=false
-    i-806d8f1592e2a2efd	DisableApiTermination=false
-    i-61e86ac6be1e2c193	DisableApiTermination=false
+```shell
+$ instances | instance-termination-protection
+i-4e15ece1de1a3f869	DisableApiTermination=true
+i-89cefa9403373d7a5	DisableApiTermination=false
+i-806d8f1592e2a2efd	DisableApiTermination=false
+i-61e86ac6be1e2c193	DisableApiTermination=false
+```
 
 
 ### instance-termination-protection-disable
