@@ -2666,39 +2666,26 @@ i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
 
 <h3 id="instance-tags">instance-tags<a class="headerlink" href="#instance-tags" title="Permanent link">&para;</a></h3>
 <h3 id="instance-terminate">instance-terminate<a class="headerlink" href="#instance-terminate" title="Permanent link">&para;</a></h3>
-<p>Terminate EC2 instance.</p>
-<p><em>This could probably do with some line oriented output.</em></p>
+<p>Terminate EC2 instance(s).</p>
 <p><code>USAGE: instance-terminate instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances | head -1 | instance-terminate
+<div class="codehilite"><pre><span></span>$ instances <span class="p">|</span> head -3 <span class="p">|</span> instance-terminate
 You are about to terminate the following instances:
-i-4e15ece1de1a3f869  ami-123456789012  t3.nano  running  nagios  2019-12-10T08:17:18.000Z  ap-southeast-2a  None
-Are you sure you want to continue? y
-
-{
-    &quot;TerminatingInstances&quot;: [
-        {
-            &quot;CurrentState&quot;: {
-                &quot;Code&quot;: 32,
-                &quot;Name&quot;: &quot;shutting-down&quot;
-            },
-            &quot;InstanceId&quot;: &quot;i-4e15ece1de1a3f869&quot;,
-            &quot;PreviousState&quot;: {
-                &quot;Code&quot;: 16,
-                &quot;Name&quot;: &quot;running&quot;
-            }
-        }
-    ]
-}
+i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  terminated  asg2  <span class="m">2019</span>-12-13T03:37:51.000Z  ap-southeast-2c  None
+i-012dded46894dfa04  ami-0119aa4d67e59007c  t3.nano  running     ec2   <span class="m">2019</span>-12-13T10:12:55.000Z  ap-southeast-2b  vpc-deb8edb9
+Are you sure you want to <span class="k">continue</span>? y
+i-06ee900565652ecc5  <span class="nv">PreviousState</span><span class="o">=</span>terminated  <span class="nv">CurrentState</span><span class="o">=</span>terminated
+i-01c7edb986c18c16a  <span class="nv">PreviousState</span><span class="o">=</span>terminated  <span class="nv">CurrentState</span><span class="o">=</span>terminated
+i-012dded46894dfa04  <span class="nv">PreviousState</span><span class="o">=</span>running     <span class="nv">CurrentState</span><span class="o">=</span>shutting-down
 </pre></div>
 
 
 <h3 id="instance-termination-protection">instance-termination-protection<a class="headerlink" href="#instance-termination-protection" title="Permanent link">&para;</a></h3>
 <p><code>USAGE: instance-termination-protection instance-id [instance-id]</code></p>
-<div class="codehilite"><pre><span></span>$ instances | instance-termination-protection
-i-4e15ece1de1a3f869 DisableApiTermination=true
-i-89cefa9403373d7a5 DisableApiTermination=false
-i-806d8f1592e2a2efd DisableApiTermination=false
-i-61e86ac6be1e2c193 DisableApiTermination=false
+<div class="codehilite"><pre><span></span>$ instances <span class="p">|</span> instance-termination-protection
+i-4e15ece1de1a3f869 <span class="nv">DisableApiTermination</span><span class="o">=</span><span class="nb">true</span>
+i-89cefa9403373d7a5 <span class="nv">DisableApiTermination</span><span class="o">=</span><span class="nb">false</span>
+i-806d8f1592e2a2efd <span class="nv">DisableApiTermination</span><span class="o">=</span><span class="nb">false</span>
+i-61e86ac6be1e2c193 <span class="nv">DisableApiTermination</span><span class="o">=</span><span class="nb">false</span>
 </pre></div>
 
 
