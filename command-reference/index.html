@@ -65,6 +65,31 @@
     
     
       
+        
+<script>
+  window.ga = window.ga || function() {
+    (ga.q = ga.q || []).push(arguments)
+  }
+  ga.l = +new Date
+  /* Setup integration and send page view */
+  ga("create", "UA-9713294-2", "bash-my-aws.org")
+  ga("set", "anonymizeIp", true)
+  ga("send", "pageview")
+  /* Register handler to log search on blur */
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.forms.search) {
+      var query = document.forms.search.query
+      query.addEventListener("blur", function() {
+        if (this.value) {
+          var path = document.location.pathname;
+          ga("send", "pageview", path + "?q=" + this.value)
+        }
+      })
+    }
+  })
+</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
     
     
   </head>
@@ -582,6 +607,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#instance-health-set-unhealthy" class="md-nav__link">
+    instance-health-set-unhealthy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#instance-iam-profile" class="md-nav__link">
     instance-iam-profile
   </a>
@@ -864,15 +896,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#iam-role-principal" class="md-nav__link">
-    iam-role-principal
+  <a href="#iam-roles" class="md-nav__link">
+    iam-roles
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#iam-roles" class="md-nav__link">
-    iam-roles
+  <a href="#iam-role-principal" class="md-nav__link">
+    iam-role-principal
   </a>
   
 </li>
@@ -1619,6 +1651,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#instance-health-set-unhealthy" class="md-nav__link">
+    instance-health-set-unhealthy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#instance-iam-profile" class="md-nav__link">
     instance-iam-profile
   </a>
@@ -1901,15 +1940,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#iam-role-principal" class="md-nav__link">
-    iam-role-principal
+  <a href="#iam-roles" class="md-nav__link">
+    iam-roles
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#iam-roles" class="md-nav__link">
-    iam-roles
+  <a href="#iam-role-principal" class="md-nav__link">
+    iam-role-principal
   </a>
   
 </li>
@@ -2609,6 +2648,7 @@ i-806d8f1592e2a2efd  ip-10-178-243-63.ap-southeast-2.compute.internal  ec2-54-21
 </pre></div>
 
 
+<h3 id="instance-health-set-unhealthy">instance-health-set-unhealthy<a class="headerlink" href="#instance-health-set-unhealthy" title="Permanent link">&para;</a></h3>
 <h3 id="instance-iam-profile">instance-iam-profile<a class="headerlink" href="#instance-iam-profile" title="Permanent link">&para;</a></h3>
 <h3 id="instance-ip">instance-ip<a class="headerlink" href="#instance-ip" title="Permanent link">&para;</a></h3>
 <p>Get IP Addresses for EC2 instances</p>
@@ -2795,8 +2835,8 @@ another-elb  another-e-MyLoadBa-171CPCZF2E84T
 
 
 <h2 id="iam-commands">iam-commands<a class="headerlink" href="#iam-commands" title="Permanent link">&para;</a></h2>
-<h3 id="iam-role-principal">iam-role-principal<a class="headerlink" href="#iam-role-principal" title="Permanent link">&para;</a></h3>
 <h3 id="iam-roles">iam-roles<a class="headerlink" href="#iam-roles" title="Permanent link">&para;</a></h3>
+<h3 id="iam-role-principal">iam-role-principal<a class="headerlink" href="#iam-role-principal" title="Permanent link">&para;</a></h3>
 <h2 id="keypair-commands">keypair-commands<a class="headerlink" href="#keypair-commands" title="Permanent link">&para;</a></h2>
 <p>List, create and delete EC2 SSH Keypairs</p>
 <h3 id="keypairs">keypairs<a class="headerlink" href="#keypairs" title="Permanent link">&para;</a></h3>
