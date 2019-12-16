@@ -82,6 +82,15 @@ instances
 keypair-create
 keypair-delete
 keypairs
+kms-alias-create
+kms-alias-delete
+kms-aliases
+kms-decrypt
+kms-encrypt
+kms-key-create
+kms-key-details
+kms-key-schedule-deletion
+kms-keys
 lambda-function-memory
 lambda-function-memory-set
 lambda-function-memory-step
