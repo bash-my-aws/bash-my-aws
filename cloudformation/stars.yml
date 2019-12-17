@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+
+  SlackChannel:
+    Description: Slack channel to notify
+    Type: String
+    Default: bash-my-aws
+
+  KmsEncryptedHookUrl:
+    Description: Slack integration URL
+    Type: String
+    Default: AQICAHgcyN4vd3V/OB7NKI6IMbpENEu1+UfyiUjVj1ieYvnwnwGKZgnw3mBHkREl+HT4/unzAAAApzCBpAYJKoZIhvcNAQcGoIGWMIGTAgEAMIGNBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDICRSzFNhvHkbsPqfQIBEIBgEIEihdMA/sl0duOQrrK4zmWaaZJahGkMT0ziSTJpDvzMox6m0iABhi2YZ0KILVFp9NkHGNWgcaMv3/OV1mErObuMXCPbU2a/feIl4D+yYN/OSzRBTrAejlutHRcq1UqZ
+
+Resources:
+
+  API:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Description: !Ref AWS::StackName
+      Name: !Ref AWS::StackName
+      ProtocolType: HTTP
+      Target: !GetAtt Lambda.Arn
+
+  Permission:
+   Type: AWS::Lambda::Permission
+   Properties:
+     FunctionName: !GetAtt 'Lambda.Arn'
+     Action: lambda:InvokeFunction
+     Principal: apigateway.amazonaws.com
+     SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${API}/*/*"
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+              - kms:Decrypt
+            Resource: '*'
+
+  Lambda:
+     Type: AWS::Lambda::Function
+     Properties:
+       FunctionName: !Ref AWS::StackName
+       Description: !Ref AWS::StackName
+       Environment:
+         Variables:
+           SlackChannel: !Ref SlackChannel
+           KmsEncryptedHookUrl: !Ref KmsEncryptedHookUrl
+       Handler: index.handler
+       Runtime: python3.7
+       Role: !GetAtt LambdaExecutionRole.Arn
+       Code:
+         ZipFile: |
+            import boto3
+            import json
+            import logging
+            import os
+
+            from base64 import b64decode
+            from urllib.request import Request, urlopen
+            from urllib.error import URLError, HTTPError
+
+            # The base-64 encoded, encrypted key (CiphertextBlob) stored in the KmsEncryptedHookUrl environment variable
+            ENCRYPTED_HOOK_URL = os.environ['KmsEncryptedHookUrl']
+            # The Slack channel to send a message to stored in the SlackChannel environment variable
+            SLACK_CHANNEL = os.environ['SlackChannel']
+
+            HOOK_URL = "https://" + boto3.client('kms').decrypt(CiphertextBlob=b64decode(ENCRYPTED_HOOK_URL))['Plaintext'].decode('utf-8')
+
+            logger = logging.getLogger()
+            logger.setLevel(logging.INFO)
+
+            def handler(event, context):
+
+                logger.info("Event: " + str(event))
+
+                data = json.loads(event['body'])
+                message = f"GitHub Star {data['action']} by {data['sender']['login']} for repo {data['repository']['name']}. New total: {data['repository']['stargazers_count']}"
+                logger.info(message)
+
+                slack_message = {
+                    'channel': SLACK_CHANNEL,
+                    'text': message
+                }
+
+                req = Request(HOOK_URL, json.dumps(slack_message).encode('utf-8'))
+                try:
+                    response = urlopen(req)
+                    response.read()
+                    logger.info("Message posted to %s", slack_message['channel'])
+                except HTTPError as e:
+                    logger.error("Request failed: %d %s", e.code, e.reason)
+                except URLError as e:
+                    logger.error("Server connection failed: %s", e.reason)
+
+Outputs:
+  APIEndpoint:
+    Description: API Endpoint
+    Value: !Sub "https://${API}.execute-api.${AWS::Region}.amazonaws.com/"
