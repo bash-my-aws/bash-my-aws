@@ -5,12 +5,12 @@
 # List, create, delete and use kms keys / aliases
 
 
-# kms-encrypt - encrypt and base64 encode STDIN or file
-#
-# $ echo foobar | kms-encrypt alias/default
-# AQICAHgcyN4vd3V/OB7NKI6IMbpENEu1+UfyiUjVj1ieYvnwnwEB83vXXk/tXx1M2RVa8lB7AAAAZDBiBgkqhkiG9w0BBwagVTBTAgEAME4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM1LAfzC1nAY5e4KsYAgEQgCF3MSJhGiNynF4NnNT0qtRA6BXSJEA4wp1R9Z2FzUYbPgA=
-
 kms-encrypt() {
+
+  # Encrypt and base64 encode STDIN or file
+  #
+  #     $ echo foobar | kms-encrypt alias/default
+  #     AQICAHgcyN4vd3V/OB7NKI6IMbpENEu1+UfyiU...
 
   local key_id=${1:-alias/default}
   local plaintext
@@ -30,10 +30,15 @@ kms-encrypt() {
 }
 
 
-# kms-decrypt - base64 decode and decrypt KMS Encrypted file or STDIN
-
 kms-decrypt() {
-  # Decrypts KMS encrypted base64 encoded input
+
+  # base64 decode and decrypt KMS Encrypted file or STDIN
+  #
+  #     $ kms-decrypt ciphertext.txt
+  #     foobar
+  #
+  #     $ echo foobar | kms-encrypt alias/default | kms-decrypt
+  #     foobar
 
   local TMPFILE=$(mktemp -t bash-my-aws.XXXXXXXX)
   ciphertext="fileb://${TMPFILE}"
@@ -55,14 +60,90 @@ kms-decrypt() {
 }
 
 
-# kms-keys - List KMS Keys
-#
-# $ kms-keys
-# 5044958c-151d-4995-bed4-dd05c1385b48
-# 8ada3e65-e377-4435-a709-fbe75dfa1dd0
-# d714a175-db12-4574-8f27-aa071a1dfd8a
+kms-aliases() {
+
+  # List KMS Aliases
+  #     $ kms-aliases default
+  #     alias/default  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/default
+
+  local filters=$(__bma_read_filters $@)
+
+  aws kms list-aliases                           \
+    --query "
+      Aliases[].[
+        AliasName,
+        TargetKeyId,
+        AliasArn
+      ]"                                      \
+    --output text       |
+  grep -E -- "$filters" |
+  column -s$'\t' -t
+}
+
+
+kms-alias-create() {
+
+  # Create alias for KMS Key
+  #
+  #     $ kms-keys | tail -1
+  #     d714a175-db12-4574-8f27-aa071a1dfd8a
+  #
+  #     $ kms-keys | tail -1 | kms-alias-create alias/foobar
+  #
+  #     $ kms-aliases foobar
+  #     alias/foobar  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/foobar
+
+  local alias_name="$1"
+  [[ -z "$alias_name" ]] && __bma_usage "alias_name key_id" && return 1
+  shift
+  local key_id=$(__bma_read_inputs "$@" | cut -f 1)
+  [[ -z "$alias_name" ]] && __bma_usage "alias_name key_id" && return 1
+
+ # prepend "alias/" to alias_name if missing
+  aws kms create-alias         \
+    --alias-name "$alias_name" \
+    --target-key-id "$key_id"
+}
+
+
+kms-alias-delete() {
+
+  # Delete alias for KMS Key
+  #
+  #     $ kms-aliases foobar | kms-alias-delete
+  #     You are about to delete the following kms aliases:
+  #     alias/foobar
+  #     Are you sure you want to continue? y
+
+  local alias_names="$(__bma_read_inputs $@)"
+  [[ -z "$alias_names" ]] && __bma_usage "alias_name [alias_name]" && return 1
+
+   echo "You are about to delete the following kms aliases:"
+   echo $alias_names | tr ' ' "\n"
+   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+   local regex_yes="^[Yy]$"
+   read -p "Are you sure you want to continue? " -n 1 -r
+   echo
+   if [[ $REPLY =~ $regex_yes ]]; then
+     local alias_name
+     for alias_name in $alias_names; do
+       aws kms delete-alias         \
+         --alias-name "$alias_name" \
+         --output text
+     done
+  fi
+}
+
 
 kms-keys() {
+
+  # List KMS Keys
+  #
+  #    $ kms-keys
+  #    5044958c-151d-4995-bed4-dd05c1385b48
+  #    8ada3e65-e377-4435-a709-fbe75dfa1dd0
+  #    d714a175-db12-4574-8f27-aa071a1dfd8a
+
   local filters=$(__bma_read_filters $@)
 
   aws kms list-keys                           \
@@ -76,12 +157,13 @@ kms-keys() {
 }
 
 
-# kms-key-create - Create a KMS Key
-#
-# $ kms-key-create
-# 9e94333b-8e85-497a-9791-e7c5edf9c35e
-
 kms-key-create() {
+
+  # Create a KMS Key
+  #
+  #     $ kms-key-create
+  #     9e94333b-8e85-497a-9791-e7c5edf9c35e
+
   aws kms create-key              \
     --query "KeyMetadata.[KeyId]" \
     --output text
@@ -110,115 +192,34 @@ kms-key-details() {
   column -s$'\t' -t
 }
 
-# kms-key-schedule-deletion - you can't delete a key immediately
-#
-# $ kms-key-schedule-deletion d714a175-db12-4574-8f27-aa071a1dfd8a
-# You are about to delete the following kms keys:
-# d714a175-db12-4574-8f27-aa071a1dfd8a
-# Are you sure you want to continue? y
-# 1579305600.0	arn:aws:kms:ap-southeast-2:089834043791:key/d714a175-db12-4574-8f27-aa071a1dfd8a
 
-kms-key-schedule-deletion() {
+kms-key-disable() {
+
+  # Disable a key
+  #
+  #     $ kms-key-disable  9e94333b-8e85-497a-9791-e7c5edf9c35e
+
   local key_ids="$(__bma_read_inputs $@)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
-   echo "You are about to delete the following kms keys:"
-   echo $key_ids | tr ' ' "\n"
-   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
-   local regex_yes="^[Yy]$"
-   read -p "Are you sure you want to continue? " -n 1 -r
-   echo
-   if [[ $REPLY =~ $regex_yes ]]; then
-     local key_id
-     for key_id in $key_ids; do
-       aws kms schedule-key-deletion        \
-         --key-id "$key_id" \
-         --output text
-     done
-  fi
+  local key_ids
+  for key_id in $key_ids; do
+    aws kms disable-key --key-id "$key_id"
+  done
 }
 
 
-# kms-aliases - List KMS Aliases
-#
-# $ kms-aliases
-# alias/aws/dynamodb           None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/dynamodb
-# alias/aws/ebs                None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/ebs
-# alias/aws/elasticfilesystem  None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/elasticfilesystem
-# alias/aws/es                 None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/es
-# alias/aws/glue               None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/glue
-# alias/aws/kinesisvideo       None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/kinesisvideo
-# alias/aws/lambda             5044958c-151d-4995-bed4-dd05c1385b48  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/lambda
-# alias/aws/rds                None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/rds
-# alias/aws/redshift           None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/redshift
-# alias/aws/s3                 None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/s3
-# alias/aws/ssm                None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/ssm
-# alias/aws/xray               None                                  arn:aws:kms:ap-southeast-2:089834043791:alias/aws/xray
-# alias/default                d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/default
+kms-key-enable() {
 
-kms-aliases() {
-  local filters=$(__bma_read_filters $@)
+  # Enable a key
+  #
+  #     $ kms-key-enable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 
-  aws kms list-aliases                           \
-    --query "
-      Aliases[].[
-        AliasName,
-        TargetKeyId,
-        AliasArn
-      ]"                                      \
-    --output text       |
-  grep -E -- "$filters" |
-  column -s$'\t' -t
-}
+  local key_ids="$(__bma_read_inputs $@)"
+  [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
-
-# kms-alias-create - Create alias for KMS Key
-#
-# $ kms-keys | tail -1
-# d714a175-db12-4574-8f27-aa071a1dfd8a
-#
-# $ kms-keys | tail -1 | kms-alias-create alias/foobar
-#
-# $ kms-aliases foobar
-# alias/foobar  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/foobar
-
-kms-alias-create() {
-  local alias_name="$1"
-  [[ -z "$alias_name" ]] && __bma_usage "alias_name key_id" && return 1
-  shift
-  local key_id=$(__bma_read_inputs "$@" | cut -f 1)
-  [[ -z "$alias_name" ]] && __bma_usage "alias_name key_id" && return 1
-
- # prepend "alias/" to alias_name if missing
-  aws kms create-alias         \
-    --alias-name "$alias_name" \
-    --target-key-id "$key_id"
-}
-
-
-# kms-alias-delete - Delete alias for KMS Key
-#
-# $ kms-aliases foobar | kms-alias-delete
-# You are about to delete the following kms aliases:
-# alias/foobar
-# Are you sure you want to continue? y
-
-kms-alias-delete() {
-  local alias_names="$(__bma_read_inputs $@)"
-  [[ -z "$alias_names" ]] && __bma_usage "alias_name [alias_name]" && return 1
-
-   echo "You are about to delete the following kms aliases:"
-   echo $alias_names | tr ' ' "\n"
-   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
-   local regex_yes="^[Yy]$"
-   read -p "Are you sure you want to continue? " -n 1 -r
-   echo
-   if [[ $REPLY =~ $regex_yes ]]; then
-     local alias_name
-     for alias_name in $alias_names; do
-       aws kms delete-alias         \
-         --alias-name "$alias_name" \
-         --output text
-     done
-  fi
+  local key_ids
+  for key_id in $key_ids; do
+    aws kms enable-key --key-id "$key_id"
+  done
 }

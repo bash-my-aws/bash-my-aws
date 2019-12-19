@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# extract markdown docs from code
+
+[[ -z $1 && -t 0 ]] && echo >&2 "Usage: $0 filename (or STDIN)" && exit 1
+
+cat $1 |
+  grep '()\|^  #' |
+  sed 's/() {//g' |
+  sed -E 's/^([^ ]+)/\n\n### \1\n/g' |
+  sed -E 's/  #( )?//g'
