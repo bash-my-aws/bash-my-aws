@@ -2,7 +2,15 @@
 #
 # lambda-functions
 
+
 lambda-functions() {
+
+  # List lambda functions
+  #
+  #     $ lambda-functions
+  #     stars    2019-12-18T10:00:00.000+0000  python2.7  256
+  #     stripes  2019-12-19T10:21:42.444+0000  python3.7  128
+
   local filters=$(__bma_read_filters $@)
 
   local column_command
@@ -27,8 +35,13 @@ lambda-functions() {
 }
 
 
+
 lambda-function-memory(){
-  # returns memorySize for function
+
+  # List memorySize for lambda function(s)
+  #
+  #     USAGE: lambda-function-memory function [function]
+
   local function_names="$(__bma_read_inputs $@)"
   [[ -z "$function_names" ]] && __bma_usage "function [function]" && return 1
 
@@ -51,6 +64,11 @@ lambda-function-memory(){
 
 
 lambda-function-memory-set(){
+
+  # Update memorySize for lambda function(s)
+  #
+  #     USAGE: lambda-function-memory-set memory function [function]
+
   local memory=$1
   shift 1
   local usage_msg="memory function [function]"
@@ -71,6 +89,17 @@ lambda-function-memory-set(){
 
 
 lambda-function-memory-step(){
+
+  # Repeatedly update memorySize for lambda function(s)
+  #
+  # Useful for measuring impact of memory on cost/performance.
+  # The function increases memorySize by 64KB every two minutes
+  # until it reaches the value requested. There is a two minute
+  # delay between increases to provide time to collect data from
+  # function execution.
+  #
+  #     USAGE: lambda-function-memory-step memory function [function]
+
   local sleep_period=120
   local memory_last=$1
   shift 1

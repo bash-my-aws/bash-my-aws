@@ -1,6 +1,17 @@
 #!/bin/bash
 
+
 hosted-zones(){
+
+  # List Route53 Hosted Zones
+  #
+  #     $ hosted-zones
+  #     /hostedzone/Z3333333333333  5   NotPrivateZone  bash-my-aws.org.
+  #     /hostedzone/Z5555555555555  2   NotPrivateZone  bash-my-universe.com.
+  #     /hostedzone/Z4444444444444  3   NotPrivateZone  bashmyaws.org.
+  #     /hostedzone/Z1111111111111  3   NotPrivateZone  bash-my-aws.com.
+  #     /hostedzone/Z2222222222222  3   NotPrivateZone  bashmyaws.com.
+
   local filters=$(__bma_read_filters $@)
 
   aws route53 list-hosted-zones     \
@@ -16,46 +27,36 @@ hosted-zones(){
   column -s$'\t' -t
 }
 
-# # XXX Choose better function name
-# # XXX Is this generally useful?
-# # Use to generate NS records for delegating domain to AWS
-# #
-# # $ hosted-zones | head -1 | hosted-zone-ns
-# # aws.bash-my.com.au. 300 IN NS	ns-1234.awsdns-01.org.
-# # aws.bash-my.com.au. 300 IN NS	ns-1234.awsdns-02.co.uk.
-# # aws.bash-my.com.au. 300 IN NS	ns-1234.awsdns-03.com.
-# # aws-bash-my.com.au. 300 IN NS	ns-1234.awsdns-04.net.
-# #
-# hosted-zone-ns(){
-#   local hosted_zone_id="$(__bma_read_inputs $@)"
-#   [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
-# 
-#   local hosted_zone_name
-#   hosted_zone_name=$(
-#     aws route53 list-resource-record-sets            \
-#       --hosted-zone-id "$hosted_zone_id"             \
-#       --query "ResourceRecordSets[?Type=='NS'].Name" \
-#       --output text
-#   )
-# 
-#   aws route53 list-resource-record-sets                    \
-#     --hosted-zone-id $hosted_zone_id                       \
-#     --query "
-#       ResourceRecordSets[?Type=='NS'].ResourceRecords[].[
-#         '$hosted_zone_name 300 IN NS',
-#         Value
-#       ]"                                                   \
-#   --output text
-# }
+hosted-zone-ns-records(){
 
+  # Generate NS records for delegating domain to AWS
+  #
+  #     $ hosted-zones bash-my-aws.org
+  #     /hostedzone/ZJ6ZCG2UD6OKX  5  NotPrivateZone  bash-my-aws.org.
+  #
+  #     $ hosted-zones bash-my-aws.org | hosted-zone-ns-records
+  #     bash-my-aws.org. 300 IN NS	ns-786.awsdns-34.net.
+  #     bash-my-aws.org. 300 IN NS	ns-1549.awsdns-01.co.uk.
+  #     bash-my-aws.org. 300 IN NS	ns-362.awsdns-45.com.
+  #     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
 
-# # XXX Is this useful?
-# hosted-zone-rr-sets() {
-#   local hosted_zone_id="$(__bma_read_inputs $@)"
-#   [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
-# 
-#   aws route53 list-resource-record-sets                               \
-#     --hosted-zone-id "$hosted_zone_id"                                \
-#     --query "ResourceRecordSets[?Type=='NS'].ResourceRecords[].Value" \
-#     --output text
-# }
+  local hosted_zone_id="$(__bma_read_inputs $@)"
+  [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
+
+  local hosted_zone_name
+  hosted_zone_name=$(
+    aws route53 list-resource-record-sets            \
+      --hosted-zone-id "$hosted_zone_id"             \
+      --query "ResourceRecordSets[?Type=='NS'].Name" \
+      --output text
+  )
+
+  aws route53 list-resource-record-sets                    \
+    --hosted-zone-id $hosted_zone_id                       \
+    --query "
+      ResourceRecordSets[?Type=='NS'].ResourceRecords[].[
+        '$hosted_zone_name 300 IN NS',
+        Value
+      ]"                                                   \
+  --output text
+}

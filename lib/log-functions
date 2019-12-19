@@ -5,6 +5,14 @@
 # CloudWatch Logs
 
 log-groups() {
+
+  # List CloudWatch Log Groups
+  #
+  #     $ log-groups
+  #     /aws/lambda/stars2  1576495961429  0   11736
+  #     /aws/lambda/stars   1576566745961  0  107460
+  #     /aws/lambda/walk    1576567300172  0   11794
+
   local filters=$(__bma_read_filters $@)
 
   local column_command
@@ -25,5 +33,4 @@ log-groups() {
   LC_ALL=C sort --key 2 |
   $column_command
 }
-
 

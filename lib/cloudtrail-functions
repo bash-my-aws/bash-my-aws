@@ -2,13 +2,19 @@
 #
 # cloudtrail-functions
 
-function cloudtrails() {
+
+cloudtrails() {
+
+  # List Cloudtrails
+  #
+  #     $ cloudtrails
+  #     failmode	failmode-cloudtrail	ap-southeast-2	IsMultiRegionTrail=true	IncludeGlobalServiceEvents=true
 
   local cloudtrails="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@)
 
   aws cloudtrail describe-trails                                                         \
-    $([[ -n ${cloudtrails} ]] && echo --trail-name-list ${cloudtrails})                 \
+    $([[ -n ${cloudtrails} ]] && echo --trail-name-list ${cloudtrails})                  \
     --query "
       trailList[].[
         Name,
@@ -22,7 +28,13 @@ function cloudtrails() {
 
 }
 
+
 cloudtrail-status() {
+
+  # List logging status of Cloudtrails
+  #
+  #     USAGE: cloudtrail-status cloudtrail [cloudtrail]
+
   local cloudtrails="$(__bma_read_inputs $@)"
   [[ -z "$cloudtrails" ]] && __bma_usage "cloudtrail [cloudtrail]" && return 1
 

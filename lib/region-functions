@@ -2,10 +2,44 @@
 #
 # region-functions
 #
-# region() must be sourced in order to update the AWS_DEFAULT_REGION
-# environment variable. It cannot set this when run via bin/bma.
 
-function region() {
+
+regions() {
+
+  # List regions
+  #
+  # The region() function must be sourced in order to update the
+  # AWS_DEFAULT_REGION environment variable. This is because it
+  # cannot update an environment variable when run as a subprocess.
+  #
+  #     $ regions
+  #     ap-northeast-1
+  #     ap-northeast-2
+  #     ap-south-1
+  #     ap-southeast-1
+  #     ap-southeast-2
+  #     ...
+  #     us-west-2
+
+  aws ec2 describe-regions           \
+    --query "Regions[].[RegionName]" \
+    --output text                    |
+  LC_ALL=C sort
+}
+
+
+region() {
+
+  # Get/Set `$AWS_DEFAULT_REGION` shell environment variable
+  #
+  #     $ region
+  #     us-east-1
+  #
+  #     $ region ap-southeast-2
+  #
+  #     $ region
+  #     ap-southeast-2
+
   local inputs=$(__bma_read_inputs $@)
   if [[ -z "$inputs" ]]; then
     echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
@@ -14,18 +48,22 @@ function region() {
   fi
 }
 
-function region-each() {
+
+region-each() {
+
+  # Run a command in every region.
+  # Any output lines will be appended with "#${REGION}".
+  #
+  #     $ region-each stacks | column -t
+  #     example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-1
+  #     example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
+  #     ...
+  #     example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
+
   local old_aws_default_region="$AWS_DEFAULT_REGION"
   for AWS_DEFAULT_REGION in $(regions); do
     eval "$@" | sed "s/$/ #${AWS_DEFAULT_REGION}/"
   done
   AWS_DEFAULT_REGION="$old_aws_default_region"
-}
-
-function regions() {
-  aws ec2 describe-regions           \
-    --query "Regions[].[RegionName]" \
-    --output text                    |
-  LC_ALL=C sort
 }
 

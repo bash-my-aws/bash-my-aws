@@ -51,6 +51,7 @@ elb-dnsname
 elb-instances
 elb-stack
 elbs
+hosted-zone-ns-records
 hosted-zones
 iam-role-principal
 iam-roles
@@ -89,7 +90,8 @@ kms-decrypt
 kms-encrypt
 kms-key-create
 kms-key-details
-kms-key-schedule-deletion
+kms-key-disable
+kms-key-enable
 kms-keys
 lambda-function-memory
 lambda-function-memory-set
@@ -121,8 +123,6 @@ stack-recreate
 stack-resources
 stack-status
 stack-tag
-stack-tag-apply
-stack-tag-delete
 stack-tags
 stack-tags-text
 stack-tail

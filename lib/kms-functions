@@ -9,6 +9,8 @@ kms-encrypt() {
 
   # Encrypt and base64 encode STDIN or file
   #
+  #     USAGE: kms-encrypt key_id/alias_id [plaintext_file]
+  #
   #     $ echo foobar | kms-encrypt alias/default
   #     AQICAHgcyN4vd3V/OB7NKI6IMbpENEu1+UfyiU...
 
@@ -33,6 +35,8 @@ kms-encrypt() {
 kms-decrypt() {
 
   # base64 decode and decrypt KMS Encrypted file or STDIN
+  #
+  #     USAGE: kms-decrypt [ciphertext_file]
   #
   #     $ kms-decrypt ciphertext.txt
   #     foobar
@@ -63,6 +67,7 @@ kms-decrypt() {
 kms-aliases() {
 
   # List KMS Aliases
+  #
   #     $ kms-aliases default
   #     alias/default  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/default
 
@@ -84,6 +89,8 @@ kms-aliases() {
 kms-alias-create() {
 
   # Create alias for KMS Key
+  #
+  #     USAGE: kms-alias-create alias_name key_id
   #
   #     $ kms-keys | tail -1
   #     d714a175-db12-4574-8f27-aa071a1dfd8a
@@ -109,6 +116,8 @@ kms-alias-create() {
 kms-alias-delete() {
 
   # Delete alias for KMS Key
+  #
+  #     USAGE: kms-alias-delete alias_name [alias_name]
   #
   #     $ kms-aliases foobar | kms-alias-delete
   #     You are about to delete the following kms aliases:
@@ -139,10 +148,10 @@ kms-keys() {
 
   # List KMS Keys
   #
-  #    $ kms-keys
-  #    5044958c-151d-4995-bed4-dd05c1385b48
-  #    8ada3e65-e377-4435-a709-fbe75dfa1dd0
-  #    d714a175-db12-4574-8f27-aa071a1dfd8a
+  #     $ kms-keys
+  #     5044958c-151d-4995-bed4-dd05c1385b48
+  #     8ada3e65-e377-4435-a709-fbe75dfa1dd0
+  #     d714a175-db12-4574-8f27-aa071a1dfd8a
 
   local filters=$(__bma_read_filters $@)
 
@@ -171,6 +180,9 @@ kms-key-create() {
 
 
 kms-key-details() {
+
+  # List details for KMS Key(s)
+
   local key_ids="$(__bma_read_inputs $@)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
@@ -195,7 +207,9 @@ kms-key-details() {
 
 kms-key-disable() {
 
-  # Disable a key
+  # Disable KMS Key(s)
+  #
+  #     USAGE: kms-key-disable key_id [key_id]
   #
   #     $ kms-key-disable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 
@@ -211,7 +225,9 @@ kms-key-disable() {
 
 kms-key-enable() {
 
-  # Enable a key
+  # Enable KMS Key(s)
+  #
+  #     USAGE: kms-key-enable key_id [key_id]
   #
   #     $ kms-key-enable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 

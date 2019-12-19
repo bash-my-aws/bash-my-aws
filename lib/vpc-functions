@@ -2,7 +2,11 @@
 #
 # vpc-functions
 
+
 pcxs(){
+
+  # List VPC Peering connections
+
   local filters=$(__bma_read_filters $@)
   aws ec2 describe-vpc-peering-connections                     \
     --query 'VpcPeeringConnections[].[
@@ -27,7 +31,16 @@ pcxs(){
   column -s$'\t' -t
 }
 
+
 subnets(){
+
+  # List subnets for all VPCs
+  #
+  #     $ subnets
+  #     subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
+  #     subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
+  #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+
   local filters=$(__bma_read_filters $@)
   local subnet_ids=$(__bma_read_inputs)
 
@@ -46,7 +59,14 @@ subnets(){
   column -s$'\t' -t
 }
 
+
 vpcs() {
+
+  # List VPCs
+  #
+  #     $ vpcs
+  #     vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
+
   local vpc_ids="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@)
 
@@ -65,7 +85,16 @@ vpcs() {
   column -s$'\t' -t
 }
 
+
 vpc-azs() {
+
+  # List availability zones of VPC(s)
+  #
+  #     USAGE: vpc-azs vpc-id [vpc-id]
+  #
+  #     $ vpcs | vpc-azs
+  #     vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -77,7 +106,16 @@ vpc-azs() {
   done
 }
 
+
 vpc-az-count() {
+
+  # List number of Availability Zones of VPC(s)
+  #
+  #     USAGE: vpc-az-count vpc-id [vpc-id]
+  #
+  #     $ vpcs | vpc-az-count
+  #     vpc-018d9739 3
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -87,7 +125,13 @@ vpc-az-count() {
   done
 }
 
+
 vpc-lambda-functions(){
+
+  # List lambda functions of VPC(s)
+  #
+  #     USAGE: vpc-lambda-functions vpc-id [vpc-id]
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -102,7 +146,13 @@ vpc-lambda-functions(){
   done | column -s$'\t' -t
 }
 
+
 vpc-dhcp-options-ntp(){
+
+  # List NTP servers of VPC(s)
+  #
+  #     USAGE: vpc-dhcp-options-ntp vpc-id [vpc-id]
+
   aws ec2 describe-dhcp-options                                              \
     --output text                                                            \
     --query "
@@ -110,7 +160,13 @@ vpc-dhcp-options-ntp(){
     "
 }
 
+
 vpc-endpoints(){
+
+  # List VPC Endpoints of VPC(s)
+  #
+  #     USAGE: vpc-endpoints vpc-id [vpc-id]
+
   local vpc_ids="$(__bma_read_inputs)"
   local filters=$(__bma_read_filters $@ $vpc_ids)
 
@@ -129,7 +185,13 @@ vpc-endpoints(){
   column -s$'\t' -t
 }
 
+
 vpc-endpoint-services(){
+
+  # List available VPC endpoint services
+  #
+  #     USAGE: vpc-endpoint-services vpc-id [vpc-id]
+
   local filters=$(__bma_read_filters $@)
 
   aws ec2 describe-vpc-endpoint-services     \
@@ -144,7 +206,13 @@ vpc-endpoint-services(){
   sort
 }
 
+
 vpc-igw() {
+
+  # List Internet Gateway of VPC(s)
+  #
+  #     USAGE: vpc-igw vpc-id [vpc-id]
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -159,7 +227,16 @@ vpc-igw() {
   done | column -s$'\t' -t
 }
 
+
 vpc-route-tables(){
+
+  # List Route Tables of VPC(s)
+  #
+  #     USAGE: vpc-route-tables vpc-id [vpc-id]
+  #
+  #     $ vpcs | vpc-route-tables
+  #     rtb-8e841c39  vpc-018d9739  NO_NAME
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -176,7 +253,13 @@ vpc-route-tables(){
   done
 }
 
+
 vpc-nat-gateways(){
+
+  # List NAT Gateways of VPC(s)
+  #
+  #     USAGE: vpc-nat-gateways vpc-id [vpc-id]
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -193,7 +276,18 @@ vpc-nat-gateways(){
   column -s$'\t' -t
 }
 
+
 vpc-subnets(){
+
+  # List subnets of VPC(s)
+  #
+  #     USAGE: vpc-subnets vpc-id [vpc-id]
+  #
+  #     $ vpcs | vpc-subnets
+  #     subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
+  #     subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
+  #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -205,7 +299,16 @@ vpc-subnets(){
   done | subnets
 }
 
+
 vpc-network-acls(){
+
+  # List Network ACLs of VPC(s)
+  #
+  #     USAGE: vpc-network-acls vpc-id [vpc-id]
+  #
+  #     $ vpcs | vpc-network-acls
+  #     acl-ff4914d1  vpc-018d9739
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -217,7 +320,13 @@ vpc-network-acls(){
   done | column -s$'\t' -t
 }
 
+
 vpc-rds(){
+
+  # List RDS instances of VPC(s)
+  #
+  #     USAGE: vpc-rds vpc-id [vpc-id]
+
   local vpc_ids="$(__bma_read_inputs $@)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
@@ -233,14 +342,23 @@ vpc-rds(){
   done | column -s$'\t' -t
 }
 
-# Output commands to delete default VPC
-# Exclude default VPCs that contain:
-# - instances
-# - lambda functions
-#
+
 vpc-default-delete() {
+
+  # Print commands you would need to run to delete that pesky default VPC
+  # Exclude default VPCs that contain:
+  # - instances
+  # - lambda functions
+  #
+  #     $ vpc-default-delete
+  #
+  #     # Deleting default VPC vpc-018d9739 in ap-southeast-2
+  #     aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-8bb774fe
+  #     aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-9eea2c07
+  #     aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-34fd9cfa
+  #     aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
+
   local REGION=$AWS_DEFAULT_REGION
-  # local vpc=$1
   local VPCID SUBNETS IGW IG INSTANCES
 
   local abort=false
