@@ -96,8 +96,9 @@ Resources:
                 logger.info("Event: " + str(event))
 
                 data = json.loads(event['body'])
-                message = f"GitHub Star {data['action']} by {data['sender']['login']} for repo {data['repository']['name']}. New total: {data['repository']['stargazers_count']}"
-                logger.info(message)
+
+                message = f"{data['sender']['login']} { 'un-' if data['action'] == 'deleted' else ''}starred {data['repository']['name']}. New total: {data['repository']['stargazers_count']}"
+                logger.debug(message)
 
                 slack_message = {
                     'channel': SLACK_CHANNEL,
