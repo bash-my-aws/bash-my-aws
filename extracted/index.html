@@ -13,7 +13,7 @@
         <meta name="description" content="CLI Tools for Managing AWS">
       
       
-        <link rel="canonical" href="https://bash-my-aws.github.io/command-reference/">
+        <link rel="canonical" href="https://bash-my-aws.github.io/extracted/">
       
       
         <meta name="author" content="Mike Bailey">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Command Reference - bash-my-aws</title>
+        <title>Extracted - bash-my-aws</title>
       
     
     
@@ -134,7 +134,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Command Reference
+                Extracted
               
             </span>
           
@@ -255,1215 +255,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Command Reference
-      </label>
-    
-    <a href="./" title="Command Reference" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../command-reference/" title="Command Reference" class="md-nav__link">
       Command Reference
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#aws-account-commands" class="md-nav__link">
-    aws-account-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#aws-account-alias" class="md-nav__link">
-    aws-account-alias
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aws-account-id" class="md-nav__link">
-    aws-account-id
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aws-account-each" class="md-nav__link">
-    aws-account-each
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aws-panopticon" class="md-nav__link">
-    aws-panopticon
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aws-account-cost-explorer" class="md-nav__link">
-    aws-account-cost-explorer
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aws-account-cost-recommendations" class="md-nav__link">
-    aws-account-cost-recommendations
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#region-commands" class="md-nav__link">
-    region-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#regions" class="md-nav__link">
-    regions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#region" class="md-nav__link">
-    region
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#region-each" class="md-nav__link">
-    region-each
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stack-commands" class="md-nav__link">
-    stack-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#stacks" class="md-nav__link">
-    stacks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-arn" class="md-nav__link">
-    stack-arn
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-cancel-update" class="md-nav__link">
-    stack-cancel-update
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-create" class="md-nav__link">
-    stack-create
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-update" class="md-nav__link">
-    stack-update
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-delete" class="md-nav__link">
-    stack-delete
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-exports" class="md-nav__link">
-    stack-exports
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-recreate" class="md-nav__link">
-    stack-recreate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-failure" class="md-nav__link">
-    stack-failure
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-events" class="md-nav__link">
-    stack-events
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-resources" class="md-nav__link">
-    stack-resources
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-asgs" class="md-nav__link">
-    stack-asgs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-asg-instances" class="md-nav__link">
-    stack-asg-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-elbs" class="md-nav__link">
-    stack-elbs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-instances" class="md-nav__link">
-    stack-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-parameters" class="md-nav__link">
-    stack-parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-status" class="md-nav__link">
-    stack-status
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tag" class="md-nav__link">
-    stack-tag
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tag-apply" class="md-nav__link">
-    stack-tag-apply
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tag-delete" class="md-nav__link">
-    stack-tag-delete
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tail" class="md-nav__link">
-    stack-tail
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-template" class="md-nav__link">
-    stack-template
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tags" class="md-nav__link">
-    stack-tags
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tags-text" class="md-nav__link">
-    stack-tags-text
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-outputs" class="md-nav__link">
-    stack-outputs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-validate" class="md-nav__link">
-    stack-validate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-diff" class="md-nav__link">
-    stack-diff
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#instance-commands" class="md-nav__link">
-    instance-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#instances" class="md-nav__link">
-    instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-asg" class="md-nav__link">
-    instance-asg
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-az" class="md-nav__link">
-    instance-az
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-console" class="md-nav__link">
-    instance-console
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-dns" class="md-nav__link">
-    instance-dns
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-health-set-unhealthy" class="md-nav__link">
-    instance-health-set-unhealthy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-iam-profile" class="md-nav__link">
-    instance-iam-profile
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-ip" class="md-nav__link">
-    instance-ip
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-ssh" class="md-nav__link">
-    instance-ssh
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-ssh-details" class="md-nav__link">
-    instance-ssh-details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-stack" class="md-nav__link">
-    instance-stack
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-start" class="md-nav__link">
-    instance-start
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-state" class="md-nav__link">
-    instance-state
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-stop" class="md-nav__link">
-    instance-stop
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-tags" class="md-nav__link">
-    instance-tags
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-terminate" class="md-nav__link">
-    instance-terminate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-termination-protection" class="md-nav__link">
-    instance-termination-protection
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-termination-protection-disable" class="md-nav__link">
-    instance-termination-protection-disable
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-termination-protection-enable" class="md-nav__link">
-    instance-termination-protection-enable
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-type" class="md-nav__link">
-    instance-type
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-userdata" class="md-nav__link">
-    instance-userdata
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-volumes" class="md-nav__link">
-    instance-volumes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-vpc" class="md-nav__link">
-    instance-vpc
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#asg-commands" class="md-nav__link">
-    asg-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#asgs" class="md-nav__link">
-    asgs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-capacity" class="md-nav__link">
-    asg-capacity
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-desired-size-set" class="md-nav__link">
-    asg-desired-size-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-instances" class="md-nav__link">
-    asg-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-launch-configuration" class="md-nav__link">
-    asg-launch-configuration
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#launch-configurations" class="md-nav__link">
-    launch-configurations
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#launch-configuration-asgs" class="md-nav__link">
-    launch-configuration-asgs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-max-size-set" class="md-nav__link">
-    asg-max-size-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-min-size-set" class="md-nav__link">
-    asg-min-size-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-processes_suspended" class="md-nav__link">
-    asg-processes_suspended
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-resume" class="md-nav__link">
-    asg-resume
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-suspend" class="md-nav__link">
-    asg-suspend
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-stack" class="md-nav__link">
-    asg-stack
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-scaling-activities" class="md-nav__link">
-    asg-scaling-activities
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cert-commands" class="md-nav__link">
-    cert-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#certs" class="md-nav__link">
-    certs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#certs-arn" class="md-nav__link">
-    certs-arn
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cert-users" class="md-nav__link">
-    cert-users
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cert-delete" class="md-nav__link">
-    cert-delete
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cloudtrail-commands" class="md-nav__link">
-    cloudtrail-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cloudtrails" class="md-nav__link">
-    cloudtrails
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cloudtrail-status" class="md-nav__link">
-    cloudtrail-status
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#ecr-commands" class="md-nav__link">
-    ecr-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ecr-repositories" class="md-nav__link">
-    ecr-repositories
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ecr-repository-images" class="md-nav__link">
-    ecr-repository-images
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#elb-commands" class="md-nav__link">
-    elb-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#elbs" class="md-nav__link">
-    elbs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#elb-dnsname" class="md-nav__link">
-    elb-dnsname
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#elb-instances" class="md-nav__link">
-    elb-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#elb-stack" class="md-nav__link">
-    elb-stack
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#iam-commands" class="md-nav__link">
-    iam-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#iam-roles" class="md-nav__link">
-    iam-roles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iam-role-principal" class="md-nav__link">
-    iam-role-principal
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#image-commands" class="md-nav__link">
-    image-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#images" class="md-nav__link">
-    images
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#image-deregister" class="md-nav__link">
-    image-deregister
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#keypair-commands" class="md-nav__link">
-    keypair-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#keypairs" class="md-nav__link">
-    keypairs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#keypair-create" class="md-nav__link">
-    keypair-create
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#keypair-delete" class="md-nav__link">
-    keypair-delete
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kms-commands" class="md-nav__link">
-    kms-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kms-encrypt" class="md-nav__link">
-    kms-encrypt
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-decrypt" class="md-nav__link">
-    kms-decrypt
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-aliases" class="md-nav__link">
-    kms-aliases
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-alias-create" class="md-nav__link">
-    kms-alias-create
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-alias-delete" class="md-nav__link">
-    kms-alias-delete
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-keys" class="md-nav__link">
-    kms-keys
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-key-create" class="md-nav__link">
-    kms-key-create
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-key-details" class="md-nav__link">
-    kms-key-details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-key-disable" class="md-nav__link">
-    kms-key-disable
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kms-key-enable" class="md-nav__link">
-    kms-key-enable
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lambda-commands" class="md-nav__link">
-    lambda-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#lambda-functions" class="md-nav__link">
-    lambda-functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lambda-function-memory" class="md-nav__link">
-    lambda-function-memory
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lambda-function-memory-set" class="md-nav__link">
-    lambda-function-memory-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lambda-function-memory-step" class="md-nav__link">
-    lambda-function-memory-step
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#log-commands" class="md-nav__link">
-    log-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#log-groups" class="md-nav__link">
-    log-groups
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rds-commands" class="md-nav__link">
-    rds-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#rds-db-instances" class="md-nav__link">
-    rds-db-instances
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#route53-commands" class="md-nav__link">
-    route53-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hosted-zones" class="md-nav__link">
-    hosted-zones
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hosted-zone-ns-records" class="md-nav__link">
-    hosted-zone-ns-records
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#s3-commands" class="md-nav__link">
-    s3-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#buckets" class="md-nav__link">
-    buckets
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bucket-acls" class="md-nav__link">
-    bucket-acls
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bucket-remove" class="md-nav__link">
-    bucket-remove
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bucket-remove-force" class="md-nav__link">
-    bucket-remove-force
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sts-commands" class="md-nav__link">
-    sts-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sts-assume-role" class="md-nav__link">
-    sts-assume-role
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vpc-commands" class="md-nav__link">
-    vpc-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pcxs" class="md-nav__link">
-    pcxs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subnets" class="md-nav__link">
-    subnets
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpcs" class="md-nav__link">
-    vpcs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-azs" class="md-nav__link">
-    vpc-azs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-az-count" class="md-nav__link">
-    vpc-az-count
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-lambda-functions" class="md-nav__link">
-    vpc-lambda-functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-dhcp-options-ntp" class="md-nav__link">
-    vpc-dhcp-options-ntp
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-endpoints" class="md-nav__link">
-    vpc-endpoints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-endpoint-services" class="md-nav__link">
-    vpc-endpoint-services
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-igw" class="md-nav__link">
-    vpc-igw
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-route-tables" class="md-nav__link">
-    vpc-route-tables
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-nat-gateways" class="md-nav__link">
-    vpc-nat-gateways
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-subnets" class="md-nav__link">
-    vpc-subnets
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-network-acls" class="md-nav__link">
-    vpc-network-acls
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-rds" class="md-nav__link">
-    vpc-rds
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vpc-default-delete" class="md-nav__link">
-    vpc-default-delete
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
     
@@ -1553,527 +349,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#region-commands" class="md-nav__link">
-    region-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#regions" class="md-nav__link">
-    regions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#region" class="md-nav__link">
-    region
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#region-each" class="md-nav__link">
-    region-each
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stack-commands" class="md-nav__link">
-    stack-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#stacks" class="md-nav__link">
-    stacks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-arn" class="md-nav__link">
-    stack-arn
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-cancel-update" class="md-nav__link">
-    stack-cancel-update
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-create" class="md-nav__link">
-    stack-create
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-update" class="md-nav__link">
-    stack-update
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-delete" class="md-nav__link">
-    stack-delete
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-exports" class="md-nav__link">
-    stack-exports
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-recreate" class="md-nav__link">
-    stack-recreate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-failure" class="md-nav__link">
-    stack-failure
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-events" class="md-nav__link">
-    stack-events
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-resources" class="md-nav__link">
-    stack-resources
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-asgs" class="md-nav__link">
-    stack-asgs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-asg-instances" class="md-nav__link">
-    stack-asg-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-elbs" class="md-nav__link">
-    stack-elbs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-instances" class="md-nav__link">
-    stack-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-parameters" class="md-nav__link">
-    stack-parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-status" class="md-nav__link">
-    stack-status
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tag" class="md-nav__link">
-    stack-tag
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tag-apply" class="md-nav__link">
-    stack-tag-apply
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tag-delete" class="md-nav__link">
-    stack-tag-delete
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tail" class="md-nav__link">
-    stack-tail
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-template" class="md-nav__link">
-    stack-template
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tags" class="md-nav__link">
-    stack-tags
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-tags-text" class="md-nav__link">
-    stack-tags-text
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-outputs" class="md-nav__link">
-    stack-outputs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-validate" class="md-nav__link">
-    stack-validate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stack-diff" class="md-nav__link">
-    stack-diff
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#instance-commands" class="md-nav__link">
-    instance-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#instances" class="md-nav__link">
-    instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-asg" class="md-nav__link">
-    instance-asg
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-az" class="md-nav__link">
-    instance-az
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-console" class="md-nav__link">
-    instance-console
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-dns" class="md-nav__link">
-    instance-dns
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-health-set-unhealthy" class="md-nav__link">
-    instance-health-set-unhealthy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-iam-profile" class="md-nav__link">
-    instance-iam-profile
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-ip" class="md-nav__link">
-    instance-ip
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-ssh" class="md-nav__link">
-    instance-ssh
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-ssh-details" class="md-nav__link">
-    instance-ssh-details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-stack" class="md-nav__link">
-    instance-stack
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-start" class="md-nav__link">
-    instance-start
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-state" class="md-nav__link">
-    instance-state
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-stop" class="md-nav__link">
-    instance-stop
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-tags" class="md-nav__link">
-    instance-tags
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-terminate" class="md-nav__link">
-    instance-terminate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-termination-protection" class="md-nav__link">
-    instance-termination-protection
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-termination-protection-disable" class="md-nav__link">
-    instance-termination-protection-disable
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-termination-protection-enable" class="md-nav__link">
-    instance-termination-protection-enable
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-type" class="md-nav__link">
-    instance-type
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-userdata" class="md-nav__link">
-    instance-userdata
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-volumes" class="md-nav__link">
-    instance-volumes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#instance-vpc" class="md-nav__link">
-    instance-vpc
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#asg-commands" class="md-nav__link">
-    asg-commands
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#asgs" class="md-nav__link">
-    asgs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-capacity" class="md-nav__link">
-    asg-capacity
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-desired-size-set" class="md-nav__link">
-    asg-desired-size-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-instances" class="md-nav__link">
-    asg-instances
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-launch-configuration" class="md-nav__link">
-    asg-launch-configuration
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#launch-configurations" class="md-nav__link">
-    launch-configurations
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#launch-configuration-asgs" class="md-nav__link">
-    launch-configuration-asgs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-max-size-set" class="md-nav__link">
-    asg-max-size-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-min-size-set" class="md-nav__link">
-    asg-min-size-set
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-processes_suspended" class="md-nav__link">
-    asg-processes_suspended
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-resume" class="md-nav__link">
-    asg-resume
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-suspend" class="md-nav__link">
-    asg-suspend
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-stack" class="md-nav__link">
-    asg-stack
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asg-scaling-activities" class="md-nav__link">
-    asg-scaling-activities
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#cert-commands" class="md-nav__link">
     cert-commands
   </a>
@@ -2254,6 +529,180 @@
           <li class="md-nav__item">
   <a href="#image-deregister" class="md-nav__link">
     image-deregister
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instance-commands" class="md-nav__link">
+    instance-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instances" class="md-nav__link">
+    instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-asg" class="md-nav__link">
+    instance-asg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-az" class="md-nav__link">
+    instance-az
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-console" class="md-nav__link">
+    instance-console
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-dns" class="md-nav__link">
+    instance-dns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-health-set-unhealthy" class="md-nav__link">
+    instance-health-set-unhealthy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-iam-profile" class="md-nav__link">
+    instance-iam-profile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ip" class="md-nav__link">
+    instance-ip
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ssh" class="md-nav__link">
+    instance-ssh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ssh-details" class="md-nav__link">
+    instance-ssh-details
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stack" class="md-nav__link">
+    instance-stack
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-start" class="md-nav__link">
+    instance-start
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-state" class="md-nav__link">
+    instance-state
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop" class="md-nav__link">
+    instance-stop
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tags" class="md-nav__link">
+    instance-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-terminate" class="md-nav__link">
+    instance-terminate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-termination-protection" class="md-nav__link">
+    instance-termination-protection
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-termination-protection-disable" class="md-nav__link">
+    instance-termination-protection-disable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-termination-protection-enable" class="md-nav__link">
+    instance-termination-protection-enable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-type" class="md-nav__link">
+    instance-type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-userdata" class="md-nav__link">
+    instance-userdata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-volumes" class="md-nav__link">
+    instance-volumes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-vpc" class="md-nav__link">
+    instance-vpc
   </a>
   
 </li>
@@ -2462,6 +911,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#region-commands" class="md-nav__link">
+    region-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regions" class="md-nav__link">
+    regions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region" class="md-nav__link">
+    region
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region-each" class="md-nav__link">
+    region-each
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#route53-commands" class="md-nav__link">
     route53-commands
   </a>
@@ -2520,6 +1003,208 @@
           <li class="md-nav__item">
   <a href="#bucket-remove-force" class="md-nav__link">
     bucket-remove-force
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack-commands" class="md-nav__link">
+    stack-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stacks" class="md-nav__link">
+    stacks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-arn" class="md-nav__link">
+    stack-arn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-cancel-update" class="md-nav__link">
+    stack-cancel-update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-create" class="md-nav__link">
+    stack-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-update" class="md-nav__link">
+    stack-update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-delete" class="md-nav__link">
+    stack-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-exports" class="md-nav__link">
+    stack-exports
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-recreate" class="md-nav__link">
+    stack-recreate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-failure" class="md-nav__link">
+    stack-failure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-events" class="md-nav__link">
+    stack-events
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-resources" class="md-nav__link">
+    stack-resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-asgs" class="md-nav__link">
+    stack-asgs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-asg-instances" class="md-nav__link">
+    stack-asg-instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-elbs" class="md-nav__link">
+    stack-elbs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-instances" class="md-nav__link">
+    stack-instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-parameters" class="md-nav__link">
+    stack-parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-status" class="md-nav__link">
+    stack-status
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tag" class="md-nav__link">
+    stack-tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tag-apply" class="md-nav__link">
+    stack-tag-apply
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tag-delete" class="md-nav__link">
+    stack-tag-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tail" class="md-nav__link">
+    stack-tail
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-template" class="md-nav__link">
+    stack-template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tags" class="md-nav__link">
+    stack-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tags-text" class="md-nav__link">
+    stack-tags-text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-outputs" class="md-nav__link">
+    stack-outputs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-validate" class="md-nav__link">
+    stack-validate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-diff" class="md-nav__link">
+    stack-diff
   </a>
   
 </li>
@@ -2690,34 +1375,12 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/bash-my-universe/bash-my-aws/edit/master/docs/command-reference.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/bash-my-universe/bash-my-aws/edit/master/docs/extracted.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Command Reference</h1>
+                  <h1>Extracted</h1>
                 
-                <p>The project provides over 120 commands but fear not, much has been done
-to make them <em>discoverable</em>, <em>memorable</em> and hopefully in many cases <em>obvious</em>.</p>
-<p>The reference material below is all extracted from the source of the commands.
-While not necessary to use the commands. Be curious. Read the source. :-)</p>
-<p>Lists in this project are alphabetised except where it makes sense not to.
-The first few sets of commands were chosen because they are likely to be of
-the most interest to readers.</p>
-<div class="admonition note">
-<p class="admonition-title">General Rules</p>
-<ul>
-<li>Commands expect <code>$AWS_DEFAULT_REGION</code> environment variable to be set
-  (check/set with <code>region</code> command)</li>
-<li>Most commands that list resources (<code>stacks</code>, `instances , etc)
-  accept filter term as first arg.<ul>
-<li><em>e.g. <code>stacks blah</code> is equivalent to <code>stacks | grep blah</code></em></li>
-</ul>
-</li>
-<li>Most commands accept resource identifiers via STDIN
-  (first token of each line)</li>
-<li>Resources are generally listed in chronological order of creation.</li>
-</ul>
-</div>
-<h2 id="aws-account-commands">aws-account-commands<a class="headerlink" href="#aws-account-commands" title="Permanent link">&para;</a></h2>
+                <h2 id="aws-account-commands">aws-account-commands<a class="headerlink" href="#aws-account-commands" title="Permanent link">&para;</a></h2>
 <h3 id="aws-account-alias">aws-account-alias<a class="headerlink" href="#aws-account-alias" title="Permanent link">&para;</a></h3>
 <p>Retrieve AWS Account Alias for current account</p>
 <div class="codehilite"><pre><span></span>$ aws-account-alias
@@ -2771,195 +1434,121 @@ in Cost Recommendations.</p>
 </pre></div>
 
 
-<h2 id="region-commands">region-commands<a class="headerlink" href="#region-commands" title="Permanent link">&para;</a></h2>
-<h3 id="regions">regions<a class="headerlink" href="#regions" title="Permanent link">&para;</a></h3>
-<p>List regions</p>
-<p>The region() function must be sourced in order to update the
-AWS_DEFAULT_REGION environment variable. This is because it
-cannot update an environment variable when run as a subprocess.</p>
-<div class="codehilite"><pre><span></span>$ regions
-ap-northeast-1
-ap-northeast-2
-ap-south-1
-ap-southeast-1
-ap-southeast-2
-...
-us-west-2
+<h2 id="cert-commands">cert-commands<a class="headerlink" href="#cert-commands" title="Permanent link">&para;</a></h2>
+<h3 id="certs">certs<a class="headerlink" href="#certs" title="Permanent link">&para;</a></h3>
+<p>List ACM Certificates</p>
+<h3 id="certs-arn">certs-arn<a class="headerlink" href="#certs-arn" title="Permanent link">&para;</a></h3>
+<p>Same as <code>certs</code> but with the ARN in first column</p>
+<h3 id="cert-users">cert-users<a class="headerlink" href="#cert-users" title="Permanent link">&para;</a></h3>
+<p>List resources using ACM Cert(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: cert-users cert-arn [cert-arn]
 </pre></div>
 
 
-<h3 id="region">region<a class="headerlink" href="#region" title="Permanent link">&para;</a></h3>
-<p>Get/Set <code>$AWS_DEFAULT_REGION</code> shell environment variable</p>
-<div class="codehilite"><pre><span></span>$ region
-us-east-1
-
-$ region ap-southeast-2
-
-$ region
-ap-southeast-2
+<h3 id="cert-delete">cert-delete<a class="headerlink" href="#cert-delete" title="Permanent link">&para;</a></h3>
+<p>Delete ACM Cert(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: cert-delete cert-arn [cert-arn]
 </pre></div>
 
 
-<h3 id="region-each">region-each<a class="headerlink" href="#region-each" title="Permanent link">&para;</a></h3>
-<p>Run a command in every region.
-Any output lines will be appended with "#${REGION}".</p>
-<div class="codehilite"><pre><span></span>$ region-each stacks | column -t
-example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-1
-example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
-...
-example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
+<h2 id="cloudtrail-commands">cloudtrail-commands<a class="headerlink" href="#cloudtrail-commands" title="Permanent link">&para;</a></h2>
+<h3 id="cloudtrails">cloudtrails<a class="headerlink" href="#cloudtrails" title="Permanent link">&para;</a></h3>
+<p>List Cloudtrails</p>
+<div class="codehilite"><pre><span></span>$ cloudtrails
+failmode    failmode-cloudtrail ap-southeast-2  IsMultiRegionTrail=true IncludeGlobalServiceEvents=true
 </pre></div>
 
 
-<h2 id="stack-commands">stack-commands<a class="headerlink" href="#stack-commands" title="Permanent link">&para;</a></h2>
-<h3 id="stacks">stacks<a class="headerlink" href="#stacks" title="Permanent link">&para;</a></h3>
-<p>List CloudFormation stacks.</p>
-<p>To make it fly we omit stacks with status of DELETE_COMPLETE
-Output is sorted by CreationTime</p>
-<div class="codehilite"><pre><span></span>$ stacks
-nagios          CREATE_COMPLETE  2018-03-12T11:41:31Z  NEVER_UPDATED  NOT_NESTED
-postgres1       CREATE_COMPLETE  2019-04-14T15:22:44Z  NEVER_UPDATED  NOT_NESTED
-postgres2       CREATE_COMPLETE  2019-05-18T05:45:50Z  NEVER_UPDATED  NOT_NESTED
-prometheus-web  CREATE_COMPLETE  2019-11-23T15:57:04Z  NEVER_UPDATED  NOT_NESTED
+<h3 id="cloudtrail-status">cloudtrail-status<a class="headerlink" href="#cloudtrail-status" title="Permanent link">&para;</a></h3>
+<p>List logging status of Cloudtrails</p>
+<div class="codehilite"><pre><span></span>USAGE: cloudtrail-status cloudtrail [cloudtrail]
 </pre></div>
 
 
-<p><em>Provide a filter string for a <code>| grep</code> effect with tighter columisation:</em></p>
-<div class="codehilite"><pre><span></span>$ stacks postgres
-postgres1  CREATE_COMPLETE  2019-04-14T15:22:44Z  NEVER_UPDATED  NOT_NESTED
-postgres2  CREATE_COMPLETE  2019-05-18T05:45:50Z  NEVER_UPDATED  NOT_NESTED
+<h2 id="ecr-commands">ecr-commands<a class="headerlink" href="#ecr-commands" title="Permanent link">&para;</a></h2>
+<h3 id="ecr-repositories">ecr-repositories<a class="headerlink" href="#ecr-repositories" title="Permanent link">&para;</a></h3>
+<p>List ECR Repositories</p>
+<h3 id="ecr-repository-images">ecr-repository-images<a class="headerlink" href="#ecr-repository-images" title="Permanent link">&para;</a></h3>
+<p>List images for ECR Repositories</p>
+<h2 id="elb-commands">elb-commands<a class="headerlink" href="#elb-commands" title="Permanent link">&para;</a></h2>
+<h3 id="elbs">elbs<a class="headerlink" href="#elbs" title="Permanent link">&para;</a></h3>
+<p>List ELBs
+Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names</p>
+<div class="codehilite"><pre><span></span>$ elbs
+elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
+another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
 </pre></div>
 
 
-<h3 id="stack-arn">stack-arn<a class="headerlink" href="#stack-arn" title="Permanent link">&para;</a></h3>
-<p>Returns ARN(s) for stacks.</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-arn stack [stack]
+<h3 id="elb-dnsname">elb-dnsname<a class="headerlink" href="#elb-dnsname" title="Permanent link">&para;</a></h3>
+<p>List DNS Names of ELB(s)</p>
+<div class="codehilite"><pre><span></span> USAGE: elb-dnsname load-balancer [load-balancer]
 
-$ stack-arn prometheus-web
-arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb-4f6c-9872-2b5cddc77fba
+ $ elbs | elb-dnsname
+ elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
+ another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
 </pre></div>
 
 
-<p><em>Supports multiple stack names from STDIN</em>:</p>
-<div class="codehilite"><pre><span></span>$ stacks | stack-arn
-arn:aws:cloudformation:us-east-1:000000000000:stack/nagios/c0f0ef04-b505-4c0c-87cd-ca924153ad1c
-arn:aws:cloudformation:us-east-1:000000000000:stack/postgres1/758b0ba2-60f2-4432-8935-f79f47708f23
-arn:aws:cloudformation:us-east-1:000000000000:stack/postgres2/7420bbd4-3026-444f-b55b-fa0a9d564730
-arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb-4f6c-9872-2b5cddc77fba
+<h3 id="elb-instances">elb-instances<a class="headerlink" href="#elb-instances" title="Permanent link">&para;</a></h3>
+<p>List instances of ELB(s)</p>
+<div class="codehilite"><pre><span></span> USAGE: elb-instances load-balancer [load-balancer]
 </pre></div>
 
 
-<h3 id="stack-cancel-update">stack-cancel-update<a class="headerlink" href="#stack-cancel-update" title="Permanent link">&para;</a></h3>
-<h3 id="stack-create">stack-create<a class="headerlink" href="#stack-create" title="Permanent link">&para;</a></h3>
-<h3 id="stack-update">stack-update<a class="headerlink" href="#stack-update" title="Permanent link">&para;</a></h3>
-<h3 id="stack-delete">stack-delete<a class="headerlink" href="#stack-delete" title="Permanent link">&para;</a></h3>
-<p>delete an existing stack</p>
-<h3 id="stack-exports">stack-exports<a class="headerlink" href="#stack-exports" title="Permanent link">&para;</a></h3>
-<h3 id="stack-recreate">stack-recreate<a class="headerlink" href="#stack-recreate" title="Permanent link">&para;</a></h3>
-<h3 id="stack-failure">stack-failure<a class="headerlink" href="#stack-failure" title="Permanent link">&para;</a></h3>
-<p>type: detail
-return the reason a stack failed to update/create/delete
-FIXME: only grab the latest failure</p>
-<h3 id="stack-events">stack-events<a class="headerlink" href="#stack-events" title="Permanent link">&para;</a></h3>
-<p>List event history for a single Stack</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-events stack
+<h3 id="elb-stack">elb-stack<a class="headerlink" href="#elb-stack" title="Permanent link">&para;</a></h3>
+<p>List CloudFormation stack names of ELB(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: elb-stack load-balancer [load-balancer]
+
+$ elbs | elb-stack
+elb          elb-MyLoadBalancer-1FNISWJN0W6N9
+another-elb  another-e-MyLoadBa-171CPCZF2E84T
 </pre></div>
 
 
-<h3 id="stack-resources">stack-resources<a class="headerlink" href="#stack-resources" title="Permanent link">&para;</a></h3>
-<p>List all resources in Stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-resources stack [stack]
-
-$ stacks | stack-resources
-i-7d54924538baa7a1f  AWS::EC2::Instance  ec2
-i-c54279c6055c3c794  AWS::EC2::Instance  nagios
-i-a8b8dd6783e1a40cc  AWS::EC2::Instance  postgres1
-i-5d74753e210bfe04d  AWS::EC2::Instance  postgres2
-i-2aa95cc214a461398  AWS::EC2::Instance  prometheus-web
+<h2 id="iam-commands">iam-commands<a class="headerlink" href="#iam-commands" title="Permanent link">&para;</a></h2>
+<h3 id="iam-roles">iam-roles<a class="headerlink" href="#iam-roles" title="Permanent link">&para;</a></h3>
+<p>List IAM Roles</p>
+<div class="codehilite"><pre><span></span>$ iam-roles
+config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
+AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
+ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
 </pre></div>
 
 
-<h3 id="stack-asgs">stack-asgs<a class="headerlink" href="#stack-asgs" title="Permanent link">&para;</a></h3>
-<p>List ASGs in Stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-asgs stack [stack]
-
-$ stacks | stack-asgs
-asg-bash-my-aws-AutoScalingGroup-MSBCWRTI3PVM  AWS::AutoScaling::AutoScalingGroup  asg-bash-my-aws
-asg2-AutoScalingGroup-1FHUVUJ7SLPU7            AWS::AutoScaling::AutoScalingGroup  asg2
+<h3 id="iam-role-principal">iam-role-principal<a class="headerlink" href="#iam-role-principal" title="Permanent link">&para;</a></h3>
+<p>List role principal for IAM Role(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: iam-role-principal role-name [role-name]
 </pre></div>
 
 
-<h3 id="stack-asg-instances">stack-asg-instances<a class="headerlink" href="#stack-asg-instances" title="Permanent link">&para;</a></h3>
-<p>List EC2 Instances of EC2 Autoscaling Groups in Stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-asg-instances stack [stack]
-
-$ stacks | stack-asg-instances
-i-06ee900565652ecc5  ami-0119aa4d67e59007c  t3.nano  running  asg-bash-my-aws  2019-12-13T03:15:22.000Z  ap-southeast-2c  vpc-deb8edb9
-i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  running  asg2             2019-12-13T03:37:51.000Z  ap-southeast-2c  vpc-deb8edb9
+<h2 id="image-commands">image-commands<a class="headerlink" href="#image-commands" title="Permanent link">&para;</a></h2>
+<h3 id="images">images<a class="headerlink" href="#images" title="Permanent link">&para;</a></h3>
+<p>List EC2 AMI's</p>
+<p>Usage: images [owner] [image-id] [image-id]...</p>
+<p>owner defaults to <code>self</code> or can one or more of:</p>
+<ul>
+<li>an AWS_ACCOUNT_ID  (e.g. 1234567890)</li>
+<li>an AWS_OWNER_ALIAS (amazon, amazon-marketplace, microsoft)</li>
+</ul>
+<p>image_id can be one or more AMIs</p>
+<p>Trialing a different approach for grabbing resource ids from input.<br />
+As normal, you can pipe resource ids in as first token on each line.<br />
+We treat all args that don't start with ami- as owner identifiers.  </p>
+<p>Trialing a new pattern for output - putting the Name at the end.<br />
+This is more like the output of <code>ls -la</code></p>
+<ul>
+<li>Pro: Preceding fields tend to be of the same length</li>
+<li>Pro: Easier for eyes to scan final column for names(?)</li>
+<li>Con: Using this pattern for instances() would put name past 80 char point</li>
+<li>Con: Migrating instances() to this output is A Big Change (not made lightly)</li>
+</ul>
+<h3 id="image-deregister">image-deregister<a class="headerlink" href="#image-deregister" title="Permanent link">&para;</a></h3>
+<p>Deregister AMI(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: image-deregister image_id [image_id]
 </pre></div>
 
 
-<h3 id="stack-elbs">stack-elbs<a class="headerlink" href="#stack-elbs" title="Permanent link">&para;</a></h3>
-<p>List EC2 Elastic Load Balancers in Stack(s)</p>
-<p>USAGE: stack-elbs stack [stack]</p>
-<div class="codehilite"><pre><span></span>$ stacks | stack-elbs
-elb-MyLoadBalancer-NA5S72MLA5KI   AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-1
-load-bala-MyLoadBa-11HZ0DHUHJZZI  AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-2
-</pre></div>
-
-
-<h3 id="stack-instances">stack-instances<a class="headerlink" href="#stack-instances" title="Permanent link">&para;</a></h3>
-<p>List instances in stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-instances stack [stack]
-
-$ stacks | stack-instances
-i-7d54924538baa7a1f  ami-123456789012  t3.nano  stopped  ec2             2019-12-11T09:31:03.000Z  ap-southeast-2a  None
-i-c54279c6055c3c794  ami-123456789012  t3.nano  running  nagios          2019-12-13T02:24:30.000Z  ap-southeast-2a  None
-i-a8b8dd6783e1a40cc  ami-123456789012  t3.nano  running  postgres1       2019-12-13T02:24:32.000Z  ap-southeast-2a  None
-i-5d74753e210bfe04d  ami-123456789012  t3.nano  running  postgres2       2019-12-13T02:24:34.000Z  ap-southeast-2a  None
-i-2aa95cc214a461398  ami-123456789012  t3.nano  running  prometheus-web  2019-12-13T02:24:36.000Z  ap-southeast-2a  None
-</pre></div>
-
-
-<h3 id="stack-parameters">stack-parameters<a class="headerlink" href="#stack-parameters" title="Permanent link">&para;</a></h3>
-<p>return the parameters applied to a stack</p>
-<h3 id="stack-status">stack-status<a class="headerlink" href="#stack-status" title="Permanent link">&para;</a></h3>
-<p>type: detail
-return the current status of a stack</p>
-<h3 id="stack-tag">stack-tag<a class="headerlink" href="#stack-tag" title="Permanent link">&para;</a></h3>
-<p>return a selected stack tag</p>
-<h3 id="stack-tag-apply">stack-tag-apply<a class="headerlink" href="#stack-tag-apply" title="Permanent link">&para;</a></h3>
-<p>apply a stack tag</p>
-<h3 id="stack-tag-delete">stack-tag-delete<a class="headerlink" href="#stack-tag-delete" title="Permanent link">&para;</a></h3>
-<p>delete a stack tag</p>
-<h3 id="stack-tail">stack-tail<a class="headerlink" href="#stack-tail" title="Permanent link">&para;</a></h3>
-<p>type: detail
-follow the events occuring for a stack</p>
-<h3 id="stack-template">stack-template<a class="headerlink" href="#stack-template" title="Permanent link">&para;</a></h3>
-<p>return the template applied to a stack</p>
-<h3 id="stack-tags">stack-tags<a class="headerlink" href="#stack-tags" title="Permanent link">&para;</a></h3>
-<p>return the stack-tags applied to a stack</p>
-<h3 id="stack-tags-text">stack-tags-text<a class="headerlink" href="#stack-tags-text" title="Permanent link">&para;</a></h3>
-<p>return all stack tags on a single line</p>
-<h3 id="stack-outputs">stack-outputs<a class="headerlink" href="#stack-outputs" title="Permanent link">&para;</a></h3>
-<p>type: detail
-return the outputs of a stack</p>
-<h3 id="stack-validate">stack-validate<a class="headerlink" href="#stack-validate" title="Permanent link">&para;</a></h3>
-<p>type: detail
-validate a stack template</p>
-<h3 id="stack-diff">stack-diff<a class="headerlink" href="#stack-diff" title="Permanent link">&para;</a></h3>
-<p>type: detail
-return differences between a template and Stack
-report changes which would be made to stack if template were applied
-report on what changes would be made to stack by applying params
-If we are working from a single argument (ignore args starting with <code>--</code>)
-Strip path and extension from template
-Deduce params filename from stack and template names
-Strip path and extension from template
-File extension gets stripped off if template name provided as stack name
-Determine name of template to use
-determine name of params file to use
-determine what (if any) capabilities a given stack was deployed with</p>
 <h2 id="instance-commands">instance-commands<a class="headerlink" href="#instance-commands" title="Permanent link">&para;</a></h2>
 <h3 id="instances">instances<a class="headerlink" href="#instances" title="Permanent link">&para;</a></h3>
 <p>List EC2 Instances</p>
@@ -3177,150 +1766,6 @@ i-806d8f1592e2a2efd  vol-38fd45c3
 </pre></div>
 
 
-<h2 id="asg-commands">asg-commands<a class="headerlink" href="#asg-commands" title="Permanent link">&para;</a></h2>
-<h3 id="asgs">asgs<a class="headerlink" href="#asgs" title="Permanent link">&para;</a></h3>
-<p>List EC2 Autoscaling Groups</p>
-<h3 id="asg-capacity">asg-capacity<a class="headerlink" href="#asg-capacity" title="Permanent link">&para;</a></h3>
-<p>List min, desired and maximum capacities of EC2 Autoscaling Group(s)</p>
-<h3 id="asg-desired-size-set">asg-desired-size-set<a class="headerlink" href="#asg-desired-size-set" title="Permanent link">&para;</a></h3>
-<p>Set desired capacity of autoscaling group(s)</p>
-<h3 id="asg-instances">asg-instances<a class="headerlink" href="#asg-instances" title="Permanent link">&para;</a></h3>
-<p>List instances of autoscaling group(s)</p>
-<h3 id="asg-launch-configuration">asg-launch-configuration<a class="headerlink" href="#asg-launch-configuration" title="Permanent link">&para;</a></h3>
-<p>List Launch Configurations of Autoscaling Group(s)</p>
-<h3 id="launch-configurations">launch-configurations<a class="headerlink" href="#launch-configurations" title="Permanent link">&para;</a></h3>
-<p>List Launch Configurations</p>
-<h3 id="launch-configuration-asgs">launch-configuration-asgs<a class="headerlink" href="#launch-configuration-asgs" title="Permanent link">&para;</a></h3>
-<p>List EC2 Autoscaling Groups of Launch COnfiguration(s)</p>
-<h3 id="asg-max-size-set">asg-max-size-set<a class="headerlink" href="#asg-max-size-set" title="Permanent link">&para;</a></h3>
-<p>Set maximum size of autoscaling group(s)</p>
-<h3 id="asg-min-size-set">asg-min-size-set<a class="headerlink" href="#asg-min-size-set" title="Permanent link">&para;</a></h3>
-<p>Set minimum size of autoscaling group(s)</p>
-<h3 id="asg-processes_suspended">asg-processes_suspended<a class="headerlink" href="#asg-processes_suspended" title="Permanent link">&para;</a></h3>
-<p>List suspended processes of an autoscaling group</p>
-<h3 id="asg-resume">asg-resume<a class="headerlink" href="#asg-resume" title="Permanent link">&para;</a></h3>
-<p>Resume all processes of an autoscaling group</p>
-<h3 id="asg-suspend">asg-suspend<a class="headerlink" href="#asg-suspend" title="Permanent link">&para;</a></h3>
-<p>Suspend all processes of an autoscaling group</p>
-<h3 id="asg-stack">asg-stack<a class="headerlink" href="#asg-stack" title="Permanent link">&para;</a></h3>
-<p>List CloudFormation stack for asg(s)</p>
-<h3 id="asg-scaling-activities">asg-scaling-activities<a class="headerlink" href="#asg-scaling-activities" title="Permanent link">&para;</a></h3>
-<p>List scaling activities for Autoscaling Group(s)</p>
-<h2 id="cert-commands">cert-commands<a class="headerlink" href="#cert-commands" title="Permanent link">&para;</a></h2>
-<h3 id="certs">certs<a class="headerlink" href="#certs" title="Permanent link">&para;</a></h3>
-<p>List ACM Certificates</p>
-<h3 id="certs-arn">certs-arn<a class="headerlink" href="#certs-arn" title="Permanent link">&para;</a></h3>
-<p>Same as <code>certs</code> but with the ARN in first column</p>
-<h3 id="cert-users">cert-users<a class="headerlink" href="#cert-users" title="Permanent link">&para;</a></h3>
-<p>List resources using ACM Cert(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: cert-users cert-arn [cert-arn]
-</pre></div>
-
-
-<h3 id="cert-delete">cert-delete<a class="headerlink" href="#cert-delete" title="Permanent link">&para;</a></h3>
-<p>Delete ACM Cert(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: cert-delete cert-arn [cert-arn]
-</pre></div>
-
-
-<h2 id="cloudtrail-commands">cloudtrail-commands<a class="headerlink" href="#cloudtrail-commands" title="Permanent link">&para;</a></h2>
-<h3 id="cloudtrails">cloudtrails<a class="headerlink" href="#cloudtrails" title="Permanent link">&para;</a></h3>
-<p>List Cloudtrails</p>
-<div class="codehilite"><pre><span></span>$ cloudtrails
-failmode    failmode-cloudtrail ap-southeast-2  IsMultiRegionTrail=true IncludeGlobalServiceEvents=true
-</pre></div>
-
-
-<h3 id="cloudtrail-status">cloudtrail-status<a class="headerlink" href="#cloudtrail-status" title="Permanent link">&para;</a></h3>
-<p>List logging status of Cloudtrails</p>
-<div class="codehilite"><pre><span></span>USAGE: cloudtrail-status cloudtrail [cloudtrail]
-</pre></div>
-
-
-<h2 id="ecr-commands">ecr-commands<a class="headerlink" href="#ecr-commands" title="Permanent link">&para;</a></h2>
-<h3 id="ecr-repositories">ecr-repositories<a class="headerlink" href="#ecr-repositories" title="Permanent link">&para;</a></h3>
-<p>List ECR Repositories</p>
-<h3 id="ecr-repository-images">ecr-repository-images<a class="headerlink" href="#ecr-repository-images" title="Permanent link">&para;</a></h3>
-<p>List images for ECR Repositories</p>
-<h2 id="elb-commands">elb-commands<a class="headerlink" href="#elb-commands" title="Permanent link">&para;</a></h2>
-<h3 id="elbs">elbs<a class="headerlink" href="#elbs" title="Permanent link">&para;</a></h3>
-<p>List ELBs
-Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names</p>
-<div class="codehilite"><pre><span></span>$ elbs
-elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
-another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
-</pre></div>
-
-
-<h3 id="elb-dnsname">elb-dnsname<a class="headerlink" href="#elb-dnsname" title="Permanent link">&para;</a></h3>
-<p>List DNS Names of ELB(s)</p>
-<div class="codehilite"><pre><span></span> USAGE: elb-dnsname load-balancer [load-balancer]
-
- $ elbs | elb-dnsname
- elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
- another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
-</pre></div>
-
-
-<h3 id="elb-instances">elb-instances<a class="headerlink" href="#elb-instances" title="Permanent link">&para;</a></h3>
-<p>List instances of ELB(s)</p>
-<div class="codehilite"><pre><span></span> USAGE: elb-instances load-balancer [load-balancer]
-</pre></div>
-
-
-<h3 id="elb-stack">elb-stack<a class="headerlink" href="#elb-stack" title="Permanent link">&para;</a></h3>
-<p>List CloudFormation stack names of ELB(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: elb-stack load-balancer [load-balancer]
-
-$ elbs | elb-stack
-elb          elb-MyLoadBalancer-1FNISWJN0W6N9
-another-elb  another-e-MyLoadBa-171CPCZF2E84T
-</pre></div>
-
-
-<h2 id="iam-commands">iam-commands<a class="headerlink" href="#iam-commands" title="Permanent link">&para;</a></h2>
-<h3 id="iam-roles">iam-roles<a class="headerlink" href="#iam-roles" title="Permanent link">&para;</a></h3>
-<p>List IAM Roles</p>
-<div class="codehilite"><pre><span></span>$ iam-roles
-config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
-AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
-ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
-</pre></div>
-
-
-<h3 id="iam-role-principal">iam-role-principal<a class="headerlink" href="#iam-role-principal" title="Permanent link">&para;</a></h3>
-<p>List role principal for IAM Role(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: iam-role-principal role-name [role-name]
-</pre></div>
-
-
-<h2 id="image-commands">image-commands<a class="headerlink" href="#image-commands" title="Permanent link">&para;</a></h2>
-<h3 id="images">images<a class="headerlink" href="#images" title="Permanent link">&para;</a></h3>
-<p>List EC2 AMI's</p>
-<p>Usage: images [owner] [image-id] [image-id]...</p>
-<p>owner defaults to <code>self</code> or can one or more of:</p>
-<ul>
-<li>an AWS_ACCOUNT_ID  (e.g. 1234567890)</li>
-<li>an AWS_OWNER_ALIAS (amazon, amazon-marketplace, microsoft)</li>
-</ul>
-<p>image_id can be one or more AMIs</p>
-<p>Trialing a different approach for grabbing resource ids from input.<br />
-As normal, you can pipe resource ids in as first token on each line.<br />
-We treat all args that don't start with ami- as owner identifiers.  </p>
-<p>Trialing a new pattern for output - putting the Name at the end.<br />
-This is more like the output of <code>ls -la</code></p>
-<ul>
-<li>Pro: Preceding fields tend to be of the same length</li>
-<li>Pro: Easier for eyes to scan final column for names(?)</li>
-<li>Con: Using this pattern for instances() would put name past 80 char point</li>
-<li>Con: Migrating instances() to this output is A Big Change (not made lightly)</li>
-</ul>
-<h3 id="image-deregister">image-deregister<a class="headerlink" href="#image-deregister" title="Permanent link">&para;</a></h3>
-<p>Deregister AMI(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: image-deregister image_id [image_id]
-</pre></div>
-
-
 <h2 id="keypair-commands">keypair-commands<a class="headerlink" href="#keypair-commands" title="Permanent link">&para;</a></h2>
 <h3 id="keypairs">keypairs<a class="headerlink" href="#keypairs" title="Permanent link">&para;</a></h3>
 <p>List EC2 SSH Keypairs in current Region</p>
@@ -3521,6 +1966,46 @@ function execution.</p>
 <h2 id="rds-commands">rds-commands<a class="headerlink" href="#rds-commands" title="Permanent link">&para;</a></h2>
 <h3 id="rds-db-instances">rds-db-instances<a class="headerlink" href="#rds-db-instances" title="Permanent link">&para;</a></h3>
 <p>List RDS Database Instances</p>
+<h2 id="region-commands">region-commands<a class="headerlink" href="#region-commands" title="Permanent link">&para;</a></h2>
+<h3 id="regions">regions<a class="headerlink" href="#regions" title="Permanent link">&para;</a></h3>
+<p>List regions</p>
+<p>The region() function must be sourced in order to update the
+AWS_DEFAULT_REGION environment variable. This is because it
+cannot update an environment variable when run as a subprocess.</p>
+<div class="codehilite"><pre><span></span>$ regions
+ap-northeast-1
+ap-northeast-2
+ap-south-1
+ap-southeast-1
+ap-southeast-2
+...
+us-west-2
+</pre></div>
+
+
+<h3 id="region">region<a class="headerlink" href="#region" title="Permanent link">&para;</a></h3>
+<p>Get/Set <code>$AWS_DEFAULT_REGION</code> shell environment variable</p>
+<div class="codehilite"><pre><span></span>$ region
+us-east-1
+
+$ region ap-southeast-2
+
+$ region
+ap-southeast-2
+</pre></div>
+
+
+<h3 id="region-each">region-each<a class="headerlink" href="#region-each" title="Permanent link">&para;</a></h3>
+<p>Run a command in every region.
+Any output lines will be appended with "#${REGION}".</p>
+<div class="codehilite"><pre><span></span>$ region-each stacks | column -t
+example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-1
+example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
+...
+example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
+</pre></div>
+
+
 <h2 id="route53-commands">route53-commands<a class="headerlink" href="#route53-commands" title="Permanent link">&para;</a></h2>
 <h3 id="hosted-zones">hosted-zones<a class="headerlink" href="#hosted-zones" title="Permanent link">&para;</a></h3>
 <p>List Route53 Hosted Zones</p>
@@ -3591,6 +2076,72 @@ remove_bucket: another-example-bucket
 </pre></div>
 
 
+<h2 id="stack-commands">stack-commands<a class="headerlink" href="#stack-commands" title="Permanent link">&para;</a></h2>
+<h3 id="stacks">stacks<a class="headerlink" href="#stacks" title="Permanent link">&para;</a></h3>
+<h3 id="stack-arn">stack-arn<a class="headerlink" href="#stack-arn" title="Permanent link">&para;</a></h3>
+<h3 id="stack-cancel-update">stack-cancel-update<a class="headerlink" href="#stack-cancel-update" title="Permanent link">&para;</a></h3>
+<h3 id="stack-create">stack-create<a class="headerlink" href="#stack-create" title="Permanent link">&para;</a></h3>
+<h3 id="stack-update">stack-update<a class="headerlink" href="#stack-update" title="Permanent link">&para;</a></h3>
+<h3 id="stack-delete">stack-delete<a class="headerlink" href="#stack-delete" title="Permanent link">&para;</a></h3>
+<p>delete an existing stack</p>
+<h3 id="stack-exports">stack-exports<a class="headerlink" href="#stack-exports" title="Permanent link">&para;</a></h3>
+<h3 id="stack-recreate">stack-recreate<a class="headerlink" href="#stack-recreate" title="Permanent link">&para;</a></h3>
+<p>rm -fr $tmpdir</p>
+<h3 id="stack-failure">stack-failure<a class="headerlink" href="#stack-failure" title="Permanent link">&para;</a></h3>
+<p>type: detail
+return the reason a stack failed to update/create/delete
+FIXME: only grab the latest failure</p>
+<h3 id="stack-events">stack-events<a class="headerlink" href="#stack-events" title="Permanent link">&para;</a></h3>
+<p>type: detail
+return the events a stack has experienced</p>
+<h3 id="stack-resources">stack-resources<a class="headerlink" href="#stack-resources" title="Permanent link">&para;</a></h3>
+<h3 id="stack-asgs">stack-asgs<a class="headerlink" href="#stack-asgs" title="Permanent link">&para;</a></h3>
+<p>type: detail
+return the autoscaling groups managed by a stack</p>
+<h3 id="stack-asg-instances">stack-asg-instances<a class="headerlink" href="#stack-asg-instances" title="Permanent link">&para;</a></h3>
+<h3 id="stack-elbs">stack-elbs<a class="headerlink" href="#stack-elbs" title="Permanent link">&para;</a></h3>
+<p>return the elastic load balancers managed by stack(s)</p>
+<h3 id="stack-instances">stack-instances<a class="headerlink" href="#stack-instances" title="Permanent link">&para;</a></h3>
+<p>return the instances managed by stack(s)</p>
+<h3 id="stack-parameters">stack-parameters<a class="headerlink" href="#stack-parameters" title="Permanent link">&para;</a></h3>
+<p>return the parameters applied to a stack</p>
+<h3 id="stack-status">stack-status<a class="headerlink" href="#stack-status" title="Permanent link">&para;</a></h3>
+<p>type: detail
+return the current status of a stack</p>
+<h3 id="stack-tag">stack-tag<a class="headerlink" href="#stack-tag" title="Permanent link">&para;</a></h3>
+<p>return a selected stack tag</p>
+<h3 id="stack-tag-apply">stack-tag-apply<a class="headerlink" href="#stack-tag-apply" title="Permanent link">&para;</a></h3>
+<p>apply a stack tag</p>
+<h3 id="stack-tag-delete">stack-tag-delete<a class="headerlink" href="#stack-tag-delete" title="Permanent link">&para;</a></h3>
+<p>delete a stack tag</p>
+<h3 id="stack-tail">stack-tail<a class="headerlink" href="#stack-tail" title="Permanent link">&para;</a></h3>
+<p>type: detail
+follow the events occuring for a stack</p>
+<h3 id="stack-template">stack-template<a class="headerlink" href="#stack-template" title="Permanent link">&para;</a></h3>
+<p>return the template applied to a stack</p>
+<h3 id="stack-tags">stack-tags<a class="headerlink" href="#stack-tags" title="Permanent link">&para;</a></h3>
+<p>return the stack-tags applied to a stack</p>
+<h3 id="stack-tags-text">stack-tags-text<a class="headerlink" href="#stack-tags-text" title="Permanent link">&para;</a></h3>
+<p>return all stack tags on a single line</p>
+<h3 id="stack-outputs">stack-outputs<a class="headerlink" href="#stack-outputs" title="Permanent link">&para;</a></h3>
+<p>type: detail
+return the outputs of a stack</p>
+<h3 id="stack-validate">stack-validate<a class="headerlink" href="#stack-validate" title="Permanent link">&para;</a></h3>
+<p>type: detail
+validate a stack template</p>
+<h3 id="stack-diff">stack-diff<a class="headerlink" href="#stack-diff" title="Permanent link">&para;</a></h3>
+<p>type: detail
+return differences between a template and Stack
+report changes which would be made to stack if template were applied
+report on what changes would be made to stack by applying params
+If we are working from a single argument (ignore args starting with <code>--</code>)
+Strip path and extension from template
+Deduce params filename from stack and template names
+Strip path and extension from template
+File extension gets stripped off if template name provided as stack name
+Determine name of template to use
+determine name of params file to use
+determine what (if any) capabilities a given stack was deployed with</p>
 <h2 id="sts-commands">sts-commands<a class="headerlink" href="#sts-commands" title="Permanent link">&para;</a></h2>
 <h3 id="sts-assume-role">sts-assume-role<a class="headerlink" href="#sts-assume-role" title="Permanent link">&para;</a></h3>
 <p>Assume an IAM Role</p>
@@ -3735,41 +2286,6 @@ aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
       
         
 <footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
-        
-          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
-            </div>
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Previous
-                </span>
-                Home
-              </span>
-            </div>
-          </a>
-        
-        
-          <a href="../cfn-naming/" title="CloudFormation Naming" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                CloudFormation Naming
-              </span>
-            </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
