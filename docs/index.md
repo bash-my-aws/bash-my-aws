@@ -147,7 +147,7 @@ As shown below, you may simply clone the GitHub repo and source the files requir
 (You should probably fork it instead to keep your customisations)
 
 ```Shell
-$ git clone https://github.com/bash-my-universe/bash-my-aws.git ~/.bash-my-aws
+$ git clone https://github.com/bash-my-aws/bash-my-aws.git ~/.bash-my-aws
 ```
 
 Put the following in your shell's startup file:

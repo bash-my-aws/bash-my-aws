@@ -11,12 +11,12 @@ nav:
 
 theme:
   name: material
-repo_name: 'bash-my-universe/bash-my-aws'
-repo_url: 'https://github.com/bash-my-universe/bash-my-aws'
+repo_name: 'bash-my-aws/bash-my-aws'
+repo_url: 'https://github.com/bash-my-aws/bash-my-aws'
 extra:
   social:
     - type: 'github'
-      link: 'https://github.com/bash-my-universe'
+      link: 'https://github.com/bash-my-aws'
     - type: 'twitter'
       link: 'https://twitter.com/bashmyaws'
 markdown_extensions:
