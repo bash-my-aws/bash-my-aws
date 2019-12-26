@@ -1,5 +1,5 @@
 site_name: 'bash-my-aws'
-site_description: 'CLI Tools for Managing AWS'
+site_description: 'CLI Commands for Managing AWS Resources'
 site_author: 'Mike Bailey'
 site_url: 'https://bash-my-aws.org/'
 google_analytics: ['UA-154550647-1', 'bash-my-aws.org']
