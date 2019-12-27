@@ -1,7 +1,7 @@
 bash-my-aws
 ===========
 
-**2019-12 - New [bash-my-aws homepage](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org** 
+**Dec 2019: New [bash-my-aws homepage](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org** 
 
 bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the
 command line.
