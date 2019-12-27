@@ -2,12 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
      <loc>https://bash-my-aws.org/</loc>
-     <lastmod>2019-12-26</lastmod>
+     <lastmod>2019-12-27</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://bash-my-aws.org/command-reference/</loc>
-     <lastmod>2019-12-26</lastmod>
+     <loc></loc>
+     
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc></loc>
+     
      <changefreq>daily</changefreq>
     </url>
 </urlset>
