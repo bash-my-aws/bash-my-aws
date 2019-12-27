@@ -64,6 +64,8 @@ Bash users can still source the functions instead of loading the aliases:
 
 ## Usage
 
+**Be sure to checkout the new documentation for bash-my-aws at https://bash-my-aws.org**
+
 Authenticate to AWS in a terminal that has `bash-my-aws` loaded.
 You should now be able to explore the commands.
 
