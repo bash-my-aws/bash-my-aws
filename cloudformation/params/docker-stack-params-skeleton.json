@@ -1,0 +1,34 @@
+[
+  {
+    "ParameterKey": "CertArn",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "ELBSubnets",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "HostedZone",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "InstanceSubnets",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "SSHOrigin",
+    "ParameterValue": "127.0.0.1/0"
+  },
+  {
+    "ParameterKey": "VpcId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "WebOrigin",
+    "ParameterValue": "0.0.0.0/0"
+  }
+]
