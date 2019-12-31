@@ -7,6 +7,8 @@ They harness the power of Amazon's AWSCLI, while abstracting away verbosity.
 The project implements some innovative patterns but (arguably) remains simple,
 beautiful and readable.
 
+![screencast](images/bma-02-2.gif)
+
 ## Introduction
 
 - [Short, Memorable Commands](#short-memorable-commands)

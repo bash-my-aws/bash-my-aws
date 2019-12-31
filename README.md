@@ -12,6 +12,8 @@ effect.
 
 These functions make extensive use of the incredibly powerful AWSCLI.
 
+![screencast](/docs/images/bma-02-2.gif)
+
 ## Prerequisites
 
 * [awscli](http://aws.amazon.com/cli/)
