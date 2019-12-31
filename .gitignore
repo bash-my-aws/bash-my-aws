@@ -2,8 +2,9 @@
 lib/load.inc
 multipass-role-arns
 multipass-role-arns/*
-cloudformation/params
+cloudformation/params/*
 !cloudformation/params/.keep
+!cloudformation/params/*-params-skeleton.json
 cloudformation/tags
 !cloudformation/tags/.keep
 test/cloudformation

@@ -1,0 +1,372 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Example ELB & ASG stack for demo purposes
+Parameters:
+
+  ImageId:
+    Description: EC2 Amazon Machine Image (AMI)
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+
+  AsgMaxSize:
+    Description: Maximum size of the ASG
+    Type: Number
+    Default: '2'
+
+  AsgMinSize:
+    Description: Minimum size of the ASG
+    Type: Number
+    Default: '1'
+
+  AssignPublicIps:
+    Description: >-
+      Assign Public IP addresses to EC2 instances
+      Set to true if using the Default VPC
+    Type: String
+    Default: 'true'
+
+  DockerCommand:
+    Description: Docker command to run on each instance
+    Default: "python -m http.server"
+    Type: String
+
+  DockerImage:
+    Description: Docker image to run on each instance
+    Default: python
+    Type: String
+
+  CertArn:
+    Description: ARN of the certificate to install on the ELB
+    Type: String
+    Default: ''
+
+  ELBSubnets:
+    Description: List of subnet IDs for Load Balancer
+    Type: List<AWS::EC2::Subnet::Id>
+
+  InstanceSubnets:
+    Description: List of subnet IDs for Instance(s)
+    Type: List<AWS::EC2::Subnet::Id>
+
+  HostedZone:
+    Description: Route53 Zone [optional]
+    Type: String
+    Default: ''
+
+  InstancePort:
+    Description: The port application will be exposed on (ELB will proxy to this)
+    Type: Number
+    Default: '8000'
+
+  InstanceType:
+    Description: The size of the instance
+    Type: String
+    Default: t3.micro
+
+  KeyName:
+    Description: The public key to install on the instance
+    Type: String
+
+  SSHOrigin:
+    Description: Where to accept SSH connections from
+    Type: String
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    MaxLength: '18'
+    MinLength: '9'
+    Default: 127.0.0.1/32
+
+  VpcId:
+    Description: The VPC ID
+    Type: 'AWS::EC2::VPC::Id'
+
+  WebOrigin:
+    Description: Where to accept Web connections from
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Default: 0.0.0.0/0
+    MaxLength: '18'
+    MinLength: '9'
+    Type: String
+
+
+Conditions:
+
+  UseHostedZone: !Not [!Equals [ !Ref HostedZone, '' ]]
+  UseCert: !Not [ !Equals [ !Ref 'CertArn', '' ]]
+
+
+Resources:
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT10M
+        Count: '1'
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '1'
+        MaxBatchSize: '1'
+        PauseTime: PT10M
+        WaitOnResourceSignals: 'true'
+        SuspendProcesses:
+          - HealthCheck
+          - ReplaceUnhealthy
+          - AZRebalance
+          - AlarmNotification
+          - ScheduledActions
+    Properties:
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: '120'
+      LoadBalancerNames:
+        - !Ref ELB
+      VPCZoneIdentifier: !Ref InstanceSubnets
+      LaunchConfigurationName: !Ref 'LaunchConfiguration'
+      MinSize: !Ref 'AsgMinSize'
+      MaxSize: !Ref 'AsgMaxSize'
+      DesiredCapacity: !Ref 'AsgMinSize'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}/instance'
+          PropagateAtLaunch: 'true'
+
+  DnsRecord:
+    Condition: UseHostedZone
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref 'HostedZone'
+      Comment: DNS name for ELB
+      Name: !Sub "${AWS::StackName}.${HostedZone}"
+      Type: CNAME
+      TTL: '60'
+      ResourceRecords:
+        - !GetAtt 'ELB.DNSName'
+
+  ELB:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      HealthCheck:
+        # Target: !Sub 'TCP:${InstancePort}'
+        Target: !Sub 'TCP:22'
+        HealthyThreshold: 2
+        UnhealthyThreshold: 10
+        Interval: 60
+        Timeout: 5
+      Listeners: !If
+        - UseCert
+        - - InstanceProtocol: HTTP
+            InstancePort: !Ref 'InstancePort'
+            Protocol: HTTPS
+            LoadBalancerPort: '443'
+            SSLCertificateId: !Ref 'CertArn'
+          - InstanceProtocol: HTTP
+            InstancePort: !Ref 'InstancePort'
+            Protocol: HTTP
+            LoadBalancerPort: '80'
+          - InstancePort: '22'
+            LoadBalancerPort: '22'
+            Protocol: TCP
+            InstanceProtocol: TCP
+        - - InstanceProtocol: HTTP
+            InstancePort: !Ref 'InstancePort'
+            Protocol: HTTP
+            LoadBalancerPort: '80'
+          - InstancePort: '22'
+            LoadBalancerPort: '22'
+            Protocol: TCP
+            InstanceProtocol: TCP
+      Scheme: internet-facing
+      SecurityGroups:
+        - !Ref 'ELBSecurityGroup'
+      Subnets: !Ref 'ELBSubnets'
+
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ELB Inbound traffic
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}/sg-elb'
+      VpcId: !Ref 'VpcId'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: !Ref 'SSHOrigin'
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: !Ref 'WebOrigin'
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: !Ref 'WebOrigin'
+
+  InstanceIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: KmsElbCfn
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - elasticloadbalancing:DescribeLoadBalancers
+                Resource:
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:SignalResource
+                Resource:
+                  - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*'
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref 'InstanceIAMRole'
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Describe permitted inbound and outbound traffic to our instance
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}/sg-instance'
+      VpcId: !Ref 'VpcId'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !Ref 'InstancePort'
+          ToPort: !Ref 'InstancePort'
+          SourceSecurityGroupId: !Ref 'ELBSecurityGroup'
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref 'ELBSecurityGroup'
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: '53'
+          ToPort: '53'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: udp
+          FromPort: '53'
+          ToPort: '53'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: icmp
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          files:
+
+            /opt/install-docker.sh:
+              mode: "000755"
+              owner: "root"
+              group: "root"
+              content: !Sub |
+                #!/bin/bash
+                # Install docker on Amazon Linux 2
+
+                # https://gist.github.com/npearce/6f3c7826c7499587f00957fee62f8ee9
+                if [ "$EUID" -ne 0 ]
+                  then echo "Please run as root"
+                  exit
+                fi
+
+                amazon-linux-extras install docker
+                usermod -a -G docker ec2-user
+                systemctl enable docker
+                systemctl start docker
+
+                curl --retry 120 --retry-delay 1 --location "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                chmod +x /usr/local/bin/docker-compose
+
+            /opt/docker-compose.yml:
+              mode: "000644"
+              owner: "root"
+              group: "root"
+              content: !Sub |
+                version: '3.1'
+                services:
+                  web:
+                    image: ${DockerImage}
+                    command: ${DockerCommand}
+                    ports: ["8000:8000"]
+                    restart: always
+                    environment:
+                      - AWS_REGION=${AWS::Region}
+
+    Properties:
+      AssociatePublicIpAddress: !Ref 'AssignPublicIps'
+      IamInstanceProfile: !Ref 'InstanceProfile'
+      ImageId: !Ref 'ImageId'
+      InstanceType: !Ref 'InstanceType'
+      KeyName: !Ref 'KeyName'
+      SecurityGroups:
+        - !Ref 'InstanceSecurityGroup'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -xeuo pipefail
+
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+          /opt/aws/bin/cfn-init            \
+            --stack "${AWS::StackName}"    \
+            --resource LaunchConfiguration \
+            --region "${AWS::Region}"
+
+          /opt/install-docker.sh
+
+          docker-compose --file /opt/docker-compose.yml up --detach
+
+          /opt/aws/bin/cfn-signal       \
+            --success true              \
+            --stack "${AWS::StackName}" \
+            --resource AutoScalingGroup \
+            --region "${AWS::Region}"
+
+
+Outputs:
+
+  WebsiteUrl:
+    Condition: UseHostedZone
+    Description: The URL to our application
+    Value: !Sub "https://${DnsRecord}/"
+
+  ELBDnsName:
+    Description: The ELB hostname
+    Value: !GetAtt 'ELB.DNSName'
+
+  InstanceSecurityGroup:
+    Description: The EC2 SecurityGroup
+    Value: !GetAtt 'InstanceSecurityGroup.GroupId'
