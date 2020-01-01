@@ -174,7 +174,7 @@ source ~/.bash-my-aws/bash_completion.sh
     After years of `zsh` users asking for support, one stepped up and identified
     a changes that would eliminate any shell compatibility problems without compromising
     the functionaility, simplicity and discoverability of the project. Massive thanks
-    to @ninth-dev for this.
+    to [@ninth-dev](https://github.com/ninth-dev) for this.
 
         # bash users may source the functions instead of loading the aliases
         if [ -d ${HOME}/.bash-my-aws ]; then
