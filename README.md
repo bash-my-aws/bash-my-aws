@@ -1,9 +1,9 @@
-bash-my-aws
+Bash-My-AWS
 ===========
 
-**Dec 2019: New [bash-my-aws website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org**
+**Dec 2019: New [Bash-My-AWS website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org**
 
-bash-my-aws is a simple but extremely powerful set of CLI commands for managing
+Bash-My-AWS is a simple but extremely powerful set of CLI commands for managing
 resources on Amazon Web Services.
 
 They harness the power of Amazon's AWSCLI, while abstracting away verbosity.
@@ -105,7 +105,7 @@ Are you sure you want to continue? y
 
 ### Convenient Shortcuts
 
-bash-my-aws is insanely simple to pick up and start using but contains a lot of
+Bash-My-AWS is insanely simple to pick up and start using but contains a lot of
 convenient shortcuts you can make use of.
 
 Example: resource listing commands accept a filter argument, removing the need
@@ -167,21 +167,22 @@ source ~/.bash-my-aws/aliases
 source ~/.bash-my-aws/bash_completion.sh
 ```
 
-!!! note "Why use shell aliases?"
+#### Why use shell aliases?
 
-    `bash-my-aws` began as a collection of bash functions, sourced into your shell.
-    More recently, the default suggestion has been to load aliases that execute a
-    small wrapper script that loads the functions and executes the desired function.
+`Bash-My-AWS` began as a collection of bash functions, sourced into your shell.
+More recently, the default suggestion has been to load aliases that execute a
+small wrapper script that loads the functions and executes the desired function.
 
-    After years of `zsh` users asking for support, one stepped up and identified
-    a changes that would eliminate any shell compatibility problems without compromising
-    the functionaility, simplicity and discoverability of the project. Massive thanks
-    to @ninth-dev for this.
+After years of `zsh` users asking for support, one stepped up and identified
+a changes that would eliminate any shell compatibility problems without compromising
+the functionaility, simplicity and discoverability of the project. Massive thanks
+to @ninth-dev for this.
 
-        # bash users may source the functions instead of loading the aliases
-        if [ -d ${HOME}/.bash-my-aws ]; then
-          for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
-        fi
+    # bash users may source the functions instead of loading the aliases
+    if [ -d ${HOME}/.bash-my-aws ]; then
+      for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+    fi
+
 
 ## Usage
 
@@ -240,7 +241,7 @@ instance-ssh          instance-terminate    instance-vpc
 Whether you're new to the tools or just have a bad memory, bash completion
 makes discovering these commands simple.
 
-!!! Note "See the [Command Reference](/command-reference) for a full list with usage examples"
+See the [Command Reference](/command-reference) for a full list of commands and usage examples.
 
 
 ### Piping Between Commands
