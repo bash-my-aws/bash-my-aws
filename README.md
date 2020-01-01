@@ -1,38 +1,162 @@
 bash-my-aws
 ===========
 
-**Dec 2019: New [bash-my-aws website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org** 
+**Dec 2019: New [bash-my-aws website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org**
 
-bash-my-aws assists Infrastructure Jockeys using Amazon Web Services from the
-command line.
+bash-my-aws is a simple but extremely powerful set of CLI commands for managing
+resources on Amazon Web Services.
 
-This project provides short, memorable commands for realtime control of
-resources in Amazon AWS. The goal is to reduce the time between intention and
-effect.
+They harness the power of Amazon's AWSCLI, while abstracting away verbosity.
 
-These functions make extensive use of the incredibly powerful AWSCLI.
+The project implements some innovative patterns but (arguably) remains simple,
+beautiful and readable.
 
-![screencast](/docs/images/bma-02-2.gif)
+![screencast](docs/images/bma-02-2.gif)
 
-## Prerequisites
+## Introduction
+
+- [Short, Memorable Commands](#short-memorable-commands)
+- [Shell Command Completion (including AWS resources)](#shell-command-completion)
+- [Unix Pipeline Friendly (instead of JSON)](#unix-pipeline-friendly)
+- [Convenient Shortcuts](#convenient-shortcuts)
+
+
+### Short, Memorable Commands
+
+There are two main types of commands.
+
+**1. Resource Listing Commands**
+
+These generally consist of the pluralised form of the resource name.
+
+```shell
+$ buckets
+example-assets   2019-12-08  02:35:44.758551
+example-logs     2019-12-08  02:35:52.669771
+example-backups  2019-12-08  02:35:56.579434
+```
+
+```shell
+$ stacks
+nagios      CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres01  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+prometheus  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+```
+
+```shell
+$ keypairs
+alice  8f:85:9a:1e:6c:76:29:34:37:45:de:7f:8d:f9:70:eb
+bob    56:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
+carol  29:4e:1c:cb:ba:d4:85:0e:4f:b6:34:4c:d4:79:32:00
+```
+
+**2. Resource detail/action commands**
+
+These generally consist of a resource name and action separated by a hyphen.
+This makes discovering them via shell completion simple.
+
+Some retrieve information about resources while others make changes to them.
+
+```shell
+$ keypair-delete alice bob
+You are about to delete the following EC2 SSH KeyPairs:
+alice
+bob
+Are you sure you want to continue? y
+```
+
+See the [Command Reference](command-reference.md) for a full list of commands.
+
+
+### Shell Command Completion
+
+In the example above, shell autocompletion retrieved the existing EC2 Keypair
+names (`alice`, `bob`) from AWS. This helps avoid the need to rely on human
+memory or terminal copypasta.
+
+
+### Unix Pipeline Friendly
+
+The commands themselves are line oriented and work nicely in unix pipelines
+with other unix commands (e.g. `grep`, `awk`, etc).
+
+```shell
+$ stacks | grep postgres
+postgres01  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+```
+
+They also work incredibly well with each other due to the way they treat input
+from STDIN. The first token from each line of STDIN is taken to be a resource
+identifiers (and the rest is discarded).
+
+
+```shell
+$ stacks | grep postgres | stack-delete
+You are about to delete the following stacks:
+postgres01
+postgres02
+Are you sure you want to continue? y
+```
+
+*Some users have compared this User Experience to functionality in Windows Powershell.*
+
+
+### Convenient Shortcuts
+
+bash-my-aws is insanely simple to pick up and start using but contains a lot of
+convenient shortcuts you can make use of.
+
+Example: resource listing commands accept a filter argument, removing the need
+for `| grep`.
+
+In the following example someone has given a CloudFormation stack a really long name:
+
+```shell
+$ stacks
+nagios                             CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres01                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+prometheus                         CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+stack-with-a-annoyingly-long-name  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+```
+
+This affects the output when we look at our postgress stacks:
+```shell
+$ stacks | grep postgres
+postgres01                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+```
+
+The resource listing command can filter output before applying `column`.
+```shell
+$ stacks postgres
+postgres01  DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+postgres02  DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
+```
+
+
+## Quickstart
+
+### Prerequisites
 
 * [awscli](http://aws.amazon.com/cli/)
 * [bash](https://www.gnu.org/software/bash/)
 * [jq-1.4](http://stedolan.github.io/jq/download/) or later (for stack-diff)
 
-
-## Installation
+### Installation
 
 As shown below, you may simply clone the GitHub repo and source the files required.
 (You should probably fork it instead to keep your customisations)
 
-```ShellSession
+```Shell
 $ git clone https://github.com/bash-my-aws/bash-my-aws.git ~/.bash-my-aws
 ```
 
 Put the following in your shell's startup file:
 
-```ShellSession
+```Shell
 export PATH="$PATH:$HOME/.bash-my-aws/bin"
 source ~/.bash-my-aws/aliases
 
@@ -43,231 +167,162 @@ source ~/.bash-my-aws/aliases
 source ~/.bash-my-aws/bash_completion.sh
 ```
 
-### Why the aliases?
+!!! note "Why use shell aliases?"
 
-`bash-my-aws` began as a collection of bash functions, sourced into your shell.
-More recently, the default suggestion has been to load aliases that execute a
-small wrapper script that loads the functions and executes the desired function.
+    `bash-my-aws` began as a collection of bash functions, sourced into your shell.
+    More recently, the default suggestion has been to load aliases that execute a
+    small wrapper script that loads the functions and executes the desired function.
 
-After years of `zsh` users asking for support, one stepped up and identified
-a changes that would eliminate any shell compatibility problems without compromising
-the functionaility, simplicity and discoverability of the project. Massive thanks
-to @ninth-dev for this.
+    After years of `zsh` users asking for support, one stepped up and identified
+    a changes that would eliminate any shell compatibility problems without compromising
+    the functionaility, simplicity and discoverability of the project. Massive thanks
+    to @ninth-dev for this.
 
-Bash users can still source the functions instead of loading the aliases:
-
-  ```
-  # bash users may source the functions instead of loading the aliases
-  if [ -d ${HOME}/.bash-my-aws ]; then
-    for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
-  fi
-  ```
-
+        # bash users may source the functions instead of loading the aliases
+        if [ -d ${HOME}/.bash-my-aws ]; then
+          for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+        fi
 
 ## Usage
 
-**Check out the new docs at https://bash-my-aws.org**
 
-Authenticate to AWS in a terminal that has `bash-my-aws` loaded.
-You should now be able to explore the commands.
+### Running Commands
 
-We'll start off with `stack` commands as an example but there are many
-other resource types supported. Checkout the full list in `~/.bash-my-aws/functions`
-
-With aliases (or sourced functions) :
+The default way to run the commands is using the aliases:
 
 ```ShellSession
-$ stacks
+$ instances
+i-e6f097f6ea4457757  ami-123456789012  t3.nano  running  example-ec2-ap-southeast-2  2019-12-07T08:12:00.000Z  ap-southeast-2a  None
+i-b983805b4b254f749  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:30.000Z  ap-southeast-2a  None
+i-fed39ebe7204dfd37  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:34.000Z  ap-southeast-2a  None
+i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus                  2019-12-07T08:27:02.000Z  ap-southeast-2a  None
+i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 2019-12-07T08:27:38.000Z  ap-southeast-2a  None
 ```
 
-Using the `bma` wrapper:
+It's also possible to run them using the `bma` wrapper.
+(This is sometimes required when using a restrictive auth tool.)
 
 ```ShellSession
-$ bma stacks
+$ bma instances
+i-e6f097f6ea4457757  ami-123456789012  t3.nano  running  example-ec2-ap-southeast-2  2019-12-07T08:12:00.000Z  ap-southeast-2a  None
+i-b983805b4b254f749  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:30.000Z  ap-southeast-2a  None
+i-fed39ebe7204dfd37  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:34.000Z  ap-southeast-2a  None
+i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus                  2019-12-07T08:27:02.000Z  ap-southeast-2a  None
+i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 2019-12-07T08:27:38.000Z  ap-southeast-2a  None
 ```
 
-**Typing stack[TAB][TAB] will list available functions for CloudFormation:**
+### Discovering Commands
+
+For each resource type, there is a command to list them:
+
+```shell
+$ instances
+i-e6f097f6ea4457757  ami-123456789012  t3.nano  running  example-ec2-ap-southeast-2  2019-12-07T08:12:00.000Z  ap-southeast-2a  None
+i-b983805b4b254f749  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:30.000Z  ap-southeast-2a  None
+i-fed39ebe7204dfd37  ami-123456789012  t3.nano  running  postfix-prod                2019-12-07T08:26:34.000Z  ap-southeast-2a  None
+i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus                  2019-12-07T08:27:02.000Z  ap-southeast-2a  None
+i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 2019-12-07T08:27:38.000Z  ap-southeast-2a  None
+```
+
+and a number of command to act on these resources:
 
 ```ShellSession
-$ stacks # lists CloudFormation stacks
-
-$ stack-[TAB][TAB]
-stack-arn            stack-elbs           stack-recreate       stack-tags-text
-stack-asg-instances  stack-events         stack-resources      stack-tail
-stack-asgs           stack-exports        stack-status         stack-template
-stack-cancel-update  stack-failure        stack-tag            stack-update
-stack-create         stack-instances      stack-tag-apply      stack-validate
-stack-delete         stack-outputs        stack-tag-delete
-stack-diff           stack-parameters     stack-tags
-
-$ aws-[TAB][TAB]
-aws-account-alias                 aws-account-cost-recommendations  aws-account-id
-aws-account-cost-explorer         aws-account-each                  aws-panopticon
-
-$ asgs # lists Autoscaling groups
-
-$ asg-[TAB][TAB]
-asg-capacity             asg-min-size-set         asg-stack
-asg-desired-size-set     asg-processes_suspended  asg-suspend
-asg-instances            asg-resume
-asg-max-size-set         asg-scaling-activities
-
-$ buckets # lists S3 buckets
-bucket-acls
-
-$ elbs # lists Elastic Load Balancers (classic)
-$ elb-[TAB][TAB]
-elb-dnsname    elb-instances
-
-$ instances # lists EC2 instances
-
 $ instance-[TAB][TAB]
-instance-asg                             instance-stop
-instance-az                              instance-tags
-instance-console                         instance-terminate
-instance-dns                             instance-termination-protection
-instance-iam-profile                     instance-termination-protection-disable
-instance-ip                              instance-termination-protection-enable
-instance-ssh                             instance-type
-instance-ssh-details                     instance-userdata
-instance-stack                           instance-volumes
-instance-start                           instance-vpc
-instance-state
-
-$ keypairs # lists EC2 SSH KeyPairs
-
-$ keypair-[TAB][TAB]
-keypair-create  keypair-delete
-
-$ vpcs # lists VPCs
-
-$ vpc-[TAB][TAB]
-vpc-default-delete    vpc-lambda-functions  vpc-rds
-vpc-dhcp-options-ntp  vpc-nat-gateways      vpc-route-tables
-vpc-igw               vpc-network-acls      vpc-subnets
-
+instance-asg          instance-ssh-details  instance-termination-protection
+instance-az           instance-stack        instance-termination-protection-disable
+instance-console      instance-start        instance-termination-protection-enable
+instance-dns          instance-state        instance-type
+instance-iam-profile  instance-stop         instance-userdata
+instance-ip           instance-tags         instance-volumes
+instance-ssh          instance-terminate    instance-vpc
 ```
 
-For more info on the query syntax used by AWSCLI, check out http://jmespath.org/tutorial.html
+Whether you're new to the tools or just have a bad memory, bash completion
+makes discovering these commands simple.
 
-**Piping output between functions**
+!!! Note "See the [Command Reference](/command-reference) for a full list with usage examples"
 
-We're very excited to announce this functionality.
 
-Most bash-my-aws functions will accept AWS Resource Ids from STDIN. This means
-you can pipe output from many functions into other functions.
+### Piping Between Commands
+
+This is where the magic happens!
+
+The first token on each line is almost always a resource identifier. When you pipe output
+between the commands they just take the first token from each line.
 
 ```ShellSession
-$ instances | grep splunk | instance-stack | stack-status
-splunk-forwarder  UPDATE_COMPLETE
-splunk-forwarder-role CREATE_COMPLETE
+$ instances | grep postfix | instance-ip
+i-b983805b4b254f749  10.190.1.70    54.214.71.51
+i-fed39ebe7204dfd37  10.135.204.82  54.214.26.190
 ```
 
+!!! Note
+    Most commands that list resources (`stacks`, `instances` , etc) accept
+    filter term as first arg. As well as reducing keystrokes, it can also
+    improve output as columnisation is done after filtering.
 
-### Usage examples
+        $ instances postfix | instance-ip
+        i-b983805b4b254f749  10.190.1.70    54.214.71.51
+        i-fed39ebe7204dfd37  10.135.204.82  54.214.26.190
 
-**cloudformation-functions**
 
-#### Create a stack
+### Inspecting Commands
 
-This function gives you tab completion for filenames (missing from AWSCLI).
+For those interested in how it works:
 
-```ShellSession
-$ stack-create
-USAGE: stack-create stack
+- Each command is a bash function.
+- Most are *very* simple and wrap an AWSCLI command.
 
-$ stack-create example      # creates stack called example using example.json
+For a quick look at how a command works, you can use `bma type`:
+
+```shell
+$ bma type instances
+instances is a function
+instances () 
+{ 
+    local instance_ids=$(__bma_read_inputs);
+    local filters=$(__bma_read_filters $@);
+    aws ec2 describe-instances $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids}) --query "
+      Reservations[].Instances[][
+        InstanceId,
+        ImageId,
+        InstanceType,
+        State.Name,
+        [Tags[?Key=='Name'].Value][0][0],
+        LaunchTime,
+        Placement.AvailabilityZone,
+        VpcId
+      ]" --output text | grep -E -- "$filters" | LC_ALL=C sort -b -k 6 | column -s'	' -t
+}
 ```
 
-It's also one of the functions that allows you to omit the template name
-if it exists in the current directory and matches the stack name with '.json'
-appended.
+A prettier version can be found in the source code:
 
-It's even smart enough to detect that you've added '-blah' to the stack name.
-```ShellSession
-$ stack-create example-test # creates stack called example-test using example.json
+```shell
+# ~/.bash-my-aws/lib/instance-functions
+instances() {
+  local instance_ids=$(__bma_read_inputs)
+  local filters=$(__bma_read_filters $@)
+
+  aws ec2 describe-instances                                            \
+    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+    --query "
+      Reservations[].Instances[][
+        InstanceId,
+        ImageId,
+        InstanceType,
+        State.Name,
+        [Tags[?Key=='Name'].Value][0][0],
+        LaunchTime,
+        Placement.AvailabilityZone,
+        VpcId
+      ]"                                                               \
+    --output text       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 6 |
+  column -s$'\t' -t
+}
 ```
 
-
-#### List stacks
-
-This is basically 'ls' with the ability to filter by a search string
-
-```ShellSession
-$ stacks # call without filter argument to return all stacks
-example-app
-example-app-test
-example-app-dev
-something
-something-else
-
-$ stacks example # Or filter out the relevant stacks
-example-app
-example-app-test
-example-app-dev
-```
-
-
-#### See what changes will be made by updating a stack
-```ShellSession
-$ stack-diff
-USAGE: stack-diff stack [template-file]
-
-$ stack-diff example-dev
-template for stack (example) and contents of file (example-dev.json) are the same
-
-e--- params
-+++ example-params-dev.json
-@@ -4,7 +4,7 @@
-         "ParameterKey": "slipGeneratorRolePath"
-     },
-     {
--        "ParameterValue": "something",
-+        "ParameterValue": "something-else",
-         "ParameterKey": "storageBucketName"
-     },
-     {
-```
-
-#### Updating a stack
-
-```ShellSession
-$ stack-update
-USAGE: stack-update stack [template-file] [params-file]
-
-$ stack-update example # creates stack called example using example.json
-...
-```
-
-
-#### Deleting a stack
-
-```ShellSession
-$ stack-delete
-USAGE: stack-delete stack
-
-$ stack-delete example # deletes stack called example
-...
-```
-
-
-#### Tailing stack events
-
-The create/update tasks call this one but it can also be called directly.
-It watches events for a stack until it sees them complete or fail.
-
-```ShellSession
-$ stack-tail my-stack
----------------------------------------------------------------------------------------------------------------------------------------------------------
-|                                                                  DescribeStackEvents                                                                  |
-+--------------------------+-------------------------------+-------------------------------------------+------------------------------------------------+
-|  2015-07-25T23:13:21.628Z|  MyStack                      |  AWS::CloudFormation::Stack               |  CREATE_IN_PROGRESS                            |
-|  2015-07-25T23:13:27.221Z|  AppServerSSHSecurityGroup    |  AWS::EC2::SecurityGroup                  |  CREATE_IN_PROGRESS                            |
-|  2015-07-25T23:13:27.235Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_IN_PROGRESS                            |
-|  2015-07-25T23:13:27.291Z|  InternalELBSecurityGroup     |  AWS::EC2::SecurityGroup                  |  CREATE_IN_PROGRESS                            |
-|  2015-07-25T23:13:27.537Z|  AppServerRole                |  AWS::IAM::Role                           |  CREATE_IN_PROGRESS                            |
-|  2015-07-25T23:13:28.244Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_IN_PROGRESS                            |
-|  2015-07-25T23:13:28.769Z|  DeploymentSQSQueue           |  AWS::SQS::Queue                          |  CREATE_COMPLETE                               |
-+--------------------------+-------------------------------+-------------------------------------------+------------------------------------------------+
-```
+For more info on AWSCLI query syntax, check out [http://jmespath.org/tutorial.html](http://jmespath.org/tutorial.html)
 
