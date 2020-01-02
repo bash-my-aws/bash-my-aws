@@ -1,4 +1,4 @@
-Bash-My-AWS
+Bash-my-AWS
 ===========
 
 **Dec 2019: New [Bash-my-AWS website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org**
