@@ -122,7 +122,7 @@ prometheus                         CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_
 stack-with-a-annoyingly-long-name  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
 ```
 
-This affects the output when we look at our postgress stacks:
+This affects the output when we look at our Postgres stacks:
 ```shell
 $ stacks | grep postgres
 postgres01                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
