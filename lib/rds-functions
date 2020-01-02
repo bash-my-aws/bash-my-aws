@@ -3,7 +3,7 @@
 #
 # rds-functions
 #
-# Amazon AWS RDS database instances
+# Amazon AWS RDS database instances & clusters
 
 # This is the second function refering to a type of `instance`
 # Perhaps EC2 `instance` functions should be aliased to `ec2-instances`
@@ -22,6 +22,26 @@ rds-db-instances() {
         EngineVersion,
         DBInstanceStatus,
         DBName
+      ]"                        \
+    --output text |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 1 |
+  column -s$'\t' -t
+}
+
+rds-db-clusters() {
+
+  # List RDS Database Clusters
+
+  local filters=$(__bma_read_filters "$@")
+
+  aws rds describe-db-clusters \
+    --query "DBClusters[].[
+        DBClusterIdentifier,
+        Engine,
+        EngineVersion,
+        Status,
+        ClusterCreateTime
       ]"                        \
     --output text |
   grep -E -- "$filters" |
