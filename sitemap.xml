@@ -6,8 +6,13 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://Bash-my-AWS.org/command-reference/</loc>
-     <lastmod>2020-01-02</lastmod>
+     <loc></loc>
+     
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc></loc>
+     
      <changefreq>daily</changefreq>
     </url>
 </urlset>

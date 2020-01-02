@@ -13,7 +13,7 @@
         <meta name="description" content="CLI Commands for Managing AWS Resources">
       
       
-        <link rel="canonical" href="https://Bash-my-AWS.org/style/">
+        <link rel="canonical" href="https://Bash-my-AWS.org/cloudformation-naming/">
       
       
         <meta name="author" content="Mike Bailey">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Style - Bash-my-AWS</title>
+        <title>Cloudformation naming - Bash-my-AWS</title>
       
     
     
@@ -108,7 +108,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#bash-my-aws-style-guide" tabindex="1" class="md-skip">
+      <a href="#suggested-stacktemplateparam-file-naming-conventions" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -134,7 +134,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Style
+                Cloudformation naming
               
             </span>
           
@@ -269,7 +269,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../cloudformation-naming" title="CloudFormation Naming" class="md-nav__link">
+    <a href="." title="CloudFormation Naming" class="md-nav__link">
       CloudFormation Naming
     </a>
   </li>
@@ -289,8 +289,22 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
   
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#suggested-stacktemplateparam-file-naming-conventions" class="md-nav__link">
+    Suggested stack/template/param file naming conventions
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
   
 </nav>
                   </div>
@@ -302,28 +316,54 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/bash-my-aws/bash-my-aws/edit/master/docs/style.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/bash-my-aws/bash-my-aws/edit/master/docs/cloudformation-naming.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="bash-my-aws-style-guide">bash-my-aws style guide<a class="headerlink" href="#bash-my-aws-style-guide" title="Permanent link">&para;</a></h1>
+                  <h1>Cloudformation naming</h1>
+                
+                <h2 id="suggested-stacktemplateparam-file-naming-conventions">Suggested stack/template/param file naming conventions<a class="headerlink" href="#suggested-stacktemplateparam-file-naming-conventions" title="Permanent link">&para;</a></h2>
+<p>bash-my-aws can take a lot of the effort out of creating and updating
+CloudFormation (CFN) stacks. Tab completion on remote stack names and
+even local file names is provided.</p>
+<p>Additionally, the create/update/diff commands can make life much easier
+if you follow some simple file naming conventions.</p>
+<p><em>These are completely optional.</em></p>
+<div class="codehilite"><pre><span></span>stack   : token-env
+template: token.yml
+params  : token-params-env.json or params/token-params-env.json
+</pre></div>
+
+
+<p>Where:</p>
+<div class="codehilite"><pre><span></span>token : describes the resources (mywebsite, vpc, bastion, etc)
+env   : environment descriptor (dev, test, prod, etc)
+</pre></div>
+
+
+<p>Following these (entirely optional) conventions means bash-my-aws can
+infer template &amp; params file from stack name. For example:</p>
+<div class="codehilite"><pre><span></span>$ stack-create mywebsite-test
+</pre></div>
+
+
+<p>is equivalent (if files present) to:</p>
+<div class="codehilite"><pre><span></span>$ stack-create mywebsite-test mywebsite.yml mywebsite-params-test.json
+</pre></div>
+
+
+<p>you could even achieve the same result with:</p>
+<div class="codehilite"><pre><span></span>$ stack-create mywebsite-params-test.json
+</pre></div>
+
+
+<p>Other benefits include:</p>
 <ul>
-<li>Always quote "$variables"</li>
-<li>Only use parentheses around variables when not surrounded with whitespace (better way to phrase this?)</li>
-<li>use <code>$(date)</code> rather than "<code>date</code>"</li>
-<li>
-<p>use <code>[[</code> and <code>]]</code> rather than <code>[</code>, <code>]</code>, or <code>test</code></p>
-</li>
-<li>
-<p>show errors with <code>__bma_error()</code></p>
-</li>
-<li>show usage options with <code>__bma_usage()</code></li>
-<li>
-<p>parse inputs with <code>__bma_read_inputs()</code></p>
-</li>
-<li>
-<p>regenerate and test the bash_completion script after adding new functions</p>
-</li>
+<li>ease in locating stack for template (and vice versa) based on name</li>
+<li>template and params files are listed together on filesystem</li>
+<li>stack name env suffixes protect against accidents (wrong account error)</li>
+<li>supports prodlike non-prod environments through using same template</li>
 </ul>
+<p>And don't forget, these naming conventions are completely optional.</p>
                 
                   
                 
