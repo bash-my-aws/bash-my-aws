@@ -54,3 +54,4 @@ Resources:
         - Key: Name
           Value: !Sub '${AWS::StackName}'
           PropagateAtLaunch: 'true'
+

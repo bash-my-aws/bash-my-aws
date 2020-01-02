@@ -5,6 +5,21 @@
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
 instances() {
+
+  # List EC2 Instances
+  #
+  #     $ instances
+  #     i-4e15ece1de1a3f869  ami-123456789012  t3.nano  running  nagios          2019-12-10T08:17:18.000Z  ap-southeast-2a  None
+  #     i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1       2019-12-10T08:17:20.000Z  ap-southeast-2a  None
+  #     i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2       2019-12-10T08:17:22.000Z  ap-southeast-2a  None
+  #     i-61e86ac6be1e2c193  ami-123456789012  t3.nano  running  prometheus-web  2019-12-10T08:17:24.000Z  ap-southeast-2a  None
+  #
+  # *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+  #
+  #     $ instances postgres
+  #     i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
+  #     i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
+
   local instance_ids=$(__bma_read_inputs)
   local filters=$(__bma_read_filters $@)
 
@@ -27,8 +42,13 @@ instances() {
   column -s$'\t' -t
 }
 
+
 instance-asg() {
-  # returns the autoscaling group instance is member of
+
+  # List autoscaling group membership of EC2 Instance(s)
+  #
+  #     USAGE: instance-asg instance-id [instance-id]
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -37,7 +57,7 @@ instance-asg() {
     --query "
       Reservations[].Instances[][
         {
-          "AutoscalingGroupName": 
+          "AutoscalingGroupName":
             [Tags[?Key=='aws:autoscaling:groupName'].Value][0][0],
           "InstanceId": InstanceId
         }
@@ -46,11 +66,20 @@ instance-asg() {
   column -s$'\t' -t
 }
 
+
 instance-az() {
-  # returns the availability zone of an instance
+
+  # List availability zone of EC2 Instance(s)
+  #
+  #     USAGE: instance-az instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-az
+  #     i-89cefa9403373d7a5  ap-southeast-2a
+  #     i-806d8f1592e2a2efd  ap-southeast-2a
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
@@ -64,8 +93,26 @@ instance-az() {
   column -s$'\t' -t
 }
 
+
 instance-console() {
-  # return console output of instance
+
+  # List console output of EC2 Instance(s)
+  #
+  #     USAGE: instance-console instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-console
+  #     Console output for EC2 Instance i-89cefa9403373d7a5
+  #     Linux version 2.6.16-xenU (builder@patchbat.amazonsa) (gcc version 4.0.1 20050727 (Red Hat 4.0.1-5)) #1 SMP Thu Oct 26 08:41:26 SAST 2006
+  #     BIOS-provided physical RAM map:
+  #     Xen: 0000000000000000 - 000000006a400000 (usable)
+  #     ...snip...
+  #
+  #     Console output for EC2 Instance i-806d8f1592e2a2efd
+  #     Linux version 2.6.16-xenU (builder@patchbat.amazonsa) (gcc version 4.0.1 20050727 (Red Hat 4.0.1-5)) #1 SMP Thu Oct 26 08:41:26 SAST 2006
+  #     BIOS-provided physical RAM map:
+  #     Xen: 0000000000000000 - 000000006a400000 (usable)
+  #     ...snip...
+
   local instance_ids=$(__bma_read_inputs $@)
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local instance_id
@@ -79,11 +126,21 @@ instance-console() {
   done
 }
 
+
 instance-dns() {
-  # returns the dns name of an instance
+
+  # List DNS name of EC2 Instance(s)
+  #
+  #     USAGE: instance-dns instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-dns
+  #     i-89cefa9403373d7a5  ip-10-155-35-61.ap-southeast-2.compute.internal   ec2-54-214-206-114.ap-southeast-2.compute.amazonaws.com
+  #     i-806d8f1592e2a2efd  ip-10-178-243-63.ap-southeast-2.compute.internal  ec2-54-214-244-90.ap-southeast-2.compute.amazonaws.com
+
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
@@ -98,7 +155,13 @@ instance-dns() {
   column -s$'\t' -t
 }
 
+
 instance-health-set-unhealthy() {
+
+  # Mark EC2 Instance(s) as unhealthy (to trigger replacement by ASG)
+  #
+  #     USAGE: instance-health-set-unhealthy instance-id [instance-id]
+
   local instances=$(__bma_read_inputs "$@");
   local health_status=Unhealthy
 
@@ -114,11 +177,16 @@ instance-health-set-unhealthy() {
   done
 }
 
+
 instance-iam-profile() {
-  # returns the iam-profile of an instance
+
+  # List iam-profile of EC2 Instance(s)
+  #
+  #     USAGE: instance-iam-profile instance-id [instance-id]
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
@@ -132,11 +200,20 @@ instance-iam-profile() {
   column -s$'\t' -t
 }
 
+
 instance-ip() {
-  # returns the ip address of an instance
+
+  # List ip address of EC2 Instance(s)
+  #
+  #     USAGE: instance-ip instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-ip
+  #     i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
+  #     i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
@@ -151,8 +228,12 @@ instance-ip() {
   column -s$'\t' -t
 }
 
+
 instance-ssh() {
-  # connects to an instance via SSH
+
+  # Establish SSH connection to EC2 Instance(s)
+  #
+  #     USAGE: instance-ssh [login] [instance-id] [instance-id]
 
   local inputs="$(__bma_read_inputs $@)"
   local instance_ids=$(echo "$inputs" | tr " " "\n" | grep "^i-" | tr "\n" " ")
@@ -183,8 +264,13 @@ instance-ssh() {
   done
 }
 
+
 instance-ssh-details() {
-  # returns the details needed to SSH into an instance
+
+  # List details needed to SSH into EC2 Instance(s)
+  #
+  #     USAGE: instance-ssh-details [login] [instance-id] [instance-id]
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "${instance_ids}" ]] && __bma_usage "instance_id" && return 1
 
@@ -202,8 +288,17 @@ instance-ssh-details() {
   column -s$'\t' -t
 }
 
+
 instance-stack() {
-  # returns the stack an instances is a member of
+
+  # List CloudFormation stack EC2 Instance(s) belong to (if any)
+  #
+  #     USAGE: instance-stack instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-stack
+  #     postgres1  i-89cefa9403373d7a5
+  #     postgres2  i-806d8f1592e2a2efd
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -220,8 +315,17 @@ instance-stack() {
   column -s$'\t' -t
 }
 
+
 instance-start() {
-  # starts a stopped instance
+
+  # Start stopped EC2 Instance(s)
+  #
+  #     USAGE: instance-start instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-start
+  #     i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
+  #     i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -237,11 +341,20 @@ instance-start() {
     column -t
 }
 
+
 instance-state() {
-  # returns the state of an instance
+
+  # List state of EC2 Instance(s)
+  #
+  #     USAGE: instance-state instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-state
+  #     i-89cefa9403373d7a5  running
+  #     i-806d8f1592e2a2efd  running
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
@@ -255,8 +368,18 @@ instance-state() {
   column -s$'\t' -t
 }
 
+
 instance-stop() {
-  # stops a running instance
+
+  # Stop EC2 Instance(s)
+  #
+  #     USAGE: instance-stop instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-stop
+  #
+  #     i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
+  #     i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -272,16 +395,16 @@ instance-stop() {
     column -t
 }
 
-# Replaces two older functions
-#
-# instances_with_tag() # instance_tags | grep expiry=
-# instances_without_tag() # instance_tags | grep -v expiry=
-#
+
 instance-tags() {
-  # returns the tags applied instances
+
+  # List tags applied EC2 Instance(s)
+  #
+  #     USAGE: instance-tags instance-id [instance-id]
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "
@@ -293,10 +416,24 @@ instance-tags() {
   column -s$'\t' -t
 }
 
+
 instance-terminate() {
+
+  # Terminate EC2 Instance(s)
+  #
+  #     USAGE: instance-terminate instance-id [instance-id]
+  #
+  #     $ instances | head -3 | instance-terminate
+  #     You are about to terminate the following instances:
+  #     i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  terminated  asg2  2019-12-13T03:37:51.000Z  ap-southeast-2c  None
+  #     i-012dded46894dfa04  ami-0119aa4d67e59007c  t3.nano  running     ec2   2019-12-13T10:12:55.000Z  ap-southeast-2b  vpc-deb8edb9
+  #     Are you sure you want to continue? y
+  #     i-06ee900565652ecc5  PreviousState=terminated  CurrentState=terminated
+  #     i-01c7edb986c18c16a  PreviousState=terminated  CurrentState=terminated
+  #     i-012dded46894dfa04  PreviousState=running     CurrentState=shutting-down
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-
 
   echo "You are about to terminate the following instances:"
   instances "$instance_ids"
@@ -319,7 +456,19 @@ instance-terminate() {
   fi
 }
 
+
 instance-termination-protection() {
+
+  # List current state of Termination Protection for EC2 Instance(s)
+  #
+  #     USAGE: instance-termination-protection instance-id [instance-id]
+  #
+  #     $ instances | instance-termination-protection
+  #     i-4e15ece1de1a3f869 DisableApiTermination=true
+  #     i-89cefa9403373d7a5 DisableApiTermination=false
+  #     i-806d8f1592e2a2efd DisableApiTermination=false
+  #     i-61e86ac6be1e2c193 DisableApiTermination=false
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -327,12 +476,24 @@ instance-termination-protection() {
     aws ec2 describe-instance-attribute \
       --attribute disableApiTermination \
       --instance-id "$instance_id"      \
-      --query "[InstanceId, join('=', ['DisableApiTermination', to_string(DisableApiTermination.Value)])]" \
-      --output text
+      --output text                     \
+      --query "[
+        InstanceId,
+        join('=', [
+          'DisableApiTermination',
+          to_string(DisableApiTermination.Value)
+        ])
+      ]"
   done
 }
 
+
 instance-termination-protection-disable() {
+
+  # Disable EC2 Instance termination protection
+  #
+  #     USAGE: instance-termination-protection-disable instance-id [instance-id]
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -353,7 +514,13 @@ instance-termination-protection-disable() {
   fi
 }
 
+
 instance-termination-protection-enable() {
+
+  # Enable EC2 Instance termination protection
+  #
+  #     USAGE: instance-termination-protection-enable instance-id [instance-id]
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -374,8 +541,19 @@ instance-termination-protection-enable() {
   fi
 }
 
+
 instance-type() {
-  # returns the type of an instance
+
+  # List type of instance(s)
+  #
+  #     USAGE: instance-type instance-id [instance-id]
+  #
+  #     $ instances | instance-type
+  #     i-4e15ece1de1a3f869  t3.nano
+  #     i-89cefa9403373d7a5  t3.nano
+  #     i-806d8f1592e2a2efd  t3.nano
+  #     i-61e86ac6be1e2c193  t3.nano
+
   local instance_ids="$(__bma_read_inputs $@)"
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -392,8 +570,13 @@ instance-type() {
   column -s$'\t' -t
 }
 
+
 instance-userdata() {
-  # returns userdata for instance
+
+  # List userdata for instance(s)
+  #
+  #     USAGE: instance-userdata instance-id [instance-id]
+
   local instance_ids=$(__bma_read_inputs $@)
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
   local instance_id
@@ -409,8 +592,17 @@ instance-userdata() {
   done
 }
 
+
 instance-volumes() {
-  # returns the volumes of an instance
+
+  # List volumes of instance(s)
+  #
+  #     USAGE: instance-volumes instance-id [instance-id]
+  #
+  #     $ instances postgres | instance-volumes
+  #     i-89cefa9403373d7a5  vol-cf5ddae9
+  #     i-806d8f1592e2a2efd  vol-38fd45c3
+
   local instance_ids=$(__bma_read_inputs $@)
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
 
@@ -427,11 +619,16 @@ instance-volumes() {
   column -s$'\t' -t
 }
 
+
 instance-vpc() {
-  # returns the vpc of an instance
+
+  # List VPC of instance(s)
+  #
+  #     USAGE: instance-vpcs instance-id [instance-id]
+
   local instance_ids=$(__bma_read_inputs $@)
   [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-  
+
   aws ec2 describe-instances                                            \
     $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
     --query "

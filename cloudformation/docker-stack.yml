@@ -127,7 +127,11 @@ Resources:
       DesiredCapacity: !Ref 'AsgMinSize'
       Tags:
         - Key: Name
+<<<<<<< HEAD
           Value: !Sub '${AWS::StackName}'
+=======
+          Value: !Sub '${AWS::StackName}/instance'
+>>>>>>> Keep docs with code and extract for website.
           PropagateAtLaunch: 'true'
 
   DnsRecord:

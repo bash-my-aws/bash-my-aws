@@ -2,7 +2,11 @@
 #
 # cert-functions
 
+
 certs() {
+
+  # List ACM Certificates
+
   local filters=$(__bma_read_filters $@)
 
   local include_arn_bit=''
@@ -29,32 +33,44 @@ certs() {
 }
 
 
-# Same as certs() but with the ARN in first column
 certs-arn() {
+
+  # Same as `certs` but with the ARN in first column
+
   local include_arn=true
   certs $@
 }
 
 
 cert-users() {
+
+  # List resources using ACM Cert(s)
+  #
+  #     USAGE: cert-users cert-arn [cert-arn]
+
   local cert_arns="$(__bma_read_inputs $@)"
   [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
 
   local cert_arns
   for cert_arn in $cert_arns; do
-    aws acm describe-certificate    \
-      --certificate-arn ${cert_arn} \
+    aws acm describe-certificate       \
+      --certificate-arn "${cert_arn}"  \
+      --output text                    \
       --query "Certificate.InUseBy[].[
-        @, \`$cert_arn\`
-      ]
-      " \
-      --output text
+        @,
+        \`$cert_arn\`
+      ]"
   done |
   column -s$'\t' -t
 }
 
 
 cert-delete() {
+
+  # Delete ACM Cert(s)
+  #
+  #     USAGE: cert-delete cert-arn [cert-arn]
+
   local cert_arns="$(__bma_read_inputs $@)"
   [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
 
@@ -68,7 +84,7 @@ cert-delete() {
   then
     local cert_arn
     for cert_arn in $cert_arns; do
-      aws acm delete-certificate --certificate-arn $cert_arn
+      aws acm delete-certificate --certificate-arn "$cert_arn"
     done
   fi
 }

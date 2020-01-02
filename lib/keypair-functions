@@ -2,9 +2,17 @@
 #
 # keypair-functions
 #
-# list, create and delete EC2 ssh keypairs
+# List, create and delete EC2 SSH Keypairs
 
-keypairs(){
+
+keypairs() {
+
+  # List EC2 SSH Keypairs in current Region
+  #
+  #     $ keypairs
+  #     alice  8f:85:9a:1e:6c:76:29:34:37:45:de:7f:8d:f9:70:eb
+  #     bob    56:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
+
   local keypairs=$(__bma_read_inputs)
   local filters=$(__bma_read_filters $@)
 
@@ -16,7 +24,49 @@ keypairs(){
   column -s$'\t' -t
 }
 
-keypair-create(){
+
+keypair-create() {
+
+  # Create SSH Keypair on local machine and import public key into new EC2 Keypair.
+  #
+  # Provides benefits over AWS creating the keypair:
+  #
+  # Amazon never has access to private key.  
+  # Private key is protected with passphrase before being written to disk.  
+  # Keys is written to ~/.ssh with correct file permissions.  
+  # You control the SSH Key type (algorithm, length, etc).  
+  #
+  #     USAGE: keypair-delete key_name [key_name]
+  #
+  #     $ keypair-create yet-another-keypair
+  #     Creating /home/m/.ssh/yet-another-keypair
+  #     Generating public/private rsa key pair.
+  #     Enter passphrase (empty for no passphrase):
+  #     Enter same passphrase again:
+  #     Your identification has been saved in /home/m/.ssh/yet-another-keypair.
+  #     Your public key has been saved in /home/m/.ssh/yet-another-keypair.pub.
+  #     The key fingerprint is:
+  #     SHA256:zIpbxLo7rpQvKyezOLATk96B1kSL0QP41q6x8tUrySk m@localhost.localdomain
+  #     The key's randomart image is:
+  #     +---[RSA 4096]----+
+  #     |..o              |
+  #     |.. +             |
+  #     | .+.o            |
+  #     | .oo.. o         |
+  #     | o+.  o S        |
+  #     |=o.+.= .         |
+  #     |+++==o+          |
+  #     |XoE+*+ .         |
+  #     |o@+**+.          |
+  #     +----[SHA256]-----+
+  #     {
+  #         "KeyFingerprint": "21:82:f9:5b:79:d6:dc:0f:7b:79:43:7c:c5:34:6c:2d",
+  #         "KeyName": "yet-another-keypair"
+  #     }
+  #
+  # !!! Note
+  #     KeyPair Name defaults to "$(aws-account-alias)-$(region)" if none provided
+
   KEY_NAME=${1:-"$(aws-account-alias)-$(region)"}
   KEY_DIR=${2:-"$HOME/.ssh"}
 
@@ -33,7 +83,24 @@ keypair-create(){
     --public-key-material "file://${KEY_DIR}/${KEY_NAME}.pub"
 }
 
-keypair-delete(){
+
+keypair-delete() {
+
+  # Delete EC2 SSH Keypairs by providing their names as arguments or via STDIN
+  #
+  #     USAGE: keypair-delete key_name [key_name]
+  #
+  #     $ keypair-delete alice bob
+  #     You are about to delete the following EC2 SSH KeyPairs:
+  #     alice
+  #     bob
+  #     Are you sure you want to continue? y
+  #
+  #     $ keypairs | keypair-delete
+  #     You are about to delete the following EC2 SSH KeyPairs:
+  #     yet-another-keypair
+  #     Are you sure you want to continue? y
+
   local keypairs=$(__bma_read_inputs $@)
   local keypair
   [[ -z ${keypairs} ]] && __bma_usage "key_name [key_name]" && return 1

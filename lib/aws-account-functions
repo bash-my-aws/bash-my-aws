@@ -1,25 +1,55 @@
 #!/bin/bash
 #
 # aws-account-functions
+#
+# These functions target AWS Accounts and act on either the account you're
+# authenticated to or the Account IDs provided to them.
 
-# Returns the Account Alias
+
 aws-account-alias() {
+
+  # Retrieve AWS Account Alias for current account
+  #
+  #     $ aws-account-alias
+  #     example-account-prod
+
   aws iam list-account-aliases \
     --query AccountAliases     \
     --output text
 }
 
-# Returns AWS Account ID of caller
+
 aws-account-id() {
+
+  # Retrieve AWS Account ID for current account
+  #
+  #     $ aws-account-id
+  #     012345678901
+
   aws sts get-caller-identity --query Account --output text
 }
 
-# aws-account-each - Run command on multiple AWS Accounts
-#
-# Reads AWS Account IDs from STDIN
-# Assumes an IAM Role on each account and runs command given as arguments
-#
+
 aws-account-each() {
+
+  # Run a script/command across a number of AWS Accounts
+  #
+  #     USAGE: aws-account-each cmd # pipe in AWS_ACCOUNT_IDS
+  #
+  #     $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
+  #
+  #     # account=012345678901 alias=example-account-prod
+  #     example-stack1-prod  CREATED_FAILED
+  #     example-stack2-prod  UPDATE_ROLLBACK_FAILED
+  #     # account=123456789012 alias=example-account-staging
+  #     example-stack1-staging  CREATED_FAILED
+  #     example-stack2-staging  UPDATE_ROLLBACK_FAILED
+  #
+  # !!! Note
+  #     In order to use `aws-account-each`, you need to be authenticated with an
+  #     IAM Role that can assume a Role in each of the specified accounts.
+  #     Check the source for more info.
+
   local aws_account_ids="$(__bma_read_inputs)"
   local cmd=$@
   local assumed_role_name="${AWS_PANOPTICON_ROLE_NAME:-SecurityAuditor}"
@@ -40,15 +70,21 @@ aws-account-each() {
   done
 }
 
-# aws-panopticon was previous name for aws-account-each()
+
 aws-panopticon() {
+  # aws-panopticon was previous name for aws-account-each()
+
   aws-account-each $@
 }
 
 
-# View a list of AWS_ACCOUNT_IDs in AWS Cost Explorer
-#
 aws-account-cost-explorer(){
+
+  # Use with an AWS Organisations Master Account to open multiple accounts
+  # in Cost Explorer.
+  #
+  #     $ grep demo AWS_ACCOUNTS | aws-account-cost-explorer
+  #     #=> Opens web browser to AWS Cost Explorer with accounts selected
 
   local accounts_formatted="%22$(__bma_read_inputs $@ | sed 's/ /%22,%22/g')%22"
 
@@ -63,10 +99,15 @@ aws-account-cost-explorer(){
 
 aws-account-cost-recommendations(){
 
+  # Use with an AWS Organisations Master Account to open multiple accounts
+  # in Cost Recommendations.
+  #
+  #     $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
+  #     #=> Opens web browser to AWS Cost Recommendations with accounts selected
+
   local accounts_formatted="%22$(__bma_read_inputs | sed 's/ /%22,%22/g')%22"
 
   local cmd_open="$(hash xdg-open &> /dev/null && echo 'xdg-open' || echo 'open')"
 
   $cmd_open "https://console.aws.amazon.com/cost-reports/home?#/recommendations/rightsizing?isLoading&service=AmazonEC2&rightsizingType=%5B%22Terminate%22,%22Modify%22%5D&filter=%5B%7B%22dimension%22:%22LINKED_ACCOUNT%22,%22values%22:%5B$accounts_formatted%5D,%22include%22:true%7D%5D"
-
 }

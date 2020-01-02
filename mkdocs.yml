@@ -1,14 +1,14 @@
 site_name: 'Bash-my-AWS'
 site_description: 'CLI Commands for Managing AWS Resources'
 site_author: 'Mike Bailey'
-site_url: 'https://Bash-my-AWS.org/'
+site_url: 'https://bash-my-aws.org/'
 google_analytics: ['UA-154550647-1', 'bash-my-aws.org']
 
 nav:
   - Home: index.md
   # - Tour: tour.md
-  - Command Reference: command-reference
-  - CloudFormation Naming: cloudformation-naming
+  - Command Reference: command-reference.md
+  - CloudFormation Naming: cloudformation-naming.md
 
 theme:
   name: material

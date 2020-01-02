@@ -3,13 +3,21 @@
 # iam-functions
 
 # [TIP] When a trusted Role is recreated, the trust is broken.
-# When the friendly name is no longer used, it indicates the trust 
-# relationship is broken.
-# Broken trust relationships can be listed with:
+# When the trust is broken, the friendly name is no longer used.
+# Thus, broken trust relationships can be listed with:
 #
 # `iam-roles | iam-role-principal | grep AROA`
 
+
 iam-roles() {
+
+  # List IAM Roles
+  #
+  #     $ iam-roles
+  #     config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
+  #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
+  #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+
   local filters=$(__bma_read_filters $@)
 
   aws iam list-roles    \
@@ -26,6 +34,11 @@ iam-roles() {
 
 
 iam-role-principal(){
+
+  # List role principal for IAM Role(s)
+  #
+  #     USAGE: iam-role-principal role-name [role-name]
+
   local role_names="$(__bma_read_inputs $@)"
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 

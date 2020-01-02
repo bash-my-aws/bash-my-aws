@@ -1,10 +1,19 @@
 #!/bin/bash
 #
 # elb-functions
+#
+# EC2 Enterprise Load Balancers (A.K.A. Classic load Balancers)
+
 
 elbs() {
-  # returns a list of ELBS
+
+  # List ELBs
   # Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names
+  #
+  #     $ elbs
+  #     elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
+  #     another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
+
   local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
   local filters=$(__bma_read_filters $@)
 
@@ -21,14 +30,24 @@ elbs() {
   column -s$'\t' -t
 }
 
+
 elb-dnsname(){
+
+  # List DNS Names of ELB(s)
+  #
+  #      USAGE: elb-dnsname load-balancer [load-balancer]
+  #
+  #      $ elbs | elb-dnsname
+  #      elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
+  #      another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
+
   local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
-  [[ -z "${elb_names}" ]] && __bma_usage "load-balancer" && return 1
+  [[ -z "${elb_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   local elb_name
   for elb_name in $elb_names; do
     aws elb describe-load-balancers    \
-      --load-balancer-name ${elb_name} \
+      --load-balancer-name "$elb_name" \
       --query "
         LoadBalancerDescriptions[][
           '${elb_name}',
@@ -39,14 +58,20 @@ elb-dnsname(){
   done
 }
 
+
 elb-instances() {
+
+  # List instances of ELB(s)
+  #
+  #      USAGE: elb-instances load-balancer [load-balancer]
+
   local elb_names=$(__bma_read_inputs $@)
-  [[ -z "${elb_names}" ]] && __bma_usage "load-balancer" && return 1
+  [[ -z "${elb_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   local elb_name
   for elb_name in $elb_names; do
     aws elb describe-instance-health   \
-      --load-balancer-name ${elb_name} \
+      --load-balancer-name "$elb_name" \
       --query "
         InstanceStates[][
             InstanceId,
@@ -59,8 +84,17 @@ elb-instances() {
   done
 }
 
+
 elb-stack() {
-  # returns CloudFormation stack for asg(s)
+
+  # List CloudFormation stack names of ELB(s)
+  #
+  #     USAGE: elb-stack load-balancer [load-balancer]
+  #
+  #     $ elbs | elb-stack
+  #     elb          elb-MyLoadBalancer-1FNISWJN0W6N9
+  #     another-elb  another-e-MyLoadBa-171CPCZF2E84T
+
   local elb_names=$(__bma_read_inputs $@ | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
   [[ -z "$elb_names" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 

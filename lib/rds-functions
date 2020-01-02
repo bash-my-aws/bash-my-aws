@@ -10,6 +10,9 @@
 # The original names would be deprecated but still supported for some time.
 
 rds-db-instances() {
+
+  # List RDS Database Instances
+
   local filters=$(__bma_read_filters "$@")
 
   aws rds describe-db-instances \
