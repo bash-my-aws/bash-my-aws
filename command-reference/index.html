@@ -42,7 +42,7 @@
     
     
       
-        <title>Command reference - Bash-my-AWS</title>
+        <title>Command Reference - Bash-my-AWS</title>
       
     
     
@@ -134,7 +134,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Command reference
+                Command Reference
               
             </span>
           
@@ -255,11 +255,1201 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="." title="Command Reference" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Command Reference
+      </label>
+    
+    <a href="./" title="Command Reference" class="md-nav__link md-nav__link--active">
       Command Reference
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#aws-account-commands" class="md-nav__link">
+    aws-account-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-alias" class="md-nav__link">
+    aws-account-alias
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-id" class="md-nav__link">
+    aws-account-id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-each" class="md-nav__link">
+    aws-account-each
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-panopticon" class="md-nav__link">
+    aws-panopticon
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-cost-explorer" class="md-nav__link">
+    aws-account-cost-explorer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-cost-recommendations" class="md-nav__link">
+    aws-account-cost-recommendations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#region-commands" class="md-nav__link">
+    region-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regions" class="md-nav__link">
+    regions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region" class="md-nav__link">
+    region
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region-each" class="md-nav__link">
+    region-each
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack-commands" class="md-nav__link">
+    stack-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stacks" class="md-nav__link">
+    stacks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-arn" class="md-nav__link">
+    stack-arn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-cancel-update" class="md-nav__link">
+    stack-cancel-update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-create" class="md-nav__link">
+    stack-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-update" class="md-nav__link">
+    stack-update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-delete" class="md-nav__link">
+    stack-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-exports" class="md-nav__link">
+    stack-exports
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-recreate" class="md-nav__link">
+    stack-recreate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-failure" class="md-nav__link">
+    stack-failure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-events" class="md-nav__link">
+    stack-events
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-resources" class="md-nav__link">
+    stack-resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-asgs" class="md-nav__link">
+    stack-asgs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-asg-instances" class="md-nav__link">
+    stack-asg-instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-elbs" class="md-nav__link">
+    stack-elbs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-instances" class="md-nav__link">
+    stack-instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-parameters" class="md-nav__link">
+    stack-parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-status" class="md-nav__link">
+    stack-status
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tag" class="md-nav__link">
+    stack-tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tail" class="md-nav__link">
+    stack-tail
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-template" class="md-nav__link">
+    stack-template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tags" class="md-nav__link">
+    stack-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-tags-text" class="md-nav__link">
+    stack-tags-text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-outputs" class="md-nav__link">
+    stack-outputs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-validate" class="md-nav__link">
+    stack-validate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stack-diff" class="md-nav__link">
+    stack-diff
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instance-commands" class="md-nav__link">
+    instance-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instances" class="md-nav__link">
+    instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-asg" class="md-nav__link">
+    instance-asg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-az" class="md-nav__link">
+    instance-az
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-console" class="md-nav__link">
+    instance-console
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-dns" class="md-nav__link">
+    instance-dns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-health-set-unhealthy" class="md-nav__link">
+    instance-health-set-unhealthy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-iam-profile" class="md-nav__link">
+    instance-iam-profile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ip" class="md-nav__link">
+    instance-ip
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ssh" class="md-nav__link">
+    instance-ssh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ssh-details" class="md-nav__link">
+    instance-ssh-details
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stack" class="md-nav__link">
+    instance-stack
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-start" class="md-nav__link">
+    instance-start
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-state" class="md-nav__link">
+    instance-state
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop" class="md-nav__link">
+    instance-stop
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tags" class="md-nav__link">
+    instance-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-terminate" class="md-nav__link">
+    instance-terminate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-termination-protection" class="md-nav__link">
+    instance-termination-protection
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-termination-protection-disable" class="md-nav__link">
+    instance-termination-protection-disable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-termination-protection-enable" class="md-nav__link">
+    instance-termination-protection-enable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-type" class="md-nav__link">
+    instance-type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-userdata" class="md-nav__link">
+    instance-userdata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-volumes" class="md-nav__link">
+    instance-volumes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-vpc" class="md-nav__link">
+    instance-vpc
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asg-commands" class="md-nav__link">
+    asg-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asgs" class="md-nav__link">
+    asgs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-capacity" class="md-nav__link">
+    asg-capacity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-desired-size-set" class="md-nav__link">
+    asg-desired-size-set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-instances" class="md-nav__link">
+    asg-instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-launch-configuration" class="md-nav__link">
+    asg-launch-configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#launch-configurations" class="md-nav__link">
+    launch-configurations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#launch-configuration-asgs" class="md-nav__link">
+    launch-configuration-asgs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-max-size-set" class="md-nav__link">
+    asg-max-size-set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-min-size-set" class="md-nav__link">
+    asg-min-size-set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-processes_suspended" class="md-nav__link">
+    asg-processes_suspended
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-resume" class="md-nav__link">
+    asg-resume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-suspend" class="md-nav__link">
+    asg-suspend
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-stack" class="md-nav__link">
+    asg-stack
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asg-scaling-activities" class="md-nav__link">
+    asg-scaling-activities
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cert-commands" class="md-nav__link">
+    cert-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#certs" class="md-nav__link">
+    certs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certs-arn" class="md-nav__link">
+    certs-arn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-users" class="md-nav__link">
+    cert-users
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-delete" class="md-nav__link">
+    cert-delete
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudtrail-commands" class="md-nav__link">
+    cloudtrail-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloudtrails" class="md-nav__link">
+    cloudtrails
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudtrail-status" class="md-nav__link">
+    cloudtrail-status
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecr-commands" class="md-nav__link">
+    ecr-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecr-repositories" class="md-nav__link">
+    ecr-repositories
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecr-repository-images" class="md-nav__link">
+    ecr-repository-images
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elb-commands" class="md-nav__link">
+    elb-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#elbs" class="md-nav__link">
+    elbs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-dnsname" class="md-nav__link">
+    elb-dnsname
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-instances" class="md-nav__link">
+    elb-instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-stack" class="md-nav__link">
+    elb-stack
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#iam-commands" class="md-nav__link">
+    iam-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iam-roles" class="md-nav__link">
+    iam-roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iam-role-principal" class="md-nav__link">
+    iam-role-principal
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-commands" class="md-nav__link">
+    image-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#images" class="md-nav__link">
+    images
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-deregister" class="md-nav__link">
+    image-deregister
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keypair-commands" class="md-nav__link">
+    keypair-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keypairs" class="md-nav__link">
+    keypairs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keypair-create" class="md-nav__link">
+    keypair-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keypair-delete" class="md-nav__link">
+    keypair-delete
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kms-commands" class="md-nav__link">
+    kms-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kms-encrypt" class="md-nav__link">
+    kms-encrypt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-decrypt" class="md-nav__link">
+    kms-decrypt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-aliases" class="md-nav__link">
+    kms-aliases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-alias-create" class="md-nav__link">
+    kms-alias-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-alias-delete" class="md-nav__link">
+    kms-alias-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-keys" class="md-nav__link">
+    kms-keys
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-key-create" class="md-nav__link">
+    kms-key-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-key-details" class="md-nav__link">
+    kms-key-details
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-key-disable" class="md-nav__link">
+    kms-key-disable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kms-key-enable" class="md-nav__link">
+    kms-key-enable
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lambda-commands" class="md-nav__link">
+    lambda-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lambda-functions" class="md-nav__link">
+    lambda-functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-function-memory" class="md-nav__link">
+    lambda-function-memory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-function-memory-set" class="md-nav__link">
+    lambda-function-memory-set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-function-memory-step" class="md-nav__link">
+    lambda-function-memory-step
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#log-commands" class="md-nav__link">
+    log-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-groups" class="md-nav__link">
+    log-groups
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rds-commands" class="md-nav__link">
+    rds-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rds-db-instances" class="md-nav__link">
+    rds-db-instances
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#route53-commands" class="md-nav__link">
+    route53-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hosted-zones" class="md-nav__link">
+    hosted-zones
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hosted-zone-ns-records" class="md-nav__link">
+    hosted-zone-ns-records
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s3-commands" class="md-nav__link">
+    s3-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buckets" class="md-nav__link">
+    buckets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bucket-acls" class="md-nav__link">
+    bucket-acls
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bucket-remove" class="md-nav__link">
+    bucket-remove
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bucket-remove-force" class="md-nav__link">
+    bucket-remove-force
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sts-commands" class="md-nav__link">
+    sts-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sts-assume-role" class="md-nav__link">
+    sts-assume-role
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vpc-commands" class="md-nav__link">
+    vpc-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pcxs" class="md-nav__link">
+    pcxs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnets" class="md-nav__link">
+    subnets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpcs" class="md-nav__link">
+    vpcs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-azs" class="md-nav__link">
+    vpc-azs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-az-count" class="md-nav__link">
+    vpc-az-count
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-lambda-functions" class="md-nav__link">
+    vpc-lambda-functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-dhcp-options-ntp" class="md-nav__link">
+    vpc-dhcp-options-ntp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-endpoints" class="md-nav__link">
+    vpc-endpoints
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-endpoint-services" class="md-nav__link">
+    vpc-endpoint-services
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-igw" class="md-nav__link">
+    vpc-igw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-route-tables" class="md-nav__link">
+    vpc-route-tables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-nat-gateways" class="md-nav__link">
+    vpc-nat-gateways
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-subnets" class="md-nav__link">
+    vpc-subnets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-network-acls" class="md-nav__link">
+    vpc-network-acls
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-rds" class="md-nav__link">
+    vpc-rds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vpc-default-delete" class="md-nav__link">
+    vpc-default-delete
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
     
@@ -269,7 +1459,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../cloudformation-naming" title="CloudFormation Naming" class="md-nav__link">
+    <a href="../cloudformation-naming/" title="CloudFormation Naming" class="md-nav__link">
       CloudFormation Naming
     </a>
   </li>
@@ -1475,7 +2665,7 @@
                   <a href="https://github.com/bash-my-aws/bash-my-aws/edit/master/docs/command-reference.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Command reference</h1>
+                  <h1>Command Reference</h1>
                 
                 <p>The project provides over 120 commands but fear not, much has been done
 to make them <em>discoverable</em>, <em>memorable</em> and hopefully in many cases <em>obvious</em>.</p>
@@ -2653,6 +3843,41 @@ aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../cloudformation-naming/" title="CloudFormation Naming" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                CloudFormation Naming
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

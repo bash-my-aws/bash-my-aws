@@ -6,13 +6,13 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc></loc>
-     
+     <loc>https://bash-my-aws.org/command-reference/</loc>
+     <lastmod>2020-01-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc></loc>
-     
+     <loc>https://bash-my-aws.org/cloudformation-naming/</loc>
+     <lastmod>2020-01-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
