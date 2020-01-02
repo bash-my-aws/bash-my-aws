@@ -60,7 +60,7 @@ Parameters:
   InstanceType:
     Description: The size of the instance
     Type: String
-    Default: t3.micro
+    Default: t3.nano
 
   KeyName:
     Description: The public key to install on the instance
@@ -127,7 +127,7 @@ Resources:
       DesiredCapacity: !Ref 'AsgMinSize'
       Tags:
         - Key: Name
-          Value: !Sub '${AWS::StackName}/instance'
+          Value: !Sub '${AWS::StackName}'
           PropagateAtLaunch: 'true'
 
   DnsRecord:
@@ -244,7 +244,7 @@ Resources:
       GroupDescription: Describe permitted inbound and outbound traffic to our instance
       Tags:
         - Key: Name
-          Value: !Sub '${AWS::StackName}/sg-instance'
+          Value: !Sub '${AWS::StackName}/instance'
       VpcId: !Ref 'VpcId'
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -255,6 +255,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           SourceSecurityGroupId: !Ref 'ELBSecurityGroup'
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: !Ref 'SSHOrigin'
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: '53'
