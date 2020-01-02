@@ -1,5 +1,3 @@
-[GitHub repo](https://github.com/bash-my-aws/bash-my-aws)
-
 Bash-my-AWS is a simple but extremely powerful set of CLI commands for managing
 resources on Amazon Web Services.
 
@@ -8,7 +6,10 @@ They harness the power of Amazon's AWSCLI, while abstracting away verbosity.
 The project implements some innovative patterns but (arguably) remains simple,
 beautiful and readable.
 
+**[github.com/bash-my-aws/bash-my-aws](https://github.com/bash-my-aws/bash-my-aws/)**
+
 ![screencast](images/bma-02-2.gif)
+
 
 ## Introduction
 
@@ -176,6 +177,7 @@ source ~/.bash-my-aws/bash_completion.sh
     a changes that would eliminate any shell compatibility problems without compromising
     the functionaility, simplicity and discoverability of the project. Massive thanks
     to [@ninth-dev](https://github.com/ninth-dev) for this.
+
 
         # bash users may source the functions instead of loading the aliases
         if [ -d ${HOME}/.bash-my-aws ]; then
