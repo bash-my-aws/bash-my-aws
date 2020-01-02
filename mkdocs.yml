@@ -7,7 +7,8 @@ google_analytics: ['UA-154550647-1', 'bash-my-aws.org']
 nav:
   - Home: index.md
   # - Tour: tour.md
-  - Command Reference: command-reference.md
+  - Command Reference: command-reference
+  - CloudFormation Naming: cloudformation-naming
 
 theme:
   name: material
