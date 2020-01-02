@@ -53,3 +53,7 @@ for fnc_name in $fncs_to_clone; do
 done;
 
 ${project_root}/scripts/build-completions > "$completion_destination"
+
+${project_root}/scripts/build-docs
+
+
