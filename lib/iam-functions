@@ -3,6 +3,8 @@
 # iam-functions
 
 # [TIP] When a trusted Role is recreated, the trust is broken.
+# When the friendly name is no longer used, it indicates the trust 
+# relationship is broken.
 # Broken trust relationships can be listed with:
 #
 # `iam-roles | iam-role-principal | grep AROA`
