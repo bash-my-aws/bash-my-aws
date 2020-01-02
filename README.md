@@ -3,7 +3,7 @@ Bash-my-AWS
 
 **Dec 2019: New [Bash-my-AWS website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org**
 
-Bash-My-AWS is a simple but extremely powerful set of CLI commands for managing
+Bash-my-AWS is a simple but extremely powerful set of CLI commands for managing
 resources on Amazon Web Services.
 
 They harness the power of Amazon's AWSCLI, while abstracting away verbosity.
@@ -105,7 +105,7 @@ Are you sure you want to continue? y
 
 ### Convenient Shortcuts
 
-Bash-My-AWS is insanely simple to pick up and start using but contains a lot of
+Bash-my-AWS is insanely simple to pick up and start using but contains a lot of
 convenient shortcuts you can make use of.
 
 Example: resource listing commands accept a filter argument, removing the need
@@ -169,7 +169,7 @@ source ~/.bash-my-aws/bash_completion.sh
 
 #### Why use shell aliases?
 
-`Bash-My-AWS` began as a collection of bash functions, sourced into your shell.
+`Bash-my-AWS` began as a collection of bash functions, sourced into your shell.
 More recently, the default suggestion has been to load aliases that execute a
 small wrapper script that loads the functions and executes the desired function.
 
