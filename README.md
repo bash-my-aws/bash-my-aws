@@ -89,7 +89,7 @@ postgres02  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
 
 They also work incredibly well with each other due to the way they treat input
 from STDIN. The first token from each line of STDIN is taken to be a resource
-identifiers (and the rest is discarded).
+identifier (and the rest is discarded).
 
 
 ```shell
@@ -225,7 +225,7 @@ i-47955eb46d98b4dd8  ami-123456789012  t3.nano  running  prometheus             
 i-8d25b78d40d17f38a  ami-123456789012  t3.nano  running  plex-server                 2019-12-07T08:27:38.000Z  ap-southeast-2a  None
 ```
 
-and a number of command to act on these resources:
+and a number of commands to act on these resources:
 
 ```ShellSession
 $ instance-[TAB][TAB]
