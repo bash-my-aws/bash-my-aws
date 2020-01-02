@@ -1,7 +1,7 @@
-site_name: 'bash-my-aws'
+site_name: 'Bash-my-AWS'
 site_description: 'CLI Commands for Managing AWS Resources'
 site_author: 'Mike Bailey'
-site_url: 'https://bash-my-aws.org/'
+site_url: 'https://Bash-my-AWS.org/'
 google_analytics: ['UA-154550647-1', 'bash-my-aws.org']
 
 nav:
