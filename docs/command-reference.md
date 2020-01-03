@@ -843,8 +843,52 @@ List ECR Repositories
 
 List images for ECR Repositories
 
+## alb-commands
 
-## elb-commands
+
+### albs
+
+List ALBs
+Accepts Application Load Balancer names or ARNS on STDIN and converts to LoadBalancer names
+
+    $ albs
+    ALB-INTERNAL        2019-10-18T06:08:28.470Z  internal         subnet-23123123213,subnet-123123123
+    ALB-EXTERNAL        2019-10-30T15:00:27.290Z  internet-facing  subnet-32323232323,subnet-2323sdsds
+
+
+### alb-dnsname
+
+List DNS Names of ALB(s)
+
+     USAGE: alb-dnsname load-balancer [load-balancer]
+
+    $ albs | alb-dnsname
+    ALB-INTERNAL  internal-ALB-INTERNAL-12323232.eu-central-1.elb.amazonaws.com
+    ALB-EXTERNAL  ALB-EXTERNAL-12323232.eu-central-1.elb.amazonaws.com
+
+
+## nlb-commands
+
+
+### nlbs
+
+List ALBs
+Accepts Network Load Balancer names or ARNS on STDIN and converts to LoadBalancer names
+
+    $ nlbs
+    NLB-INTERNAL        2019-10-18T06:08:28.470Z  internal         subnet-23123123213,subnet-123123123
+    NLB-EXTERNAL        2019-10-30T15:00:27.290Z  internet-facing  subnet-32323232323,subnet-2323sdsds
+
+
+### nlb-dnsname
+
+List DNS Names of NLB(s)
+
+     USAGE: nlb-dnsname load-balancer [load-balancer]
+
+    $ nlbs | nlb-dnsname
+    NLB-INTERNAL  internal-ALB-INTERNAL-12323232.eu-central-1.elb.amazonaws.com
+    NLB-EXTERNAL  ALB-EXTERNAL-12323232.eu-central-1.elb.amazonaws.com
 
 
 ### elbs

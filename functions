@@ -51,6 +51,10 @@ elb-dnsname
 elb-instances
 elb-stack
 elbs
+alb-dnsname
+albs
+nlb-dnsname
+nlbs
 hosted-zone-ns-records
 hosted-zones
 iam-role-principal

@@ -27,6 +27,20 @@ _bma_elbs_completion() {
   COMPREPLY=($(compgen -W "${options}" -- ${word}))
   return 0
 }
+_bma_albs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma albs | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
+_bma_nlbs_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma nlbs | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
 _bma_instances_completion() {
   local command="$1"
   local word="$2"
@@ -132,6 +146,10 @@ complete -F _bma_elbs_completion elb-dnsname
 complete -F _bma_elbs_completion elb-instances
 complete -F _bma_elbs_completion elb-stack
 complete -F _bma_elbs_completion elbs
+complete -F _bma_albs_completion alb-dnsname
+complete -F _bma_albs_completion albs
+complete -F _bma_nlbs_completion nlb-dnsname
+complete -F _bma_nlbs_completion nlbs
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
 complete -F _bma_instances_completion instance-console

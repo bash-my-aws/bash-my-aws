@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# nlb-functions
+#
+# Network Load Balancer
+
+
+nlbs() {
+
+  # List NLBs
+  # Accepts Network Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names
+  #
+  # $ nlbs
+  # NLB-INTERNAL        2019-10-18T06:08:28.470Z  internal         subnet-23123123213,subnet-123123123
+  # NLB-EXTERNAL        2019-10-30T15:00:27.290Z  internet-facing  subnet-32323232323,subnet-2323sdsds
+
+  local nlb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  local filters=$(__bma_read_filters $@)
+
+  aws elbv2 describe-load-balancers                                     \
+    $([[ -n ${nlb_names} ]] && echo --load-balancer-names $nlb_names) \
+    --query "LoadBalancers[?Type=='network'][
+               LoadBalancerName,
+               CreatedTime,
+               Scheme,
+               join(',', AvailabilityZones[].SubnetId)
+             ]"          \
+    --output text       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -k 2    |
+  column -s$'\t' -t
+}
+
+
+nlb-dnsname(){
+
+  # List DNS Names of nlb(s)
+  #
+  #      USAGE: nlb-dnsname load-balancer [load-balancer]
+  #
+  # $ nlbs | nlb-dnsname
+  # NLB-INTERNAL  internal-NLB-INTERNAL-12323232.eu-central-1.elb.amazonaws.com
+  # NLB-EXTERNAL  NLB-EXTERNAL-12323232.eu-central-1.elb.amazonaws.com
+
+  local nlb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  [[ -z "${nlb_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  local nlb_name
+  for nlb_name in $nlb_names; do
+    aws elbv2 describe-load-balancers    \
+      --names "$nlb_name" \
+      --query "
+        LoadBalancers[][
+          LoadBalancerName,
+          DNSName
+        ]"                             \
+      --output text                    |
+      column -s$'\t' -t
+  done
+}
