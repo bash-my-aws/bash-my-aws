@@ -52,6 +52,7 @@ elb-instances
 elb-stack
 elbs
 hosted-zone-ns-records
+hosted-zone-records
 hosted-zones
 iam-role-principal
 iam-roles
