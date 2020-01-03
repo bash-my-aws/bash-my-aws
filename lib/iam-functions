@@ -55,3 +55,39 @@ iam-role-principal(){
   LC_ALL=C sort              |
   column -s$'\t' -t
 }
+
+reset-password() {
+  if [[ $# -ne 2 ]]
+  then
+    __bma_usage "[username] [password]"
+    return 1
+  fi
+  local username=$1
+  local password=$2
+
+  read -p "Are you sure you want to reset $username's password? " -n 1 -r
+  echo
+
+  local regex_yes="^[Yy]$"
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+      read -p "Should the user specify a new password on their next sign-in? " -n 1 -r
+      echo
+      if [[ $REPLY =~ $regex_yes ]]
+      then
+        aws iam update-login-profile \
+          --user-name $username \
+          --password $password  \
+          --password-reset-required
+      else
+        aws iam update-login-profile \
+          --user-name $username \
+          --password $password  \
+          --no-password-reset-required
+      fi
+      # echoing the password in case command substitution or env vars
+      # are used to specify the password, meaning that the user doesn't know
+      # the password in advance and will need to see it in order to save it somewhere
+      echo "set password for $username to '$password'"
+  fi
+}

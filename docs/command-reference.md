@@ -905,6 +905,10 @@ List role principal for IAM Role(s)
 
     USAGE: iam-role-principal role-name [role-name]
 
+### reset-password
+  Reset the console password for a given user
+
+  USAGE: reset-password [username] [password]
 
 ## image-commands
 

@@ -105,6 +105,7 @@ rds-db-instances
 region
 region-each
 regions
+reset-password
 stack-arn
 stack-asg-instances
 stack-asgs
