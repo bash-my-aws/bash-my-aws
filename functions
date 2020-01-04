@@ -101,8 +101,8 @@ launch-configuration-asgs
 launch-configurations
 log-groups
 pcxs
-rds-db-instances
 rds-db-clusters
+rds-db-instances
 region
 region-each
 regions

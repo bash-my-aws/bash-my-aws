@@ -16,18 +16,19 @@ rds-db-instances() {
   local filters=$(__bma_read_filters "$@")
 
   aws rds describe-db-instances \
+    --output text               \
     --query "DBInstances[].[
         DBInstanceIdentifier,
         Engine,
         EngineVersion,
         DBInstanceStatus,
         DBName
-      ]"                        \
-    --output text |
+      ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 1 |
   column -s$'\t' -t
 }
+
 
 rds-db-clusters() {
 
@@ -36,15 +37,15 @@ rds-db-clusters() {
   local filters=$(__bma_read_filters "$@")
 
   aws rds describe-db-clusters \
+    --output text              \
     --query "DBClusters[].[
         DBClusterIdentifier,
         Engine,
         EngineVersion,
         Status,
         ClusterCreateTime
-      ]"                        \
-    --output text |
+      ]"                |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 1 |
+  LC_ALL=C sort -b -k 5 |
   column -s$'\t' -t
 }
