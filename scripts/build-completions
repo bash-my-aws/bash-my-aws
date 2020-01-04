@@ -47,7 +47,7 @@ bma_funcs=$(
 
 # maps the available completions to the bma functions
 for type in "${available_completions[@]}"; do
-  functions=$(echo "${bma_funcs}" | grep "^${type}")
+  functions=$(echo "${bma_funcs}" | grep -E "^${type}([s-]|$)")
   for function in ${functions}; do
     echo "complete -F _bma_${type}s_completion ${function}"
   done
