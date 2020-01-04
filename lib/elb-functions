@@ -11,20 +11,20 @@ elbs() {
   # Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names
   #
   #     $ elbs
-  #     elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
-  #     another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
+  #     elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
+  #     another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z
 
   local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
   local filters=$(__bma_read_filters $@)
 
-  aws elb describe-load-balancers                                     \
-    $([[ -n ${elb_names} ]] && echo --load-balancer-names $elb_names) \
-    --query "LoadBalancerDescriptions[][
-               LoadBalancerName,
-               CreatedTime,
-               join(',', Subnets)
-             ]"          \
-    --output text       |
+  aws elb describe-load-balancers                                   \
+    $([[ -n $elb_names ]] && echo --load-balancer-names $elb_names) \
+    --output text                                                   \
+    --query "
+      LoadBalancerDescriptions[][
+        LoadBalancerName,
+        CreatedTime
+      ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -k 2    |
   column -s$'\t' -t
@@ -42,20 +42,17 @@ elb-dnsname(){
   #      another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
 
   local elb_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
-  [[ -z "${elb_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+  [[ -z $elb_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
-  local elb_name
-  for elb_name in $elb_names; do
-    aws elb describe-load-balancers    \
-      --load-balancer-name "$elb_name" \
-      --query "
-        LoadBalancerDescriptions[][
-          '${elb_name}',
-          DNSName
-        ]"                             \
-      --output text                    |
-      column -s$'\t' -t
-  done
+  aws elb describe-load-balancers                                   \
+    $([[ -n $elb_names ]] && echo --load-balancer-names $elb_names) \
+    --output text                                                   \
+    --query "
+      LoadBalancerDescriptions[][
+        LoadBalancerName,
+        DNSName
+      ]"              |
+    column -s$'\t' -t
 }
 
 
@@ -72,14 +69,14 @@ elb-instances() {
   for elb_name in $elb_names; do
     aws elb describe-instance-health   \
       --load-balancer-name "$elb_name" \
+      --output text                    \
       --query "
         InstanceStates[][
-            InstanceId,
-            State,
-            ReasonCode,
-            '${elb_name}'
-        ]"                             \
-      --output text                    |
+          InstanceId,
+          State,
+          ReasonCode,
+          '${elb_name}'
+        ]"              |
       column -s$'\t' -t
   done
 }
@@ -99,13 +96,62 @@ elb-stack() {
   [[ -z "$elb_names" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   aws elb describe-tags                                            \
-    --load-balancer-names ${elb_names}                             \
+    --load-balancer-names $elb_names                               \
+    --output text                                                  \
     --query "
       TagDescriptions[].[
         [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
         LoadBalancerName
-      ]"                                                            \
-    --output text |
+      ]"            |
   column -s$'\t' -t
 }
 
+
+elb-subnets() {
+
+  # List subnets of ELB(s)
+  #
+  #     USAGE: elb-subnets load-balancer [load-balancer]
+  #
+  #     $ elbs | elb-subnets
+  #     rails-demo-ELB-FRBEQPCYSZQD  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+  #     huginn-ELB-BMD0QUX179PK      subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+  #     prometheus-ELB-C0FGVLGQ64UH  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+
+  local elb_names=$(__bma_read_inputs $@ | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
+  [[ -z "$elb_names" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  aws elb describe-load-balancers    \
+    --load-balancer-names $elb_names \
+    --output text                    \
+    --query "
+      LoadBalancerDescriptions[][
+        LoadBalancerName,
+        join(' ', sort(Subnets))
+      ]"              |
+    column -s$'\t' -t
+}
+
+elb-azs() {
+
+  # List Availability Zones of ELB(s)
+  #
+  #     USAGE: elb-azs load-balancer [load-balancer]
+  #
+  #     $ elbs | elb-azs
+  #     rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
+  #     huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
+
+  local elb_names=$(__bma_read_inputs $@ | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
+  [[ -z $elb_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  aws elb describe-load-balancers          \
+    --load-balancer-names $elb_names       \
+    --output text                          \
+    --query "
+      LoadBalancerDescriptions[][
+        LoadBalancerName,
+        join(' ', sort(AvailabilityZones))
+      ]"              |
+    column -s$'\t' -t
+}

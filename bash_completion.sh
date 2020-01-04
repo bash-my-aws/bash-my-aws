@@ -128,10 +128,16 @@ complete -F _bma_certs_completion cert-delete
 complete -F _bma_certs_completion cert-users
 complete -F _bma_certs_completion certs
 complete -F _bma_certs_completion certs-arn
+complete -F _bma_elbs_completion elb-azs
 complete -F _bma_elbs_completion elb-dnsname
 complete -F _bma_elbs_completion elb-instances
 complete -F _bma_elbs_completion elb-stack
+complete -F _bma_elbs_completion elb-subnets
 complete -F _bma_elbs_completion elbs
+complete -F _bma_elbs_completion elbv2-azs
+complete -F _bma_elbs_completion elbv2-dnsname
+complete -F _bma_elbs_completion elbv2-subnets
+complete -F _bma_elbs_completion elbv2s
 complete -F _bma_instances_completion instance-asg
 complete -F _bma_instances_completion instance-az
 complete -F _bma_instances_completion instance-console
