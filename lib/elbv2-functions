@@ -1,0 +1,109 @@
+#!/bin/bash
+#
+# elbv2-functions
+#
+# Network and Application Load Balancers (2nd Generation)
+
+
+elbv2s() {
+
+  # List EC2 ELBv2 load balancers (both Network and Application types)
+  # Accepts Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names
+  #
+  #     $ elbv2s
+  #     bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
+  #     bash-my-aws-alb  application  internet-facing  provisioning  2020-01-04T11:29:45.030Z
+
+  local elbv2_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  local filters=$(__bma_read_filters $@)
+
+  aws elbv2 describe-load-balancers                         \
+    $([[ -n ${elbv2_names} ]] && echo --names $elbv2_names) \
+    --output text                                           \
+    --query "
+      LoadBalancers[][
+        LoadBalancerName,
+        Type,
+        Scheme,
+        State.Code,
+        CreatedTime
+      ]"                |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -k 5    |
+  column -s$'\t' -t
+}
+
+
+elbv2-dnsname(){
+
+  # List DNS Names of elbv2(s)
+  #
+  #     USAGE: elbv2-dnsname load-balancer [load-balancer]
+  #
+  #     $ elbv2s | elbv2-dnsname
+  #     bash-my-aws      bash-my-aws-c23c598688520e51.elb.ap-southeast-2.amazonaws.com
+  #     bash-my-aws-alb  bash-my-aws-alb-2036199590.ap-southeast-2.elb.amazonaws.com
+
+  local elbv2_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  [[ -z "${elbv2_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  aws elbv2 describe-load-balancers \
+    --names $elbv2_names            \
+    --output text                   \
+    --query "
+      LoadBalancers[][
+        LoadBalancerName,
+        DNSName
+      ]"              |
+    column -s$'\t' -t
+}
+
+
+elbv2-subnets() {
+
+  # List subnets of ELBv2(s) [Application and Network Load Balancers)
+  #
+  #     USAGE: elbv2-subnets load-balancer [load-balancer]
+  #
+  #     $ elbv2s | elbv2-subnets
+  #     bash-my-aws      subnet-c25fa0a7
+  #     bash-my-aws-alb  subnet-7828cd0f subnet-c25fa0a7
+
+  local elbv2_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  [[ -z "${elbv2_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  aws elbv2 describe-load-balancers \
+    --names $elbv2_names            \
+    --output text                   \
+    --query "
+      LoadBalancers[][
+        LoadBalancerName,
+        join(' ', AvailabilityZones[].SubnetId)
+      ]"              |
+    column -s$'\t' -t
+}
+
+
+elbv2-azs() {
+
+  # List Availability Zones of ELB(s)
+  #
+  #     USAGE: elb-azs load-balancer [load-balancer]
+  #
+  #     $ elbv2s | elbv2-subnets
+  #     bash-my-aws      ap-southeast-2a
+  #     bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
+
+  local elb_names=$(__bma_read_inputs $@ | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
+  [[ -z $elb_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  aws elbv2 describe-load-balancers \
+    --names $elbv2_names            \
+    --output text                   \
+    --query "
+      LoadBalancers[][
+        LoadBalancerName,
+        join(' ', sort(AvailabilityZones[].ZoneName))
+      ]"              |
+    column -s$'\t' -t
+}

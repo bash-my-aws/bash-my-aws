@@ -843,53 +843,6 @@ List ECR Repositories
 
 List images for ECR Repositories
 
-## alb-commands
-
-
-### albs
-
-List ALBs
-Accepts Application Load Balancer names or ARNS on STDIN and converts to LoadBalancer names
-
-    $ albs
-    ALB-INTERNAL        2019-10-18T06:08:28.470Z  internal         subnet-23123123213,subnet-123123123
-    ALB-EXTERNAL        2019-10-30T15:00:27.290Z  internet-facing  subnet-32323232323,subnet-2323sdsds
-
-
-### alb-dnsname
-
-List DNS Names of ALB(s)
-
-     USAGE: alb-dnsname load-balancer [load-balancer]
-
-    $ albs | alb-dnsname
-    ALB-INTERNAL  internal-ALB-INTERNAL-12323232.eu-central-1.elb.amazonaws.com
-    ALB-EXTERNAL  ALB-EXTERNAL-12323232.eu-central-1.elb.amazonaws.com
-
-
-## nlb-commands
-
-
-### nlbs
-
-List ALBs
-Accepts Network Load Balancer names or ARNS on STDIN and converts to LoadBalancer names
-
-    $ nlbs
-    NLB-INTERNAL        2019-10-18T06:08:28.470Z  internal         subnet-23123123213,subnet-123123123
-    NLB-EXTERNAL        2019-10-30T15:00:27.290Z  internet-facing  subnet-32323232323,subnet-2323sdsds
-
-
-### nlb-dnsname
-
-List DNS Names of NLB(s)
-
-     USAGE: nlb-dnsname load-balancer [load-balancer]
-
-    $ nlbs | nlb-dnsname
-    NLB-INTERNAL  internal-ALB-INTERNAL-12323232.eu-central-1.elb.amazonaws.com
-    NLB-EXTERNAL  ALB-EXTERNAL-12323232.eu-central-1.elb.amazonaws.com
-
 
 ## elb-commands
 
@@ -900,8 +853,8 @@ List ELBs
 Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names
 
     $ elbs
-    elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
-    another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
+    elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
+    another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z
 
 
 ### elb-dnsname
@@ -931,6 +884,75 @@ List CloudFormation stack names of ELB(s)
     $ elbs | elb-stack
     elb          elb-MyLoadBalancer-1FNISWJN0W6N9
     another-elb  another-e-MyLoadBa-171CPCZF2E84T
+
+
+### elb-subnets
+
+List subnets of ELB(s)
+
+    USAGE: elb-subnets load-balancer [load-balancer]
+
+    $ elbs | elb-subnets
+    rails-demo-ELB-FRBEQPCYSZQD  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+    huginn-ELB-BMD0QUX179PK      subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+    prometheus-ELB-C0FGVLGQ64UH  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+
+
+### elb-azs
+
+List Availability Zones of ELB(s)
+
+    USAGE: elb-azs load-balancer [load-balancer]
+
+    $ elbs | elb-azs
+    rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
+    huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
+
+
+## elbv2-commands
+
+
+### elbv2s
+
+List EC2 ELBv2 load balancers (both Network and Application types)
+Accepts Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names
+
+    $ elbv2s
+    bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
+    bash-my-aws-alb  application  internet-facing  provisioning  2020-01-04T11:29:45.030Z
+
+
+### elbv2-dnsname
+
+List DNS Names of elbv2(s)
+
+    USAGE: elbv2-dnsname load-balancer [load-balancer]
+
+    $ elbv2s | elbv2-dnsname
+    bash-my-aws      bash-my-aws-c23c598688520e51.elb.ap-southeast-2.amazonaws.com
+    bash-my-aws-alb  bash-my-aws-alb-2036199590.ap-southeast-2.elb.amazonaws.com
+
+
+### elbv2-subnets
+
+List subnets of ELBv2(s) [Application and Network Load Balancers)
+
+    USAGE: elbv2-subnets load-balancer [load-balancer]
+
+    $ elbv2s | elbv2-subnets
+    bash-my-aws      subnet-c25fa0a7
+    bash-my-aws-alb  subnet-7828cd0f subnet-c25fa0a7
+
+
+### elbv2-azs
+
+List Availability Zones of ELB(s)
+
+    USAGE: elb-azs load-balancer [load-balancer]
+
+    $ elbv2s | elbv2-subnets
+    bash-my-aws      ap-southeast-2a
+    bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
 
 
 ## iam-commands
