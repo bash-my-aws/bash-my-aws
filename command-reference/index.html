@@ -972,6 +972,61 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elb-subnets" class="md-nav__link">
+    elb-subnets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-azs" class="md-nav__link">
+    elb-azs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elbv2-commands" class="md-nav__link">
+    elbv2-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#elbv2s" class="md-nav__link">
+    elbv2s
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elbv2-dnsname" class="md-nav__link">
+    elbv2-dnsname
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elbv2-subnets" class="md-nav__link">
+    elbv2-subnets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elbv2-azs" class="md-nav__link">
+    elbv2-azs
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2183,6 +2238,61 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elb-subnets" class="md-nav__link">
+    elb-subnets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-azs" class="md-nav__link">
+    elb-azs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elbv2-commands" class="md-nav__link">
+    elbv2-commands
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#elbv2s" class="md-nav__link">
+    elbv2s
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elbv2-dnsname" class="md-nav__link">
+    elbv2-dnsname
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elbv2-subnets" class="md-nav__link">
+    elbv2-subnets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elbv2-azs" class="md-nav__link">
+    elbv2-azs
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3369,8 +3479,8 @@ failmode    failmode-cloudtrail ap-southeast-2  IsMultiRegionTrail=true IncludeG
 <p>List ELBs
 Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names</p>
 <div class="codehilite"><pre><span></span>$ elbs
-elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z  subnet-eff2cf88
-another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
+elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
+another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z
 </pre></div>
 
 
@@ -3397,6 +3507,67 @@ another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z  subnet-eff2cf88
 $ elbs | elb-stack
 elb          elb-MyLoadBalancer-1FNISWJN0W6N9
 another-elb  another-e-MyLoadBa-171CPCZF2E84T
+</pre></div>
+
+
+<h3 id="elb-subnets">elb-subnets<a class="headerlink" href="#elb-subnets" title="Permanent link">&para;</a></h3>
+<p>List subnets of ELB(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: elb-subnets load-balancer [load-balancer]
+
+$ elbs | elb-subnets
+rails-demo-ELB-FRBEQPCYSZQD  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+huginn-ELB-BMD0QUX179PK      subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+prometheus-ELB-C0FGVLGQ64UH  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+</pre></div>
+
+
+<h3 id="elb-azs">elb-azs<a class="headerlink" href="#elb-azs" title="Permanent link">&para;</a></h3>
+<p>List Availability Zones of ELB(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: elb-azs load-balancer [load-balancer]
+
+$ elbs | elb-azs
+rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
+huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
+</pre></div>
+
+
+<h2 id="elbv2-commands">elbv2-commands<a class="headerlink" href="#elbv2-commands" title="Permanent link">&para;</a></h2>
+<h3 id="elbv2s">elbv2s<a class="headerlink" href="#elbv2s" title="Permanent link">&para;</a></h3>
+<p>List EC2 ELBv2 load balancers (both Network and Application types)
+Accepts Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names</p>
+<div class="codehilite"><pre><span></span>$ elbv2s
+bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
+bash-my-aws-alb  application  internet-facing  provisioning  2020-01-04T11:29:45.030Z
+</pre></div>
+
+
+<h3 id="elbv2-dnsname">elbv2-dnsname<a class="headerlink" href="#elbv2-dnsname" title="Permanent link">&para;</a></h3>
+<p>List DNS Names of elbv2(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: elbv2-dnsname load-balancer [load-balancer]
+
+$ elbv2s | elbv2-dnsname
+bash-my-aws      bash-my-aws-c23c598688520e51.elb.ap-southeast-2.amazonaws.com
+bash-my-aws-alb  bash-my-aws-alb-2036199590.ap-southeast-2.elb.amazonaws.com
+</pre></div>
+
+
+<h3 id="elbv2-subnets">elbv2-subnets<a class="headerlink" href="#elbv2-subnets" title="Permanent link">&para;</a></h3>
+<p>List subnets of ELBv2(s) [Application and Network Load Balancers)</p>
+<div class="codehilite"><pre><span></span>USAGE: elbv2-subnets load-balancer [load-balancer]
+
+$ elbv2s | elbv2-subnets
+bash-my-aws      subnet-c25fa0a7
+bash-my-aws-alb  subnet-7828cd0f subnet-c25fa0a7
+</pre></div>
+
+
+<h3 id="elbv2-azs">elbv2-azs<a class="headerlink" href="#elbv2-azs" title="Permanent link">&para;</a></h3>
+<p>List Availability Zones of ELB(s)</p>
+<div class="codehilite"><pre><span></span>USAGE: elb-azs load-balancer [load-balancer]
+
+$ elbv2s | elbv2-subnets
+bash-my-aws      ap-southeast-2a
+bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
 </pre></div>
 
 
