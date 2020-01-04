@@ -18,8 +18,6 @@ extra:
   social:
     - type: 'github'
       link: 'https://github.com/bash-my-aws'
-    - type: 'twitter'
-      link: 'https://twitter.com/bashmyaws'
 markdown_extensions:
   - admonition
   - codehilite:
