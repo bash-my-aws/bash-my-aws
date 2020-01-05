@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 
 source ~/.bash-my-aws/bin/bma
 
@@ -20,7 +19,7 @@ function stack-tail() {
 
 function cmd() {
   echo "# Command: $@"
-  $@ 
+  $@
   echo
 }
 
