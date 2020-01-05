@@ -77,23 +77,23 @@ describe "_bma_stack_template_arg:" "$(
 
 # templates
 touch            \
-  cloudformation/great-app.json \
-  cloudformation/great-app.yml  \
-  cloudformation/great-app.yaml \
+  $(dirname $0)/cloudformation/great-app.json \
+  $(dirname $0)/cloudformation/great-app.yml  \
+  $(dirname $0)/cloudformation/great-app.yaml \
 
 # params
 
 [[ -d params ]] || mkdir params
 
 touch                                      \
-  cloudformation/great-app-params.json                    \
-  cloudformation/great-app-params-staging.json            \
-  cloudformation/great-app-params-another-env.json        \
-  cloudformation/params/great-app-params.json             \
-  cloudformation/params/great-app-params-staging.json     \
-  cloudformation/params/great-app-params-another-env.json
+  $(dirname $0)/cloudformation/great-app-params.json                    \
+  $(dirname $0)/cloudformation/great-app-params-staging.json            \
+  $(dirname $0)/cloudformation/great-app-params-another-env.json        \
+  $(dirname $0)/cloudformation/params/great-app-params.json             \
+  $(dirname $0)/cloudformation/params/great-app-params-staging.json     \
+  $(dirname $0)/cloudformation/params/great-app-params-another-env.json
 
-cd cloudformation
+cd $(dirname $0)/cloudformation
 
 describe "_bma_stack_args:" "$(
   context "without an argument" "$(

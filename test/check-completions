@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 bma_path=$(cd $(dirname $0)/.. && pwd)
 
 # function in bma
@@ -14,7 +16,6 @@ completions=$(
 )
 
 for func in $bma_funcs;do
-  # echo "xxx ${func}"
   if [[ "${completions}" =~ "${func}" ]];then
     printf "\033[32m\xE2\x9C\x94 %s\033[0m\n" "${func}"
   else
@@ -22,3 +23,6 @@ for func in $bma_funcs;do
   fi
 done
 
+echo "Note that some functions should not have bash completions."
+echo "These are generally functions that require use to enter a"
+echo "value (such as desired number of instances) as first arg."

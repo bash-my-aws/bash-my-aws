@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #==================================================================================
 # BDD-style testing framework for bash scripts.
 #
