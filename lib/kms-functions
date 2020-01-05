@@ -71,16 +71,17 @@ kms-aliases() {
   #     $ kms-aliases default
   #     alias/default  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/default
 
+  # TODO Accept alias_names from STDIN and filter in query
   local filters=$(__bma_read_filters $@)
 
-  aws kms list-aliases                           \
+  aws kms list-aliases  \
+    --output text       \
     --query "
       Aliases[].[
         AliasName,
         TargetKeyId,
         AliasArn
-      ]"                                      \
-    --output text       |
+      ]"                |
   grep -E -- "$filters" |
   column -s$'\t' -t
 }
@@ -101,10 +102,8 @@ kms-alias-create() {
   #     alias/foobar  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/foobar
 
   local alias_name="$1"
-  [[ -z "$alias_name" ]] && __bma_usage "alias_name key_id" && return 1
-  shift
-  local key_id=$(__bma_read_inputs "$@" | cut -f 1)
-  [[ -z "$alias_name" ]] && __bma_usage "alias_name key_id" && return 1
+  local key_id="$2"
+  [[ -z "$alias_name" || -z "$key_id" ]] && __bma_usage "alias_name key_id" && return 1
 
  # prepend "alias/" to alias_name if missing
   aws kms create-alias         \
@@ -124,7 +123,7 @@ kms-alias-delete() {
   #     alias/foobar
   #     Are you sure you want to continue? y
 
-  local alias_names="$(__bma_read_inputs $@)"
+  local alias_names="$@ $(skimstdin)"
   [[ -z "$alias_names" ]] && __bma_usage "alias_name [alias_name]" && return 1
 
    echo "You are about to delete the following kms aliases:"
@@ -183,7 +182,7 @@ kms-key-details() {
 
   # List details for KMS Key(s)
 
-  local key_ids="$(__bma_read_inputs $@)"
+  local key_ids="$@ $(skimstdin)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
   local key_ids
@@ -213,7 +212,7 @@ kms-key-disable() {
   #
   #     $ kms-key-disable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 
-  local key_ids="$(__bma_read_inputs $@)"
+  local key_ids="$@ $(skimstdin)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
   local key_ids
@@ -231,7 +230,7 @@ kms-key-enable() {
   #
   #     $ kms-key-enable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 
-  local key_ids="$(__bma_read_inputs $@)"
+  local key_ids="$@ $(skimstdin)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
   local key_ids

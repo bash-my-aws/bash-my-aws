@@ -53,8 +53,8 @@ stacks() {
   #     postgres1  CREATE_COMPLETE  2019-04-14T15:22:44Z  NEVER_UPDATED  NOT_NESTED
   #     postgres2  CREATE_COMPLETE  2019-05-18T05:45:50Z  NEVER_UPDATED  NOT_NESTED
 
+  local stack_names=$(skimstdin) # Filter by stack-names from STDIN (optional)
   local filters=$(__bma_read_filters $@) # Filter output by arguments (optional)
-  local stack_names=$(__bma_read_inputs) # Filter by stack-names from STDIN (optional)
 
   aws cloudformation list-stacks                      \
     --stack-status                                    \
@@ -104,7 +104,7 @@ stack-arn() {
   #     arn:aws:cloudformation:us-east-1:000000000000:stack/postgres2/7420bbd4-3026-444f-b55b-fa0a9d564730
   #     arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb-4f6c-9872-2b5cddc77fba
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   local stack
   for stack in $stacks; do
@@ -120,10 +120,10 @@ stack-cancel-update() {
 
   # Cancel an in-progress stack update
 
-  local stack=$(_bma_stack_name_arg $(__bma_read_inputs $@))
+  local stack=$(_bma_stack_name_arg "$@ $(skimstdin)")
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  aws cloudformation cancel-update-stack --stack-name $stack
+  aws cloudformation cancel-update-stack --stack-name "$stack"
 }
 
 
@@ -299,7 +299,7 @@ stack-delete() {
 
   # *Note that the error reported at the end of `stack-delete` command is just AWSCLI saying it can't find the stack anymore.*
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   local stack
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   if ! [ -t 0 ] ; then # if STDIN is not a terminal...
@@ -332,7 +332,7 @@ stack-exports() {
 }
 
 stack-recreate() {
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
@@ -357,7 +357,7 @@ stack-failure() {
 
   # Return reason a stack failed to update/create/delete
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z "${stack}" ]] && __bma_usage "stack" && return 1
 
@@ -379,7 +379,7 @@ stack-events() {
   #
   #     USAGE: stack-events stack
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -415,7 +415,7 @@ stack-resources() {
   #     i-2aa95cc214a461398  AWS::EC2::Instance  prometheus-web
 
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   local stack
@@ -445,7 +445,7 @@ stack-asgs() {
   #     asg-bash-my-aws-AutoScalingGroup-MSBCWRTI3PVM  AWS::AutoScaling::AutoScalingGroup  asg-bash-my-aws
   #     asg2-AutoScalingGroup-1FHUVUJ7SLPU7            AWS::AutoScaling::AutoScalingGroup  asg2
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   stack-resources $stacks                 |
@@ -464,7 +464,7 @@ stack-asg-instances() {
   #     i-06ee900565652ecc5  ami-0119aa4d67e59007c  t3.nano  running  asg-bash-my-aws  2019-12-13T03:15:22.000Z  ap-southeast-2c  vpc-deb8edb9
   #     i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  running  asg2             2019-12-13T03:37:51.000Z  ap-southeast-2c  vpc-deb8edb9
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   local asgs=$(stack-asgs $stacks)
@@ -484,7 +484,7 @@ stack-elbs() {
   #     elb-MyLoadBalancer-NA5S72MLA5KI   AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-1
   #     load-bala-MyLoadBa-11HZ0DHUHJZZI  AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-2
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   stack-resources $stacks                      |
@@ -506,7 +506,7 @@ stack-instances() {
   #     i-5d74753e210bfe04d  ami-123456789012  t3.nano  running  postgres2       2019-12-13T02:24:34.000Z  ap-southeast-2a  None
   #     i-2aa95cc214a461398  ami-123456789012  t3.nano  running  prometheus-web  2019-12-13T02:24:36.000Z  ap-southeast-2a  None
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   local instance_ids=$(stack-resources $stacks | grep AWS::EC2::Instance | awk '{ print $1 }')
@@ -516,7 +516,7 @@ stack-instances() {
 
 stack-parameters() {
   # List parameters of stack
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -531,7 +531,7 @@ stack-status() {
 
   # List status of stack
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
 
   local stack
@@ -551,7 +551,7 @@ stack-tag() {
   local tag=$1
   shift 1
   [[ -z "${tag}" ]] && __bma_usage "tag-key stack [stack]" && return 1
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
   [[ -z ${stacks} && -t 0 ]] && __bma_usage "tag-key stack [stack]" && return 1
   local stack
   for stack in $stacks; do
@@ -579,7 +579,7 @@ stack-tag() {
 # XXX   [[ -z "${tag_key}" ]]    && __bma_usage $usage_msg && return 1
 # XXX   [[ -z "${tag_value}" ]] && __bma_usage $usage_msg && return 1
 # XXX 
-# XXX   local stacks=$(__bma_read_inputs $@)
+# XXX   local stacks="$@ $(skimstdin)"
 # XXX   [[ -z "${stacks}" && -t 0 ]] && __bma_usage $usage_msg && return 1
 # XXX 
 # XXX   local stack
@@ -627,7 +627,7 @@ stack-tag() {
 # XXX   shift 1
 # XXX   [[ -z "${tag_key}" ]] && __bma_usage "tag-key stack [stack]" && return 1
 # XXX 
-# XXX   local stacks=$(__bma_read_inputs $@)
+# XXX   local stacks="$@ $(skimstdin)"
 # XXX   [[ -z "${stacks}" ]] && __bma_usage "tag-key stack [stack]" && return 1
 # XXX 
 # XXX   local stack
@@ -662,7 +662,7 @@ stack-tail() {
 
   # Show all events for CF stack until update completes or fails.
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -696,7 +696,7 @@ stack-template() {
 
   # Return template of a stack
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
 
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
@@ -712,7 +712,7 @@ stack-tags() {
 
   # List stack-tags applied to a stack
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
 
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
@@ -729,7 +729,7 @@ stack-tags-text() {
 
   # List stack-tags applied to a stack on a single line
 
-  local stacks=$(__bma_read_inputs $@)
+  local stacks="$@ $(skimstdin)"
 
   [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
   local stack
@@ -749,7 +749,7 @@ stack-outputs() {
 
   # List outputs of a stack
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   local stack=$(_bma_stack_name_arg ${inputs})
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
@@ -770,7 +770,7 @@ stack-validate() {
 
   # Validate a stack template
 
-  local inputs=$(__bma_read_inputs $@ | cut -f1)
+  local inputs=$(printf "$@ $(skimstdin)" | cut -f1)
   [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
   size=$(wc -c <"$inputs")
   if [[ $size -gt 51200 ]]; then
@@ -778,7 +778,7 @@ stack-validate() {
     __bma_error "template too large: $size bytes, 51200 max"
     return 1
   else
-    aws cloudformation validate-template --template-body file://$inputs
+    aws cloudformation validate-template --template-body "file://$inputs"
   fi
 }
 
@@ -811,7 +811,7 @@ stack-diff(){
   #        {
   #          "ParameterKey": "InstanceType",
 
-  local inputs=$(__bma_read_inputs $@)
+  local inputs="$@ $(skimstdin)"
   [[ -z "$inputs" ]] && __bma_usage "stack [template-file]" && return 1
   _bma_stack_diff_template $inputs
   [[ $? -ne 0 ]] && __bma_usage "stack [template-file]" && return 1
@@ -829,7 +829,7 @@ _bma_stack_diff_template() {
   _bma_stack_args $@
   [[ $? -ne 0 ]] && return 1
 
-  if ! aws cloudformation describe-stacks --stack-name $stack 1>/dev/null; then
+  if ! aws cloudformation describe-stacks --stack-name "$stack" 1>/dev/null; then
     return 1;
   fi
   if [ "x$( type -P colordiff )" != "x" ]; then

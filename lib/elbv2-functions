@@ -8,18 +8,18 @@
 elbv2s() {
 
   # List EC2 ELBv2 load balancers (both Network and Application types)
-  # Accepts Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names
+  # Accepts Load Balancer names on STDIN and converts to Network Load Balancer names
   #
   #     $ elbv2s
   #     bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
   #     bash-my-aws-alb  application  internet-facing  provisioning  2020-01-04T11:29:45.030Z
 
-  local elbv2_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  local elbv2_names=$(skimstdin)
   local filters=$(__bma_read_filters $@)
 
-  aws elbv2 describe-load-balancers                         \
-    $([[ -n ${elbv2_names} ]] && echo --names $elbv2_names) \
-    --output text                                           \
+  aws elbv2 describe-load-balancers \
+    ${elbv2_names/#/'--names '}     \
+    --output text                   \
     --query "
       LoadBalancers[][
         LoadBalancerName,
@@ -44,7 +44,7 @@ elbv2-dnsname(){
   #     bash-my-aws      bash-my-aws-c23c598688520e51.elb.ap-southeast-2.amazonaws.com
   #     bash-my-aws-alb  bash-my-aws-alb-2036199590.ap-southeast-2.elb.amazonaws.com
 
-  local elbv2_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  local elbv2_names="$@ $(skimstdin)"
   [[ -z "${elbv2_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   aws elbv2 describe-load-balancers \
@@ -69,7 +69,7 @@ elbv2-subnets() {
   #     bash-my-aws      subnet-c25fa0a7
   #     bash-my-aws-alb  subnet-7828cd0f subnet-c25fa0a7
 
-  local elbv2_names=$(__bma_read_inputs | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\/net\///g' | sed 's/\/.*//g')
+  local elbv2_names="$@ $(skimstdin)"
   [[ -z "${elbv2_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   aws elbv2 describe-load-balancers \
@@ -94,7 +94,7 @@ elbv2-azs() {
   #     bash-my-aws      ap-southeast-2a
   #     bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
 
-  local elb_names=$(__bma_read_inputs $@ | sed 's/arn[a-zA-Z0-9:\-]*loadbalancer\///g')
+  local elb_names="$@ $(skimstdin)"
   [[ -z $elb_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   aws elbv2 describe-load-balancers \
