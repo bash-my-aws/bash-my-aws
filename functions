@@ -61,6 +61,7 @@ hosted-zone-ns-records
 hosted-zones
 iam-role-principal
 iam-roles
+iam-users
 image-deregister
 images
 instance-asg
