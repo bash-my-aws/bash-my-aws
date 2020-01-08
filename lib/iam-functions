@@ -21,12 +21,13 @@ iam-roles() {
   local filters=$(__bma_read_filters $@)
 
   aws iam list-roles    \
-    --query 'Roles[].[
-      RoleName,
-      RoleId,
-      CreateDate
-    ]'                  \
-    --output text       |
+    --output text       \
+    --query '
+      Roles[].[
+        RoleName,
+        RoleId,
+        CreateDate
+      ]'                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
@@ -42,7 +43,8 @@ iam-role-principal(){
   local role_names="$(__bma_read_inputs $@)"
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 
-  aws iam list-roles \
+  aws iam list-roles                                                         \
+    --output text                                                            \
     --query "
       Roles[?contains('$role_names', RoleName)].[
         RoleName,
@@ -50,8 +52,33 @@ iam-role-principal(){
         AssumeRolePolicyDocument.Statement[0].Action,
         join('', keys(AssumeRolePolicyDocument.Statement[0].Principal)),
         join(',', values(AssumeRolePolicyDocument.Statement[0].Principal)[])
-    ]" \
-    --output text   |
-  LC_ALL=C sort              |
+    ]"              |
+  LC_ALL=C sort     |
   column -s$'\t' -t
 }
+
+
+iam-users() {
+
+  # List IAM Users
+  #
+  #     $ iam-users
+  #     config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
+  #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
+  #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+
+  local filters=$(__bma_read_filters $@)
+
+  aws iam list-users    \
+    --output text       \
+    --query '
+      Users[].[
+        UserName,
+        UserId,
+        CreateDate
+    ]'                  |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 3 |
+  column -s$'\t' -t
+}
+

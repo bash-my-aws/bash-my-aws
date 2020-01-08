@@ -975,6 +975,16 @@ List role principal for IAM Role(s)
     USAGE: iam-role-principal role-name [role-name]
 
 
+### iam-users
+
+List IAM Users
+
+    $ iam-users
+    config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
+    AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
+    ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+
+
 ## image-commands
 
 
