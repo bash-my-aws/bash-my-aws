@@ -12,13 +12,13 @@ buckets() {
   #     backups     2019-12-20  08:24:44.351215
   #     archive     2019-12-20  08:24:57.567652
 
-  local bucket_names=$(skimstdin)
+  local buckets=$(skimstdin)
   local filters=$(__bma_read_filters $@)
 
   aws s3api list-buckets \
     --output text        \
     --query "
-      Buckets[${bucket_names:+?contains(['${bucket_names// /"','"}'], Name)}].[
+      Buckets[${buckets:+?contains(['${buckets// /"','"}'], Name)}].[
         Name,
         CreationDate
       ]"                |
