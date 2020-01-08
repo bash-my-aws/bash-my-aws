@@ -102,7 +102,7 @@ vpc-azs() {
   local vpc_id
   for vpc_id in $vpc_ids; do
     echo -n "$vpc_id "
-    echo "$vpc_id" | vpc-subnets LC_ALL=C sort -u | awk 'ORS=" " {print $3}'
+    echo "$vpc_id" | vpc-subnets | awk '{print $3}' | LC_ALL=C sort -u | tr "\n" ' '
     echo
   done
 }
