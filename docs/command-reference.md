@@ -997,9 +997,12 @@ List IAM Users Profile
 
 Change password for IAM user
 
-    USAGE: iam-user-profile-update [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
+    USAGE: iam-user-profile-update [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
 
     $ iam-user-profile-update --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  XXXXXXXXXXXXXXX  SUCCESS
+
+    $ iam-user-profile-update --display-password --no-password-reset-required --password=RND john.smith@example.com
     john.smith@example.com  {LK-4q\>V9E>n`%  SUCCESS
 
 

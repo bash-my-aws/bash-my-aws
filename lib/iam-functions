@@ -110,20 +110,26 @@ iam-user-profile-update(){
 
   # Change IAM User(s) password
   #
-  #     USAGE: iam-user-profile-update [--no-reset-required] --password [Pa$$w0rd | RND] user-name [user-name]
+  #     USAGE: iam-user-profile-update [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
 
   local resetrequired="--password-reset-required"   # Default require password reset
   local passwd="RND"                                # Default to randomly generated password
+  local display_pass=FALSE                          # Default to obscure password display
 
   # Process options
   local inputs_array=($@)
   local IFS='=' # override default field separator in the scope of this function only
   local regex_reset_required=^\-\-\(no\-\)*password\-reset\-required
+  local regex_display=^\-\-display\-password
   local regex_password=^\-\-password=.*
   for index in "${inputs_array[@]}" ; do
     if [[ "$index" =~ $regex_reset_required ]] ; then
       read reset_opt <<< "$index" # ignore anything after option
       resetrequired="$reset_opt"
+      shift
+    elif [[ "$index" =~ $regex_display ]] ; then
+      read disp_opt <<< "$index" # ignore anything after option
+      display_pass=TRUE
       shift
     elif [[ "$index" =~ $regex_password ]] ; then
       read pass_opt pass_arg <<< "$index" # ignore anything after option + arg
@@ -135,7 +141,7 @@ iam-user-profile-update(){
 
   # Read in usernames
   local user_names="$(__bma_read_inputs $@)"
-  [[ -z "$user_names" ]] && __bma_usage "[--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
+  [[ -z "$user_names" ]] && __bma_usage "[--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
   local user_name
 
   for user_name in $user_names; do
@@ -154,6 +160,7 @@ iam-user-profile-update(){
       # Otherwise use password provided on command-line
       password=${passwd}
     fi
+    if [[ "${display_pass}" == "TRUE" ]]; then password_display="${password}"; else password_display=${password//[[:graph:]]/X}; fi
 
     aws iam update-login-profile \
       --user-name "${user_name}" \
@@ -165,7 +172,7 @@ iam-user-profile-update(){
     else
       status="FAIL"
     fi
-    echo ${user_name}   ${password}   ${status} |  
+    echo ${user_name}   ${password_display}   ${status} |  
     LC_ALL=C sort              |
     column -s$'\t' -t
   done
