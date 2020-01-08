@@ -13,6 +13,7 @@ log-groups() {
   #     /aws/lambda/stars   1576566745961  0  107460
   #     /aws/lambda/walk    1576567300172  0   11794
 
+  local log_group_names=$(skimstdin)
   local filters=$(__bma_read_filters $@)
 
   local column_command
@@ -23,12 +24,14 @@ log-groups() {
   fi
 
   aws logs describe-log-groups    \
-    --query 'logGroups[].[
-               logGroupName,
-               creationTime,
-               metricFilterCount,
-               storedBytes]'      \
-    --output text |
+    --output text                 \
+    --query "
+      logGroups[${log_group_names:+?contains(['${log_group_names// /"','"}'], logGroupName)}].[
+        logGroupName,
+        creationTime,
+        metricFilterCount,
+        storedBytes
+      ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort --key 2 |
   $column_command

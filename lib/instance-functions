@@ -20,11 +20,12 @@ instances() {
   #     i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
   #     i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
 
-  local instance_ids=$(__bma_read_inputs)
+  local instance_ids=$(skimstdin)
   local filters=$(__bma_read_filters $@)
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances            \
+    ${instance_ids/#/'--instance-ids '} \
+    --output text                       \
     --query "
       Reservations[].Instances[][
         InstanceId,
@@ -35,8 +36,7 @@ instances() {
         LaunchTime,
         Placement.AvailabilityZone,
         VpcId
-      ]"                                                               \
-    --output text       |
+      ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 6 |
   column -s$'\t' -t
@@ -49,11 +49,12 @@ instance-asg() {
   #
   #     USAGE: instance-asg instance-id [instance-id]
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids=$(skimstdin $@)
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances      \
+    --instance-ids $instance_ids  \
+    --output text                 \
     --query "
       Reservations[].Instances[][
         {
@@ -61,8 +62,7 @@ instance-asg() {
             [Tags[?Key=='aws:autoscaling:groupName'].Value][0][0],
           "InstanceId": InstanceId
         }
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -77,19 +77,19 @@ instance-az() {
   #     i-89cefa9403373d7a5  ap-southeast-2a
   #     i-806d8f1592e2a2efd  ap-southeast-2a
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances      \
+    --instance-ids $instance_ids  \
+    --output text                 \
     --query "
       Reservations[].Instances[][
         [
           InstanceId,
           Placement.AvailabilityZone
         ]
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -113,16 +113,17 @@ instance-console() {
   #     Xen: 0000000000000000 - 000000006a400000 (usable)
   #     ...snip...
 
-  local instance_ids=$(__bma_read_inputs $@)
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
   local instance_id
   for instance_id in $instance_ids; do
-    echo Console output for EC2 Instance $instance_id
+    echo
+    echo "Console output for EC2 Instance $instance_id"
     aws ec2 get-console-output     \
       --instance-id "$instance_id" \
-      --query Output               \
-      --output text
-    echo
+      --output text                \
+      --query Output
   done
 }
 
@@ -137,12 +138,12 @@ instance-dns() {
   #     i-89cefa9403373d7a5  ip-10-155-35-61.ap-southeast-2.compute.internal   ec2-54-214-206-114.ap-southeast-2.compute.amazonaws.com
   #     i-806d8f1592e2a2efd  ip-10-178-243-63.ap-southeast-2.compute.internal  ec2-54-214-244-90.ap-southeast-2.compute.amazonaws.com
 
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
-
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances         \
+    --instance-ids $instance_ids     \
+    --output text                    \
     --query "
       Reservations[].Instances[][
         {
@@ -150,8 +151,7 @@ instance-dns() {
           "Private": PrivateDnsName,
           "Public": PublicDnsName
         }
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -162,13 +162,11 @@ instance-health-set-unhealthy() {
   #
   #     USAGE: instance-health-set-unhealthy instance-id [instance-id]
 
-  local instances=$(__bma_read_inputs "$@");
+  local instances="$@ $(skimstdin)";
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
   local health_status=Unhealthy
 
-  if [[ -z $instances ]]; then
-      __bma_usage "instance [instance]";
-      return 1;
-  fi;
   local instance;
   for instance in $instances; do
     aws autoscaling set-instance-health \
@@ -184,19 +182,19 @@ instance-iam-profile() {
   #
   #     USAGE: instance-iam-profile instance-id [instance-id]
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instances="$@ $(skimstdin)";
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances      \
+    --instance-ids $instance_ids  \
+    --output text                 \
     --query "
       Reservations[].Instances[][
         [
           InstanceId,
           IamInstanceProfile.Id
         ]
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -211,11 +209,12 @@ instance-ip() {
   #     i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
   #     i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances           \
+    --instance-ids $instance_ids       \
+    --output text                      \
     --query "
       Reservations[].Instances[][
         {
@@ -223,8 +222,7 @@ instance-ip() {
           "Private": PrivateIpAddress,
           "Public": PublicIpAddress
         }
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -235,10 +233,12 @@ instance-ssh() {
   #
   #     USAGE: instance-ssh [login] [instance-id] [instance-id]
 
-  local inputs="$(__bma_read_inputs $@)"
-  local instance_ids=$(echo "$inputs" | tr " " "\n" | grep "^i-" | tr "\n" " ")
-  local user=$(echo "$inputs" | tr " " "\n" | grep -v "^i-" | tr "\n" " ")
-  if [ -z "$instance_ids" ] ; then echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"; return 1; fi
+  if [[ $1 != *i-* ]]; then
+    local user=${1}
+    shift
+  fi
+  local instance_ids="$@ $(skimstdin)"
+  if [ -z $instance_ids ] ; then echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"; return 1; fi
 
   exec </dev/tty # reattach keyboard to STDIN
 
@@ -253,14 +253,14 @@ instance-ssh() {
     local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
     echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
 
-    ssh                                  \
-      -t                                \
-      -i ${BMA_SSH_DIR:-~/.ssh/}$keyname \
-      -o LogLevel=error                  \
-      -o StrictHostKeyChecking=no        \
-      -o UserKnownHostsFile=/dev/null    \
-      -l $USERNAME                       \
-      $private_ip
+    ssh                                    \
+      -t                                   \
+      -i "${BMA_SSH_DIR:-~/.ssh/}$keyname" \
+      -o LogLevel=error                    \
+      -o StrictHostKeyChecking=no          \
+      -o UserKnownHostsFile=/dev/null      \
+      -l "$USERNAME"                       \
+      "$private_ip"
   done
 }
 
@@ -271,11 +271,12 @@ instance-ssh-details() {
   #
   #     USAGE: instance-ssh-details [login] [instance-id] [instance-id]
 
-  local instance_ids="$(__bma_read_inputs $@)"
+  local instance_ids="$@ $(skimstdin)"
   [[ -z "${instance_ids}" ]] && __bma_usage "instance_id" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances                                      \
+    --instance-ids $instance_ids                                  \
+    --output text                                                 \
     --query "
       Reservations[].Instances[][
         InstanceId,
@@ -283,8 +284,7 @@ instance-ssh-details() {
         (PublicIpAddress || PrivateIpAddress),
         join(' ', [Tags[?Key=='Name'].Value][] || ['not-named']),
         join(' ', [Tags[?Key=='default-user'].Value][] || [''])
-      ]"                                                                \
-    --output text                                                       |
+      ]"            |
   column -s$'\t' -t
 }
 
@@ -299,19 +299,19 @@ instance-stack() {
   #     postgres1  i-89cefa9403373d7a5
   #     postgres2  i-806d8f1592e2a2efd
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances                                         \
+    --instance-ids $instance_ids                                     \
+    --output text                                                    \
     --query "
       Reservations[].Instances[][
         [
           [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
           InstanceId
         ]
-      ][]"                                                                \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -326,8 +326,8 @@ instance-start() {
   #     i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
   #     i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   aws ec2 start-instances        \
     --instance-ids $instance_ids \
@@ -352,19 +352,19 @@ instance-state() {
   #     i-89cefa9403373d7a5  running
   #     i-806d8f1592e2a2efd  running
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances        \
+    --instance-ids $instance_ids    \
+    --output text                   \
     --query "
       Reservations[].Instances[][
         {
           "InstanceId": InstanceId,
           "State": State.Name
         }
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 
@@ -380,8 +380,8 @@ instance-stop() {
   #     i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
   #     i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   aws ec2 stop-instances         \
     --instance-ids $instance_ids \
@@ -402,17 +402,17 @@ instance-tags() {
   #
   #     USAGE: instance-tags instance-id [instance-id]
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances                            \
+    --instance-ids $instance_ids                        \
+    --output text                                       \
     --query "
       Reservations[].Instances[].[
         InstanceId,
         join(' ', [Tags[].[join('=',[Key,Value])][]][])
-      ]"                                                                \
-    --output text                                                       |
+      ]"            |
   column -s$'\t' -t
 }
 
@@ -432,11 +432,11 @@ instance-terminate() {
   #     i-01c7edb986c18c16a  PreviousState=terminated  CurrentState=terminated
   #     i-012dded46894dfa04  PreviousState=running     CurrentState=shutting-down
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   echo "You are about to terminate the following instances:"
-  instances "$instance_ids"
+  echo "$instance_ids" | instances
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
@@ -469,8 +469,8 @@ instance-termination-protection() {
   #     i-806d8f1592e2a2efd DisableApiTermination=false
   #     i-61e86ac6be1e2c193 DisableApiTermination=false
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   for instance_id in $instance_ids; do
     aws ec2 describe-instance-attribute \
@@ -494,11 +494,11 @@ instance-termination-protection-disable() {
   #
   #     USAGE: instance-termination-protection-disable instance-id [instance-id]
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   echo "You are about to disable termination protection on the following instances:"
-  instances "$instance_ids"
+  echo "$instance_ids" | instances
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
@@ -509,7 +509,7 @@ instance-termination-protection-disable() {
       aws ec2 modify-instance-attribute   \
         --attribute disableApiTermination \
         --value false                     \
-        --instance-id $instance_id
+        --instance-id "$instance_id"
     done
   fi
 }
@@ -521,8 +521,8 @@ instance-termination-protection-enable() {
   #
   #     USAGE: instance-termination-protection-enable instance-id [instance-id]
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   echo "You are about to enable termination protection on the following instances:"
   instances "$instance_ids"
@@ -536,7 +536,7 @@ instance-termination-protection-enable() {
       aws ec2 modify-instance-attribute   \
         --attribute disableApiTermination \
         --value true                      \
-        --instance-id $instance_id
+        --instance-id "$instance_id"
     done
   fi
 }
@@ -554,11 +554,11 @@ instance-type() {
   #     i-806d8f1592e2a2efd  t3.nano
   #     i-61e86ac6be1e2c193  t3.nano
 
-  local instance_ids="$(__bma_read_inputs $@)"
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+    $([[ -n $instance_ids ]] && echo --instance-ids ${instance_ids})  \
     --query "
       Reservations[].Instances[][
         [
@@ -577,17 +577,17 @@ instance-userdata() {
   #
   #     USAGE: instance-userdata instance-id [instance-id]
 
-  local instance_ids=$(__bma_read_inputs $@)
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
   local instance_id
   for instance_id in $instance_ids; do
     echo Userdata for EC2 Instance $instance_id
     aws ec2 describe-instance-attribute \
       --attribute userData              \
-      --instance-id $instance_id        \
+      --instance-id "$instance_id"      \
       --query UserData                  \
-      --output text                     |
-        base64 --decode
+      --output text    |
+    base64 --decode
     echo
   done
 }
@@ -603,11 +603,11 @@ instance-volumes() {
   #     i-89cefa9403373d7a5  vol-cf5ddae9
   #     i-806d8f1592e2a2efd  vol-38fd45c3
 
-  local instance_ids=$(__bma_read_inputs $@)
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+    $([[ -n $instance_ids ]] && echo --instance-ids ${instance_ids})  \
     --query "
       Reservations[].Instances[][
         [
@@ -626,19 +626,19 @@ instance-vpc() {
   #
   #     USAGE: instance-vpcs instance-id [instance-id]
 
-  local instance_ids=$(__bma_read_inputs $@)
-  [[ -z "$instance_ids" ]] && __bma_usage "instance-id [instance-id]" && return 1
+  local instance_ids="$@ $(skimstdin)"
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
-  aws ec2 describe-instances                                            \
-    $([[ -n ${instance_ids} ]] && echo --instance-ids ${instance_ids})  \
+  aws ec2 describe-instances     \
+    --instance-ids $instance_ids \
+    --output text                \
     --query "
       Reservations[].Instances[][
         [
           VpcId,
           InstanceId
         ]
-      ][]"                                                              \
-    --output text                                                       |
+      ][]"          |
   column -s$'\t' -t
 }
 

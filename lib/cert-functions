@@ -7,25 +7,35 @@ certs() {
 
   # List ACM Certificates
 
+  local cert_arns=$(skimstdin)
   local filters=$(__bma_read_filters $@)
 
   local include_arn_bit=''
   [[ -n ${include_arn:-} ]] && include_arn_bit="CertificateArn,"
-  local cert_arns=$(aws acm list-certificates --output text | cut -f2)
+  local retrieved_cert_arns=$(
+    aws acm list-certificates      \
+      --output text                \
+      --query "
+        CertificateSummaryList[${cert_arns:+?contains(['${cert_arns// /"','"}'], CertificateArn)}].[
+          CertificateArn
+        ]"
+  )
+
   local cert_arn
-  for cert_arn in $cert_arns; do
-    aws acm describe-certificate \
+  for cert_arn in $retrieved_cert_arns; do
+    aws acm describe-certificate    \
       --certificate-arn "$cert_arn" \
-      --query "Certificate.[
-        $include_arn_bit
-        DomainName,
-        Status,
-        length(InUseBy)==\`0\` && 'not-in-use' || 'in-use',
-        NotBefore,
-        NotAfter,
-        join(',', [DomainValidationOptions[].ValidationMethod][])
-      ]" \
-      --output text
+      --output text                 \
+      --query "
+        Certificate.[
+          $include_arn_bit
+          DomainName,
+          Status,
+          length(InUseBy)==\`0\` && 'not-in-use' || 'in-use',
+          NotBefore,
+          NotAfter,
+          join(',', [DomainValidationOptions[].ValidationMethod][])
+      ]"
   done |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 5 | # sort by NotAfter
@@ -48,13 +58,13 @@ cert-users() {
   #
   #     USAGE: cert-users cert-arn [cert-arn]
 
-  local cert_arns="$(__bma_read_inputs $@)"
+  local cert_arns="$@ $(skimstdin)"
   [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
 
   local cert_arns
   for cert_arn in $cert_arns; do
     aws acm describe-certificate       \
-      --certificate-arn "${cert_arn}"  \
+      --certificate-arn "$cert_arn"  \
       --output text                    \
       --query "Certificate.InUseBy[].[
         @,
@@ -71,7 +81,7 @@ cert-delete() {
   #
   #     USAGE: cert-delete cert-arn [cert-arn]
 
-  local cert_arns="$(__bma_read_inputs $@)"
+  local cert_arns="$@ $(skimstdin)"
   [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
 
   echo "You are about to delete the following certificates:"

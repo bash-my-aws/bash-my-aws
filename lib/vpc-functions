@@ -41,12 +41,12 @@ subnets(){
   #     subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
   #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
 
+  local subnet_ids=$(skimstdin)
   local filters=$(__bma_read_filters $@)
-  local subnet_ids=$(__bma_read_inputs)
 
-  aws ec2 describe-subnets                                       \
-    $([[ -n ${subnet_ids} ]] && echo --subnet-ids ${subnet_ids}) \
-    --output text                                                \
+  aws ec2 describe-subnets          \
+    ${subnet_ids/#/'--subnet-ids '} \
+    --output text                   \
     --query "Subnets[].[
       SubnetId,
       VpcId,
@@ -67,20 +67,21 @@ vpcs() {
   #     $ vpcs
   #     vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
 
-  local vpc_ids="$(__bma_read_inputs)"
+  local vpc_ids=$(skimstdin)
   local filters=$(__bma_read_filters $@)
 
-  aws ec2 describe-vpcs                                                 \
-    $([[ -n ${vpc_ids} ]] && echo --vpc-ids ${vpc_ids})                 \
-    --output text                                                       \
-    --query 'Vpcs[].[
-      VpcId,
-      ((IsDefault==`false`)&&`not-default`)||`default-vpc`,
-      join(`,`, [Tags[?Key==`Name`].Value || `NO_NAME`][]),
-      CidrBlock,
-      join(`,`, [Tags[?Key==`aws:cloudformation:stack-name`].Value || `NO_STACK`][]),
-      join(`,`, [Tags[?Key==`version`].Value || `NO_VERSION`][])
-    ]'                  |
+  aws ec2 describe-vpcs       \
+    ${vpc_ids/#/'--vpc-ids '} \
+    --output text             \
+    --query '
+      Vpcs[].[
+        VpcId,
+        ((IsDefault==`false`)&&`not-default`)||`default-vpc`,
+        join(`,`, [Tags[?Key==`Name`].Value || `NO_NAME`][]),
+        CidrBlock,
+        join(`,`, [Tags[?Key==`aws:cloudformation:stack-name`].Value || `NO_STACK`][]),
+        join(`,`, [Tags[?Key==`version`].Value || `NO_VERSION`][])
+      ]'                |
   grep -E -- "$filters" |
   column -s$'\t' -t
 }
@@ -95,13 +96,13 @@ vpc-azs() {
   #     $ vpcs | vpc-azs
   #     vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
     echo -n "$vpc_id "
-    echo "$vpc_id" | vpc-subnets | awk '{print $3}' | LC_ALL=C sort -u | tr "\n" ' '
+    echo "$vpc_id" | vpc-subnets LC_ALL=C sort -u | awk 'ORS=" " {print $3}'
     echo
   done
 }
@@ -116,7 +117,7 @@ vpc-az-count() {
   #     $ vpcs | vpc-az-count
   #     vpc-018d9739 3
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -132,7 +133,7 @@ vpc-lambda-functions(){
   #
   #     USAGE: vpc-lambda-functions vpc-id [vpc-id]
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -163,23 +164,24 @@ vpc-dhcp-options-ntp(){
 
 vpc-endpoints(){
 
-  # List VPC Endpoints of VPC(s)
+  # List VPC Endpoints
   #
-  #     USAGE: vpc-endpoints vpc-id [vpc-id]
+  #     USAGE: vpc-endpoints [filter]
 
-  local vpc_ids="$(__bma_read_inputs)"
+  local vpc_endpoint_ids=$(skimstdin)
   local filters=$(__bma_read_filters $@ $vpc_ids)
 
-  aws ec2 describe-vpc-endpoints \
-  --output text                  \
-  --query '
-    VpcEndpoints[].[
-      VpcEndpointId,
-      VpcId,
-      State,
-      VpcEndpointType,
-      ServiceName
-    ]'                  |
+  aws ec2 describe-vpc-endpoints                \
+    ${vpc_endpoint_ids/#/'--vpc-endpoint-ids '} \
+    --output text                               \
+    --query '
+      VpcEndpoints[].[
+        VpcEndpointId,
+        VpcId,
+        State,
+        VpcEndpointType,
+        ServiceName
+      ]'                |
   grep -E -- "$filters" |
   sort -k 5             |
   column -s$'\t' -t
@@ -190,7 +192,7 @@ vpc-endpoint-services(){
 
   # List available VPC endpoint services
   #
-  #     USAGE: vpc-endpoint-services vpc-id [vpc-id]
+  #     USAGE: vpc-endpoint-services
 
   local filters=$(__bma_read_filters $@)
 
@@ -213,16 +215,17 @@ vpc-igw() {
   #
   #     USAGE: vpc-igw vpc-id [vpc-id]
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
     aws ec2 describe-internet-gateways                                       \
       --output text                                                          \
-      --query "InternetGateways[?contains(Attachments[].VpcId, '$vpc_id')].[
-        InternetGatewayId,
-        join(',', Attachments[].VpcId)
+      --query "
+        InternetGateways[?contains(Attachments[].VpcId, '$vpc_id')].[
+          InternetGatewayId,
+          join(',', Attachments[].VpcId)
       ]"
   done | column -s$'\t' -t
 }
@@ -237,18 +240,19 @@ vpc-route-tables(){
   #     $ vpcs | vpc-route-tables
   #     rtb-8e841c39  vpc-018d9739  NO_NAME
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
     aws ec2 describe-route-tables                             \
       --output text                                           \
-      --query "RouteTables[?VpcId=='$vpc_id'].[
-        RouteTableId,
-        VpcId,
-        join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
-      ]"              |
+      --query "
+        RouteTables[?VpcId=='$vpc_id'].[
+          RouteTableId,
+          VpcId,
+          join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
+        ]"            |
     column -s$'\t' -t
   done
 }
@@ -260,7 +264,7 @@ vpc-nat-gateways(){
   #
   #     USAGE: vpc-nat-gateways vpc-id [vpc-id]
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -288,7 +292,7 @@ vpc-subnets(){
   #     subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
   #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -309,7 +313,7 @@ vpc-network-acls(){
   #     $ vpcs | vpc-network-acls
   #     acl-ff4914d1  vpc-018d9739
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -327,7 +331,7 @@ vpc-rds(){
   #
   #     USAGE: vpc-rds vpc-id [vpc-id]
 
-  local vpc_ids="$(__bma_read_inputs $@)"
+  local vpc_ids="$@ $(skimstdin)"
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id

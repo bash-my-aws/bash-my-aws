@@ -8,12 +8,12 @@ asgs() {
 
   # List EC2 Autoscaling Groups
 
-  local asg_names=$(__bma_read_inputs)
-  local filters=$(__bma_read_filters "$@")
+  local asg_names=$(skimstdin)
+  local filters=$(__bma_read_filters $@)
 
   # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups              \
-    ${asg_names:+'--auto-scaling-group-names' $asg_names}   \
+    ${asg_names/#/'--auto-scaling-group-names '}            \
     --output text                                           \
     --query "AutoScalingGroups[].[
       AutoScalingGroupName,
@@ -31,8 +31,8 @@ asg-capacity() {
 
   # List min, desired and maximum capacities of EC2 Autoscaling Group(s)
 
-  local asg_names=$(__bma_read_inputs "$@")
-  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names="$@ $(skimstdin)"
+  [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups \
@@ -47,13 +47,14 @@ asg-capacity() {
   column -s$'\t' -t
 }
 
+
 asg-desired-size-set() {
 
   # Set desired capacity of autoscaling group(s)
 
   local capacity="$1"
   shift
-  local asg_names=$(__bma_read_inputs "$@")
+  local asg_names="$@ $(skimstdin)"
   if [[ -z $asg_names ]] || [[ -z $capacity ]] || [[ $capacity =~ [^0-9]+ ]]; then
     __bma_usage "capacity asg_name [asg_name]"
     return 1
@@ -71,15 +72,18 @@ asg-instances() {
 
   # List instances of autoscaling group(s)
 
-  local asg_names=$(__bma_read_inputs "$@")
-  [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names="$@ $(skimstdin)"
+  [[ -z "$asg_names" ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   # shellcheck disable=SC2086
   local instance_ids="$(
-    aws autoscaling describe-auto-scaling-groups             \
-      --auto-scaling-group-names $asg_names                  \
-      --query "AutoScalingGroups[].Instances[].[InstanceId]" \
-      --output text
+    aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-names $asg_names      \
+      --output text                              \
+      --query "
+        AutoScalingGroups[].Instances[].[
+          InstanceId
+      ]"
   )"
   if [[ -n "$instance_ids" ]]; then
     echo "$instance_ids" | instances
@@ -91,18 +95,22 @@ asg-launch-configuration() {
 
   # List Launch Configurations of Autoscaling Group(s)
 
-  local asg_names=$(__bma_read_inputs "$@")
+  local asg_names="$@ $(skimstdin)"
   [[ -z "$asg_names" ]] && __bma_usage "auto-scaling-group" && return 1
 
   # shellcheck disable=SC2086
   local launch_configuration_names="$(
-    aws autoscaling describe-auto-scaling-groups              \
-      --auto-scaling-group-names $asg_names                   \
-      --query "AutoScalingGroups[].[LaunchConfigurationName]" \
-      --output text)"
+    aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-names $asg_names      \
+      --output text                              \
+      --query "
+        AutoScalingGroups[].[
+          LaunchConfigurationName
+        ]"
+  )"
 
   if [[ -n "$launch_configuration_names" ]]; then
-    launch-configurations "$launch_configuration_names"
+    echo "$launch_configuration_names" | launch-configurations
   fi
 }
 
@@ -111,25 +119,27 @@ launch-configurations() {
 
   # List Launch Configurations
 
-  local launch_configuration_names=$(__bma_read_inputs "$@")
+  local launch_configuration_names=$(skimstdin)
+  local filters=$(__bma_read_filters $@)
 
-  aws autoscaling describe-launch-configurations                                              \
-    ${launch_configuration_names:+'--launch-configuration-names' $launch_configuration_names} \
-    --output text                                                                             \
-    --query "LaunchConfigurations[].[
-      LaunchConfigurationName,
-      ImageId,
-      InstanceType
-    ]"              |
+  aws autoscaling describe-launch-configurations                    \
+    ${launch_configuration_names/#/'--launch-configuration-names '} \
+    --output text                                                   \
+    --query "
+      LaunchConfigurations[].[
+        LaunchConfigurationName,
+        ImageId,
+        InstanceType
+    ]" |
   column -s$'\t' -t
 }
 
 
 launch-configuration-asgs() {
 
-  # List EC2 Autoscaling Groups of Launch COnfiguration(s)
+  # List EC2 Autoscaling Groups of Launch Configuration(s)
 
-  local launch_configuration_names=$(__bma_read_inputs "$@")
+  local launch_configuration_names="$@ $(skimstdin)"
   if [[ -z $launch_configuration_names ]] ; then
     __bma_usage "launch_configuration [launch_configuration]"
     return 1
@@ -155,7 +165,7 @@ asg-max-size-set() {
 
   local capacity="$1"
   shift
-  local asg_names=$(__bma_read_inputs "$@")
+  local asg_names="$@ $(skimstdin)"
   if [[ -z $asg_names ]] || [[ -z $capacity ]] || [[ $capacity =~ [^0-9]+ ]]; then
     __bma_usage "capacity asg_name [asg_name]"
     return 1
@@ -176,7 +186,7 @@ asg-min-size-set() {
 
   local capacity="$1"
   shift
-  local asg_names=$(__bma_read_inputs "$@")
+  local asg_names="$@ $(skimstdin)"
   if [[ -z $asg_names ]] || [[ -z $capacity ]] || [[ $capacity =~ [^0-9]+ ]]; then
     __bma_usage "capacity asg_name [asg_name]"
     return 1
@@ -196,8 +206,8 @@ asg-processes_suspended() {
   # List suspended processes of an autoscaling group
 
   # TODO: fix the output
-  local asg_names=$(__bma_read_inputs "$@")
-  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names="$@ $(skimstdin)"
+  [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   # shellcheck disable=SC2086
   aws autoscaling describe-auto-scaling-groups \
@@ -215,8 +225,8 @@ asg-resume() {
 
   # Resume all processes of an autoscaling group
 
-  local asg_names=$(__bma_read_inputs "$@")
-  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names="$@ $(skimstdin)"
+  [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   local asg_name
   for asg_name in $asg_names; do
@@ -229,7 +239,7 @@ asg-suspend() {
 
   # Suspend all processes of an autoscaling group
 
-  local asg_names=$(__bma_read_inputs "$@")
+  local asg_names="$@ $(skimstdin)"
   [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   local asg_name
@@ -244,7 +254,7 @@ asg-stack() {
 
   # List CloudFormation stack for asg(s)
 
-  local asg_names=$(__bma_read_inputs "$@")
+  local asg_names="$@ $(skimstdin)"
   [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   # shellcheck disable=SC2086
@@ -263,8 +273,8 @@ asg-scaling-activities() {
 
   # List scaling activities for Autoscaling Group(s)
 
-  local asg_names=$(__bma_read_inputs "$@")
-  [[ -z $asg_names ]] && __bma_usage "auto-scaling-group" && return 1
+  local asg_names="$@ $(skimstdin)"
+  [[ -z $asg_names ]] && __bma_usage "asg_name [asg_name]" && return 1
 
   local asg_name
   for asg_name in $asg_names; do
