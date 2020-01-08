@@ -18,7 +18,8 @@ iam-roles() {
   #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
   #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
 
-  local filters=$(__bma_read_filters $@)
+  local filters
+  filters=$(__bma_read_filters "$@")
 
   aws iam list-roles    \
     --output text       \
@@ -40,7 +41,8 @@ iam-role-principal(){
   #
   #     USAGE: iam-role-principal role-name [role-name]
 
-  local role_names="$(__bma_read_inputs $@)"
+  local role_names
+  role_names=$(__bma_read_inputs "$@")
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 
   aws iam list-roles                                                         \
@@ -67,7 +69,8 @@ iam-users() {
   #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
   #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
 
-  local filters=$(__bma_read_filters $@)
+  local filters
+  filters=$(__bma_read_filters "$@")
 
   aws iam list-users    \
     --query 'Users[].[
@@ -88,7 +91,8 @@ iam-user-profile(){
   #
   #     USAGE: iam-user-profile user-name [user-name]
 
-  local user_names="$(__bma_read_inputs $@)"
+  local user_names
+  user_names=$(__bma_read_inputs "$@")
   [[ -z "${user_names}" ]] && __bma_usage "user-name [user-name]" && return 1
   local user_name
   for user_name in ${user_names}; do
@@ -126,7 +130,7 @@ iam-user-profile-update(){
   local regex_password=^\-\-password=.*
   for index in "${inputs_array[@]}" ; do
       if [[ "${index}" =~ ${regex_reset_required} ]] ; then
-      read reset_opt <<< "${index}" # ignore anything after option
+      read -r reset_opt <<< "${index}" # ignore anything after option
       resetrequired="${reset_opt}"
       shift
     elif [[ "${index}" =~ ${regex_batch} ]] ; then
@@ -136,7 +140,7 @@ iam-user-profile-update(){
       display_pass=TRUE
       shift
     elif [[ "${index}" =~ $regex_password ]] ; then
-      read pass_opt pass_arg <<< "$index" # ignore anything after option + arg
+      read -r pass_opt pass_arg <<< "$index" # ignore anything after option + arg
       passwd="${pass_arg}"
       shift
     fi
@@ -144,7 +148,8 @@ iam-user-profile-update(){
   unset IFS # to prevent it from breaking things later
 
   # Read in usernames
-  local user_names="$(__bma_read_inputs $@)"
+  local user_names
+  user_names=$(__bma_read_inputs "$@")
   [[ -z "${user_names}" ]] && __bma_usage "[--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
   local user_name
 
@@ -164,18 +169,30 @@ iam-user-profile-update(){
       # Otherwise use password provided on command-line
       password="${passwd}"
     fi
-    if [[ "${display_pass}" == "TRUE" ]]; then password_display="${password}"; else password_display=${password//[[:graph:]]/X}; fi
 
     if [[ "${batch}" == "FALSE" ]]; then
         echo    "${user_name}:                            Suggested password: ${password}"
-        echo -n "${user_name}:                   Enter new password for user: "; read -r password1
-        echo -n "${user_name}:                 Confirm new password for user: "; read -r password2
-        echo -n "${user_name}: Require password reset on next sign-in? [Y/n]: "; read -r pass_reset
+        password1="x"; password2="y"
+        until [[ "${password1}" == "${password2}" ]]; do
+          read -srp "${user_name}:                   Enter new password for user: " password1 <&1; echo ""
+          read -srp "${user_name}:                 Confirm new password for user: " password2 <&1; echo ""
+          if [[ "${password1}" != "${password2}" ]]; then echo "Passwords do not match..."; fi
+        done
+        read -n1 -rp "${user_name}: Require password reset on next sign-in? [Y/n]: " pass_reset <&1; echo ""
+        password="${password1}"
+        pass_reset=${pass_reset,,}    # tolower
+        if [[ "$pass_reset" =~ ^(n)$ ]]; then 
+          resetrequired="--no-password-reset-required"
+        else
+          resetrequired="--password-reset-required"
+        fi
     fi
 
-    echo aws iam update-login-profile \
+    if [[ "${display_pass}" == "TRUE" ]]; then password_display="${password}"; else password_display=${password//[[:graph:]]/X}; fi
+
+    aws iam update-login-profile \
       --user-name "${user_name}" \
-      --password "${password}" \
+      --password """${password}""" \
       "${resetrequired}" \
       --output text 
 
