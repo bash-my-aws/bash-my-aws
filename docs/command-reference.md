@@ -997,10 +997,20 @@ List IAM Users Profile
 
 Change password for IAM user
 
-    USAGE: iam-user-profile-update [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
+    USAGE: iam-user-profile-update [--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
 
-    $ iam-user-profile-update --no-password-reset-required --password=RND john.smith@example.com
+    $ iam-user-profile-update --batch --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  XXXXXXXXXXXXXXX  SUCCESS
+
+    $ iam-user-profile-update --batch --display-password --no-password-reset-required --password=RND john.smith@example.com
     john.smith@example.com  {LK-4q\>V9E>n`%  SUCCESS
+
+    $ iam-users king | iam-user-profile-update
+    john.smith@example.com:                            Suggested password: ($p:#|q%5U!6~n%
+    john.smith@example.com:                   Enter new password for user:
+    john.smith@example.com:                 Confirm new password for user:
+    john.smith@example.com: Require password reset on next sign-in? [Y/n]: n
+    john.smith@example.com XXXXXXXXXXXXXXX SUCCESS
 
 
 ## image-commands
