@@ -974,6 +974,7 @@ List role principal for IAM Role(s)
 
     USAGE: iam-role-principal role-name [role-name]
 
+
 ### iam-users
 
 List IAM Users
