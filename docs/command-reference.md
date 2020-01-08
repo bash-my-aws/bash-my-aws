@@ -979,9 +979,27 @@ List role principal for IAM Role(s)
 List IAM Users
 
     $ iam-users
-    john.smith@example.com                   AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
-    aws-test-user                            AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
-    mary.jones@example.com                   AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+    john.smith@example.com  AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z  2019-10-16T17:16:08Z 
+    aws-test-user           AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z  2019-10-16T02:12:52Z 
+    mary.jones@example.com  AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z  2019-10-16T13:51:32Z 
+
+### iam-user-profile
+
+List IAM Users Profile
+
+    USAGE: iam-user-profile user-name [user-name] 
+
+    $ iam-user-profile john.smith@example.com
+    john.smith@example.com  2019-10-16T17:16:08Z  False
+
+### iam-user-profile-update
+
+Change password for IAM user
+
+    USAGE: iam-user-profile-update [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
+
+    $ iam-user-profile-update --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  {LK-4q\>V9E>n`%  SUCCESS
 
 
 ## image-commands

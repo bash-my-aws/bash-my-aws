@@ -71,11 +71,102 @@ iam-users() {
     --query 'Users[].[
       UserName,
       UserId,
-      CreateDate
+      CreateDate,
+      PasswordLastUsed
     ]'                  \
     --output text       |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
 }
+
+iam-user-profile(){
+
+  # List login profile for IAM User(s)
+  #
+  #     USAGE: iam-user-profile user-name [user-name]
+
+  local user_names="$(__bma_read_inputs $@)"
+  [[ -z "$user_names" ]] && __bma_usage "user-name [user-name]" && return 1
+  local user_name
+  for user_name in $user_names; do
+
+    aws iam get-login-profile \
+      --user-name "$user_name" \
+      --query 'LoginProfile.[
+        UserName,
+        CreateDate,
+        PasswordResetRequired
+      ]' \
+      --output text  |
+    LC_ALL=C sort              |
+    column -s$'\t' -t
+  done
+}
+
+iam-user-profile-update(){
+
+  # Change IAM User(s) password
+  #
+  #     USAGE: iam-user-profile-update [--no-reset-required] --password [Pa$$w0rd | RND] user-name [user-name]
+
+  local resetrequired="--password-reset-required"   # Default require password reset
+  local passwd="RND"                                # Default to randomly generated password
+
+  # Process options
+  local inputs_array=($@)
+  local IFS='=' # override default field separator in the scope of this function only
+  local regex_reset_required=^\-\-\(no\-\)*password\-reset\-required
+  local regex_password=^\-\-password=.*
+  for index in "${inputs_array[@]}" ; do
+    if [[ "$index" =~ $regex_reset_required ]] ; then
+      read reset_opt <<< "$index" # ignore anything after option
+      resetrequired="$reset_opt"
+      shift
+    elif [[ "$index" =~ $regex_password ]] ; then
+      read pass_opt pass_arg <<< "$index" # ignore anything after option + arg
+      passwd="${pass_arg}"
+      shift
+    fi
+  done
+  unset IFS # to prevent it from breaking things later
+
+  # Read in usernames
+  local user_names="$(__bma_read_inputs $@)"
+  [[ -z "$user_names" ]] && __bma_usage "[--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
+  local user_name
+
+  for user_name in $user_names; do
+    if [ "${user_name:0:1}" == "-" ]; then continue; fi
+    if [ "${passwd}" == "RND" ]; then
+      # Generate random password until it matches password policy:
+      #  - At least one Upper Case
+      #  - At least one Lower Case
+      #  - At least one Digit
+      #  - At least one Special Character
+      #  - At least 15 characters long
+      until [[ ${#password} -ge 15 && "$password" == *[A-Z]* && "$password" == *[a-z]* && "$password" == *[0-9]* && "$password" == *[!@#$%^\&*\(\)_+-=\[\]\{\}\|]* ]]; do
+        password=`strings /dev/urandom | grep -o '[[:graph:]]' | head -n 15 | tr -d '\n'; echo`
+      done
+    else
+      # Otherwise use password provided on command-line
+      password=${passwd}
+    fi
+
+    aws iam update-login-profile \
+      --user-name "${user_name}" \
+      --password "${password}" \
+      ${resetrequired} \
+      --output text 
+    if [ $? -eq 0 ]; then
+      status="SUCCESS"
+    else
+      status="FAIL"
+    fi
+    echo ${user_name}   ${password}   ${status} |  
+    LC_ALL=C sort              |
+    column -s$'\t' -t
+  done
+}
+
 
