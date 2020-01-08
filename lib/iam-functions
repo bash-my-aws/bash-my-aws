@@ -21,12 +21,13 @@ iam-roles() {
   local filters=$(__bma_read_filters $@)
 
   aws iam list-roles    \
-    --query 'Roles[].[
-      RoleName,
-      RoleId,
-      CreateDate
-    ]'                  \
-    --output text       |
+    --output text       \
+    --query '
+      Roles[].[
+        RoleName,
+        RoleId,
+        CreateDate
+      ]'                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
@@ -42,7 +43,8 @@ iam-role-principal(){
   local role_names="$(__bma_read_inputs $@)"
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 
-  aws iam list-roles \
+  aws iam list-roles                                                         \
+    --output text                                                            \
     --query "
       Roles[?contains('$role_names', RoleName)].[
         RoleName,
@@ -50,11 +52,11 @@ iam-role-principal(){
         AssumeRolePolicyDocument.Statement[0].Action,
         join('', keys(AssumeRolePolicyDocument.Statement[0].Principal)),
         join(',', values(AssumeRolePolicyDocument.Statement[0].Principal)[])
-    ]" \
-    --output text   |
-  LC_ALL=C sort              |
+    ]"              |
+  LC_ALL=C sort     |
   column -s$'\t' -t
 }
+
 
 iam-users() {
 
@@ -68,12 +70,13 @@ iam-users() {
   local filters=$(__bma_read_filters $@)
 
   aws iam list-users    \
-    --query 'Users[].[
-      UserName,
-      UserId,
-      CreateDate
-    ]'                  \
-    --output text       |
+    --output text       \
+    --query '
+      Users[].[
+        UserName,
+        UserId,
+        CreateDate
+    ]'                  |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
