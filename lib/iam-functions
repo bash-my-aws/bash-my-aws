@@ -77,7 +77,7 @@ iam-users() {
       PasswordLastUsed
     ]'                  \
     --output text       |
-  grep -E -- "$filters" |
+  grep -E -- "${filters}" |
   LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
 }
@@ -89,12 +89,12 @@ iam-user-profile(){
   #     USAGE: iam-user-profile user-name [user-name]
 
   local user_names="$(__bma_read_inputs $@)"
-  [[ -z "$user_names" ]] && __bma_usage "user-name [user-name]" && return 1
+  [[ -z "${user_names}" ]] && __bma_usage "user-name [user-name]" && return 1
   local user_name
-  for user_name in $user_names; do
+  for user_name in ${user_names}; do
 
     aws iam get-login-profile \
-      --user-name "$user_name" \
+      --user-name "${user_name}" \
       --query 'LoginProfile.[
         UserName,
         CreateDate,
@@ -110,28 +110,32 @@ iam-user-profile-update(){
 
   # Change IAM User(s) password
   #
-  #     USAGE: iam-user-profile-update [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
+  #     USAGE: iam-user-profile-update [--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
 
   local resetrequired="--password-reset-required"   # Default require password reset
   local passwd="RND"                                # Default to randomly generated password
+  local batch=FALSE                                 # Default to interactive mode
   local display_pass=FALSE                          # Default to obscure password display
 
   # Process options
   local inputs_array=($@)
   local IFS='=' # override default field separator in the scope of this function only
   local regex_reset_required=^\-\-\(no\-\)*password\-reset\-required
+  local regex_batch=^\-\-batch
   local regex_display=^\-\-display\-password
   local regex_password=^\-\-password=.*
   for index in "${inputs_array[@]}" ; do
-    if [[ "$index" =~ $regex_reset_required ]] ; then
-      read reset_opt <<< "$index" # ignore anything after option
-      resetrequired="$reset_opt"
+      if [[ "${index}" =~ ${regex_reset_required} ]] ; then
+      read reset_opt <<< "${index}" # ignore anything after option
+      resetrequired="${reset_opt}"
       shift
-    elif [[ "$index" =~ $regex_display ]] ; then
-      read disp_opt <<< "$index" # ignore anything after option
+    elif [[ "${index}" =~ ${regex_batch} ]] ; then
+      batch=TRUE
+      shift
+    elif [[ "${index}" =~ $regex_display ]] ; then
       display_pass=TRUE
       shift
-    elif [[ "$index" =~ $regex_password ]] ; then
+    elif [[ "${index}" =~ $regex_password ]] ; then
       read pass_opt pass_arg <<< "$index" # ignore anything after option + arg
       passwd="${pass_arg}"
       shift
@@ -141,38 +145,46 @@ iam-user-profile-update(){
 
   # Read in usernames
   local user_names="$(__bma_read_inputs $@)"
-  [[ -z "$user_names" ]] && __bma_usage "[--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
+  [[ -z "${user_names}" ]] && __bma_usage "[--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
   local user_name
 
-  for user_name in $user_names; do
+  for user_name in ${user_names}; do
     if [ "${user_name:0:1}" == "-" ]; then continue; fi
-    if [ "${passwd}" == "RND" ]; then
+    if [[ "${passwd}" = "RND" ]] || [[ "${batch}" = "FALSE" ]]; then
       # Generate random password until it matches password policy:
       #  - At least one Upper Case
       #  - At least one Lower Case
       #  - At least one Digit
       #  - At least one Special Character
       #  - At least 15 characters long
-      until [[ ${#password} -ge 15 && "$password" == *[A-Z]* && "$password" == *[a-z]* && "$password" == *[0-9]* && "$password" == *[!@#$%^\&*\(\)_+-=\[\]\{\}\|]* ]]; do
-        password=`strings /dev/urandom | grep -o '[[:graph:]]' | head -n 15 | tr -d '\n'; echo`
+      until [[ ${#password} -ge 15 && "${password}" == *[A-Z]* && "${password}" == *[a-z]* && "${password}" == *[0-9]* && "${password}" == *[!@#$%^\&*\(\)_+-=\[\]\{\}\|]* ]]; do
+          password=$(strings /dev/urandom | grep -o '[[:graph:]]' | head -n 15 | tr -d '\n'; echo)
       done
     else
       # Otherwise use password provided on command-line
-      password=${passwd}
+      password="${passwd}"
     fi
     if [[ "${display_pass}" == "TRUE" ]]; then password_display="${password}"; else password_display=${password//[[:graph:]]/X}; fi
 
-    aws iam update-login-profile \
+    if [[ "${batch}" == "FALSE" ]]; then
+        echo    "${user_name}:                            Suggested password: ${password}"
+        echo -n "${user_name}:                   Enter new password for user: "; read -r password1
+        echo -n "${user_name}:                 Confirm new password for user: "; read -r password2
+        echo -n "${user_name}: Require password reset on next sign-in? [Y/n]: "; read -r pass_reset
+    fi
+
+    echo aws iam update-login-profile \
       --user-name "${user_name}" \
       --password "${password}" \
-      ${resetrequired} \
+      "${resetrequired}" \
       --output text 
+
     if [ $? -eq 0 ]; then
       status="SUCCESS"
     else
       status="FAIL"
     fi
-    echo ${user_name}   ${password_display}   ${status} |  
+    echo "${user_name}"   "${password_display}"   "${status}" |  
     LC_ALL=C sort              |
     column -s$'\t' -t
   done
