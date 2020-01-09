@@ -11,22 +11,6 @@ skimstdin() {
 }
 
 
-__bma_read_inputs() {
-  # deprecated
-  echo $(skimstdin) $@
-}
-
-
-__bma_read_stdin() {
-  # deprecated - use skimstdin
-  [[ -t 0 ]] ||
-    cat                  |
-      awk '{ print $1 }' |
-      tr '\n' ' '        |
-      sed 's/\ $//'
-}
-
-
 __bma_read_filters() {
 
   # Construct a string to be passed to `grep -E`
@@ -48,4 +32,26 @@ __bma_usage() {
   echo "USAGE: ${FUNCNAME[1]} $@" > /dev/stderr
 }
 
-## vim: ft=sh
+
+#
+# The following two functions are deprecated
+#
+
+
+__bma_read_inputs() {
+  # deprecated
+  echo $(__bma_read_stdin) $@ |
+    sed -E 's/\ +$//'         |
+    sed -E 's/^\ +//'
+}
+
+
+__bma_read_stdin() {
+  # deprecated - use skimstdin
+  [[ -t 0 ]] ||
+    cat                  |
+      awk '{ print $1 }' |
+      tr '\n' ' '        |
+      sed 's/\ $//'
+}
+
