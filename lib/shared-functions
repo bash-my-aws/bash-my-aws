@@ -5,7 +5,7 @@
 # Used by bash-my-aws functions to work with stdin and arguments.
 
 
-skimstdin() {
+skim-stdin() {
   # Return the first token from each line of STDIN
   [[ -t 0 ]] || awk 'ORS=" " { print $1 }'
 }
@@ -47,7 +47,7 @@ __bma_read_inputs() {
 
 
 __bma_read_stdin() {
-  # deprecated - use skimstdin
+  # deprecated - use skim-stdin
   [[ -t 0 ]] ||
     cat                  |
       awk '{ print $1 }' |

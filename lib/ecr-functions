@@ -7,7 +7,7 @@ ecr-repositories() {
 
   # List ECR Repositories
 
-  local aws_account_id=$(skimstdin)
+  local aws_account_id=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
   aws ecr describe-repositories          \
@@ -33,7 +33,7 @@ ecr-repository-images() {
     local registry_id=${1#registry=}
     shift
   fi
-  local repository_names="$@ $(skimstdin)"
+  local repository_names="$@ $(skim-stdin)"
 
   # XXX Display USAGE if no repository_names passed in
 

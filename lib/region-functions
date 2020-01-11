@@ -40,7 +40,7 @@ region() {
   #     $ region
   #     ap-southeast-2
 
-  local inputs="$@ $(skimstdin)"
+  local inputs="$@ $(skim-stdin)"
   if [[ -z "$inputs" ]]; then
     echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
   else

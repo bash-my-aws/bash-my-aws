@@ -10,7 +10,7 @@ cloudtrails() {
   #     $ cloudtrails
   #     failmode	failmode-cloudtrail	ap-southeast-2	IsMultiRegionTrail=true	IncludeGlobalServiceEvents=true
 
-  local cloudtrails="$(skimstdin)"
+  local cloudtrails="$(skim-stdin)"
   local filters=$(__bma_read_filters "$@")
 
   aws cloudtrail describe-trails          \
@@ -41,7 +41,7 @@ cloudtrail-status() {
   #
   #     USAGE: cloudtrail-status cloudtrail [cloudtrail]
 
-  local cloudtrails="$@ $(skimstdin)"
+  local cloudtrails="$@ $(skim-stdin)"
   [[ -z "$cloudtrails" ]] && __bma_usage "cloudtrail [cloudtrail]" && return 1
 
   local cloudtrail
