@@ -94,8 +94,8 @@ elbv2-azs() {
   #     bash-my-aws      ap-southeast-2a
   #     bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
 
-  local elb_names="$@ $(skim-stdin)"
-  [[ -z $elb_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+  local elbv2_names="$@ $(skim-stdin)"
+  [[ -z $elbv2_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   aws elbv2 describe-load-balancers \
     --names $elbv2_names            \
