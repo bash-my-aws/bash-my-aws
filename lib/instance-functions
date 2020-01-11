@@ -49,7 +49,7 @@ instance-asg() {
   #
   #     USAGE: instance-asg instance-id [instance-id]
 
-  local instance_ids=$(skim-stdin $@)
+  local instance_ids="$@ $(skim-stdin)"
   [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   aws ec2 describe-instances      \
@@ -162,15 +162,15 @@ instance-health-set-unhealthy() {
   #
   #     USAGE: instance-health-set-unhealthy instance-id [instance-id]
 
-  local instances="$@ $(skim-stdin)";
+  local instance_ids="$@ $(skim-stdin)";
   [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   local health_status=Unhealthy
 
   local instance;
-  for instance in $instances; do
+  for instance_id in $instance_ids; do
     aws autoscaling set-instance-health \
-      --instance-id "$instance"         \
+      --instance-id "$instance_id"      \
       --health-status "$health_status"
   done
 }
@@ -182,7 +182,7 @@ instance-iam-profile() {
   #
   #     USAGE: instance-iam-profile instance-id [instance-id]
 
-  local instances="$@ $(skim-stdin)";
+  local instance_ids="$@ $(skim-stdin)";
   [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   aws ec2 describe-instances      \
