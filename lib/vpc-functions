@@ -96,7 +96,7 @@ vpc-azs() {
   #     $ vpcs | vpc-azs
   #     vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -117,7 +117,7 @@ vpc-az-count() {
   #     $ vpcs | vpc-az-count
   #     vpc-018d9739 3
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -133,7 +133,7 @@ vpc-lambda-functions(){
   #
   #     USAGE: vpc-lambda-functions vpc-id [vpc-id]
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -215,7 +215,7 @@ vpc-igw() {
   #
   #     USAGE: vpc-igw vpc-id [vpc-id]
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -240,7 +240,7 @@ vpc-route-tables(){
   #     $ vpcs | vpc-route-tables
   #     rtb-8e841c39  vpc-018d9739  NO_NAME
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -264,7 +264,7 @@ vpc-nat-gateways(){
   #
   #     USAGE: vpc-nat-gateways vpc-id [vpc-id]
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -292,7 +292,7 @@ vpc-subnets(){
   #     subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
   #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -313,7 +313,7 @@ vpc-network-acls(){
   #     $ vpcs | vpc-network-acls
   #     acl-ff4914d1  vpc-018d9739
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
@@ -331,7 +331,7 @@ vpc-rds(){
   #
   #     USAGE: vpc-rds vpc-id [vpc-id]
 
-  local vpc_ids="$@ $(skim-stdin)"
+  local vpc_ids=$(skim-stdin "$@")
   [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id

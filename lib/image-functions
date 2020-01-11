@@ -21,7 +21,7 @@ images() {
   # Trialing a different approach for grabbing resource ids from input.
   # As normal, you can pipe resource ids in as first token on each line.
   # We treat all args that don't start with ami- as owner identifiers.
-  local inputs="$@ $(skim-stdin)"
+  local inputs=$(skim-stdin "$@")
   local image_ids=$(echo -n "$inputs" | tr ' ' '\n' | grep ami- | tr '\n' ' ')
   local owners=$(echo -n "$inputs" | tr ' ' '\n' | grep -v ami- | tr '\n' ' ')
 
@@ -55,7 +55,7 @@ image-deregister() {
   #
   #     USAGE: image-deregister image_id [image_id]
 
-  local image_ids="$@ $(skim-stdin)"
+  local image_ids=$(skim-stdin "$@")
   [[ -z "${image_ids}" ]] && __bma_usage "image_id" && return 1
 
   local image_id
