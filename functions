@@ -113,7 +113,7 @@ rds-db-instances
 region
 region-each
 regions
-skimstdin
+skim-stdin
 stack-arn
 stack-asg-instances
 stack-asgs
