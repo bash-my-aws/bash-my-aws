@@ -33,7 +33,7 @@ ecr-repository-images() {
     local registry_id=${1#registry=}
     shift
   fi
-  local repository_names="$@ $(skim-stdin)"
+  local repository_names=$(skim-stdin "$@")
 
   # XXX Display USAGE if no repository_names passed in
 

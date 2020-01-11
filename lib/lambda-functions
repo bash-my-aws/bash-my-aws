@@ -43,7 +43,7 @@ lambda-function-memory(){
   #
   #     USAGE: lambda-function-memory function [function]
 
-  local function_names="$@ $(skim-stdin)"
+  local function_names=$(skim-stdin "$@")
   [[ -z "$function_names" ]] && __bma_usage "function [function]" && return 1
 
   local column_command
@@ -75,7 +75,7 @@ lambda-function-memory-set(){
   local usage_msg="memory function [function]"
   [[ -z "${memory}" ]] && __bma_usage "$usage_msg" && return 1
 
-  local function_names="$@ $(skim-stdin)"
+  local function_names=$(skim-stdin "$@")
   [[ -z "${function_names}" && -t 0 ]] && __bma_usage "$usage_msg" && return 1
 
   local function_name
@@ -108,7 +108,7 @@ lambda-function-memory-step(){
   [[ -z "${memory_last}" ]] && __bma_usage $usage_msg && return 1
   # XXX check it's a valid memory size
 
-  local function_names="$@ $(skim-stdin)"
+  local function_names=$(skim-stdin "$@")
   [[ -z "${function_names}" && -t 0 ]] && __bma_usage $usage_msg && return 1
 
   echo "You are about to step memory for following functions:"
