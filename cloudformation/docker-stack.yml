@@ -102,7 +102,7 @@ Resources:
     CreationPolicy:
       ResourceSignal:
         Timeout: PT10M
-        Count: '1'
+        Count: !Ref 'AsgMinSize'
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MinInstancesInService: '1'
