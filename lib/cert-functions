@@ -7,7 +7,7 @@ certs() {
 
   # List ACM Certificates
 
-  local cert_arns=$(skimstdin)
+  local cert_arns=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
   local include_arn_bit=''
@@ -58,7 +58,7 @@ cert-users() {
   #
   #     USAGE: cert-users cert-arn [cert-arn]
 
-  local cert_arns="$@ $(skimstdin)"
+  local cert_arns="$@ $(skim-stdin)"
   [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
 
   local cert_arns
@@ -81,7 +81,7 @@ cert-delete() {
   #
   #     USAGE: cert-delete cert-arn [cert-arn]
 
-  local cert_arns="$@ $(skimstdin)"
+  local cert_arns="$@ $(skim-stdin)"
   [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
 
   echo "You are about to delete the following certificates:"

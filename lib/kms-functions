@@ -123,7 +123,7 @@ kms-alias-delete() {
   #     alias/foobar
   #     Are you sure you want to continue? y
 
-  local alias_names="$@ $(skimstdin)"
+  local alias_names="$@ $(skim-stdin)"
   [[ -z "$alias_names" ]] && __bma_usage "alias_name [alias_name]" && return 1
 
    echo "You are about to delete the following kms aliases:"
@@ -182,7 +182,7 @@ kms-key-details() {
 
   # List details for KMS Key(s)
 
-  local key_ids="$@ $(skimstdin)"
+  local key_ids="$@ $(skim-stdin)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
   local key_ids
@@ -212,7 +212,7 @@ kms-key-disable() {
   #
   #     $ kms-key-disable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 
-  local key_ids="$@ $(skimstdin)"
+  local key_ids="$@ $(skim-stdin)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
   local key_ids
@@ -230,7 +230,7 @@ kms-key-enable() {
   #
   #     $ kms-key-enable  9e94333b-8e85-497a-9791-e7c5edf9c35e
 
-  local key_ids="$@ $(skimstdin)"
+  local key_ids="$@ $(skim-stdin)"
   [[ -z "$key_ids" ]] && __bma_usage "key_id [key_id]" && return 1
 
   local key_ids

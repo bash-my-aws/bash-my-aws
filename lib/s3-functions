@@ -12,7 +12,7 @@ buckets() {
   #     backups     2019-12-20  08:24:44.351215
   #     archive     2019-12-20  08:24:57.567652
 
-  local buckets=$(skimstdin)
+  local buckets=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
   aws s3api list-buckets \
@@ -39,7 +39,7 @@ bucket-acls() {
   #     permission to the Amazon S3 Log Delivery group to write access log
   #     objects to your bucket. [AWS docs](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-alternatives-guidelines.html)
 
-  local buckets="$@ $(skimstdin)"
+  local buckets="$@ $(skim-stdin)"
   [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
 
   local bucket
@@ -68,7 +68,7 @@ bucket-remove() {
   #     Are you sure you want to continue? y
   #     remove_bucket failed: s3://another-example-bucket An error occurred (BucketNotEmpty) when calling the DeleteBucket operation: The bucket you tried to delete is not empty
 
-  local buckets="$@ $(skimstdin)"
+  local buckets="$@ $(skim-stdin)"
   [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
 
   echo "You are about to remove the following buckets:"
@@ -98,7 +98,7 @@ bucket-remove-force() {
   #     delete: s3://another-example-bucket/aliases
   #     remove_bucket: another-example-bucket
 
-  local buckets="$@ $(skimstdin)"
+  local buckets="$@ $(skim-stdin)"
   [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
 
   echo "You are about to delete all objects from and remove the following buckets:"
