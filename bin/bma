@@ -25,4 +25,20 @@ if [[ $BMA_USE_LOCALSTACK == 'true' ]]; then
   export aws
 fi
 
-$@
+
+# Set BMA_TRUNCATE to the maximum line length you want
+# This will only be applied when STDOUT is connected to
+# a terminal.
+#
+# This means it won't truncate output being
+# piped to other commands or redirected to a file.
+# e.g. `stack-template example-app > example-app.yml`
+
+if [[ -t 1 && -n $BMA_TRUNCATE && ! "$@" =~ stack-tail ]]; then
+  truncate_command="| cut -c 1-${BMA_TRUNCATE}"
+else
+  truncate_command=""
+fi
+
+
+eval $@ $truncate_command
