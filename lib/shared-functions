@@ -24,8 +24,10 @@ skim-stdin() {
   #     mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
   #     grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
 
-  [[ -n $@ ]] && printf -- "$* "           # All arguments
-  [[ -t 0 ]] || awk 'ORS=" " { print $1 }' # First token each line of STDIN
+  (
+    printf -- "$* "                          # All arguments, followed by a space
+    [[ -t 0 ]] || awk 'ORS=" " { print $1 }' # First token each line of STDIN
+  ) | awk '{$1=$1;print}'                    # trim leading/trailing spaces
 }
 
 
