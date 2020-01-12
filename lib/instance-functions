@@ -238,7 +238,7 @@ instance-ssh() {
     shift
   fi
   local instance_ids=$(skim-stdin "$@")
-  if [ -z $instance_ids ] ; then
+  if [[ -z $instance_ids ]] ; then
     echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"
     return 1
   fi
@@ -253,7 +253,7 @@ instance-ssh() {
     local instance_name=$(echo $instance_details | awk '{print $4}')
     local instance_default_user=$(echo $instance_details | awk '{print $5}')
 
-    local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
+    local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-ec2-user}}}
     echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
 
     ssh                                    \
