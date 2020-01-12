@@ -41,7 +41,7 @@ elb-dnsname(){
   #      elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
   #      another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
 
-  local elb_names=$(skim-stdin)
+  local elb_names=$(skim-stdin "$@")
   [[ -z $elb_names ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   aws elb describe-load-balancers           \

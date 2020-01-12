@@ -770,7 +770,7 @@ stack-validate() {
 
   # Validate a stack template
 
-  local inputs=$(printf $(skim-stdin "$@") | cut -f1)
+  local inputs=$(skim-stdin "$@")
   [[ -z "$inputs" ]] && __bma_usage "template-file" && return 1
   size=$(wc -c <"$inputs")
   if [[ $size -gt 51200 ]]; then
