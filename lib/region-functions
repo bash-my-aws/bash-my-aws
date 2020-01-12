@@ -40,7 +40,8 @@ region() {
   #     $ region
   #     ap-southeast-2
 
-  local inputs=$(skim-stdin "$@" | awk '{ print $1 }')
+  local inputs=$(skim-stdin "$@")
+  # XXX Check input is a valid region
   if [[ -z "$inputs" ]]; then
     echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
   else
