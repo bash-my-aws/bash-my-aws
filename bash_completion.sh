@@ -80,6 +80,13 @@ _bma_stacks_completion() {
   fi
   return 0
 }
+_bma_things_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma things | awk '{ print $1 }')
+  COMPREPLY=( $(compgen -W "${options}" -- ${word}) )
+  return 0
+}
 _bma_vpcs_completion() {
   local command="$1"
   local word="$2"
@@ -201,6 +208,7 @@ complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stacks
+complete -F _bma_stacks_completion things
 complete -F _bma_vpcs_completion vpc-az-count
 complete -F _bma_vpcs_completion vpc-azs
 complete -F _bma_vpcs_completion vpc-endpoints

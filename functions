@@ -88,6 +88,8 @@ instance-userdata
 instance-volumes
 instance-vpc
 instances
+iot-cert
+iot-certs
 keypair-create
 keypair-delete
 keypairs
@@ -109,6 +111,10 @@ launch-configuration-asgs
 launch-configurations
 log-groups
 pcxs
+policies
+policiy
+policiy-document
+principal-policies
 rds-db-clusters
 rds-db-instances
 region
@@ -142,6 +148,8 @@ stack-validate
 stacks
 sts-assume-role
 subnets
+thing-principals
+things
 vpc-az-count
 vpc-azs
 vpc-default-delete

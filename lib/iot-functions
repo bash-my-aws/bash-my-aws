@@ -1,0 +1,228 @@
+#!/bin/bash
+#
+# iot-functions
+#
+# List Amazon IoT Things, certificate and policy information
+
+iot-cert() {
+
+  # List IoT Certificate details
+  #
+  #     $ iot-cert
+  #     example-cert ACTIVE   1550174600.356  1550174600.402  1550174490.0  1593374490.0
+  #     another-cert INACTIVE 1550174600.356  1550174600.402  1550174490.0  1593374490.0
+
+  local certs="$@ $(skim-stdin)"
+  [[ -z "$certs" ]] && __bma_usage "[certificate-id]" && return 1
+
+  local cert
+  for cert in $certs; do
+    aws iot describe-certificate \
+      --certificate-id "$cert"   \
+      --output text              \
+      --query "
+        certificateDescription.[
+          certificateId,
+          status,
+          validity.notBefore,
+          validity.notAfter
+        ]"
+  done |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 5 | # sort by NotAfter
+  column -t
+}
+
+
+iot-certs() {
+
+  # List IoT Certificates
+  #
+  #     $ iot-certs
+  #     example-cert ACTIVE
+  #     another-cert INACTIVE
+  #
+  # *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+  #
+  #     $ iot-certs INACTIVE
+  #     another-cert INACTIVE
+
+  local targets="$@ $(skim-stdin)"
+  local filters=$(__bma_read_filters $@)
+
+  aws iot list-certificates \
+    --output text           \
+    --query "
+      certificates[${certificates:+?contains(['${certificateId// /"','"}'], targets)}].[
+        certificateId,
+        status
+      ]" |
+  grep -E -- "$filters"     |
+  column -t
+}
+
+
+policies() {
+
+  # List IoT Policies
+  #
+  #     $ policies
+  #     example-policy
+  #     another-policy
+
+  local targets=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  aws iot list-policies \
+    --output text       \
+    --query "
+      policies[${policies:+?contains(['${policy// /"','"}'], targets)}].[
+        policyName
+    ]"                    |
+    grep -E -- "$filters" |
+    column -t
+}
+
+
+policy() {
+
+  # List IoT Policy
+  #
+  #     $ policy
+  #     example-policy 1 1559925941.924 1559925941.924
+  #     another-policy 3 1559925941.924 1559925941.924
+
+  local policies="$@ $(skim-stdin)"
+  local filters=$(__bma_read_filters $@)
+  [[ -z "$policies" ]] && __bma_usage "[policy-name]" && return 1
+  
+  local policy
+  local result
+  local document
+  for policy in $policies; do
+    aws iot get-policy        \
+      --policy-name "$policy" \
+      --output text           \
+      --query "[
+        policyName,
+        defaultVersionId,
+        creationDate,
+        lastModifiedDate
+      ]"
+  done |
+  grep -E -- "$filters" |
+  column -t
+}
+
+
+#
+# Requires jq-1.4 or later # http://stedolan.github.io/jq/download/
+#
+policy-document() {
+
+  # Displays an IoT Policy Document
+  #
+  #     USAGE: policy-document policy-name [policy-name]
+  #     $ iot-certs | principal-policies | policy-document
+  #     example-policy
+  #     {
+  #        "Version": "2012-10-17",
+  #        "Statement": [
+  #          ...
+  #     }
+  #     another-policy
+  #     {
+  #        "Version": "2012-10-17",
+  #        "Statement": [
+  #          ...
+  #     }
+
+  local policies="$@ $(skim-stdin)"
+  local filters=$(__bma_read_filters $@)
+  [[ -z "$policies" ]] && __bma_usage "[policy-name]" && return 1
+  
+  local policy
+  for policy in $policies; do
+    echo $policy              &&
+    aws iot get-policy        \
+      --policy-name "$policy" \
+      --query "[
+        policyDocument
+      ]"                      |
+    jq -r ".[]"               |
+    jq
+  done
+}
+
+
+principal-policies() {
+
+  # List IoT policies attached to principal
+  #
+  #     USAGE: principal-policies target [target-arn]
+  #
+  #     $ things | thing-principals | principal-policies
+  #     example-policy
+  #     another-policy
+
+  # *Note that the target may refer to an IoT Thing Group or certficate.*
+
+  local targets="$@ $(skim-stdin)"
+  local filters=$(__bma_read_filters $@)
+  [[ -z "$targets" ]] && __bma_usage "[target-arn]" && return 1
+
+  local target
+  for target in $targets; do
+    aws iot list-attached-policies \
+      --target "$target" \
+      --output text \
+      --query "policies[].[
+        policyName
+      ]"
+  done
+}
+
+
+thing-principals() {
+
+  # List cetrificates for IoT Thing
+  #
+  #     $ thing-principals
+  #     arn:aws:iot:::cert/certificateId
+
+  local things="$@ $(skim-stdin)"
+  local filters=$(__bma_read_filters $@)
+  [[ -z "$things" ]] && __bma_usage "[thing-name]" && return 1
+
+  local thing
+  for thing in $things; do
+    aws iot list-thing-principals \
+      --thing-name "$thing"       \
+      --output text               \
+      --query "principals"
+  done
+}
+
+
+things() {
+
+  # List IoT Things
+  #
+  #     $ things
+  #     example-thing type
+  #     another-thing type
+
+  local things=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  aws iot list-things \
+    --output text     \
+    --query "
+      things[${things:+?contains(['${things// /"','"}'], thingName)}].[
+        thingName,
+        thingTypeName,
+        version
+      ]"                |
+  grep -E -- "$filters" |
+  column -t
+}

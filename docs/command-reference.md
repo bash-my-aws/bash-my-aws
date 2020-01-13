@@ -1041,6 +1041,92 @@ Deregister AMI(s)
     USAGE: image-deregister image_id [image_id]
 
 
+## iot-commands
+
+### iot-cert
+
+List IoT Certificate details
+
+    $ iot-cert
+    example-cert ACTIVE   1550174600.356  1550174600.402  1550174490.0  1593374490.0
+    another-cert INACTIVE 1550174600.356  1550174600.402  1550174490.0  1593374490.0
+
+### iot-certs
+
+List IoT Certificates
+
+    $ iot-certs
+    example-cert ACTIVE
+    another-cert INACTIVE
+
+*Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+
+    $ iot-certs INACTIVE
+    another-cert INACTIVE
+
+### policies
+
+List IoT Policies
+
+    $ policies
+    example-policy
+    another-policy
+
+### policy
+
+List IoT Policy
+
+    $ policy
+    example-policy 1 1559925941.924 1559925941.924
+    another-policy 3 1559925941.924 1559925941.924
+
+### policy-document
+
+Displays an IoT Policy Document
+
+    USAGE: policy-document policy-name [policy-name]
+    $ iot-certs | principal-policies | policy-document
+    example-policy
+    {
+       "Version": "2012-10-17",
+       "Statement": [
+         ...
+    }
+    another-policy
+    {
+       "Version": "2012-10-17",
+       "Statement": [
+         ...
+    }
+
+### principal-policies
+
+List IoT policies attached to principal
+
+    USAGE: principal-policies target [target-arn]
+
+    $ things | thing-principals | principal-policies
+    example-policy
+    another-policy
+
+*Note that the target may refer to an IoT Thing Group or certficate.*
+
+
+### thing-principals
+
+List cetrificates for IoT Thing
+
+    $ thing-principals
+    arn:aws:iot:::cert/certificateId
+
+### things
+
+List IoT Things
+
+    $ things
+    example-thing type
+    another-thing type
+
 ## keypair-commands
 
 
