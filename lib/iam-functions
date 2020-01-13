@@ -18,7 +18,7 @@ iam-roles() {
   #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
   #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
 
-  local filters=$(__bma_read_filters "$@")
+  local filters=$(__bma_read_filters $@)
 
   aws iam list-roles    \
     --output text       \
@@ -40,7 +40,7 @@ iam-role-principal(){
   #
   #     USAGE: iam-role-principal role-name [role-name]
 
-  local role_names=$(__bma_read_inputs "$@")
+  local role_names="$(__bma_read_inputs $@)"
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 
   aws iam list-roles                                                         \
@@ -67,7 +67,7 @@ iam-users() {
   #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
   #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
 
-  local filters=$(__bma_read_filters "$@")
+  local filters=$(__bma_read_filters $@)
 
   aws iam list-users    \
     --output text       \
