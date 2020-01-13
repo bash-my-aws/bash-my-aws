@@ -12,20 +12,23 @@ hosted-zones(){
   #     /hostedzone/Z1111111111111  3   NotPrivateZone  bash-my-aws.com.
   #     /hostedzone/Z2222222222222  3   NotPrivateZone  bashmyaws.com.
 
+  local ids=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
-  aws route53 list-hosted-zones     \
-    --query "HostedZones[].[
-               Id,
-               ResourceRecordSetCount,
-               (Config.PrivateZone && 'PrivateZone') || 'NotPrivateZone',
-               Name
-             ]" \
-    --output text       |
+  aws route53 list-hosted-zones \
+    --output text               \
+    --query "
+      HostedZones[${ids:+?contains(['${ids// /"','"}'], Id)}].[
+        Id,
+        ResourceRecordSetCount,
+        (Config.PrivateZone && 'PrivateZone') || 'NotPrivateZone',
+        Name
+      ]"                |
   sort -k 4             |
   grep -E -- "$filters" |
   column -s$'\t' -t
 }
+
 
 hosted-zone-ns-records(){
 
@@ -40,7 +43,8 @@ hosted-zone-ns-records(){
   #     bash-my-aws.org. 300 IN NS	ns-362.awsdns-45.com.
   #     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
 
-  local hosted_zone_id="$(__bma_read_inputs $@)"
+  local inputs="$@ $(skim-stdin)"
+  local hosted_zone_id=$(echo "$inputs" | awk '{print $1}')
   [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
 
   local hosted_zone_name
@@ -51,12 +55,12 @@ hosted-zone-ns-records(){
       --output text
   )
 
-  aws route53 list-resource-record-sets                    \
-    --hosted-zone-id $hosted_zone_id                       \
+  aws route53 list-resource-record-sets                   \
+    --hosted-zone-id "$hosted_zone_id"                    \
+    --output text                                         \
     --query "
       ResourceRecordSets[?Type=='NS'].ResourceRecords[].[
         '$hosted_zone_name 300 IN NS',
         Value
-      ]"                                                   \
-  --output text
+      ]"
 }

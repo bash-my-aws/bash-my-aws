@@ -4,13 +4,50 @@
 #
 # Used by bash-my-aws functions to work with stdin and arguments.
 
+
+skim-stdin() {
+  # Return the first token from each line of STDIN
+  [[ -t 0 ]] || awk 'ORS=" " { print $1 }'
+}
+
+
+__bma_read_filters() {
+
+  # Construct a string to be passed to `grep -E`
+  #
+  #     $ __bma_read_filters foo bar baz
+  #     foo|bar|baz
+
+  ( IFS=$'|'; printf -- "$*" )
+}
+
+
+__bma_error() {
+  echo "ERROR: $@" > /dev/stderr
+  return 1
+}
+
+
+__bma_usage() {
+  echo "USAGE: ${FUNCNAME[1]} $@" > /dev/stderr
+}
+
+
+#
+# The following two functions are deprecated
+#
+
+
 __bma_read_inputs() {
+  # deprecated
   echo $(__bma_read_stdin) $@ |
     sed -E 's/\ +$//'         |
     sed -E 's/^\ +//'
 }
 
+
 __bma_read_stdin() {
+  # deprecated - use skim-stdin
   [[ -t 0 ]] ||
     cat                  |
       awk '{ print $1 }' |
@@ -18,20 +55,3 @@ __bma_read_stdin() {
       sed 's/\ $//'
 }
 
-# Construct a string to be passed to `grep -E`
-__bma_read_filters() {
-  local IFS_SAVED="$IFS"; IFS=$'|'
-  printf -- "$*"
-  IFS=$IFS_SAVED
-}
-
-__bma_error() {
-  echo "ERROR: $@" > /dev/stderr
-  return 1
-}
-
-__bma_usage() {
-  echo "USAGE: ${FUNCNAME[1]} $@" > /dev/stderr
-}
-
-## vim: ft=sh

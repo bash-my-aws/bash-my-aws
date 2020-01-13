@@ -26,12 +26,12 @@ Parameters:
 
   DockerCommand:
     Description: Docker command to run on each instance
-    Default: "python -m http.server"
+    Default: ""
     Type: String
 
   DockerImage:
     Description: Docker image to run on each instance
-    Default: python
+    Default: nginx
     Type: String
 
   CertArn:
@@ -55,7 +55,7 @@ Parameters:
   InstancePort:
     Description: The port application will be exposed on (ELB will proxy to this)
     Type: Number
-    Default: '8000'
+    Default: '80'
 
   InstanceType:
     Description: The size of the instance
@@ -102,7 +102,7 @@ Resources:
     CreationPolicy:
       ResourceSignal:
         Timeout: PT10M
-        Count: '1'
+        Count: !Ref 'AsgMinSize'
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MinInstancesInService: '1'
@@ -127,11 +127,7 @@ Resources:
       DesiredCapacity: !Ref 'AsgMinSize'
       Tags:
         - Key: Name
-<<<<<<< HEAD
           Value: !Sub '${AWS::StackName}'
-=======
-          Value: !Sub '${AWS::StackName}/instance'
->>>>>>> Keep docs with code and extract for website.
           PropagateAtLaunch: 'true'
 
   DnsRecord:
@@ -327,8 +323,8 @@ Resources:
                 services:
                   web:
                     image: ${DockerImage}
-                    command: ${DockerCommand}
-                    ports: ["8000:8000"]
+                    # command: ${DockerCommand} # ? What to do when no command required?
+                    ports: ["${InstancePort}:${InstancePort}"]
                     restart: always
                     environment:
                       - AWS_REGION=${AWS::Region}

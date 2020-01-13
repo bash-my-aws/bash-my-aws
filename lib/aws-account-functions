@@ -50,10 +50,10 @@ aws-account-each() {
   #     IAM Role that can assume a Role in each of the specified accounts.
   #     Check the source for more info.
 
-  local aws_account_ids="$(__bma_read_inputs)"
+  local aws_account_ids="$(skim-stdin)"
   local cmd=$@
   local assumed_role_name="${AWS_PANOPTICON_ROLE_NAME:-SecurityAuditor}"
-  [[ -z "${aws_account_ids}" ]] && __bma_usage "cmd # pipe in AWS_ACCOUNT_IDS" && return 1
+  [[ -z $aws_account_ids ]] && __bma_usage "cmd # pipe in AWS_ACCOUNT_IDS" && return 1
 
   echo "#command=${cmd}"
   echo "#"
@@ -72,6 +72,7 @@ aws-account-each() {
 
 
 aws-panopticon() {
+
   # aws-panopticon was previous name for aws-account-each()
 
   aws-account-each $@
@@ -86,7 +87,7 @@ aws-account-cost-explorer(){
   #     $ grep demo AWS_ACCOUNTS | aws-account-cost-explorer
   #     #=> Opens web browser to AWS Cost Explorer with accounts selected
 
-  local accounts_formatted="%22$(__bma_read_inputs $@ | sed 's/ /%22,%22/g')%22"
+  local accounts_formatted="%22$(printf "$@ $(skim-stdin)" | sed 's/ /%22,%22/g')%22"
 
   local cmd_open="$(hash xdg-open &> /dev/null && echo 'xdg-open' || echo 'open')"
 
@@ -105,7 +106,7 @@ aws-account-cost-recommendations(){
   #     $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
   #     #=> Opens web browser to AWS Cost Recommendations with accounts selected
 
-  local accounts_formatted="%22$(__bma_read_inputs | sed 's/ /%22,%22/g')%22"
+  local accounts_formatted="%22$(printf "$@ $(skim-stdin)" | sed 's/ /%22,%22/g')%22"
 
   local cmd_open="$(hash xdg-open &> /dev/null && echo 'xdg-open' || echo 'open')"
 

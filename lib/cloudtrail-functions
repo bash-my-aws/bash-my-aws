@@ -10,20 +10,26 @@ cloudtrails() {
   #     $ cloudtrails
   #     failmode	failmode-cloudtrail	ap-southeast-2	IsMultiRegionTrail=true	IncludeGlobalServiceEvents=true
 
-  local cloudtrails="$(__bma_read_inputs)"
-  local filters=$(__bma_read_filters $@)
+  local cloudtrails="$(skim-stdin)"
+  local filters=$(__bma_read_filters "$@")
 
-  aws cloudtrail describe-trails                                                         \
-    $([[ -n ${cloudtrails} ]] && echo --trail-name-list ${cloudtrails})                  \
+  aws cloudtrail describe-trails          \
+    ${cloudtrails/#/'--trail-name-list '} \
+    --output text                         \
     --query "
       trailList[].[
         Name,
         S3BucketName,
         HomeRegion,
-        join('=', ['IsMultiRegionTrail', to_string(IsMultiRegionTrail)]),
-        join('=', ['IncludeGlobalServiceEvents', to_string(IncludeGlobalServiceEvents)])
-      ] "                                                                                \
-    --output text       |
+        join('=', [
+          'IsMultiRegionTrail',
+          to_string(IsMultiRegionTrail)
+        ]),
+        join('=', [
+          'IncludeGlobalServiceEvents',
+          to_string(IncludeGlobalServiceEvents)
+        ])
+      ] "               |
   grep -E -- "$filters"
 
 }
@@ -35,7 +41,7 @@ cloudtrail-status() {
   #
   #     USAGE: cloudtrail-status cloudtrail [cloudtrail]
 
-  local cloudtrails="$(__bma_read_inputs $@)"
+  local cloudtrails="$@ $(skim-stdin)"
   [[ -z "$cloudtrails" ]] && __bma_usage "cloudtrail [cloudtrail]" && return 1
 
   local cloudtrail

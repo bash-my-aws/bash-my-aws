@@ -748,7 +748,7 @@ List Launch Configurations
 
 ### launch-configuration-asgs
 
-List EC2 Autoscaling Groups of Launch COnfiguration(s)
+List EC2 Autoscaling Groups of Launch Configuration(s)
 
 
 ### asg-max-size-set
@@ -850,7 +850,7 @@ List images for ECR Repositories
 ### elbs
 
 List ELBs
-Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names
+Accepts LoadBalancer names on STDIN and converts to LoadBalancer names
 
     $ elbs
     elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
@@ -915,7 +915,7 @@ List Availability Zones of ELB(s)
 ### elbv2s
 
 List EC2 ELBv2 load balancers (both Network and Application types)
-Accepts Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names
+Accepts Load Balancer names on STDIN and converts to Network Load Balancer names
 
     $ elbv2s
     bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
@@ -1029,11 +1029,11 @@ owner defaults to `self` or can one or more of:
 
 image_id can be one or more AMIs
 
-Trialing a different approach for grabbing resource ids from input.  
-As normal, you can pipe resource ids in as first token on each line.  
-We treat all args that don't start with ami- as owner identifiers.  
+Trialing a different approach for grabbing resource ids from input.
+As normal, you can pipe resource ids in as first token on each line.
+We treat all args that don't start with ami- as owner identifiers.
 
-Trialing a new pattern for output - putting the Name at the end.  
+Trialing a new pattern for output - putting the Name at the end.
 This is more like the output of `ls -la`
 
 - Pro: Preceding fields tend to be of the same length
@@ -1067,12 +1067,12 @@ Create SSH Keypair on local machine and import public key into new EC2 Keypair.
 
 Provides benefits over AWS creating the keypair:
 
-Amazon never has access to private key.  
-Private key is protected with passphrase before being written to disk.  
-Keys is written to ~/.ssh with correct file permissions.  
-You control the SSH Key type (algorithm, length, etc).  
+- Amazon never has access to private key.
+- Private key is protected with passphrase before being written to disk.
+- Keys is written to ~/.ssh with correct file permissions.
+- You control the SSH Key type (algorithm, length, etc).
 
-    USAGE: keypair-delete key_name [key_name]
+    USAGE: keypair-create [key_name] [key_dir]
 
     $ keypair-create yet-another-keypair
     Creating /home/m/.ssh/yet-another-keypair
@@ -1441,16 +1441,16 @@ List NTP servers of VPC(s)
 
 ### vpc-endpoints
 
-List VPC Endpoints of VPC(s)
+List VPC Endpoints
 
-    USAGE: vpc-endpoints vpc-id [vpc-id]
+    USAGE: vpc-endpoints [filter]
 
 
 ### vpc-endpoint-services
 
 List available VPC endpoint services
 
-    USAGE: vpc-endpoint-services vpc-id [vpc-id]
+    USAGE: vpc-endpoint-services
 
 
 ### vpc-igw
