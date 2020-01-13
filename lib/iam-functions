@@ -68,16 +68,18 @@ iam-users() {
   #     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
   #     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
 
+  local user_names=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
   aws iam list-users    \
     --output text       \
-    --query 'Users[].[
+    --query "
+      Users[${user_names:+?contains(['${user_names// /"','"}'], UserName)}].[
       UserName,
       UserId,
       CreateDate,
       PasswordLastUsed
-    ]'                  |
+    ]"                  |
   grep -E -- "${filters}" |
   LC_ALL=C sort -b -k 3 |
   column -s$'\t' -t
@@ -89,20 +91,21 @@ iam-user-profile(){
   #
   #     USAGE: iam-user-profile user-name [user-name]
 
-  local user_names
-  user_names=$(__bma_read_inputs "$@")
+  local user_names="$@ $(skim-stdin)"
   [[ -z "${user_names}" ]] && __bma_usage "user-name [user-name]" && return 1
+
   local user_name
   for user_name in ${user_names}; do
 
     aws iam get-login-profile \
+      --output text  \
       --user-name "${user_name}" \
-      --query 'LoginProfile.[
-        UserName,
-        CreateDate,
-        PasswordResetRequired
-      ]' \
-      --output text  |
+      --query "
+        LoginProfile.[
+          UserName,
+          CreateDate,
+          PasswordResetRequired
+      ]" |
     LC_ALL=C sort              |
     column -s$'\t' -t
   done
@@ -122,10 +125,12 @@ iam-user-profile-update(){
   # Process options
   local inputs_array=($@)
   local IFS='=' # override default field separator in the scope of this function only
+  # regex for searching options
   local regex_reset_required=^\-\-\(no\-\)*password\-reset\-required
   local regex_batch=^\-\-batch
   local regex_display=^\-\-display\-password
   local regex_password=^\-\-password=.*
+
   for index in "${inputs_array[@]}" ; do
       if [[ "${index}" =~ ${regex_reset_required} ]] ; then
       read -r reset_opt <<< "${index}" # ignore anything after option
@@ -146,11 +151,10 @@ iam-user-profile-update(){
   unset IFS # to prevent it from breaking things later
 
   # Read in usernames
-  local user_names
-  user_names=$(__bma_read_inputs "$@")
+  local user_names="$@ $(skim-stdin)"
   [[ -z "${user_names}" ]] && __bma_usage "[--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]" && return 1
-  local user_name
 
+  local user_name
   for user_name in ${user_names}; do
     if [ "${user_name:0:1}" == "-" ]; then continue; fi
     if [[ "${passwd}" = "RND" ]] || [[ "${batch}" = "FALSE" ]]; then
@@ -179,6 +183,8 @@ iam-user-profile-update(){
         read -n1 -rp "${user_name}: Require password reset on next sign-in? [Y/n]: " pass_reset <&1; echo ""
         password="${password1}"
         pass_reset=${pass_reset,,}    # tolower
+
+        # Set password reset required flag as needed
         if [[ "$pass_reset" =~ ^(n)$ ]]; then 
           resetrequired="--no-password-reset-required"
         else
@@ -186,19 +192,26 @@ iam-user-profile-update(){
         fi
     fi
 
-    if [[ "${display_pass}" == "TRUE" ]]; then password_display="${password}"; else password_display=${password//[[:graph:]]/X}; fi
+    # Conceal password display dy default, reveal if desired
+    if [[ "${display_pass}" == "TRUE" ]]; then 
+        password_display="${password}"
+    else
+        password_display=${password//[[:graph:]]/X}
+    fi
 
+    # Execute the password change
     aws iam update-login-profile \
+      --output text \
       --user-name "${user_name}" \
       --password """${password}""" \
-      "${resetrequired}" \
-      --output text 
+      "${resetrequired}"
 
     if [ $? -eq 0 ]; then
-      status="SUCCESS"
+      status='SUCCESS'
     else
-      status="FAIL"
+      status='FAIL'
     fi
+
     echo "${user_name}"   "${password_display}"   "${status}" |  
     LC_ALL=C sort              |
     column -s$'\t' -t
