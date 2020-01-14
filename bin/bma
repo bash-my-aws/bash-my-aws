@@ -36,7 +36,7 @@ fi
 
 truncate_command=""
 if [[ -t 1 && -n $BMA_TRUNCATE && ! "$@" =~ stack-tail ]]; then
-  [[ $@ =~ instance-ssh ]] || truncate_command="| cut -c 1-${BMA_TRUNCATE}"
+  [[ $@ =~ instance-ssh|keypair-create ]] || truncate_command="| cut -c 1-${BMA_TRUNCATE}"
 fi
 
 
