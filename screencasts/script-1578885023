@@ -1,0 +1,8 @@
+Script started on 2020-01-13 13:10:23+10:00 [TERM="xterm-256color" TTY="/dev/pts/6" COLUMNS="112" LINES="30"]
+]777;notify;Command completed;LastUpdatedTime]' --output text | column -t\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ [H[2J
+bash-my-aws $ aws [Kbash-my-aws $ aws ^C
+]777;notify;Command completed;LastUpdatedTime]' --output text | column -t\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ exit
+
+Script done on 2020-01-13 13:10:30+10:00 [COMMAND_EXIT_CODE="130"]

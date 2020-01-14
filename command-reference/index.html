@@ -1054,6 +1054,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#iam-users" class="md-nav__link">
+    iam-users
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1523,6 +1530,18 @@
   <li class="md-nav__item">
     <a href="../cloudformation-naming/" title="CloudFormation Naming" class="md-nav__link">
       CloudFormation Naming
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../linuxconf2020/" title="LinuxConf 2020" class="md-nav__link">
+      LinuxConf 2020
     </a>
   </li>
 
@@ -2316,6 +2335,13 @@
           <li class="md-nav__item">
   <a href="#iam-role-principal" class="md-nav__link">
     iam-role-principal
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iam-users" class="md-nav__link">
+    iam-users
   </a>
   
 </li>
@@ -3423,7 +3449,7 @@ i-806d8f1592e2a2efd  vol-38fd45c3
 <h3 id="launch-configurations">launch-configurations<a class="headerlink" href="#launch-configurations" title="Permanent link">&para;</a></h3>
 <p>List Launch Configurations</p>
 <h3 id="launch-configuration-asgs">launch-configuration-asgs<a class="headerlink" href="#launch-configuration-asgs" title="Permanent link">&para;</a></h3>
-<p>List EC2 Autoscaling Groups of Launch COnfiguration(s)</p>
+<p>List EC2 Autoscaling Groups of Launch Configuration(s)</p>
 <h3 id="asg-max-size-set">asg-max-size-set<a class="headerlink" href="#asg-max-size-set" title="Permanent link">&para;</a></h3>
 <p>Set maximum size of autoscaling group(s)</p>
 <h3 id="asg-min-size-set">asg-min-size-set<a class="headerlink" href="#asg-min-size-set" title="Permanent link">&para;</a></h3>
@@ -3477,7 +3503,7 @@ failmode    failmode-cloudtrail ap-southeast-2  IsMultiRegionTrail=true IncludeG
 <h2 id="elb-commands">elb-commands<a class="headerlink" href="#elb-commands" title="Permanent link">&para;</a></h2>
 <h3 id="elbs">elbs<a class="headerlink" href="#elbs" title="Permanent link">&para;</a></h3>
 <p>List ELBs
-Accepts LoadBalancer names or ARNS on STDIN and converts to LoadBalancer names</p>
+Accepts LoadBalancer names on STDIN and converts to LoadBalancer names</p>
 <div class="codehilite"><pre><span></span>$ elbs
 elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
 another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z
@@ -3534,7 +3560,7 @@ huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
 <h2 id="elbv2-commands">elbv2-commands<a class="headerlink" href="#elbv2-commands" title="Permanent link">&para;</a></h2>
 <h3 id="elbv2s">elbv2s<a class="headerlink" href="#elbv2s" title="Permanent link">&para;</a></h3>
 <p>List EC2 ELBv2 load balancers (both Network and Application types)
-Accepts Load Balancer names or ARNS on STDIN and converts to Network Load Balancer names</p>
+Accepts Load Balancer names on STDIN and converts to Network Load Balancer names</p>
 <div class="codehilite"><pre><span></span>$ elbv2s
 bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
 bash-my-aws-alb  application  internet-facing  provisioning  2020-01-04T11:29:45.030Z
@@ -3587,6 +3613,15 @@ ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31
 </pre></div>
 
 
+<h3 id="iam-users">iam-users<a class="headerlink" href="#iam-users" title="Permanent link">&para;</a></h3>
+<p>List IAM Users</p>
+<div class="codehilite"><pre><span></span>$ iam-users
+config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
+AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
+ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+</pre></div>
+
+
 <h2 id="image-commands">image-commands<a class="headerlink" href="#image-commands" title="Permanent link">&para;</a></h2>
 <h3 id="images">images<a class="headerlink" href="#images" title="Permanent link">&para;</a></h3>
 <p>List EC2 AMI's</p>
@@ -3597,10 +3632,10 @@ ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31
 <li>an AWS_OWNER_ALIAS (amazon, amazon-marketplace, microsoft)</li>
 </ul>
 <p>image_id can be one or more AMIs</p>
-<p>Trialing a different approach for grabbing resource ids from input.<br />
-As normal, you can pipe resource ids in as first token on each line.<br />
-We treat all args that don't start with ami- as owner identifiers.  </p>
-<p>Trialing a new pattern for output - putting the Name at the end.<br />
+<p>Trialing a different approach for grabbing resource ids from input.
+As normal, you can pipe resource ids in as first token on each line.
+We treat all args that don't start with ami- as owner identifiers.</p>
+<p>Trialing a new pattern for output - putting the Name at the end.
 This is more like the output of <code>ls -la</code></p>
 <ul>
 <li>Pro: Preceding fields tend to be of the same length</li>
@@ -3626,13 +3661,14 @@ bob    56:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
 <h3 id="keypair-create">keypair-create<a class="headerlink" href="#keypair-create" title="Permanent link">&para;</a></h3>
 <p>Create SSH Keypair on local machine and import public key into new EC2 Keypair.</p>
 <p>Provides benefits over AWS creating the keypair:</p>
-<p>Amazon never has access to private key.<br />
-Private key is protected with passphrase before being written to disk.<br />
-Keys is written to ~/.ssh with correct file permissions.<br />
-You control the SSH Key type (algorithm, length, etc).  </p>
-<div class="codehilite"><pre><span></span>USAGE: keypair-delete key_name [key_name]
-
-$ keypair-create yet-another-keypair
+<ul>
+<li>Amazon never has access to private key.</li>
+<li>Private key is protected with passphrase before being written to disk.</li>
+<li>Keys is written to ~/.ssh with correct file permissions.</li>
+<li>
+<p>You control the SSH Key type (algorithm, length, etc).</p>
+<p>USAGE: keypair-create [key_name] [key_dir]</p>
+<p>$ keypair-create yet-another-keypair
 Creating /home/m/.ssh/yet-another-keypair
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase):
@@ -3641,7 +3677,7 @@ Your identification has been saved in /home/m/.ssh/yet-another-keypair.
 Your public key has been saved in /home/m/.ssh/yet-another-keypair.pub.
 The key fingerprint is:
 SHA256:zIpbxLo7rpQvKyezOLATk96B1kSL0QP41q6x8tUrySk m@localhost.localdomain
-The key&#39;s randomart image is:
+The key's randomart image is:
 +---[RSA 4096]----+
 |..o              |
 |.. +             |
@@ -3650,16 +3686,15 @@ The key&#39;s randomart image is:
 | o+.  o S        |
 |=o.+.= .         |
 |+++==o+          |
-|XoE+*+ .         |
-|o@+**+.          |
+|XoE+<em>+ .         |
+|o@+</em>*+.          |
 +----[SHA256]-----+
 {
-    &quot;KeyFingerprint&quot;: &quot;21:82:f9:5b:79:d6:dc:0f:7b:79:43:7c:c5:34:6c:2d&quot;,
-    &quot;KeyName&quot;: &quot;yet-another-keypair&quot;
-}
-</pre></div>
-
-
+    "KeyFingerprint": "21:82:f9:5b:79:d6:dc:0f:7b:79:43:7c:c5:34:6c:2d",
+    "KeyName": "yet-another-keypair"
+}</p>
+</li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>KeyPair Name defaults to "$(aws-account-alias)-$(region)" if none provided</p>
@@ -3943,14 +3978,14 @@ vpc-018d9739 3
 
 
 <h3 id="vpc-endpoints">vpc-endpoints<a class="headerlink" href="#vpc-endpoints" title="Permanent link">&para;</a></h3>
-<p>List VPC Endpoints of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-endpoints vpc-id [vpc-id]
+<p>List VPC Endpoints</p>
+<div class="codehilite"><pre><span></span>USAGE: vpc-endpoints [filter]
 </pre></div>
 
 
 <h3 id="vpc-endpoint-services">vpc-endpoint-services<a class="headerlink" href="#vpc-endpoint-services" title="Permanent link">&para;</a></h3>
 <p>List available VPC endpoint services</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-endpoint-services vpc-id [vpc-id]
+<div class="codehilite"><pre><span></span>USAGE: vpc-endpoint-services
 </pre></div>
 
 

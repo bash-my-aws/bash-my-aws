@@ -1,0 +1,467 @@
+Script started on 2020-01-13 13:10:45+10:00 [TERM="xterm-256color" TTY="/dev/pts/6" COLUMNS="90" LINES="24"]
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ [H[2J
+bash-my-aws $ aws cloudformation list-stacks
+777;preexec{
+    "StackSummaries": [
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/nginx-bma/eaa1cc90-347d-11ea-a983-0278bc173a5c",
+            "StackName": "nginx-bma",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T14:23:37.223Z",
+            "LastUpdatedTime": "2020-01-11T14:28:50.465Z",
+            "StackStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/grafana-bma/ac03ada0-347d-11ea-bd7d-0a8ccfe1fca8",
+            "StackName": "grafana-bma",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T14:21:46.609Z",
+            "StackStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/promcom-bma/990b2e50-347b-11ea-b30f-0254a62a914c",
+            "StackName": "promcom-bma",
+            "TemplateDescription": "Run Prometheus.io monitoring server using Docker compose",
+            "CreationTime": "2020-01-11T14:06:59.067Z",
+            "LastUpdatedTime": "2020-01-11T14:15:09.935Z",
+            "DeletionTime": "2020-01-11T14:38:36.293Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/huginn-bma/3211a070-3477-11ea-bfb6-025d2b085864",
+            "StackName": "huginn-bma",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T13:35:41.985Z",
+            "LastUpdatedTime": "2020-01-11T13:51:12.448Z",
+            "StackStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/huginn-bma/1a03dc20-3475-11ea-8e57-0a97b58f1090",
+            "StackName": "huginn-bma",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T13:20:14.252Z",
+            "DeletionTime": "2020-01-11T13:32:26.158Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/nginx-bash-my-aws/6de275f0-3474-11ea-9859-02b4ddd3d586",
+            "StackName": "nginx-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T13:15:42.583Z",
+            "DeletionTime": "2020-01-11T13:40:00.276Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/grafana-bash-my-aws/534e3860-3473-11ea-98ad-06d8fa8d4244",
+            "StackName": "grafana-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T13:07:51.926Z",
+            "DeletionTime": "2020-01-11T14:19:41.856Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/grafana-bash-my-aws/c37677d0-343a-11ea-8794-0ad0425fd8cc",
+            "StackName": "grafana-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T06:22:50.565Z",
+            "DeletionTime": "2020-01-11T06:40:01.641Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/grafana/5d543a50-343a-11ea-8b80-021756f35c8c",
+            "StackName": "grafana",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T06:19:47.001Z",
+            "LastUpdatedTime": "2020-01-11T12:36:51.239Z",
+            "DeletionTime": "2020-01-11T14:07:44.576Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/mastodon/546b3100-343a-11ea-84ca-02358afe8f78",
+            "StackName": "mastodon",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T06:19:31.958Z",
+            "LastUpdatedTime": "2020-01-11T11:13:45.978Z",
+            "DeletionTime": "2020-01-11T14:08:08.528Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/huginn/39919090-343a-11ea-9eed-06d6569a47b8",
+            "StackName": "huginn",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T06:18:46.905Z",
+            "LastUpdatedTime": "2020-01-11T11:13:33.193Z",
+            "DeletionTime": "2020-01-11T13:25:16.376Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/docker-stack-bash-my-aws/8373b540-3439-11ea-bc8f-0ac3f68b351c",
+            "StackName": "docker-stack-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T06:13:41.369Z",
+            "DeletionTime": "2020-01-11T06:27:22.333Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/docker-stack-bash-my-aws/d34cf370-3438-11ea-95eb-0ad2fa41fde2",
+            "StackName": "docker-stack-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T06:09:04.061Z",
+            "DeletionTime": "2020-01-11T06:12:35.566Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/docker-stack-bash-my-aws/b5d2c140-2f87-11ea-894a-02bf7f1fc1f4",
+            "StackName": "docker-stack-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-05T06:52:02.992Z",
+            "DeletionTime": "2020-01-09T23:54:51.023Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/rails-demo/656d8850-2bba-11ea-894a-02bf7f1fc1f4",
+            "StackName": "rails-demo",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2019-12-31T10:43:35.583Z",
+            "LastUpdatedTime": "2019-12-31T13:48:34.747Z",
+            "DeletionTime": "2020-01-04T13:38:21.277Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/huginn/52311040-2bba-11ea-9ea2-06bea7b10744",
+            "StackName": "huginn",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2019-12-31T10:43:03.322Z",
+            "LastUpdatedTime": "2019-12-31T13:48:22.419Z",
+            "DeletionTime": "2020-01-04T13:35:19.743Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/spotifree/3113e400-2bba-11ea-8b05-0abc5d72d376",
+            "StackName": "spotifree",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2019-12-31T10:42:27.184Z",
+            "LastUpdatedTime": "2019-12-31T13:46:35.287Z",
+            "DeletionTime": "2020-01-04T13:33:56.441Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/postfix/9a9023f0-2ba4-11ea-ab2a-06bee07abda0",
+            "StackName": "postfix",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2019-12-31T08:07:58.041Z",
+            "LastUpdatedTime": "2019-12-31T08:24:21.617Z",
+            "DeletionTime": "2019-12-31T10:41:20.324Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/docker-stack-bash-my-aws/0df00b00-2af9-11ea-8064-021224f04290",
+            "StackName": "docker-stack-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack",
+            "CreationTime": "2019-12-30T11:39:35.958Z",
+            "LastUpdatedTime": "2019-12-30T11:50:59.023Z",
+            "DeletionTime": "2019-12-30T12:19:27.005Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/docker-stack-bash-my-aws/00beed30-2af8-11ea-98a8-0a1551879166",
+            "StackName": "docker-stack-bash-my-aws",
+            "TemplateDescription": "Example ELB & ASG stack",
+            "CreationTime": "2019-12-30T11:32:20.055Z",
+            "DeletionTime": "2019-12-30T11:38:58.833Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg-prod/e42bce90-23f4-11ea-9d3d-0620fb4f1fdc",
+            "StackName": "asg-prod",
+            "CreationTime": "2019-12-21T13:22:09.672Z",
+            "DeletionTime": "2019-12-30T12:13:01.797Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg-prod/98d40130-23f2-11ea-b7c1-06494f833672",
+            "StackName": "asg-prod",
+            "CreationTime": "2019-12-21T13:05:44.261Z",
+            "LastUpdatedTime": "2019-12-21T13:12:43.731Z",
+            "DeletionTime": "2019-12-21T13:18:06.709Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/another-elb/dd8c4690-1d92-11ea-bc19-0a2f9ebec938",
+            "StackName": "another-elb",
+            "CreationTime": "2019-12-13T10:25:20.797Z",
+            "DeletionTime": "2019-12-21T13:05:14.728Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/elb/cc2cf2f0-1d92-11ea-b310-02fcd5f0116e",
+            "StackName": "elb",
+            "CreationTime": "2019-12-13T10:24:51.659Z",
+            "DeletionTime": "2019-12-21T13:05:04.063Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/ec2/1f00a1e0-1d91-11ea-8eec-0aefbb6c17f2",
+            "StackName": "ec2",
+            "CreationTime": "2019-12-13T10:12:51.701Z",
+            "DeletionTime": "2019-12-21T13:04:40.096Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/ec2/d2a05340-1d90-11ea-91ab-0ac3f68b351c",
+            "StackName": "ec2",
+            "CreationTime": "2019-12-13T10:11:08.972Z",
+            "DeletionTime": "2019-12-13T10:12:45.140Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/load-balancer/ef6ffeb0-1d8d-11ea-a3ac-066f346b367c",
+            "StackName": "load-balancer",
+            "CreationTime": "2019-12-13T09:50:03.345Z",
+            "DeletionTime": "2019-12-13T10:10:29.815Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/elb/d6ed4690-1d8d-11ea-a36e-0ad0425fd8cc",
+            "StackName": "elb",
+            "CreationTime": "2019-12-13T09:49:22.203Z",
+            "DeletionTime": "2019-12-13T10:10:26.101Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg2/d45d4a80-1d59-11ea-ad00-025411181be4",
+            "StackName": "asg2",
+            "CreationTime": "2019-12-13T03:37:13.065Z",
+            "DeletionTime": "2019-12-13T10:08:18.862Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg-bash-my-aws/c6ce6730-1d56-11ea-8101-02f7636bd36c",
+            "StackName": "asg-bash-my-aws",
+            "CreationTime": "2019-12-13T03:15:12.935Z",
+            "DeletionTime": "2019-12-13T10:06:25.239Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg-bash-my-aws/8f7342b0-1d56-11ea-bcce-06e276ca85be",
+            "StackName": "asg-bash-my-aws",
+            "CreationTime": "2019-12-13T03:13:40.052Z",
+            "DeletionTime": "2019-12-13T03:15:03.673Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg/355494f0-1d56-11ea-b636-060188cb51ee",
+            "StackName": "asg",
+            "CreationTime": "2019-12-13T03:11:08.858Z",
+            "DeletionTime": "2019-12-13T03:38:31.300Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/domain-redirector/28e90d30-1bf9-11ea-b6b2-02616cf4281c",
+            "StackName": "domain-redirector",
+            "CreationTime": "2019-12-11T09:33:21.430Z",
+            "LastUpdatedTime": "2019-12-11T10:02:04.789Z",
+            "DeletionTime": "2019-12-11T10:02:40.397Z",
+            "StackStatus": "DELETE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+]777;notify;Command completed;aws cloudformation list-stacks\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks | head -15[H[2J
+bash-my-aws $ aws cloudformation list-stacks | head -15
+777;preexec{
+    "StackSummaries": [
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/nginx-bma/eaa1cc90-347d-11ea-a983-0278bc173a5c",
+            "StackName": "nginx-bma",
+            "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+            "CreationTime": "2020-01-11T14:23:37.223Z",
+            "LastUpdatedTime": "2020-01-11T14:28:50.465Z",
+            "StackStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/grafana-bma/ac03ada0-347d-11ea-bd7d-0a8ccfe1fca8",
+]777;notify;Command completed;aws cloudformation list-stacks | head -15\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks | head -15[K[K[K[K[K[K[K[K[K[K--query "StackSummaries[0]"[H[2J
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[0]"
+777;preexec{
+    "StackId": "arn:aws:cloudformation:ap-southeast-2:812094344564:stack/nginx-bma/eaa1cc90-347d-11ea-a983-0278bc173a5c",
+    "StackName": "nginx-bma",
+    "TemplateDescription": "Example ELB & ASG stack for demo purposes",
+    "CreationTime": "2020-01-11T14:23:37.223Z",
+    "LastUpdatedTime": "2020-01-11T14:28:50.465Z",
+    "StackStatus": "UPDATE_COMPLETE",
+    "DriftInformation": {
+        "StackDriftStatus": "NOT_CHECKED"
+    }
+}
+]777;notify;Command completed;aws cloudformation list-stacks --query "StackSummaries[0]"\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[0]"."["S"T"a"c"[1P"[1P"[1P"t"a"c"k"N"a"m"e"," "S"t"a"c"k" [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[CS"t"a"t"u"s"]"[H[2J
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[0].[StackName, StackStatus]"
+777;preexec[
+    "nginx-bma",
+    "UPDATE_COMPLETE"
+]
+]777;notify;Command completed;aws cloudformation list-stacks --query "StackSummaries[0].[StackName, StackStatus]"\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[0].[StackName, StackStatus]" --putput [K[K[K[K[K[K[Kput[K[K[Koutput text
+777;preexecnginx-bma	UPDATE_COMPLETE
+]777;notify;Command completed;aws cloudformation list-stacks --query "StackSummaries[0].[StackName, StackStatus]" --output text\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[0].[StackName, StackStatus]" --output text[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C].[StackName, StackSta[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[H[2J
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+777;preexecnginx-bma	UPDATE_COMPLETE
+grafana-bma	CREATE_COMPLETE
+promcom-bma	DELETE_COMPLETE
+huginn-bma	UPDATE_COMPLETE
+huginn-bma	DELETE_COMPLETE
+nginx-bash-my-aws	DELETE_COMPLETE
+grafana-bash-my-aws	DELETE_COMPLETE
+grafana-bash-my-aws	DELETE_COMPLETE
+grafana	DELETE_COMPLETE
+mastodon	DELETE_COMPLETE
+huginn	DELETE_COMPLETE
+docker-stack-bash-my-aws	DELETE_COMPLETE
+docker-stack-bash-my-aws	DELETE_COMPLETE
+docker-stack-bash-my-aws	DELETE_COMPLETE
+rails-demo	DELETE_COMPLETE
+huginn	DELETE_COMPLETE
+spotifree	DELETE_COMPLETE
+postfix	DELETE_COMPLETE
+docker-stack-bash-my-aws	DELETE_COMPLETE
+docker-stack-bash-my-aws	DELETE_COMPLETE
+asg-prod	DELETE_COMPLETE
+asg-prod	DELETE_COMPLETE
+another-elb	DELETE_COMPLETE
+elb	DELETE_COMPLETE
+ec2	DELETE_COMPLETE
+ec2	DELETE_COMPLETE
+load-balancer	DELETE_COMPLETE
+elb	DELETE_COMPLETE
+asg2	DELETE_COMPLETE
+asg-bash-my-aws	DELETE_COMPLETE
+asg-bash-my-aws	DELETE_COMPLETE
+asg	DELETE_COMPLETE
+domain-redirector	DELETE_COMPLETE
+]777;notify;Command completed;aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text | grep -v DELETE_COMPLETE
+777;preexecnginx-bma	UPDATE_COMPLETE
+grafana-bma	CREATE_COMPLETE
+huginn-bma	UPDATE_COMPLETE
+]777;notify;Command completed;aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text | grep -v DELETE_COMPLETE\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text | grep -v DELETE_COMPLETE | column -t[H[2J
+bash-my-aws $ aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text | grep -v DELETE_COMPLETE | column -t
+777;preexecnginx-bma    UPDATE_COMPLETE
+grafana-bma  CREATE_COMPLETE
+huginn-bma   UPDATE_COMPLETE
+]777;notify;Command completed;aws cloudformation list-stacks --query "StackSummaries[].[StackName, StackStatus]" --output text | grep -v DELETE_COMPLETE | column -t\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ stacks
+777;preexechuginn-bma   UPDATE_COMPLETE  2020-01-11T13:35:41.985Z  2020-01-11T13:51:12.448Z  NOT_NEST
+grafana-bma  CREATE_COMPLETE  2020-01-11T14:21:46.609Z  NEVER_UPDATED             NOT_NEST
+nginx-bma    UPDATE_COMPLETE  2020-01-11T14:23:37.223Z  2020-01-11T14:28:50.465Z  NOT_NEST
+]777;notify;Command completed;stacks\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ exit
+
+Script done on 2020-01-13 13:13:35+10:00 [COMMAND_EXIT_CODE="0"]

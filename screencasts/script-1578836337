@@ -1,0 +1,7 @@
+Script started on 2020-01-13 00:38:57+11:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="90" LINES="24"]
+]777;notify;Command completed;stacks\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ clear
+777;preexec[H[2J[3J]777;notify;Command completed;clear\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ exit
+
+Script done on 2020-01-13 00:39:05+11:00 [COMMAND_EXIT_CODE="0"]
