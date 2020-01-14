@@ -41,7 +41,7 @@ iam-role-principal(){
   #
   #     USAGE: iam-role-principal role-name [role-name]
 
-  local role_names="$@ $(skim-stdin)"
+  local role_names=$(skim-stdin "$@")
   [[ -z "$role_names" ]] && __bma_usage "role-name [role-name]" && return 1
 
   aws iam list-roles                                                         \
