@@ -9,6 +9,7 @@ nav:
   # - Tour: tour.md
   - Command Reference: command-reference.md
   - CloudFormation Naming: cloudformation-naming.md
+  - LinuxConf 2020: linuxconf2020.md
 
 theme:
   name: material
