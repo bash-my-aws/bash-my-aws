@@ -17,7 +17,7 @@ log-groups() {
   local filters=$(__bma_read_filters $@)
 
   local column_command
-  if column --help | grep -- --table-right > /dev/null; then
+  if column --help 2>/dev/null| grep -- --table-right > /dev/null; then
     column_command='column --table --table-right 3,4'
   else
     column_command='column -t'
