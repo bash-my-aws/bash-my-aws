@@ -238,7 +238,7 @@ instance-ssh() {
     shift
   fi
   local instance_ids=$(skim-stdin "$@")
-  if [ -z $instance_ids ] ; then
+  if [[ -z $instance_ids ]] ; then
     echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"
     return 1
   fi
