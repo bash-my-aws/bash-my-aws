@@ -6,8 +6,29 @@
 
 
 skim-stdin() {
-  # Return the first token from each line of STDIN
-  [[ -t 0 ]] || awk 'ORS=" " { print $1 }'
+
+  # Append first token from each line of STDIN to argument list
+  #
+  # Implementation of `pipe-skimming` pattern.
+  #
+  # Typical usage within Bash-my-AWS:
+  #
+  #   - local asg_names=$(skim-stdin "$@") # Append to arg list
+  #   - local asg_names=$(skim-stdin)      # Only draw from STDIN
+  #
+  #     $ stacks | skim-stdin foo bar
+  #     foo bar huginn mastodon grafana
+  #
+  #     $ stacks
+  #     huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+  #     mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+  #     grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+  (
+    printf -- "$*"                           # Print all args
+    printf " "                               # Print a space
+    [[ -t 0 ]] || awk 'ORS=" " { print $1 }' # Print first token of each line of STDIN
+  ) | awk '{$1=$1;print}'                    # Trim leading/trailing spaces
 }
 
 

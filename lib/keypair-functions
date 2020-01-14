@@ -13,7 +13,7 @@ keypairs() {
   #     alice  8f:85:9a:1e:6c:76:29:34:37:45:de:7f:8d:f9:70:eb
   #     bob    56:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
 
-  local keypairs="$(skim-stdin)"
+  local keypairs=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
   aws ec2 describe-key-pairs                       \
@@ -101,7 +101,7 @@ keypair-delete() {
   #     yet-another-keypair
   #     Are you sure you want to continue? y
 
-  local keypairs="$@ $(skim-stdin)"
+  local keypairs=$(skim-stdin "$@")
   [[ -z $keypairs ]] && __bma_usage "key_name [key_name]" && return 1
 
   echo "You are about to delete the following EC2 SSH KeyPairs:"
