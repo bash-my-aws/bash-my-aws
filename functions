@@ -34,6 +34,8 @@ aws-account-cost-recommendations
 aws-account-each
 aws-account-id
 aws-panopticon
+aws-profile-each
+aws-profiles
 bucket-acls
 bucket-remove
 bucket-remove-force
