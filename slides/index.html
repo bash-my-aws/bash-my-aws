@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bash-my-AWS - LinuxConf 2020</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Bash-my-AWS
+
+## Mike Bailey - mike@bailey.net.au
+
+## linux.conf.au 2020 | Gold Coast, Australia
+???
+
+Notes for the _first_ slide!
+
+---
+
+class: center, middle
+
+# Agenda
+
+1. Command Line vs. ClickOps
+2. Amazon Web Services
+3. Bash-my-AWS: Test Drive
+4. Bash-my-AWS: Under the Hood
+
+---
+
+class: center, middle
+
+# Command Line
+
+---
+
+class: center, middle
+
+# ClickOps
+
+---
+
+class: center, middle
+
+# AWS
+
+---
+
+class: center, middle
+
+# AWS
+
+## CloudFormation: Config as Code
+
+---
+
+class: center, middle
+
+# AWS
+
+![elb-asg-instances](assets/elb-asg-ec2.png)
+
+### Load Balancer, AutoScaling Group, EC2 Instances
+
+---
+
+class: center, middle
+
+# AWS
+
+### `aws cloudformation list-stacks`
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+- Resource List
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+- Resource List
+- Resource Detail
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+- Resource List
+- Resource Detail
+- Resource Action
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+- Resource List
+- Resource Detail
+- Resource Action
+- Related Resources
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+### Demo time
+
+
+---
+
+class: middle
+
+# Bash-my-AWS
+
+### pipe-skimming
+
+```shell
+instance-asgs() {
+  local instance_ids=$(skim-stdin "$@")
+  ...
+```
+
+```shell
+skim-stdin() {
+  (
+    printf -- "$*"                           # Print all args
+    printf " "                               # Print a space
+    [[ -t 0 ]] || awk 'ORS=" " { print $1 }' # Print first token of each line of STDIN
+  ) | awk '{$1=$1;print}'                    # Trim leading/trailing spaces
+}
+```
+
+---
+
+class: center, middle
+
+# Bash-my-AWS
+
+### Documentation: bash-my-aws.org
+### Source: github.com/bash-my-aws/bash-my-aws
+
+    </textarea>
+    <script src="out/remark.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
