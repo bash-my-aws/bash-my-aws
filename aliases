@@ -162,9 +162,14 @@ alias vpcs='~/.bash-my-aws/bin/bma vpcs'
 # set AWS_DEFAULT_REGION in the current shell
 function region() { 
     local inputs=$(skim-stdin "$@");
+    # Remove leading and trailing spaces
+         inputs="${inputs/# /}"
+         inputs="${inputs/% /}"
+    
     if [[ -z "$inputs" ]]; then
         echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}";
     else
         AWS_DEFAULT_REGION="$inputs";
+        export AWS_DEFAULT_REGION;
     fi
 }
