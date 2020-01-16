@@ -8,6 +8,7 @@ nav:
   - Home: index.md
   # - Tour: tour.md
   - Command Reference: command-reference.md
+  - Pipe-Skimming: pipe-skimming.md
   - CloudFormation Naming: cloudformation-naming.md
   - LinuxConf 2020: linuxconf2020.md
 
