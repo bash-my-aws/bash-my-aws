@@ -13,7 +13,7 @@
         <meta name="description" content="CLI Commands for Managing AWS Resources">
       
       
-        <link rel="canonical" href="https://bash-my-aws.org/style/">
+        <link rel="canonical" href="https://bash-my-aws.org/pipe-skimming/">
       
       
         <meta name="author" content="Mike Bailey">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Style - Bash-my-AWS</title>
+        <title>Pipe-Skimming - Bash-my-AWS</title>
       
     
     
@@ -108,7 +108,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#bash-my-aws-style-guide" tabindex="1" class="md-skip">
+      <a href="#pipe-skimming-examples" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -134,7 +134,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Style
+                Pipe-Skimming
               
             </span>
           
@@ -267,11 +267,45 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="../pipe-skimming/" title="Pipe-Skimming" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Pipe-Skimming
+      </label>
+    
+    <a href="./" title="Pipe-Skimming" class="md-nav__link md-nav__link--active">
       Pipe-Skimming
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pipe-skimming-examples" class="md-nav__link">
+    Pipe-Skimming examples
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
     
@@ -313,8 +347,22 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
   
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pipe-skimming-examples" class="md-nav__link">
+    Pipe-Skimming examples
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
   
 </nav>
                   </div>
@@ -326,28 +374,116 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/bash-my-aws/bash-my-aws/edit/master/docs/style.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/bash-my-aws/bash-my-aws/edit/master/docs/pipe-skimming.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="bash-my-aws-style-guide">bash-my-aws style guide<a class="headerlink" href="#bash-my-aws-style-guide" title="Permanent link">&para;</a></h1>
-<ul>
-<li>Always quote "$variables"</li>
-<li>Only use parentheses around variables when not surrounded with whitespace (better way to phrase this?)</li>
-<li>use <code>$(date)</code> rather than "<code>date</code>"</li>
-<li>
-<p>use <code>[[</code> and <code>]]</code> rather than <code>[</code>, <code>]</code>, or <code>test</code></p>
-</li>
-<li>
-<p>show errors with <code>__bma_error()</code></p>
-</li>
-<li>show usage options with <code>__bma_usage()</code></li>
-<li>
-<p>parse inputs with <code>__bma_read_inputs()</code></p>
-</li>
-<li>
-<p>regenerate and test the bash_completion script after adding new functions</p>
-</li>
-</ul>
+                  <h1>Pipe-Skimming</h1>
+                
+                <p>Pipe-skimming is a simple pattern that can enhance the user interface
+of command line tools.</p>
+<p>The pattern describes treatment of text received from other commands via
+unix pipes. The first token of each line is appended to the commands
+argument list (ARGV).</p>
+<p>It allows for expressive line oriented output to be piped to commands
+that will skim only the resource identifiers from each line.</p>
+<p>This pattern is simple to implement within commands and does not require
+any changes to the command shell.</p>
+<p>A more detailed explanation is included below but the end result includes
+being able to chain commands together like this, despite each command's
+output containing more info than just the resource identiers:</p>
+<div class="codehilite"><pre><span></span>$ stacks | grep nginx | stack-asgs | asg-instances | instance-state
+i-0e219fbee42347721  shutting-down
+</pre></div>
+
+
+<h2 id="pipe-skimming-examples">Pipe-Skimming examples<a class="headerlink" href="#pipe-skimming-examples" title="Permanent link">&para;</a></h2>
+<p>The following examples show commands from <a href="https://bash-my-aws.org/">Bash-my-AWS</a>,
+the project from which this pattern was extracted.</p>
+<p>We list EC2 Instances running in an Amazon AWS Account:</p>
+<div class="codehilite"><pre><span></span>$ instances
+i-09d962a1d688bb3ec  t3.nano   running  grafana-bma  2020-01-16T03:53:44.000Z
+i-083f73ad5a1895ba0  t3.small  running  huginn-bma   2020-01-16T03:54:24.000Z
+i-0e219fbee42347721  t3.nano   running  nginx-bma    2020-01-16T03:56:22.000Z
+</pre></div>
+
+
+<p>Piping output from this command into <code>instance-asg</code> returns a list of
+AutoScaling Groups (ASGs) they belong to:</p>
+<div class="codehilite"><pre><span></span>$ instances | instance-asg
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-083f73ad5a1895ba0
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-0e219fbee42347721
+grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09d962a1d688bb3ec
+</pre></div>
+
+
+<p>A functionally equivalent way to run this second command is:</p>
+<div class="codehilite"><pre><span></span>$ instance-asg i-09d962a1d688bb3ec i-083f73ad5a1895ba0 i-0e219fbee42347721
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-083f73ad5a1895ba0
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-0e219fbee42347721
+grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09d962a1d688bb3ec
+</pre></div>
+
+
+<p>The command <code>instance-asg</code> (a Bash function) appends the first item
+from each line of piped input on STDIN to it's argument list:</p>
+<div class="codehilite"><pre><span></span>instance-asg() {
+
+  # List autoscaling group membership of EC2 Instance(s)
+  #
+  #     USAGE: instance-asg instance-id [instance-id]
+
+  local instance_ids=$(skim-stdin &quot;$@&quot;)
+  [[ -z $instance_ids ]] &amp;&amp; __bma_usage &quot;instance-id [instance-id]&quot; &amp;&amp; return 1
+
+  aws ec2 describe-instances      \
+    --instance-ids $instance_ids  \
+    --output text                 \
+    --query &quot;
+      Reservations[].Instances[][
+        {
+          &quot;AutoscalingGroupName&quot;:
+            [Tags[?Key==&#39;aws:autoscaling:groupName&#39;].Value][0][0],
+          &quot;InstanceId&quot;: InstanceId
+        }
+      ][]&quot;          |
+  column -s$&#39;\t&#39; -t
+}
+</pre></div>
+
+
+<p>This implementation uses a simple Bash function called <code>skim-stdin</code>:</p>
+<div class="codehilite"><pre><span></span>skim-stdin() {
+
+  # Append first token from each line of STDIN to argument list
+  #
+  # Implementation of `pipe-skimming` pattern.
+  #
+  # Typical usage within Bash-my-AWS:
+  #
+  #   - local asg_names=$(skim-stdin &quot;$@&quot;) # Append to arg list
+  #   - local asg_names=$(skim-stdin)      # Only draw from STDIN
+  #
+  #     $ stacks | skim-stdin foo bar
+  #     foo bar huginn mastodon grafana
+  #
+  #     $ stacks
+  #     huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+  #     mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+  #     grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+  (
+    printf -- &quot;$*&quot;                           # Print all args
+    printf &quot; &quot;                               # Print a space
+    [[ -t 0 ]] || awk &#39;ORS=&quot; &quot; { print $1 }&#39; # Print first token of each line of STDIN
+  ) | awk &#39;{$1=$1;print}&#39;                    # Trim leading/trailing spaces
+}
+</pre></div>
+
+
+<p>Almost every command in <a href="https://bash-my-aws.org">Bash-my-AWS</a> makes use of
+<code>skim-stdin</code> to accept resource identifiers via arguments and/or piped input on
+STDIN.</p>
+<p>AFAIK, this pattern has not previsouly been described.</p>
                 
                   
                 
@@ -364,6 +500,41 @@
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../command-reference/" title="Command Reference" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Command Reference
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../cloudformation-naming/" title="CloudFormation Naming" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                CloudFormation Naming
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
