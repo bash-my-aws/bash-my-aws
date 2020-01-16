@@ -1,32 +1,30 @@
-Pipe-Skimming: Enhancing the UI of CLI tools
+Pipe-Skimming: Enhancing the UI of Unix CLI tools
 
-Pipe-skimming is a simple pattern that can enhance the user interface
-of command line tools.
+When text is piped to a command that implements pipe-skimming, it appends
+the first item from each line (STDIN) to its argument array (ARGV).
 
-The pattern describes treatment of text received from other commands via
-unix pipes. The first token of each line is appended to the commands
-argument list (ARGV).
-
-It allows for expressive line oriented output to be piped to commands
+This allows for expressive line oriented output to be piped to commands
 that will skim only the resource identifiers from each line.
 
-This pattern is simple to implement within commands and does not require
-any changes to the command shell.
-
-A more detailed explanation is included below but the end result includes
-being able to chain commands together like this, despite each command's
-output containing more info than just the resource identiers:
+This makes exploring and traversing related resources from the command
+line a pleasure:
 
     $ stacks | grep nginx | stack-asgs | asg-instances | instance-state
     i-0e219fbee42347721  shutting-down
 
+Pipe-skimming is simple to implement within commands and doesn't require
+any changes to the command shell.
 
-## Pipe-Skimming examples
+
+## How it Works
 
 The following examples show commands from [Bash-my-AWS](https://bash-my-aws.org/),
 the project from which this pattern was extracted.
 
-We list EC2 Instances running in an Amazon AWS Account:
+
+### Usage Examples
+
+Here we list EC2 Instances running in an Amazon AWS Account:
 
     $ instances
     i-09d962a1d688bb3ec  t3.nano   running  grafana-bma  2020-01-16T03:53:44.000Z
@@ -43,7 +41,8 @@ AutoScaling Groups (ASGs) they belong to:
     grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09d962a1d688bb3ec
 
 
-A functionally equivalent way to run this second command is:
+While functionally identical, the example above is far easier to type
+than this example using command arguments:
 
     $ instance-asg i-09d962a1d688bb3ec i-083f73ad5a1895ba0 i-0e219fbee42347721
     huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-083f73ad5a1895ba0
@@ -51,8 +50,18 @@ A functionally equivalent way to run this second command is:
     grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09d962a1d688bb3ec
 
 
+We can continue adding commands to our pipeline:
+
+    $ instances | instance-asg | asg-capacity
+    grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  1  1  2
+    huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    1  1  2
+    nginx-bma-AutoScalingGroup-106KHAYHUSRHU    1  1  2
+
+
+### Implementation in Bash-my-AWS
+
 The command `instance-asg` (a Bash function) appends the first item
-from each line of piped input on STDIN to it's argument list:
+from each line of piped input on STDIN to its argument list:
 
     instance-asg() {
 
@@ -111,6 +120,6 @@ Almost every command in [Bash-my-AWS](https://bash-my-aws.org) makes use of
 `skim-stdin` to accept resource identifiers via arguments and/or piped input on
 STDIN.
 
-AFAIK, this pattern has not previsouly been described.
+AFAIK, this pattern has not previously been described.
 
 
