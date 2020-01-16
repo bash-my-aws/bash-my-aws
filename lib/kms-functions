@@ -127,7 +127,7 @@ kms-alias-delete() {
   [[ -z "$alias_names" ]] && __bma_usage "alias_name [alias_name]" && return 1
 
    echo "You are about to delete the following kms aliases:"
-   echo $alias_names | tr ' ' "\n"
+   echo "$alias_names" | tr ' ' "\n"
    [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
    local regex_yes="^[Yy]$"
    read -p "Are you sure you want to continue? " -n 1 -r

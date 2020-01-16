@@ -294,26 +294,24 @@ stack-delete() {
   #     |  2019-12-21T13:14:07.820Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE                      |
   #     |  2019-12-21T13:18:06.709Z|  asg-prod            |  AWS::CloudFormation::Stack             |  DELETE_IN_PROGRESS                   |
   #     |  2019-12-21T13:18:08.931Z|  AutoScalingGroup    |  AWS::AutoScaling::AutoScalingGroup     |  DELETE_IN_PROGRESS                   |
-  #     
+  #
   #     An error occurred (ValidationError) when calling the DescribeStackEvents operation: Stack [asg-prod] does not exist
 
   # *Note that the error reported at the end of `stack-delete` command is just AWSCLI saying it can't find the stack anymore.*
 
   local stacks=$(skim-stdin "$@")
   local stack
-  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
-  if ! [ -t 0 ] ; then # if STDIN is not a terminal...
-    exec </dev/tty # reattach terminal to STDIN
-    local regex_yes="^[Yy]$"
-    echo "You are about to delete the following stacks:"
-    echo "$stacks" | tr ' ' "\n"
-    read -p "Are you sure you want to continue? " -n 1 -r
-    echo
-    [[ $REPLY =~ $regex_yes ]] || return 0
-  fi
+  [[ -z $stacks ]] && __bma_usage "stack [stack]" && return 1
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  echo "You are about to delete the following stacks:"
+  echo "$stacks" | tr ' ' "\n" | stacks
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  [[ $REPLY =~ $regex_yes ]] || return 0
   for stack in $stacks; do
     if aws cloudformation delete-stack \
-         --stack-name $stack           \
+         --stack-name "$stack"         \
          --output text
     then
       stack-tail "$stack"
