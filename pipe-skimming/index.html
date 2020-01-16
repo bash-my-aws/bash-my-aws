@@ -108,7 +108,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#pipe-skimming-examples" tabindex="1" class="md-skip">
+      <a href="#how-it-works" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -292,9 +292,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pipe-skimming-examples" class="md-nav__link">
-    Pipe-Skimming examples
+  <a href="#how-it-works" class="md-nav__link">
+    How it Works
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    Usage Examples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-in-bash-my-aws" class="md-nav__link">
+    Implementation in Bash-my-AWS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -352,9 +372,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pipe-skimming-examples" class="md-nav__link">
-    Pipe-Skimming examples
+  <a href="#how-it-works" class="md-nav__link">
+    How it Works
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    Usage Examples
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-in-bash-my-aws" class="md-nav__link">
+    Implementation in Bash-my-AWS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -379,27 +419,24 @@
                 
                   <h1>Pipe-Skimming</h1>
                 
-                <p>Pipe-skimming is a simple pattern that can enhance the user interface
-of command line tools.</p>
-<p>The pattern describes treatment of text received from other commands via
-unix pipes. The first token of each line is appended to the commands
-argument list (ARGV).</p>
-<p>It allows for expressive line oriented output to be piped to commands
+                <p>When text is piped to a command that implements pipe-skimming, it appends
+the first item from each line (STDIN) to its argument array (ARGV).</p>
+<p>This allows for expressive line oriented output to be piped to commands
 that will skim only the resource identifiers from each line.</p>
-<p>This pattern is simple to implement within commands and does not require
-any changes to the command shell.</p>
-<p>A more detailed explanation is included below but the end result includes
-being able to chain commands together like this, despite each command's
-output containing more info than just the resource identiers:</p>
+<p>This makes exploring and traversing related resources from the command
+line a pleasure:</p>
 <div class="codehilite"><pre><span></span>$ stacks | grep nginx | stack-asgs | asg-instances | instance-state
 i-0e219fbee42347721  shutting-down
 </pre></div>
 
 
-<h2 id="pipe-skimming-examples">Pipe-Skimming examples<a class="headerlink" href="#pipe-skimming-examples" title="Permanent link">&para;</a></h2>
+<p>Pipe-skimming is simple to implement within commands and doesn't require
+any changes to the command shell.</p>
+<h2 id="how-it-works">How it Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <p>The following examples show commands from <a href="https://bash-my-aws.org/">Bash-my-AWS</a>,
 the project from which this pattern was extracted.</p>
-<p>We list EC2 Instances running in an Amazon AWS Account:</p>
+<h3 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h3>
+<p>Here we list EC2 Instances running in an Amazon AWS Account:</p>
 <div class="codehilite"><pre><span></span>$ instances
 i-09d962a1d688bb3ec  t3.nano   running  grafana-bma  2020-01-16T03:53:44.000Z
 i-083f73ad5a1895ba0  t3.small  running  huginn-bma   2020-01-16T03:54:24.000Z
@@ -416,7 +453,8 @@ grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09d962a1d688bb3ec
 </pre></div>
 
 
-<p>A functionally equivalent way to run this second command is:</p>
+<p>While functionally identical, the example above is far easier to type
+than this example using command arguments:</p>
 <div class="codehilite"><pre><span></span>$ instance-asg i-09d962a1d688bb3ec i-083f73ad5a1895ba0 i-0e219fbee42347721
 huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-083f73ad5a1895ba0
 nginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-0e219fbee42347721
@@ -424,8 +462,17 @@ grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09d962a1d688bb3ec
 </pre></div>
 
 
+<p>We can continue adding commands to our pipeline:</p>
+<div class="codehilite"><pre><span></span>$ instances | instance-asg | asg-capacity
+grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  1  1  2
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    1  1  2
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    1  1  2
+</pre></div>
+
+
+<h3 id="implementation-in-bash-my-aws">Implementation in Bash-my-AWS<a class="headerlink" href="#implementation-in-bash-my-aws" title="Permanent link">&para;</a></h3>
 <p>The command <code>instance-asg</code> (a Bash function) appends the first item
-from each line of piped input on STDIN to it's argument list:</p>
+from each line of piped input on STDIN to its argument list:</p>
 <div class="codehilite"><pre><span></span>instance-asg() {
 
   # List autoscaling group membership of EC2 Instance(s)
@@ -483,7 +530,7 @@ from each line of piped input on STDIN to it's argument list:</p>
 <p>Almost every command in <a href="https://bash-my-aws.org">Bash-my-AWS</a> makes use of
 <code>skim-stdin</code> to accept resource identifiers via arguments and/or piped input on
 STDIN.</p>
-<p>AFAIK, this pattern has not previsouly been described.</p>
+<p>AFAIK, this pattern has not previously been described.</p>
                 
                   
                 
