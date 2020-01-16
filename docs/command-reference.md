@@ -9,6 +9,8 @@ The first few sets of commands were chosen because they are likely to be of
 the most interest to readers.
 
 !!! Note "General Rules"
+    - Commands expect `$AWS_DEFAULT_PROFILE` environment variable to be set
+      (check/set with `aws-profile` command)
     - Commands expect `$AWS_DEFAULT_REGION` environment variable to be set
       (check/set with `region` command)
     - Most commands that list resources (`stacks`, `instances , etc)
@@ -82,6 +84,48 @@ in Cost Recommendations.
 
     $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
     #=> Opens web browser to AWS Cost Recommendations with accounts selected
+
+
+## profile-commands
+
+### aws-profiles
+
+List profiles
+
+The aws-profile() function must be sourced in order to update the
+AWS_DEFAULT_PROFILE environment variable. This is because it
+cannot update an environment variable when run as a subprocess.
+
+    $ aws-profiles
+    dev
+    test
+    stage
+    prod
+
+
+### aws-profile
+
+Get/Set `$AWS_DEFAULT_PROFILE` shell environment variable
+
+    $ aws-profile
+      test
+
+    $ aws-profile prod
+
+    $ aws-profile
+      prod
+
+
+### aws-profile-each
+
+Run a command in every profile.
+Any output lines will be appended with "#${PROFILE}".
+
+    $ aws-profile-each stacks | column -t
+    example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #prod
+    example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #stage
+    ...
+    example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #test
 
 
 ## region-commands
@@ -980,9 +1024,37 @@ List role principal for IAM Role(s)
 List IAM Users
 
     $ iam-users
-    config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
-    AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
-    ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+    john.smith@example.com  AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z  2019-10-16T17:16:08Z 
+    aws-test-user           AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z  2019-10-16T02:12:52Z 
+    mary.jones@example.com  AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z  2019-10-16T13:51:32Z 
+
+### iam-user-profile
+
+List IAM Users Profile
+
+    USAGE: iam-user-profile user-name [user-name] 
+
+    $ iam-user-profile john.smith@example.com
+    john.smith@example.com  2019-10-16T17:16:08Z  False
+
+### iam-user-profile-update
+
+Change password for IAM user
+
+    USAGE: iam-user-profile-update [--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
+
+    $ iam-user-profile-update --batch --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  XXXXXXXXXXXXXXX  SUCCESS
+
+    $ iam-user-profile-update --batch --display-password --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  {LK-4q\>V9E>n`%  SUCCESS
+
+    $ iam-users king | iam-user-profile-update
+    john.smith@example.com:                            Suggested password: ($p:#|q%5U!6~n%
+    john.smith@example.com:                   Enter new password for user:
+    john.smith@example.com:                 Confirm new password for user:
+    john.smith@example.com: Require password reset on next sign-in? [Y/n]: n
+    john.smith@example.com XXXXXXXXXXXXXXX SUCCESS
 
 
 ## image-commands

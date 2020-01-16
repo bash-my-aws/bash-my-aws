@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# profile-functions
+#
+
+
+aws-profiles() {
+
+  # List profiles
+  #
+  # The profile() function must be sourced in order to update the
+  # AWS_DEFAULT_PROFILE environment variable. This is because it
+  # cannot update an environment variable when run as a subprocess.
+  #
+  #     $ aws-profiles
+  #     test
+  #     stage
+  #     prod
+  aws_creds=~/.aws/credentials
+  while read -r line; do
+    if [[ "${line:0:1}" == "[" ]]; then
+      echo "${line:1:-1}"
+    fi
+  done < "${aws_creds}"
+
+  #LC_ALL=C sort
+}
+
+
+aws-profile-each() {
+
+  # Run a command in every profile.
+  # Any output lines will be appended with "#${PROFILE}".
+  #
+  #     $ aws-profile-each stacks | column -t
+  #     example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #prod
+  #     example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #stage
+  #     ...
+  #     example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #test
+
+  local old_aws_default_profile="$AWS_DEFAULT_PROFILE"
+  for aws_profile in $(aws-profiles); do
+    # Have to export this so that it works with the following commands
+    export AWS_DEFAULT_PROFILE=$aws_profile
+    eval "$@" | sed "s/$/ #${AWS_DEFAULT_PROFILE}/"
+  done
+  AWS_DEFAULT_PROFILE="$old_aws_default_profile"
+}
+
