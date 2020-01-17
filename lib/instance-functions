@@ -46,7 +46,7 @@ instance-change-type() {
 
   # Change an instance type
   #
-  #     USAGE: instance-change-type [instance-id instance-type]
+  #     USAGE: instance-change-type [instance-id] [instance-type]
 
   [[ $# != 2 ]] && __bma_usage "instance-id [instance-id] [instance-type]" && return 1
 
