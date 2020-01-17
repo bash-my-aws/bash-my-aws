@@ -1,5 +1,7 @@
 Pipe-Skimming: Enhancing the UI of Unix CLI tools
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/eqQUepwTHjA?start=631" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 When text is piped to a command that implements pipe-skimming, it appends
 the first item from each line (STDIN) to its argument array (ARGV).
 
