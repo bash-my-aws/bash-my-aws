@@ -42,6 +42,18 @@ instances() {
   column -s$'\t' -t
 }
 
+instance-change-type() {
+
+  # Change an instance type
+  #
+  #     USAGE: instance-change-type [instance-id instance-type]
+
+  [[ $# != 2 ]] && __bma_usage "instance-id [instance-id] [instance-type]" && return 1
+
+  aws ec2 modify-instance-attribute \
+    --instance-id $1               \
+    --instance-type $2
+}
 
 instance-asg() {
 
