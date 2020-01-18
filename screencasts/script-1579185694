@@ -1,0 +1,12 @@
+Script started on 2020-01-17 00:41:34+10:00 [TERM="xterm-256color" TTY="/dev/pts/11" COLUMNS="90" LINES="22"]
+]777;notify;Command completed;prompt\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ [H[2J
+bash-my-aws $ instances
+777;preexeci-09d962a1d688bb3ec  t3.nano   running  grafana-bma  2020-01-16T03:53:44.000Z
+i-083f73ad5a1895ba0  t3.small  running  huginn-bma   2020-01-16T03:54:24.000Z
+i-0db15ca48ff1ccbfd  t3.nano   running  nginx-bma    2020-01-16T04:29:15.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ [H[2J
+bash-my-aws $ exit
+
+Script done on 2020-01-17 00:41:46+10:00 [COMMAND_EXIT_CODE="0"]

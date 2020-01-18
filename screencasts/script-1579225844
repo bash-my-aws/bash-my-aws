@@ -1,0 +1,64 @@
+Script started on 2020-01-17 11:50:44+10:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="90" LINES="23"]
+]777;notify;Command completed;instances | instance-terminate \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ [H[2J
+$ instances
+777;preexeci-09974ff0cfed5c984  t3.small  terminated  huginn-bma   2020-01-16T14:45:32.000Z
+i-009ae1cdd4d65077d  t3.nano   terminated  nginx-bma    2020-01-16T14:45:36.000Z
+i-09c6be2d518d241e8  t3.nano   terminated  grafana-bma  2020-01-16T14:45:36.000Z
+i-0fa4ade2079f1f6d5  t3.nano   terminated  nginx-bma    2020-01-17T01:40:11.000Z
+i-0caa8abfb2288d843  t3.small  terminated  huginn-bma   2020-01-17T01:40:33.000Z
+i-0a0a0067cffde6418  t3.nano   terminated  grafana-bma  2020-01-17T01:40:43.000Z
+i-0c7a672a4b33a6b58  t3.small  running     huginn-bma   2020-01-17T01:42:06.000Z
+i-09496ca69c367a215  t3.nano   running     grafana-bma  2020-01-17T01:42:16.000Z
+i-0fd455eadd82ec264  t3.nano   running     grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  running     huginn-bma   2020-01-17T01:42:38.000Z
+i-0ac8d8aa4f31568bd  t3.nano   running     nginx-bma    2020-01-17T01:43:11.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   running     nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ asgs | asg-desired-size-set 1
+777;preexec]777;notify;Command completed;asgs | asg-desired-size-set 1\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances
+777;preexeci-09974ff0cfed5c984  t3.small  terminated     huginn-bma   2020-01-16T14:45:32.000Z
+i-009ae1cdd4d65077d  t3.nano   terminated     nginx-bma    2020-01-16T14:45:36.000Z
+i-09c6be2d518d241e8  t3.nano   terminated     grafana-bma  2020-01-16T14:45:36.000Z
+i-0fa4ade2079f1f6d5  t3.nano   terminated     nginx-bma    2020-01-17T01:40:11.000Z
+i-0caa8abfb2288d843  t3.small  terminated     huginn-bma   2020-01-17T01:40:33.000Z
+i-0a0a0067cffde6418  t3.nano   terminated     grafana-bma  2020-01-17T01:40:43.000Z
+i-0c7a672a4b33a6b58  t3.small  shutting-down  huginn-bma   2020-01-17T01:42:06.000Z
+i-09496ca69c367a215  t3.nano   running        grafana-bma  2020-01-17T01:42:16.000Z
+i-0fd455eadd82ec264  t3.nano   shutting-down  grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  running        huginn-bma   2020-01-17T01:42:38.000Z
+i-0ac8d8aa4f31568bd  t3.nano   terminated     nginx-bma    2020-01-17T01:43:11.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   running        nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances
+777;preexeci-09974ff0cfed5c984  t3.small  terminated  huginn-bma   2020-01-16T14:45:32.000Z
+i-009ae1cdd4d65077d  t3.nano   terminated  nginx-bma    2020-01-16T14:45:36.000Z
+i-09c6be2d518d241e8  t3.nano   terminated  grafana-bma  2020-01-16T14:45:36.000Z
+i-0fa4ade2079f1f6d5  t3.nano   terminated  nginx-bma    2020-01-17T01:40:11.000Z
+i-0caa8abfb2288d843  t3.small  terminated  huginn-bma   2020-01-17T01:40:33.000Z
+i-0a0a0067cffde6418  t3.nano   terminated  grafana-bma  2020-01-17T01:40:43.000Z
+i-0c7a672a4b33a6b58  t3.small  terminated  huginn-bma   2020-01-17T01:42:06.000Z
+i-09496ca69c367a215  t3.nano   running     grafana-bma  2020-01-17T01:42:16.000Z
+i-0fd455eadd82ec264  t3.nano   terminated  grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  running     huginn-bma   2020-01-17T01:42:38.000Z
+i-0ac8d8aa4f31568bd  t3.nano   terminated  nginx-bma    2020-01-17T01:43:11.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   running     nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances
+777;preexeci-09974ff0cfed5c984  t3.small  terminated  huginn-bma   2020-01-16T14:45:32.000Z
+i-009ae1cdd4d65077d  t3.nano   terminated  nginx-bma    2020-01-16T14:45:36.000Z
+i-09c6be2d518d241e8  t3.nano   terminated  grafana-bma  2020-01-16T14:45:36.000Z
+i-0fa4ade2079f1f6d5  t3.nano   terminated  nginx-bma    2020-01-17T01:40:11.000Z
+i-0caa8abfb2288d843  t3.small  terminated  huginn-bma   2020-01-17T01:40:33.000Z
+i-0a0a0067cffde6418  t3.nano   terminated  grafana-bma  2020-01-17T01:40:43.000Z
+i-0c7a672a4b33a6b58  t3.small  terminated  huginn-bma   2020-01-17T01:42:06.000Z
+i-09496ca69c367a215  t3.nano   running     grafana-bma  2020-01-17T01:42:16.000Z
+i-0fd455eadd82ec264  t3.nano   terminated  grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  running     huginn-bma   2020-01-17T01:42:38.000Z
+i-0ac8d8aa4f31568bd  t3.nano   terminated  nginx-bma    2020-01-17T01:43:11.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   running     nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ exit
+
+Script done on 2020-01-17 11:53:35+10:00 [COMMAND_EXIT_CODE="0"]

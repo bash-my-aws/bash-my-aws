@@ -1,0 +1,30 @@
+Script started on 2020-01-17 00:35:58+10:00 [TERM="xterm-256color" TTY="/dev/pts/11" COLUMNS="90" LINES="22"]
+]777;notify;Command completed;instance-ssh i-083f73ad5a1895ba0 \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ [H[2J
+bash-my-aws $ instances
+777;preexeci-09d962a1d688bb3ec  t3.nano   running  grafana-bma  2020-01-16T03:53:44.000Z
+i-083f73ad5a1895ba0  t3.small  running  huginn-bma   2020-01-16T03:54:24.000Z
+i-0db15ca48ff1ccbfd  t3.nano   running  nginx-bma    2020-01-16T04:29:15.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ instances nginx
+777;preexeci-0db15ca48ff1ccbfd  t3.nano  running  nginx-bma  2020-01-16T04:29:15.000Z
+]777;notify;Command completed;instances nginx\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ instance-
+instance-asg                             instance-state
+instance-az                              instance-stop
+instance-console                         instance-tags
+instance-dns                             instance-terminate
+instance-health-set-unhealthy            instance-termination-protection
+instance-iam-profile                     instance-termination-protection-disable
+instance-ip                              instance-termination-protection-enable
+instance-ssh                             instance-type
+instance-ssh-details                     instance-userdata
+instance-stack                           instance-volumes
+instance-start                           instance-vpc
+
+bash-my-aws $ instance-ssh 
+777;preexecUsage: instance-ssh [login] [instance-id] [instance-id]
+]777;notify;Command completed;instance-ssh \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+bash-my-aws $ exit
+
+Script done on 2020-01-17 00:36:42+10:00 [COMMAND_EXIT_CODE="1"]

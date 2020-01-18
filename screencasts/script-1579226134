@@ -1,0 +1,113 @@
+Script started on 2020-01-17 11:55:34+10:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="90" LINES="23"]
+]777;notify;Command completed;instances | grep running | instance-asg\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ [H[2J
+$ instances
+777;preexeci-09974ff0cfed5c984  t3.small  terminated  huginn-bma   2020-01-16T14:45:32.000Z
+i-009ae1cdd4d65077d  t3.nano   terminated  nginx-bma    2020-01-16T14:45:36.000Z
+i-09c6be2d518d241e8  t3.nano   terminated  grafana-bma  2020-01-16T14:45:36.000Z
+i-0fa4ade2079f1f6d5  t3.nano   terminated  nginx-bma    2020-01-17T01:40:11.000Z
+i-0caa8abfb2288d843  t3.small  terminated  huginn-bma   2020-01-17T01:40:33.000Z
+i-0a0a0067cffde6418  t3.nano   terminated  grafana-bma  2020-01-17T01:40:43.000Z
+i-0c7a672a4b33a6b58  t3.small  terminated  huginn-bma   2020-01-17T01:42:06.000Z
+i-09496ca69c367a215  t3.nano   running     grafana-bma  2020-01-17T01:42:16.000Z
+i-0fd455eadd82ec264  t3.nano   terminated  grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  running     huginn-bma   2020-01-17T01:42:38.000Z
+i-0ac8d8aa4f31568bd  t3.nano   terminated  nginx-bma    2020-01-17T01:43:11.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   running     nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running
+777;preexeci-09496ca69c367a215  t3.nano   [01;31m[Krunning[m[K     grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  [01;31m[Krunning[m[K     huginn-bma   2020-01-17T01:42:38.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   [01;31m[Krunning[m[K     nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances | grep running\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instance-asg
+777;preexecUSAGE: instance-asg instance-id [instance-id]
+]777;notify;Command completed;instance-asg\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instance-asg i-09496ca69c367a215 i-01d847582db0e01f8 i-0a8dd0d41fe07d1bd [H[2J
+$ instance-asg i-09496ca69c367a215 i-01d847582db0e01f8 i-0a8dd0d41fe07d1bd 
+777;preexecnginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-0a8dd0d41fe07d1bd
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-01d847582db0e01f8
+grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09496ca69c367a215
+]777;notify;Command completed;instance-asg i-09496ca69c367a215 i-01d847582db0e01f8 i-0a8dd0d41fe07d1bd \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instance-asg i-09496ca69c367a215 i-01d847582db0e01f8 i-0a8dd0d41fe07d1bd [C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ks | grep running | instance-asg
+777;preexecnginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-0a8dd0d41fe07d1bd
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-01d847582db0e01f8
+grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09496ca69c367a215
+]777;notify;Command completed;instances | grep running | instance-asg\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running | instance-asg | asg-
+asg-capacity              asg-max-size-set          asg-scaling-activities
+asg-desired-size-set      asg-min-size-set          asg-stack
+asg-instances             asg-processes_suspended   asg-suspend
+asg-launch-configuration  asg-resume                
+
+$ instances | grep running | instance-asg | asg-capacity 
+777;preexecgrafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  1  1  2
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    1  1  2
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    1  1  2
+]777;notify;Command completed;instances | grep running | instance-asg | asg-capacity \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running | instance-asg | asg-capacity [K[K[K[K[K[K[K[K[Kdesired-size-set 2
+777;preexec]777;notify;Command completed;instances | grep running | instance-asg | asg-desired-size-set 2\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running | instance-asg | asg-desired-size-set 2[9Pcapacity 
+777;preexecgrafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  1  2  2
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    1  2  2
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    1  2  2
+]777;notify;Command completed;instances | grep running | instance-asg | asg-capacity \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running | instance-asg | asg-capacity [H[2J
+$ instances | grep running | instance-asg | asg-capacity [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K
+777;preexeci-09496ca69c367a215  t3.nano   [01;31m[Krunning[m[K     grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  [01;31m[Krunning[m[K     huginn-bma   2020-01-17T01:42:38.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   [01;31m[Krunning[m[K     nginx-bma    2020-01-17T01:45:12.000Z
+]777;notify;Command completed;instances | grep running\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running
+777;preexeci-09496ca69c367a215  t3.nano   [01;31m[Krunning[m[K     grafana-bma  2020-01-17T01:42:16.000Z
+i-01d847582db0e01f8  t3.small  [01;31m[Krunning[m[K     huginn-bma   2020-01-17T01:42:38.000Z
+i-0a8dd0d41fe07d1bd  t3.nano   [01;31m[Krunning[m[K     nginx-bma    2020-01-17T01:45:12.000Z
+i-0588726918d6ee19b  t3.small  [01;31m[Krunning[m[K     huginn-bma   2020-01-17T01:57:33.000Z
+]777;notify;Command completed;instances | grep running\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ [H[2J
+$ instances | grep running | grep nginx
+777;preexeci-0a8dd0d41fe07d1bd  t3.nano   running     [01;31m[Knginx[m[K-bma    2020-01-17T01:45:12.000Z
+i-08ec93cf02239df3d  t3.nano   running     [01;31m[Knginx[m[K-bma    2020-01-17T01:57:40.000Z
+]777;notify;Command completed;instances | grep running | grep nginx\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | grep running | grep nginx | instance-ssh
+777;preexecConnecting to EC2 Instance i-0a8dd0d41fe07d1bd 'nginx-bma'
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+9 package(s) needed for security, out of 24 available
+Run "sudo yum update" to apply all updates.
+]0;ec2-user@ip-172-31-42-54:~[?1034h[ec2-user@ip-172-31-42-54 ~]$ uptime
+ 01:58:12 up 12 min,  1 user,  load average: 0.00, 0.01, 0.00
+]0;ec2-user@ip-172-31-42-54:~[ec2-user@ip-172-31-42-54 ~]$ exit
+logout
+Connection to 3.104.124.147 closed.
+Connecting to EC2 Instance i-08ec93cf02239df3d 'nginx-bma'
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+9 package(s) needed for security, out of 24 available
+Run "sudo yum update" to apply all updates.
+]0;ec2-user@ip-172-31-17-175:~[?1034h[ec2-user@ip-172-31-17-175 ~]$ uptime
+ 01:58:24 up 0 min,  1 user,  load average: 0.53, 0.13, 0.04
+]0;ec2-user@ip-172-31-17-175:~[ec2-user@ip-172-31-17-175 ~]$ exit
+logout
+Connection to 54.252.173.119 closed.
+]777;notify;Command completed;instances | grep running | grep nginx | instance-ssh\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ [H[2J
+$ instances | grep running | instance-stack
+777;preexecgrafana-bma  i-09b1a3bc8917b9ca0
+nginx-bma    i-08ec93cf02239df3d
+nginx-bma    i-0a8dd0d41fe07d1bd
+huginn-bma   i-01d847582db0e01f8
+grafana-bma  i-09496ca69c367a215
+huginn-bma   i-0588726918d6ee19b
+]777;notify;Command completed;instances | grep running | instance-stack\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ exit
+
+Script done on 2020-01-17 11:58:55+10:00 [COMMAND_EXIT_CODE="0"]
