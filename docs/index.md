@@ -1,4 +1,7 @@
-Bash-my-AWS is a simple but extremely powerful set of CLI commands for managing
+title: Bash-my-AWS - CLI Commands for AWS
+description: Bash-my-AWS is a simple but powerful set of CLI commands for managing resources on Amazon Web Services.
+
+Bash-my-AWS is a simple but powerful set of CLI commands for managing
 resources on Amazon Web Services.
 
 They harness the power of Amazon's AWSCLI, while abstracting away verbosity.

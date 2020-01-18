@@ -1,3 +1,7 @@
+title: Pipe-Skimming pattern for Unix CLI Tools - Bash-my-AWS
+description: Pipe-Skimming allows expressive, line oriented text to be
+    piped to commands that skim only the resource identifiers from each line.
+
 Pipe-Skimming: Enhancing the UI of Unix CLI tools
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/eqQUepwTHjA?start=631" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
