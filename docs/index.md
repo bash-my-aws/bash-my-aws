@@ -244,7 +244,7 @@ instance-ssh          instance-terminate    instance-vpc
 Whether you're new to the tools or just have a bad memory, bash completion
 makes discovering these commands simple.
 
-!!! Note "See the [Command Reference](/command-reference) for a full list with usage examples"
+!!! Note "See the [Command Reference](command-reference.md) for a full list with usage examples"
 
 
 ### Piping Between Commands

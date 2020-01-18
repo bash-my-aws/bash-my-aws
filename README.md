@@ -1,7 +1,7 @@
 Bash-my-AWS
 ===========
 
-**Dec 2019: New [Bash-my-AWS website](https://bash-my-aws.org) has extensive documentation at https://bash-my-aws.org**
+**Dec 2019: New [Bash-my-AWS website](https://bash-my-aws.org/) has extensive documentation at https://bash-my-aws.org/**
 
 Bash-my-AWS is a simple but extremely powerful set of CLI commands for managing
 resources on Amazon Web Services.
@@ -66,7 +66,7 @@ bob
 Are you sure you want to continue? y
 ```
 
-See the [Command Reference](https://bash-my-aws.org/command-reference) for a full list of commands.
+See the [Command Reference](https://bash-my-aws.org/command-reference/) for a full list of commands.
 
 
 ### Shell Command Completion
@@ -241,7 +241,7 @@ instance-ssh          instance-terminate    instance-vpc
 Whether you're new to the tools or just have a bad memory, bash completion
 makes discovering these commands simple.
 
-See the [Command Reference](https://bash-my-aws.org/command-reference) for a full list of commands and usage examples.
+See the [Command Reference](https://bash-my-aws.org/command-reference/) for a full list of commands and usage examples.
 
 
 ### Piping Between Commands
