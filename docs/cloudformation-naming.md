@@ -1,3 +1,8 @@
+title: CloudFormation Naming Conventions - Bash-my-AWS
+description: Suggested naming conventions for CloudFormation stacks,
+    templates and parameter files that enable use of some shortcuts
+    in the Bash-my-AWS commands.
+
 ## Suggested stack/template/param file naming conventions
 
 bash-my-aws can take a lot of the effort out of creating and updating
