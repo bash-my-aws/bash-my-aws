@@ -13,7 +13,7 @@ nav:
   - Command Reference: command-reference.md
   - Pipe-Skimming: pipe-skimming.md
   - CloudFormation Naming: cloudformation-naming.md
-  - LinuxConf 2020: linuxconf2020.md
+  - LCA 2020 Video: linuxconf2020.md
 
 theme:
   name: material
