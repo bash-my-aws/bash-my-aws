@@ -1,0 +1,60 @@
+Script started on 2020-01-17 13:06:15+10:00 [TERM="xterm-256color" TTY="/dev/pts/8" COLUMNS="90" LINES="22"]
+]777;notify;Command completed;bma type skim-stdin \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ [H[2J
+$ instances
+777;preexeci-0588726918d6ee19b  t3.small  running  huginn-bma   2020-01-17T01:57:33.000Z
+i-08ec93cf02239df3d  t3.nano   running  nginx-bma    2020-01-17T01:57:40.000Z
+i-09b1a3bc8917b9ca0  t3.nano   running  grafana-bma  2020-01-17T01:57:42.000Z
+i-0120b019f373f8860  t3.small  running  huginn-bma   2020-01-17T02:40:14.000Z
+i-065bf156cdd2d6dc3  t3.nano   running  grafana-bma  2020-01-17T02:40:20.000Z
+i-078337da5262a5d5a  t3.nano   running  nginx-bma    2020-01-17T02:40:28.000Z
+]777;notify;Command completed;instances\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instance-asg
+777;preexecUSAGE: instance-asg instance-id [instance-id]
+]777;notify;Command completed;instance-asg\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instance-asgs[K | instance-asg
+777;preexecgrafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-09b1a3bc8917b9ca0
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-08ec93cf02239df3d
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    i-078337da5262a5d5a
+grafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  i-065bf156cdd2d6dc3
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-0120b019f373f8860
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    i-0588726918d6ee19b
+]777;notify;Command completed;instances | instance-asg\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ instances | instance-asg | asg-
+asg-capacity              asg-max-size-set          asg-scaling-activities
+asg-desired-size-set      asg-min-size-set          asg-stack
+asg-instances             asg-processes_suspended   asg-suspend
+asg-launch-configuration  asg-resume                
+
+$ instances | instance-asg | asg-capacity 
+777;preexecgrafana-bma-AutoScalingGroup-1NXJHMJVZQVMB  1  2  2
+huginn-bma-AutoScalingGroup-QS7EQOT1G7OX    1  2  2
+nginx-bma-AutoScalingGroup-106KHAYHUSRHU    1  2  2
+]777;notify;Command completed;instances | instance-asg | asg-capacity \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ [H[2J
+$ bma type instance-asg
+777;preexecinstance-asg is a function
+instance-asg () 
+{ 
+    local instance_ids=$(skim-stdin "$@");
+    [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1;
+    aws ec2 describe-instances --instance-ids $instance_ids --output text --query "
+      Reservations[].Instances[][
+        {
+          "AutoscalingGroupName":
+            [Tags[?Key=='aws:autoscaling:groupName'].Value][0][0],
+          "InstanceId": InstanceId
+        }
+      ][]" | column -s'	' -t
+}
+]777;notify;Command completed;bma type instance-asg\]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ bma type skim-stdin 
+777;preexecskim-stdin is a function
+skim-stdin () 
+{ 
+    echo $@ $([[ -t 0 ]] || awk 'ORS=" " { print $1 }')
+}
+]777;notify;Command completed;bma type skim-stdin \]777;precmd\]0;m@localhost:~/.bash-my-aws\]7;file://localhost.localdomain/home/m/.bash-my-aws\
+$ exit
+
+Script done on 2020-01-17 13:07:32+10:00 [COMMAND_EXIT_CODE="0"]
