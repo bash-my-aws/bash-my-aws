@@ -6,6 +6,13 @@ _bma_asgs_completion() {
   COMPREPLY=($(compgen -W "${options}" -- ${word}))
   return 0
 }
+_bma_aws-accounts_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma aws-accounts | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
 _bma_buckets_completion() {
   local command="$1"
   local word="$2"
@@ -127,6 +134,9 @@ complete -F _bma_asgs_completion asg-scaling-activities
 complete -F _bma_asgs_completion asg-stack
 complete -F _bma_asgs_completion asg-suspend
 complete -F _bma_asgs_completion asgs
+complete -F _bma_aws-accounts_completion aws-account-cost-explorer
+complete -F _bma_aws-accounts_completion aws-account-cost-recommendations
+complete -F _bma_aws-accounts_completion aws-accounts
 complete -F _bma_buckets_completion bucket-acls
 complete -F _bma_buckets_completion bucket-remove
 complete -F _bma_buckets_completion bucket-remove-force

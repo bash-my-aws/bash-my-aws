@@ -35,6 +35,7 @@ alias aws-account-cost-explorer='~/.bash-my-aws/bin/bma aws-account-cost-explore
 alias aws-account-cost-recommendations='~/.bash-my-aws/bin/bma aws-account-cost-recommendations'
 alias aws-account-each='~/.bash-my-aws/bin/bma aws-account-each'
 alias aws-account-id='~/.bash-my-aws/bin/bma aws-account-id'
+alias aws-accounts='~/.bash-my-aws/bin/bma aws-accounts'
 alias aws-panopticon='~/.bash-my-aws/bin/bma aws-panopticon'
 alias bucket-acls='~/.bash-my-aws/bin/bma bucket-acls'
 alias bucket-remove='~/.bash-my-aws/bin/bma bucket-remove'

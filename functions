@@ -33,6 +33,7 @@ aws-account-cost-explorer
 aws-account-cost-recommendations
 aws-account-each
 aws-account-id
+aws-accounts
 aws-panopticon
 bucket-acls
 bucket-remove
