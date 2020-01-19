@@ -105,11 +105,11 @@ lambda-function-memory-step(){
   local memory_last=$1
   shift 1
   local usage_msg="memory function [function]"
-  [[ -z "${memory_last}" ]] && __bma_usage $usage_msg && return 1
+  [[ -z "${memory_last}" ]] && __bma_usage "$usage_msg" && return 1
   # XXX check it's a valid memory size
 
   local function_names=$(skim-stdin "$@")
-  [[ -z "${function_names}" && -t 0 ]] && __bma_usage $usage_msg && return 1
+  [[ -z "${function_names}" && -t 0 ]] && __bma_usage "$usage_msg" && return 1
 
   echo "You are about to step memory for following functions:"
   echo "$function_names" | tr ' ' "\n" | lambda-functions
@@ -131,9 +131,9 @@ lambda-function-memory-step(){
   done # | column --table --table-right 2
 
   local something_updated=''
-  for (( COUNTER=128; COUNTER<=$memory_last; COUNTER+=64 )); do
+  for (( COUNTER=128; COUNTER<=memory_last; COUNTER+=64 )); do
     for function_name in $function_names; do
-      if (( ${memory_old[$function_name]} < $COUNTER )); then
+      if (( ${memory_old[$function_name]} < COUNTER )); then
         lambda-function-memory-set "${COUNTER}" "$function_name"
         something_updated=true
       fi

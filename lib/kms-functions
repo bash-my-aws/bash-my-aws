@@ -72,7 +72,7 @@ kms-aliases() {
   #     alias/default  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/default
 
   # TODO Accept alias_names from STDIN and filter in query
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
   aws kms list-aliases  \
     --output text       \

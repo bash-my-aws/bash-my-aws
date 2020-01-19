@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# shellcheck disable=SC2155 # Declare and assign separately to avoid masking return values.
+#
 # vpc-functions
 
 
@@ -7,7 +9,7 @@ pcxs(){
 
   # List VPC Peering connections
 
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
   aws ec2 describe-vpc-peering-connections                     \
     --query 'VpcPeeringConnections[].[
       [VpcPeeringConnectionId,
@@ -42,7 +44,7 @@ subnets(){
   #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
 
   local subnet_ids=$(skim-stdin)
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
   aws ec2 describe-subnets          \
     ${subnet_ids/#/'--subnet-ids '} \
@@ -68,7 +70,7 @@ vpcs() {
   #     vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
 
   local vpc_ids=$(skim-stdin)
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
   aws ec2 describe-vpcs       \
     ${vpc_ids/#/'--vpc-ids '} \
@@ -97,7 +99,7 @@ vpc-azs() {
   #     vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -118,11 +120,11 @@ vpc-az-count() {
   #     vpc-018d9739 3
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
-    echo "$vpc_id $(( $(vpc-azs $vpc_id | wc -w) - 1 ))"
+    echo "$vpc_id $(( $(vpc-azs "$vpc_id" | wc -w) - 1 ))"
   done
 }
 
@@ -134,7 +136,7 @@ vpc-lambda-functions(){
   #     USAGE: vpc-lambda-functions vpc-id [vpc-id]
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -169,7 +171,7 @@ vpc-endpoints(){
   #     USAGE: vpc-endpoints [filter]
 
   local vpc_endpoint_ids=$(skim-stdin)
-  local filters=$(__bma_read_filters $@ $vpc_ids)
+  local filters=$(__bma_read_filters "$@" "$vpc_ids")
 
   aws ec2 describe-vpc-endpoints                \
     ${vpc_endpoint_ids/#/'--vpc-endpoint-ids '} \
@@ -194,7 +196,7 @@ vpc-endpoint-services(){
   #
   #     USAGE: vpc-endpoint-services
 
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
   aws ec2 describe-vpc-endpoint-services     \
   --output text                              \
@@ -216,7 +218,7 @@ vpc-igw() {
   #     USAGE: vpc-igw vpc-id [vpc-id]
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -241,7 +243,7 @@ vpc-route-tables(){
   #     rtb-8e841c39  vpc-018d9739  NO_NAME
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -265,7 +267,7 @@ vpc-nat-gateways(){
   #     USAGE: vpc-nat-gateways vpc-id [vpc-id]
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -293,7 +295,7 @@ vpc-subnets(){
   #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -314,7 +316,7 @@ vpc-network-acls(){
   #     acl-ff4914d1  vpc-018d9739
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -332,7 +334,7 @@ vpc-rds(){
   #     USAGE: vpc-rds vpc-id [vpc-id]
 
   local vpc_ids=$(skim-stdin "$@")
-  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+  [[ -z $vpc_ids ]] && __bma_usage "vpc-id [vpc-id]" && return 1
 
   local vpc_id
   for vpc_id in $vpc_ids; do
@@ -368,49 +370,49 @@ vpc-default-delete() {
   local abort=false
 
   local VPCID=$(aws ec2 describe-vpcs --query "Vpcs[?IsDefault].VpcId" --output text)
-  if [ "$VPCID" ] ; then
+  if [[ -n $VPCID ]]; then
 
     # abort if instances exist in this VPC
     INSTANCES=$(aws ec2 describe-instances --query "Reservations[].Instances[?VpcId=='$VPCID'].InstanceId" --output text)
-    if [ "$INSTANCES" ]; then
-      echo "# $VPCID has instances:" $INSTANCES
+    if [[ -n $INSTANCES ]]; then
+      echo "# $VPCID has instances: $INSTANCES"
       abort=true
     fi
 
     # abort if a lambda function exists in this vpc
-    local LAMBDA_FUNCTIONS=$(vpc-lambda-functions $VPCID)
-    if [ "$LAMBDA_FUNCTIONS" ]; then
-      echo "# $VPCID has lambda functions:" $LAMBDA_FUNCTIONS
+    local LAMBDA_FUNCTIONS=$(vpc-lambda-functions "$VPCID")
+    if [[ -n $LAMBDA_FUNCTIONS ]]; then
+      echo "# $VPCID has lambda functions: $LAMBDA_FUNCTIONS"
       abort=true
     fi
 
     # abort if an RDS instance exists in this vpc
-    local RDS_INSTANCES=$(vpc-rds $VPCID)
-    if [ "$RDS_INSTANCES" ]; then
-      echo "# $VPCID has RDS instances:" $RDS_INSTANCES
+    local RDS_INSTANCES=$(vpc-rds "$VPCID")
+    if [[ -n $RDS_INSTANCES ]]; then
+      echo "# $VPCID has RDS instances: $RDS_INSTANCES"
       abort=true
     fi
 
-    [[ "${abort}" != "false"  ]] && echo "# $VPCID skipped" && return 1
+    [[ $abort != "false"  ]] && echo "# $VPCID skipped" && return 1
 
     echo "# Deleting default VPC $VPCID in $REGION"
     local SUBNETS="$(aws ec2 describe-subnets --query "Subnets[?VpcId=='$VPCID'].SubnetId" --output text)"
-    if [ "$SUBNETS" ] ; then
+    if [[ -n $SUBNETS ]]; then
       for SUBNET in $SUBNETS ; do
-        echo aws --region $REGION ec2 delete-subnet --subnet-id=$SUBNET
+        echo aws --region "$REGION" ec2 delete-subnet --subnet-id="$SUBNET"
       done
     fi
 
     # Internet Gateway - must detach and delete
     IGW=$(aws ec2 describe-internet-gateways --query "InternetGateways[?contains(Attachments[].VpcId, '$VPCID')].InternetGatewayId" --output text)
-    if [ "$IGW" ] ; then
+    if [[ -n $IGW ]]; then
       for IG in $IGW ; do
-        echo aws --region $REGION ec2 detach-internet-gateway --vpc-id $VPCID --internet-gateway-id $IG
-        echo aws --region $REGION ec2 delete-internet-gateway --internet-gateway-id $IG
+        echo aws --region "$REGION" ec2 detach-internet-gateway --vpc-id "$VPCID" --internet-gateway-id "$IG"
+        echo aws --region "$REGION" ec2 delete-internet-gateway --internet-gateway-id "$IG"
       done
     fi
 
     # And finally the VPC
-    echo aws --region $REGION ec2 delete-vpc --vpc-id=$VPCID
+    echo aws --region "$REGION" ec2 delete-vpc --vpc-id="$VPCID"
   fi
 }

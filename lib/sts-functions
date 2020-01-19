@@ -1,4 +1,6 @@
 #!/bin/bash
+# shellcheck disable=SC2155 # Declare and assign separately to avoid masking return values.
+# shellcheck disable=SC2016 # Expressions don't expand in single quotes, use double quotes for that.
 #
 # sts-functions
 #
@@ -10,9 +12,9 @@ sts-assume-role() {
   #
   #     USAGE: sts-assume-role role_arn
 
-  local role_arn=$1
+  local role_arn="$1"
   local time_stamp=$(date +%s)
-  [[ -z "${role_arn}" ]] && __bma_usage "role_arn" && return 1
+  [[ -z $role_arn ]] && __bma_usage "role_arn" && return 1
   aws sts assume-role                 \
     --role-arn "$role_arn"            \
     --role-session-name "$time_stamp" \

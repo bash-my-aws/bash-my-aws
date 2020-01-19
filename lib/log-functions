@@ -1,5 +1,8 @@
 #!/bin/bash
 #
+# shellcheck disable=SC2155 # Declare and assign separately to avoid masking return values.
+# shellcheck disable=SC2016 # Expressions don't expand in single quotes, use double quotes for that.
+#
 # log-functions
 #
 # CloudWatch Logs
@@ -14,7 +17,7 @@ log-groups() {
   #     /aws/lambda/walk    1576567300172  0   11794
 
   local log_group_names=$(skim-stdin)
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
   local column_command
   if column --help 2>/dev/null| grep -- --table-right > /dev/null; then

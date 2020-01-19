@@ -1,14 +1,16 @@
 #!/bin/bash
 #
+# shellcheck disable=SC2155 # Declare and assign separately to avoid masking return values.
+# shellcheck disable=SC2016
+#
 # cert-functions
-
 
 certs() {
 
   # List ACM Certificates
 
   local cert_arns=$(skim-stdin)
-  local filters=$(__bma_read_filters $@)
+  local filters=$(__bma_read_filters "$@")
 
   local include_arn_bit=''
   [[ -n ${include_arn:-} ]] && include_arn_bit="CertificateArn,"
@@ -48,7 +50,7 @@ certs-arn() {
   # Same as `certs` but with the ARN in first column
 
   local include_arn=true
-  certs $@
+  certs "$@"
 }
 
 

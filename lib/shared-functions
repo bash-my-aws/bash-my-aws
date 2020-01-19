@@ -11,11 +11,6 @@ skim-stdin() {
   #
   # Implementation of `pipe-skimming` pattern.
   #
-  # Typical usage within Bash-my-AWS:
-  #
-  #   - local asg_names=$(skim-stdin "$@") # Append to arg list
-  #   - local asg_names=$(skim-stdin)      # Only draw from STDIN
-  #
   #     $ stacks | skim-stdin foo bar
   #     foo bar huginn mastodon grafana
   #
@@ -23,12 +18,17 @@ skim-stdin() {
   #     huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
   #     mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
   #     grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+  #
+  # Typical usage within Bash-my-AWS functions:
+  #
+  #     local asg_names=$(skim-stdin "$@") # Append to arg list
+  #     local asg_names=$(skim-stdin)      # Only draw from STDIN
 
-  (
-    printf -- "$*"                           # Print all args
-    printf " "                               # Print a space
-    [[ -t 0 ]] || awk 'ORS=" " { print $1 }' # Print first token of each line of STDIN
-  ) | awk '{$1=$1;print}'                    # Trim leading/trailing spaces
+  local skimmed_stdin=$([[ -t 0 ]] || awk 'ORS=" " { print $1 }')
+
+  printf -- '%s %s' "$*" "$skimmed_stdin" |
+    awk '{$1=$1;print}'  # trim leading/trailing spaces
+
 }
 
 
