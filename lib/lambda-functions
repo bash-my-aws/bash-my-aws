@@ -47,7 +47,7 @@ lambda-function-memory(){
   [[ -z "$function_names" ]] && __bma_usage "function [function]" && return 1
 
   local column_command
-  if column --help | grep -- --table-right > /dev/null; then
+  if column --help 2>/dev/null | grep -- --table-right > /dev/null; then
     column_command='column --table --table-right 2'
   else
     column_command='column -t'
