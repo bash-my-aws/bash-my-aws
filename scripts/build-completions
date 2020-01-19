@@ -21,19 +21,24 @@ done
 
 cat "${bma_path}/scripts/completions/bma-completion"
 
+
+
 # dont add auto_completions for these functions
 funcs_no_completion=(
   asg-desired-size-set
   asg-max-size-set
   asg-min-size-set
+  aws-account-alias
+  aws-account-each
+  aws-account-id
   keypair-create
   region-each
   regions
-  stack-validate
   stack-create
   stack-tag
   stack-tag-apply
   stack-tag-delete
+  stack-validate
   vpc-default-delete
   vpc-dhcp-options-ntp
   vpc-endpoint-services
