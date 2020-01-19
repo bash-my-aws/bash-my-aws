@@ -25,4 +25,4 @@ if [[ $BMA_USE_LOCALSTACK == 'true' ]]; then
   export aws
 fi
 
-$@
+"$@"
