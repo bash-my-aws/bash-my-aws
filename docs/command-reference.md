@@ -285,7 +285,7 @@ Delete a CloudFormation Stack
     |  2019-12-21T13:14:07.820Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE                      |
     |  2019-12-21T13:18:06.709Z|  asg-prod            |  AWS::CloudFormation::Stack             |  DELETE_IN_PROGRESS                   |
     |  2019-12-21T13:18:08.931Z|  AutoScalingGroup    |  AWS::AutoScaling::AutoScalingGroup     |  DELETE_IN_PROGRESS                   |
-    
+
     An error occurred (ValidationError) when calling the DescribeStackEvents operation: Stack [asg-prod] does not exist
 *Note that the error reported at the end of `stack-delete` command is just AWSCLI saying it can't find the stack anymore.*
 
