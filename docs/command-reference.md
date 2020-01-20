@@ -3,11 +3,11 @@ description: Command reference for Bash-my-AWS - CLI Tools for AWS.
     Bash-my-AWS provides short memorable commands for managing resources
     in Amazon Web Services.
 
-The project provides over 120 commands but fear not, much has been done
-to make them *discoverable*, *memorable* and hopefully in many cases *obvious*.
+Bash-my-AWS provides over 120 commands for managing AWS Resources. Much has
+been done to make them *discoverable*, *memorable* and hopefully in most cases
+*obvious*.
 
 The reference material below is all extracted from the source of the commands.
-While not necessary to use the commands. Be curious. Read the source. :-)
 
 Lists in this project are alphabetised except where it makes sense not to.
 The first few sets of commands were chosen because they are likely to be of
