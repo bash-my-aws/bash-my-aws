@@ -120,7 +120,7 @@ aws-account-cost-explorer(){
   #     $ grep demo AWS_ACCOUNTS | aws-account-cost-explorer
   #     #=> Opens web browser to AWS Cost Explorer with accounts selected
 
-  local accounts_formatted="%22$(printf $(skim-stdin "$@") | sed 's/ /%22,%22/g')%22"
+  local accounts_formatted="%22$(skim-stdin "$@" | sed 's/ /%22,%22/g')%22"
 
   local cmd_open="$(hash xdg-open &> /dev/null && echo 'xdg-open' || echo 'open')"
 
@@ -139,7 +139,7 @@ aws-account-cost-recommendations(){
   #     $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
   #     #=> Opens web browser to AWS Cost Recommendations with accounts selected
 
-  local accounts_formatted="%22$(printf $(skim-stdin "$@") | sed 's/ /%22,%22/g')%22"
+  local accounts_formatted="%22$(skim-stdin "$@" | sed 's/ /%22,%22/g')%22"
 
   local cmd_open="$(hash xdg-open &> /dev/null && echo 'xdg-open' || echo 'open')"
 
