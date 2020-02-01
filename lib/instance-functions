@@ -296,11 +296,11 @@ instance-ssm() {
 
   # Establish SSM connection to EC2 Instance(s)
   #
-  #     USAGE: instance-ssm instance-id
+  #     USAGE: instance-ssm instance-id [instance-id]
 
   local instance_ids=$(skim-stdin "$@")
   if [[ -z $instance_ids ]] ; then
-    echo "Usage: $FUNCNAME instance-id"
+    echo "Usage: $FUNCNAME instance-id [instance-id]"
     return 1
   fi
 
