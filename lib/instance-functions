@@ -227,6 +227,25 @@ instance-ip() {
 }
 
 
+instance-ssm() {
+
+  # Establish SSM connection to EC2 Instance(s)
+  #
+  #     USAGE: instance-ssm [instance-id] [instance-id]
+
+  local instance_ids=$(skim-stdin "$@")
+  if [[ -z $instance_ids ]] ; then
+    echo "Usage: $FUNCNAME [instance-id] [instance-id]"
+    return 1
+  fi
+
+  for instance_id in $instance_ids; do
+    local instance_id=$(echo $instance_details | awk '{print $1}')
+
+    aws ssm start-session --target $instance-id
+  done
+}
+
 instance-ssh() {
 
   # Establish SSH connection to EC2 Instance(s)

@@ -64,6 +64,7 @@ cmd instance-ip i-11111111 i-22222222
 cmd instance-ssh
 cmd instance-ssh-details
 cmd instance-ssh-details i-11111111
+cmd instance-ssm
 cmd instance-stack
 cmd instance-stack i-11111111 i-22222222
 cmd instance-start
