@@ -116,3 +116,47 @@ bucket-remove-force() {
   fi
 }
 
+
+s3-ls() {
+
+  # List of S3 Bucket Objects.
+  #
+  #     $ s3-ls example-bucket
+  #     object-key
+  #     another-object-key
+  #
+
+  local buckets=$(skim-stdin "$@")
+  [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
+
+  local bucket
+  for bucket in $buckets; do
+    aws s3api list-objects \
+      --bucket "$bucket"   \
+      --output text        \
+      --query "Contents[].[Key]"
+  done
+}
+
+
+s3-lsl() {
+
+  # Detail List of S3 Bucket Objects.
+  #
+  #     $ s3-lsl another-example-bucket
+  #     object-key         last-modified storage-class owner-display-name etag aize
+  #     another-object-key last-modified storage-class owner-display-name etag aize
+  #
+
+  local buckets=$(skim-stdin "$@")
+  [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
+
+  local bucket
+  for bucket in $buckets; do
+    aws s3api list-objects \
+      --bucket "$bucket"   \
+      --output text        \
+      --query "Contents[].[Key, LastModified, StorageClass, Owner.DisplayName, ETag, Size]"
+  done
+}
+
