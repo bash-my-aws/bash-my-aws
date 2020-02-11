@@ -138,11 +138,10 @@ complete -F _bma_aws-accounts_completion aws-account-cost-explorer
 complete -F _bma_aws-accounts_completion aws-account-cost-recommendations
 complete -F _bma_aws-accounts_completion aws-accounts
 complete -F _bma_buckets_completion bucket-acls
+complete -F _bma_buckets_completion bucket-objects
 complete -F _bma_buckets_completion bucket-remove
 complete -F _bma_buckets_completion bucket-remove-force
 complete -F _bma_buckets_completion buckets
-complete -F _bma_buckets_completion s3-ls
-complete -F _bma_buckets_completion s3-lsl
 complete -F _bma_certs_completion cert-delete
 complete -F _bma_certs_completion cert-users
 complete -F _bma_certs_completion certs
