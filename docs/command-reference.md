@@ -975,6 +975,26 @@ List Availability Zones of ELB(s)
     bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
 
 
+### elbv2-instances
+
+List EC2 ELBv2 target group instances
+Accepts Target Group names on stdin or as arguments
+
+    $ elbv2s-instanes bash-my-aws-nlb-tg
+    bash-my-aws-nlb-tg  i-0709fdcce31cf64bc  443  healthy
+    bash-my-aws-nlb-tg  i-0434e654ae0cfe98b  443  unhealthy
+
+
+### elbv2-target-groups
+
+List EC2 ELBv2 target groups
+Accepts ELBv2 target group names on stdin or as arguments
+
+    $ elbv2s-target-groups
+    bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  bash-my-aws-nlb
+    bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  bash-my-aws-alb
+
+
 ## iam-commands
 
 

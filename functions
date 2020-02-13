@@ -56,7 +56,9 @@ elb-subnets
 elbs
 elbv2-azs
 elbv2-dnsname
+elbv2-instances
 elbv2-subnets
+elbv2-target-groups
 elbv2s
 hosted-zone-ns-records
 hosted-zones
