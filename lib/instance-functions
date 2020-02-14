@@ -274,6 +274,10 @@ instance-ssh-details() {
   #
   #     USAGE: instance-ssh-details [login] [instance-id] [instance-id]
 
+  if [[ $1 != *i-* ]]; then
+    local user=${1}
+    shift
+  fi
   local instance_ids=$(skim-stdin "$@")
   [[ -z "${instance_ids}" ]] && __bma_usage "instance_id" && return 1
 
