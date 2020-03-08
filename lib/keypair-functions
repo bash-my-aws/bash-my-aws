@@ -76,7 +76,7 @@ keypair-create() {
   fi
 
   echo "Creating ${KEY_DIR}/${KEY_NAME}"
-  ssh-keygen -t rsa -b 4096 -o -a 100 -f "${KEY_DIR}/${KEY_NAME}"
+  ssh-keygen -t rsa -m PEM -b 4096 -o -a 100 -f "${KEY_DIR}/${KEY_NAME}"
   chmod 0600 "${KEY_DIR}/${KEY_NAME}"
   aws ec2 import-key-pair                                 \
     --key-name "$KEY_NAME"                                \
