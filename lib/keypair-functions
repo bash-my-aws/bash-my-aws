@@ -80,7 +80,7 @@ keypair-create() {
   chmod 0600 "${KEY_DIR}/${KEY_NAME}"
   aws ec2 import-key-pair                                 \
     --key-name "$KEY_NAME"                                \
-    --public-key-material "file://${KEY_DIR}/${KEY_NAME}.pub"
+    --public-key-material "fileb://${KEY_DIR}/${KEY_NAME}.pub"
 }
 
 
