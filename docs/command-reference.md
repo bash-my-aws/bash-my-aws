@@ -34,12 +34,12 @@ the most interest to readers.
 
 List AWS Accounts in an [Organization](https://aws.amazon.com/organizations/)
 
-   $ aws-accounts
-   089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
-   812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
-   001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
-   867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
-   892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
+    $ aws-accounts
+    089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
+    812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
+    001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
+    867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
+    892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
 
 *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
 
