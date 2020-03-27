@@ -38,7 +38,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -2868,12 +2868,15 @@ the most interest to readers.</p>
 <h2 id="aws-account-commands">aws-account-commands<a class="headerlink" href="#aws-account-commands" title="Permanent link">&para;</a></h2>
 <h3 id="aws-accounts">aws-accounts<a class="headerlink" href="#aws-accounts" title="Permanent link">&para;</a></h3>
 <p>List AWS Accounts in an <a href="https://aws.amazon.com/organizations/">Organization</a></p>
-<p>$ aws-accounts
-   089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
-   812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
-   001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
-   867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
-   892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au</p>
+<div class="codehilite"><pre><span></span>$ aws-accounts
+089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
+812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
+001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
+867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
+892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
+</pre></div>
+
+
 <p><em>Optionally provide a filter string for a <code>| grep</code> effect with tighter columisation:</em></p>
 <h3 id="aws-account-alias">aws-account-alias<a class="headerlink" href="#aws-account-alias" title="Permanent link">&para;</a></h3>
 <p>Retrieve AWS Account Alias for current account</p>
@@ -4087,6 +4090,7 @@ aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
                 
                   
                 
+                
               
               
                 
@@ -4160,7 +4164,7 @@ aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       
