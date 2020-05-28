@@ -7,6 +7,9 @@ Parameters:
     Type: String
     Default: bash-my-aws
 
+  # A KMS customer managed key (CMK) costs $1 a month
+  # This feels like overkill for the risk that someone will SPAM my Slack channel.
+  # TODO: switch to an unencrypted parameter
   KmsEncryptedHookUrl:
     Description: Slack integration URL
     Type: String
