@@ -699,10 +699,12 @@ stack-template() {
 
   [[ -z ${stack} ]] && __bma_usage "stack" && return 1
 
-  aws cloudformation get-template   \
-    --stack-name "$stack"           \
-    --query TemplateBody            |
-  jq --raw-output --sort-keys .
+  aws cloudformation get-template       \
+    --stack-name "$stack"               \
+    --query TemplateBody                |
+  jq --raw-output --sort-keys .         |
+  sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba'   # remove trailing blank lines
+                                          # sometimes appended by jq
 }
 
 
