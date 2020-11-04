@@ -73,7 +73,7 @@ stacks() {
       UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS    \
       UPDATE_ROLLBACK_FAILED                          \
       UPDATE_ROLLBACK_IN_PROGRESS                     \
-    --query "StackSummaries[${stack_names:+?contains(['${stack_names// /"','"}'], StackName)}][
+    --query "StackSummaries[${stack_names:+?contains(['${stack_names// /','}'], StackName)}][
                StackName ,
                StackStatus,
                CreationTime,
