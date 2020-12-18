@@ -31,6 +31,10 @@ skim-stdin() {
 
 }
 
+__bma-using-aws-cli-v1() {
+  aws --version | grep 'aws-cli/1' &>/dev/null
+}
+
 
 __bma_read_filters() {
 

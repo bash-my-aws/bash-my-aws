@@ -75,6 +75,9 @@ In the example above, shell autocompletion retrieved the existing EC2 Keypair
 names (`alice`, `bob`) from AWS. This helps avoid the need to rely on human
 memory or terminal copypasta.
 
+Additionally, all of the bash-my-aws commands are available as completions
+for the `bma` command, so `bma[tab][tab]` will produce a list of all of the
+available commands.
 
 ### Unix Pipeline Friendly
 

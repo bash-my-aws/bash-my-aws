@@ -19,7 +19,11 @@ kms-encrypt() {
   if [[ -n $2 ]]; then
     plaintext="fileb://${2}"
   elif [[ ! -t 0 ]]; then
-    plaintext=$(cat)
+    if __bma-using-aws-cli-v1; then
+      plaintext="$(cat)"
+    else
+      plaintext="$(base64)"
+    fi
   fi
 
   [[ -z "$plaintext" ]] && __bma_usage "key_id/alias_id [plaintext_file]" && return 1

@@ -15,14 +15,22 @@
 
 for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
 
-# For testing with [localstack](https://github.com/localstack/localstack)
+
+# Optionally specify which installation of aws-cli to use
 #
-if [[ $BMA_USE_LOCALSTACK == 'true' ]]; then
+# Added for testing against breaking changes in aws-cli-v2
+#
+# Set it to `awslocal` for testing with the very useful
+# [localstack](https://github.com/localstack/localstack)
+#
+if [[ -n $BMA_AWSCLI ]]; then
   function aws(){
-    args=( "$@" )
-    awslocal "${args[@]}"
+    $BMA_AWSCLI "$@"
   }
   export aws
 fi
+
+# Print awscli version info to STDERR (if in debug mode)
+[[ -n $BMA_DEBUG ]] && aws --version >&2
 
 "$@"
