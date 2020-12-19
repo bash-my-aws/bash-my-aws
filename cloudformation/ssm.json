@@ -1,23 +1,44 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "AMI": {
+      "Type": "String",
+      "Default": "ami-03156384f702d4eaf",
+      "Description": "Amazon Linux 2 AMI"
+    },
+    "VpcId": {
+      "Type": "String",
+      "Description": "VPC to launch the EC2 instance into"
+    },
+    "SubnetId": {
+      "Type": "String",
+      "Description": "Subnet to launch the EC2 instance into"
+    }
+  },
   "Resources": {
     "ec2Test": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "IamInstanceProfile": {"Ref": "iamipTestProfile"},
-        "ImageId": "ami-afd15ed0",
-        "InstanceType": "t3.nano",
+        "ImageId": {"Ref": "AMI"},
+        "InstanceType": "t4g.nano",
         "SecurityGroupIds": [{"Ref": "ec2sgAllowVPC"}],
-        "SubnetId": "subnet-07xxxxxxxxxxx",
+        "SubnetId": {"Ref": "SubnetId"},
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": ["\n", ["#!/bin/bash -ex", "yum udpate -y"]]
+          }
+        },
         "Tags": [
-          {"Key": "Name", "Value": "TestInstance"}
+          {"Key": "Name", "Value": "SSMTestInstance"}
         ]
       }
     },
     "ec2sgAllowVPC": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "VpcId": "vpc-073ccxxxxxxxxxxxx",
+        "GroupDescription": "Allow SSM access",
+        "VpcId": {"Ref": "VpcId"},
         "SecurityGroupIngress": [],
         "SecurityGroupEgress": []
       }
