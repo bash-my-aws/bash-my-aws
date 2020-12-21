@@ -1,9 +1,9 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters": {
-    "AMI": {
-      "Type": "String",
-      "Default": "ami-03156384f702d4eaf",
+    "AmiId": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2",
       "Description": "Amazon Linux 2 AMI"
     },
     "VpcId": {
@@ -20,7 +20,7 @@
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "IamInstanceProfile": {"Ref": "iamipTestProfile"},
-        "ImageId": {"Ref": "AMI"},
+        "ImageId": {"Ref": "AmiId"},
         "InstanceType": "t4g.nano",
         "SecurityGroupIds": [{"Ref": "ec2sgAllowVPC"}],
         "SubnetId": {"Ref": "SubnetId"},
