@@ -57,6 +57,7 @@ elbs
 elbv2-azs
 elbv2-dnsname
 elbv2-subnets
+elbv2-target-groups
 elbv2s
 hosted-zone-ns-records
 hosted-zones
@@ -142,6 +143,8 @@ stack-validate
 stacks
 sts-assume-role
 subnets
+target-group-instances
+target-groups
 vpc-az-count
 vpc-azs
 vpc-default-delete

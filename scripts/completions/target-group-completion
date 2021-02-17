@@ -1,0 +1,7 @@
+_bma_target-groups_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma target-groups | awk '{ print $1 }')
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
