@@ -1,0 +1,63 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "AmiId": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2",
+      "Description": "Amazon Linux 2 AMI"
+    },
+    "VpcId": {
+      "Type": "String",
+      "Description": "VPC to launch the EC2 instance into"
+    },
+    "SubnetId": {
+      "Type": "String",
+      "Description": "Subnet to launch the EC2 instance into"
+    }
+  },
+  "Resources": {
+    "ec2Test": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "IamInstanceProfile": {"Ref": "iamipTestProfile"},
+        "ImageId": {"Ref": "AmiId"},
+        "InstanceType": "t4g.nano",
+        "SecurityGroupIds": [{"Ref": "ec2sgAllowVPC"}],
+        "SubnetId": {"Ref": "SubnetId"},
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": ["\n", ["#!/bin/bash -ex", "yum udpate -y"]]
+          }
+        },
+        "Tags": [
+          {"Key": "Name", "Value": "SSMTestInstance"}
+        ]
+      }
+    },
+    "ec2sgAllowVPC": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow SSM access",
+        "VpcId": {"Ref": "VpcId"},
+        "SecurityGroupIngress": [],
+        "SecurityGroupEgress": []
+      }
+    },
+    "iamipTestProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {"Path": "/", "Roles": [{"Ref": "iamrTestRole"}]}
+    },
+    "iamrTestRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "ManagedPolicyArns": ["arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {"Effect": "Allow", "Principal": {"Service": ["ec2.amazonaws.com"]}, "Action": ["sts:AssumeRole"]}
+          ]
+        }
+      }
+    }
+  }
+}

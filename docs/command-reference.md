@@ -600,6 +600,13 @@ List details needed to SSH into EC2 Instance(s)
     USAGE: instance-ssh-details [login] [instance-id] [instance-id]
 
 
+### instance-ssm
+
+Establish SSM connection to EC2 Instance(s)
+
+    USAGE: instance-ssm [instance-id] [instance-id]
+
+
 ### instance-stack
 
 List CloudFormation stack EC2 Instance(s) belong to (if any)

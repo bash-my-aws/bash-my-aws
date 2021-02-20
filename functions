@@ -74,6 +74,7 @@ instance-iam-profile
 instance-ip
 instance-ssh
 instance-ssh-details
+instance-ssm
 instance-stack
 instance-start
 instance-state

@@ -296,6 +296,26 @@ instance-ssh-details() {
 }
 
 
+instance-ssm() {
+
+  # Establish SSM connection to EC2 Instance(s)
+  #
+  #     USAGE: instance-ssm instance-id [instance-id]
+
+  local instance_ids=$(skim-stdin "$@")
+  if [[ -z $instance_ids ]] ; then
+    echo "Usage: $FUNCNAME instance-id [instance-id]"
+    return 1
+  fi
+
+  exec </dev/tty # reattach keyboard to STDIN
+
+  for instance_id in $instance_ids; do
+    aws ssm start-session --target $instance_id
+  done
+}
+
+
 instance-stack() {
 
   # List CloudFormation stack EC2 Instance(s) belong to (if any)

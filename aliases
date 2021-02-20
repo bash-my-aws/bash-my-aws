@@ -76,6 +76,7 @@ alias instance-iam-profile='~/.bash-my-aws/bin/bma instance-iam-profile'
 alias instance-ip='~/.bash-my-aws/bin/bma instance-ip'
 alias instance-ssh='~/.bash-my-aws/bin/bma instance-ssh'
 alias instance-ssh-details='~/.bash-my-aws/bin/bma instance-ssh-details'
+alias instance-ssm='~/.bash-my-aws/bin/bma instance-ssm'
 alias instance-stack='~/.bash-my-aws/bin/bma instance-stack'
 alias instance-start='~/.bash-my-aws/bin/bma instance-start'
 alias instance-state='~/.bash-my-aws/bin/bma instance-state'
@@ -161,7 +162,7 @@ alias vpcs='~/.bash-my-aws/bin/bma vpcs'
 # We'll find a less suprising place for this in future
 # region() needs to be a function in order to let it
 # set AWS_DEFAULT_REGION in the current shell
-function region() { 
+function region() {
     local inputs=$(skim-stdin "$@");
     if [[ -z "$inputs" ]]; then
         echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}";
