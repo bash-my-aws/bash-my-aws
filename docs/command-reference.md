@@ -15,6 +15,8 @@ The first few sets of commands were chosen because they are likely to be of
 the most interest to readers.
 
 !!! Note "General Rules"
+    - Commands expect `$AWS_DEFAULT_PROFILE` environment variable to be set
+      (check/set with `aws-profile` command)
     - Commands expect `$AWS_DEFAULT_REGION` environment variable to be set
       (check/set with `region` command)
     - Most commands that list resources (`stacks`, `instances , etc)
@@ -102,6 +104,48 @@ in Cost Recommendations.
 
     $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
     #=> Opens web browser to AWS Cost Recommendations with accounts selected
+
+
+## profile-commands
+
+### aws-profiles
+
+List profiles
+
+The aws-profile() function must be sourced in order to update the
+AWS_DEFAULT_PROFILE environment variable. This is because it
+cannot update an environment variable when run as a subprocess.
+
+    $ aws-profiles
+    dev
+    test
+    stage
+    prod
+
+
+### aws-profile
+
+Get/Set `$AWS_DEFAULT_PROFILE` shell environment variable
+
+    $ aws-profile
+      test
+
+    $ aws-profile prod
+
+    $ aws-profile
+      prod
+
+
+### aws-profile-each
+
+Run a command in every profile.
+Any output lines will be appended with "#${PROFILE}".
+
+    $ aws-profile-each stacks | column -t
+    example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #prod
+    example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #stage
+    ...
+    example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #test
 
 
 ## region-commands
