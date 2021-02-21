@@ -6,11 +6,11 @@ hosted-zones(){
   # List Route53 Hosted Zones
   #
   #     $ hosted-zones
-  #     /hostedzone/Z3333333333333  5   NotPrivateZone  bash-my-aws.org.
-  #     /hostedzone/Z5555555555555  2   NotPrivateZone  bash-my-universe.com.
-  #     /hostedzone/Z4444444444444  3   NotPrivateZone  bashmyaws.org.
-  #     /hostedzone/Z1111111111111  3   NotPrivateZone  bash-my-aws.com.
-  #     /hostedzone/Z2222222222222  3   NotPrivateZone  bashmyaws.com.
+  #     /hostedzone/Z3333333333333  5   Public  bash-my-aws.org.
+  #     /hostedzone/Z5555555555555  2   Public  bash-my-universe.com.
+  #     /hostedzone/Z4444444444444  3   Public  bashmyaws.org.
+  #     /hostedzone/Z1111111111111  3   Public  bash-my-aws.com.
+  #     /hostedzone/Z2222222222222  3   Public  bashmyaws.com.
 
   local ids=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
@@ -21,7 +21,7 @@ hosted-zones(){
       HostedZones[${ids:+?contains(['${ids// /"','"}'], Id)}].[
         Id,
         ResourceRecordSetCount,
-        (Config.PrivateZone && 'PrivateZone') || 'NotPrivateZone',
+        (Config.PrivateZone && 'Private') || 'Public',
         Name
       ]"                |
   sort -k 4             |
