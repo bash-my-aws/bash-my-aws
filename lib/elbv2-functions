@@ -123,10 +123,10 @@ elbv2-target-groups() {
   [[ -z "${elbv2_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
 
   local elbv2_arns=$(
-      aws elbv2 describe-load-balancers \
-      --names "$elbv2_names"            \
-      --output text                     \
-      --query 'LoadBalancers[*].LoadBalancerArn'
+    aws elbv2 describe-load-balancers \
+    ${elbv2_names/#/'--names '}       \
+    --output text                     \
+    --query 'LoadBalancers[*].LoadBalancerArn'
   )
 
   for elbv2_arn in $elbv2_arns; do
