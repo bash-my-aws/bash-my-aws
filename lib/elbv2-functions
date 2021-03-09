@@ -107,3 +107,41 @@ elbv2-azs() {
       ]"              |
     column -s$'\t' -t
 }
+
+
+elbv2-target-groups() {
+
+  # List target groups of ELBv2(s) [Application and Network Load Balancers)
+  #
+  #     USAGE: elbv2-target-groups load-balancer [load-balancer]
+  #
+  #     $ elbv2s | elbv2-target-groups
+  #     bash-my-aws-nlb-tg  TCP   22   vpc-018d9739  bash-my-aws-nlb
+  #     bash-my-aws-alb-tg  HTTP  443  vpc-018d9739  bash-my-aws-alb
+
+  local elbv2_names=$(skim-stdin "$@")
+  [[ -z "${elbv2_names}" ]] && __bma_usage "load-balancer [load-balancer]" && return 1
+
+  local elbv2_arns=$(
+    aws elbv2 describe-load-balancers \
+    ${elbv2_names/#/'--names '}       \
+    --output text                     \
+    --query 'LoadBalancers[*].LoadBalancerArn'
+  )
+
+  for elbv2_arn in $elbv2_arns; do
+    aws elbv2 describe-target-groups   \
+      --load-balancer-arn "$elbv2_arn" \
+      --output text                    \
+      --query "
+        TargetGroups[][
+          TargetGroupName,
+          Protocol,
+          Port,
+          VpcId,
+          join(' ', LoadBalancerArns[])
+        ]"
+   done |
+   sed 's,arn:[^/]*:loadbalancer/[^/]*/\([^/]*\)[^[:blank:]]*,\1,g' |
+   column -s$'\t ' -t
+}

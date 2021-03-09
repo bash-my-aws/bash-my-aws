@@ -34,12 +34,12 @@ the most interest to readers.
 
 List AWS Accounts in an [Organization](https://aws.amazon.com/organizations/)
 
-    $ aws-accounts
-    089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
-    812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
-    001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
-    867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
-    892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
+   $ aws-accounts
+   089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
+   812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
+   001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
+   867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
+   892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
 
 *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
 
@@ -982,6 +982,17 @@ List Availability Zones of ELB(s)
     bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
 
 
+### elbv2-target-groups
+
+List target groups of ELBv2(s) [Application and Network Load Balancers)
+
+    USAGE: elbv2-target-groups load-balancer [load-balancer]
+
+    $ elbv2s | elbv2-target-groups
+    bash-my-aws-nlb-tg  TCP   22   vpc-018d9739  bash-my-aws-nlb
+    bash-my-aws-alb-tg  HTTP  443  vpc-018d9739  bash-my-aws-alb
+
+
 ## iam-commands
 
 
@@ -1376,6 +1387,28 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
 Assume an IAM Role
 
     USAGE: sts-assume-role role_arn
+
+
+## target-group-commands
+
+
+### target-groups
+
+List EC2 ELBv2 target groups
+
+    $ target-groups
+    bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
+    bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
+
+
+### target-group-targets
+
+List EC2 ELBv2 target group targets
+Accepts Target Group names on stdin or as arguments
+
+    $ target-group-targets bash-my-aws-nlb-tg
+    i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
+    i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
 
 
 ## vpc-commands

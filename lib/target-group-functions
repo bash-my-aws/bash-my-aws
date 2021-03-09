@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# target-group-functions
+#
+# Load balancer target groups
+
+
+target-groups() {
+
+  # List EC2 ELBv2 target groups
+  #
+  #     $ target-groups
+  #     bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
+  #     bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
+
+  local tg_names=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  aws elbv2 describe-target-groups   \
+    ${tg_names/#/'--names '}         \
+    --output text                    \
+    --query "
+      TargetGroups[][
+        TargetGroupName,
+        Protocol,
+        Port,
+        VpcId,
+        TargetType,
+        join(' ', LoadBalancerArns[])
+      ]" |
+  sed 's,arn:[^/]*:loadbalancer/[^/]*/\([^/]*\)[^[:blank:]]*,\1,g' |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b |
+  column -s$'\t' -t
+}
+
+
+target-group-targets() {
+
+  # List EC2 ELBv2 target group targets
+  # Accepts Target Group names on stdin or as arguments
+  #
+  #     $ target-group-targets bash-my-aws-nlb-tg
+  #     i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
+  #     i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
+
+  local tg_names=$(skim-stdin "$@")
+
+  for tg_name in $tg_names; do
+    local tg_arn=$(aws elbv2 describe-target-groups \
+      --names "$tg_name"                   \
+      --output text                        \
+      --query "
+        TargetGroups[][
+          TargetGroupArn
+        ]
+      ")
+    aws elbv2 describe-target-health       \
+      --target-group-arn "$tg_arn"         \
+      --output text                        \
+      --query "
+        TargetHealthDescriptions[][
+          Target.Id,
+          Target.Port,
+          TargetHealth.State,
+          '${tg_name}'
+        ]
+      "
+  done | column -s$'\t' -t
+}
