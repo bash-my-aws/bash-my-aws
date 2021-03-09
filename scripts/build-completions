@@ -31,7 +31,6 @@ funcs_no_completion=(
   aws-account-alias
   aws-account-each
   aws-account-id
-  elbv2-target-group-instances
   keypair-create
   region-each
   regions

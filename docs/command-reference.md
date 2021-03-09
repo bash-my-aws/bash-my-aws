@@ -1394,12 +1394,12 @@ List EC2 ELBv2 target groups
     bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
 
 
-### target-group-instances
+### target-group-targets
 
-List EC2 ELBv2 target group instances
+List EC2 ELBv2 target group targets
 Accepts Target Group names on stdin or as arguments
 
-    $ target-group-instances bash-my-aws-nlb-tg
+    $ target-group-targets bash-my-aws-nlb-tg
     i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
     i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
 

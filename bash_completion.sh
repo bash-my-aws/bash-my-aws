@@ -209,7 +209,7 @@ complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stacks
-complete -F _bma_target-groups_completion target-group-instances
+complete -F _bma_target-groups_completion target-group-targets
 complete -F _bma_target-groups_completion target-groups
 complete -F _bma_vpcs_completion vpc-az-count
 complete -F _bma_vpcs_completion vpc-azs
