@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
+  AmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2
+    Description: Amazon Linux 2 AMI
   KeyName:
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
@@ -14,54 +18,9 @@ Parameters:
     Type: AWS::EC2::VPC::Id
 Resources:
   EC2Instance1:
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT15M
-    Metadata:
-      AWS::CloudFormation::Init:
-        config:
-          files:
-            /etc/cfn/cfn-hup.conf:
-              content: !Sub |
-                [main]
-                stack=${AWS::StackId}
-                region=${AWS::Region}
-              group: root
-              mode: '000400'
-              owner: root
-            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
-              content: !Sub |
-               [cfn-auto-reloader-hook]
-               triggers=post.update
-               path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init
-               action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance1 --region ${AWS::Region}
-               runas=root
-              group: root
-              mode: '000400'
-              owner: root
-            /var/www/html/index.html:
-              content: <h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>
-              group: root
-              mode: '000644'
-              owner: root
-          packages:
-            yum:
-              httpd: []
-          services:
-            sysvinit:
-              cfn-hup:
-                enabled: 'true'
-                ensureRunning: 'true'
-                files:
-                - /etc/cfn/cfn-hup.conf
-                - /etc/cfn/hooks.d/cfn-auto-reloader.conf
-              httpd:
-                enabled: 'true'
-                ensureRunning: 'true'
-      Comment: Install a simple application
     Properties:
-      ImageId: ami-032930428bf1abbff
-      InstanceType: t2.small
+      ImageId: !Ref AmiId
+      InstanceType: t4g.nano
       KeyName: !Ref KeyName
       SecurityGroupIds:
       - Ref: InstanceSecurityGroup
@@ -69,19 +28,11 @@ Resources:
         Fn::Select:
         - 0
         - Ref: Subnets
-      UserData: !Sub |+
-          #!/bin/bash -xe
-          yum update -y aws-cfn-bootstrap
-          /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance1 --region ${AWS::Region}
-
-          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource EC2Instance2 --region ${AWS::Region}
     Type: AWS::EC2::Instance
   EC2Instance2:
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT15M
     Properties:
-      InstanceType: t2.small
+      InstanceType: t4g.nano
+      ImageId: !Ref AmiId
       KeyName: !Ref KeyName
       SecurityGroupIds:
       - Ref: InstanceSecurityGroup
@@ -89,12 +40,6 @@ Resources:
         Fn::Select:
         - 1
         - Ref: Subnets
-      UserData: !Sub |+
-          #!/bin/bash -xe
-          yum update -y aws-cfn-bootstrap
-          /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance1 --region ${AWS::Region}
-
-          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource EC2Instance2 --region ${AWS::Region}
     Type: AWS::EC2::Instance
   InstanceSecurityGroup:
     Properties:
@@ -174,3 +119,4 @@ Resources:
         Port: 80
       VpcId: !Ref VpcId
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
+
