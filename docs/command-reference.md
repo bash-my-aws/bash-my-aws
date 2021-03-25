@@ -604,7 +604,7 @@ List details needed to SSH into EC2 Instance(s)
 
 Establish SSM connection to EC2 Instance(s)
 
-    USAGE: instance-ssm [instance-id] [instance-id]
+    USAGE: instance-ssm instance-id [instance-id]
 
 
 ### instance-stack

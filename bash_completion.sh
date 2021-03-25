@@ -1,3 +1,6 @@
+# DO NOT MANUALLY MODIFY THIS FILE.
+# Use 'scripts/build' to regenerate if required.
+
 bma_path="${HOME}/.bash-my-aws"
 _bma_asgs_completion() {
   local command="$1"
@@ -110,7 +113,7 @@ _bma_completion() {
 _bma_functions_completion() {
   local word all_funcs
   word="$1"
-  all_funcs=$(echo "type" && cat "${bma_path}/functions")
+  all_funcs=$(echo "type" && cat "${bma_path}/functions" | command grep -v "^#")
   COMPREPLY=($(compgen -W "${all_funcs}" -- ${word}))
   return
 }
