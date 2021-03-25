@@ -5,6 +5,7 @@ bma_path=$(cd $(dirname $0)/.. && pwd)
 # function in bma
 bma_funcs=$(
   cat "${bma_path}/functions" \
+  | grep -vE "^#" \
   | grep -vE "^__bma" \
   | grep -vE "^_bma"
 )
