@@ -16,16 +16,24 @@ for f in $project_root/lib/*-functions; do source "$f"; done
 # all function after loading BMA functions
 funcs_after_bma=$(compgen -A function)
 
-echo "${funcs_before_bma}" "${funcs_after_bma}" |
-  tr ' ' '\n'                                   |
-  awk 'NF'                                      |
-  LC_ALL=C sort                                 |
-  uniq -u > "$funcs_destination"
+# Generate the functions file
+
+{
+  echo "# DO NOT MANUALLY MODIFY THIS FILE."
+  echo "# Use 'scripts/build' to regenerate if required."
+  echo ""
+  echo "${funcs_before_bma}" "${funcs_after_bma}" |
+    tr ' ' '\n'                                   |
+    awk 'NF'                                      |
+    LC_ALL=C sort                                 |
+    uniq -u
+} > "$funcs_destination"
 
 
 # Generate the aliases file
 {
-  echo "# GENERATED ALIASES FOR BASH-MY-AWS"
+  echo "# DO NOT MANUALLY MODIFY THIS FILE."
+  echo "# Use 'scripts/build' to regenerate if required."
   echo ""
 } > "$aliases_destination"
 
@@ -51,6 +59,8 @@ for fnc_name in $fncs_to_clone; do
     function_body=$(type "$fnc_name" | tail -n +3)
     printf "function %s() %s" "$fnc_name" "$function_body" >> "$aliases_destination"
 done;
+
+echo "" >> "$aliases_destination"
 
 ${project_root}/scripts/build-completions > "$completion_destination"
 

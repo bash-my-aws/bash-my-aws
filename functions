@@ -1,3 +1,7 @@
+# DO NOT MANUALLY MODIFY THIS FILE.
+# Use 'scripts/build' to regenerate if required.
+
+__bma-using-aws-cli-v1
 __bma_error
 __bma_read_filters
 __bma_read_inputs

@@ -1,5 +1,7 @@
-# GENERATED ALIASES FOR BASH-MY-AWS
+# DO NOT MANUALLY MODIFY THIS FILE.
+# Use 'scripts/build' to regenerate if required.
 
+alias __bma-using-aws-cli-v1='~/.bash-my-aws/bin/bma __bma-using-aws-cli-v1'
 alias __bma_error='~/.bash-my-aws/bin/bma __bma_error'
 alias __bma_read_filters='~/.bash-my-aws/bin/bma __bma_read_filters'
 alias __bma_read_inputs='~/.bash-my-aws/bin/bma __bma_read_inputs'
@@ -165,7 +167,7 @@ alias vpcs='~/.bash-my-aws/bin/bma vpcs'
 # We'll find a less suprising place for this in future
 # region() needs to be a function in order to let it
 # set AWS_DEFAULT_REGION in the current shell
-function region() {
+function region() { 
     local inputs=$(skim-stdin "$@");
     if [[ -z "$inputs" ]]; then
         echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}";

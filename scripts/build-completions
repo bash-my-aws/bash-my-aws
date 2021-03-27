@@ -3,6 +3,9 @@
 bma_path="$(cd "$(dirname "$0")/.." && pwd)"
 
 cat <<EOF
+# DO NOT MANUALLY MODIFY THIS FILE.
+# Use 'scripts/build' to regenerate if required.
+
 bma_path="\${HOME}/.bash-my-aws"
 EOF
 
@@ -20,8 +23,6 @@ for type in "${available_completions[@]}"; do
 done
 
 cat "${bma_path}/scripts/completions/bma-completion"
-
-
 
 # dont add auto_completions for these functions
 funcs_no_completion=(
