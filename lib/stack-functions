@@ -426,6 +426,7 @@ stack-resources() {
         StackResources[].[
           PhysicalResourceId,
           ResourceType,
+          ResourceStatus,
           '$stack'
       ]"              |
     column -s$'\t' -t
