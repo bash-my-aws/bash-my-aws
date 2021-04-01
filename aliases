@@ -172,6 +172,6 @@ function region() {
     if [[ -z "$inputs" ]]; then
         echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}";
     else
-        AWS_DEFAULT_REGION="$inputs";
+        export AWS_DEFAULT_REGION="$inputs";
     fi
 }

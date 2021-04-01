@@ -45,7 +45,7 @@ region() {
   if [[ -z "$inputs" ]]; then
     echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
   else
-    AWS_DEFAULT_REGION="$inputs"
+    export AWS_DEFAULT_REGION="$inputs"
   fi
 }
 
@@ -62,6 +62,7 @@ region-each() {
   #     example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
 
   local old_aws_default_region="$AWS_DEFAULT_REGION"
+  export AWS_DEFAULT_REGION
   for AWS_DEFAULT_REGION in $(regions); do
     eval "$@" | sed "s/$/ #${AWS_DEFAULT_REGION}/"
   done
