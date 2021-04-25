@@ -1,7 +1,7 @@
 Bash-my-AWS
 ===========
 
-**Dec 2019: New [Bash-my-AWS website](https://bash-my-aws.org/) has extensive documentation at https://bash-my-aws.org/**
+**[Bash-my-AWS website](https://bash-my-aws.org/) has extensive documentation at https://bash-my-aws.org/**
 
 Bash-my-AWS is a simple but powerful set of CLI commands for managing
 resources on Amazon Web Services.
