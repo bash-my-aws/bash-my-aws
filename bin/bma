@@ -15,6 +15,15 @@
 
 for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
 
+# Disable awcli client side pager
+#
+# AWS CLI version 2 provides the use of a client-side pager program for output.
+# By default, this feature returns all output through your operating system’s
+# default pager program.
+#
+# https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-pagination.html#cli-usage-pagination-clientside
+#
+export AWS_PAGER=''
 
 # Optionally specify which installation of aws-cli to use
 #
