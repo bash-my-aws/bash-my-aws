@@ -55,6 +55,28 @@ bucket-acls() {
   done
 }
 
+bucket-objects() {
+
+  # List of S3 Bucket Objects.
+  #
+  #     $ bucket-objects example-bucket
+  #     object-key         last-modified storage-class owner-display-name etag size
+  #     another-object-key last-modified storage-class owner-display-name etag size
+  #
+
+  local buckets=$(skim-stdin "$@")
+  [[ -z "$buckets" ]] && __bma_usage "bucket [bucket]" && return 1
+
+  local bucket
+  for bucket in $buckets; do
+    aws s3api list-objects \
+      --bucket "$bucket"   \
+      --output text        \
+      --query "Contents[].[Key, LastModified, StorageClass, Owner.DisplayName, ETag, Size]" |
+      column -s$'\t' -t
+  done
+}
+
 
 bucket-remove() {
 

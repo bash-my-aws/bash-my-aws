@@ -148,6 +148,7 @@ complete -F _bma_aws-accounts_completion aws-account-cost-explorer
 complete -F _bma_aws-accounts_completion aws-account-cost-recommendations
 complete -F _bma_aws-accounts_completion aws-accounts
 complete -F _bma_buckets_completion bucket-acls
+complete -F _bma_buckets_completion bucket-objects
 complete -F _bma_buckets_completion bucket-remove
 complete -F _bma_buckets_completion bucket-remove-force
 complete -F _bma_buckets_completion buckets
