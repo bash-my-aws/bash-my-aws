@@ -42,6 +42,28 @@ instances() {
   column -s$'\t' -t
 }
 
+instance-change-type() {
+
+  # Change an instance type
+  #
+  #     USAGE: instance-change-type instance-type instance-id [instance-id]
+
+  [[ $# != 2 ]] && __bma_usage "instance-change-type  instance-type instance-id [instance-id]" && return 1
+  local type=$1
+  shift
+  local instance_ids=$(skim-stdin "$@")
+  local regex_yes="^[Yy]$"
+
+  read -p "Are you sure you want to change these instances to $type? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    for id in $instance_ids; do
+      aws ec2 modify-instance-attribute \
+        --instance-type $type            \
+        --instance-id $id
+    done
+  fi
+}
 
 instance-asg() {
 
