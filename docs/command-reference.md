@@ -1328,6 +1328,23 @@ Generate NS records for delegating domain to AWS
     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
 
 
+### hosted-zone-records
+
+List Records in a Route53 Hosted Zone
+NOTE: AWS alias records are shown with a fake TTL of 86400.
+
+    $ hosted-zones bash-my-aws.org
+    /hostedzone/ZJ6ZCG2UD6OKX  5  NotPrivateZone  bash-my-aws.org.
+
+    $ hosted-zones bash-my-aws.org | hosted-zone-records
+    bash-my-aws.org.  900 SOA ns-1549.awsdns-01.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+    bash-my-aws.org.  300 NS  ns-1464.awsdns-55.org.
+    bash-my-aws.org.  300 A 185.199.108.153
+    bash-my-aws.org.  300 A 185.199.109.153
+    bash-my-aws.org.  300 TXT "google-site-verification=RbKejqu95y4Q78BkWnjaiM0rl6SYugtTdVLexK35b2k"
+    lb.bash-my-aws.org. 86400 ALIAS dualstack.lb-bmaorg-12345.us-east-1.elb.amazonaws.com
+
+
 ## s3-commands
 
 

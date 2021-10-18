@@ -64,6 +64,7 @@ elbv2-subnets
 elbv2-target-groups
 elbv2s
 hosted-zone-ns-records
+hosted-zone-records
 hosted-zones
 iam-role-principal
 iam-roles
