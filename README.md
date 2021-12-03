@@ -153,33 +153,21 @@ postgres02  DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
 As shown below, you may simply clone the GitHub repo and source the files required.
 (You should probably fork it instead to keep your customisations)
 
-Decide where you want to locate the files (default is $HOME/.bash-my-aws) and set
-the BMA_HOME variable to this location (a logical alternative location could
-be $HOME/.config/bash-my-aws)
-
 ```Shell
-$ export BMA_HOME=$HOME/.bash-my-aws
-$ git clone https://github.com/bash-my-aws/bash-my-aws.git $BMA_HOME
-```
-
-Rebuild the config files to update them for your local location:
-
-```Shell
-$ $BMA_HOME/scripts/build
+$ git clone https://github.com/bash-my-aws/bash-my-aws.git ${BMA_HOME:-$HOME/.bash-my-aws}
 ```
 
 Put the following in your shell's startup file:
 
 ```Shell
-export BMA_HOME=$HOME/.bash-my-aws
-export PATH="$PATH:$BMA_HOME/bin"
-source $BMA_HOME/aliases
+export PATH="$PATH:${BMA_HOME:-$HOME/.bash-my-aws}/bin"
+source ${BMA_HOME:-$HOME/.bash-my-aws}/aliases
 
 # For ZSH users, uncomment the following two lines:
 # autoload -U +X compinit && compinit
 # autoload -U +X bashcompinit && bashcompinit
 
-source $BMA_HOME/bash_completion.sh
+source ${BMA_HOME:-$HOME/.bash-my-aws}/bash_completion.sh
 ```
 
 #### Why use shell aliases?
