@@ -115,6 +115,7 @@ alias launch-configuration-asgs='~/.bash-my-aws/bin/bma launch-configuration-asg
 alias launch-configurations='~/.bash-my-aws/bin/bma launch-configurations'
 alias log-groups='~/.bash-my-aws/bin/bma log-groups'
 alias pcxs='~/.bash-my-aws/bin/bma pcxs'
+alias private-ip-details='~/.bash-my-aws/bin/bma private-ip-details'
 alias rds-db-clusters='~/.bash-my-aws/bin/bma rds-db-clusters'
 alias rds-db-instances='~/.bash-my-aws/bin/bma rds-db-instances'
 alias region-each='~/.bash-my-aws/bin/bma region-each'

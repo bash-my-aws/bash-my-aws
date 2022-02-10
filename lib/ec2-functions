@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# ec2-functions
+#
+# Generic EC2 functions
+
+
+private-ip-details() {
+  # Outputs information about a list of IPs
+  # 
+  # $ private-ip-details  10.1.2.3 10.2.3.4 10.3.4.5
+  #   None                 None          10.1.2.3       vpc_endpoint  111111111111  eni-aaaaaaaaaaaaaaaaa  in-use
+  #   None                 None          10.2.3.4       interface     amazon-elb    eni-bbbbbbbbbbbbbbbbb  in-use
+  #   i-123456             1.2.3.4       10.3.4.5       interface     None          eni-ccccccccccccccccc  in-use
+
+
+  local ips=$(skim-stdin "$@")
+  local joined_ips=$(echo $ips | sed "s/ /,/g")
+
+  aws ec2 describe-network-interfaces \
+    --filters "Name=addresses.private-ip-address,Values=$joined_ips" \
+    --query  \
+       "NetworkInterfaces[][
+          Attachment.InstanceId,
+          Association.PublicIp,
+          PrivateIpAddress,
+          InterfaceType,
+          RequesterId,
+          NetworkInterfaceId,
+          Status
+        ]" \
+    --output text |
+  column -s $'\t' -t
+
+}
