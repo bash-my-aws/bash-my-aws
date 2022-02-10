@@ -1018,9 +1018,37 @@ List role principal for IAM Role(s)
 List IAM Users
 
     $ iam-users
-    config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
-    AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
-    ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+    john.smith@example.com  AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z  2019-10-16T17:16:08Z 
+    aws-test-user           AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z  2019-10-16T02:12:52Z 
+    mary.jones@example.com  AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z  2019-10-16T13:51:32Z 
+
+### iam-user-profile
+
+List IAM Users Profile
+
+    USAGE: iam-user-profile user-name [user-name] 
+
+    $ iam-user-profile john.smith@example.com
+    john.smith@example.com  2019-10-16T17:16:08Z  False
+
+### iam-user-profile-update
+
+Change password for IAM user
+
+    USAGE: iam-user-profile-update [--batch] [--display-password] [--password-reset-required (default) | --no-password-reset-required] --password=[<value>|RND (default)] user-name [user-name]
+
+    $ iam-user-profile-update --batch --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  XXXXXXXXXXXXXXX  SUCCESS
+
+    $ iam-user-profile-update --batch --display-password --no-password-reset-required --password=RND john.smith@example.com
+    john.smith@example.com  {LK-4q\>V9E>n`%  SUCCESS
+
+    $ iam-users king | iam-user-profile-update
+    john.smith@example.com:                            Suggested password: ($p:#|q%5U!6~n%
+    john.smith@example.com:                   Enter new password for user:
+    john.smith@example.com:                 Confirm new password for user:
+    john.smith@example.com: Require password reset on next sign-in? [Y/n]: n
+    john.smith@example.com XXXXXXXXXXXXXXX SUCCESS
 
 
 ## image-commands

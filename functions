@@ -68,6 +68,8 @@ hosted-zones
 iam-role-principal
 iam-roles
 iam-users
+iam-user-profile
+iam-user-profile-update
 image-deregister
 images
 instance-asg
