@@ -148,6 +148,11 @@ postgres02  DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
 * [bash](https://www.gnu.org/software/bash/)
 * [jq-1.4](http://stedolan.github.io/jq/download/) or later (for stack-diff)
 
+### Optional Packages
+
+* [colordiff](https://www.colordiff.org/) to show stack-diff in color
+* [icdiff](https://github.com/jeffkaufman/icdiff) to show stack-diff in color and side-by-side
+
 ### Installation
 
 As shown below, you may simply clone the GitHub repo and source the files required.
