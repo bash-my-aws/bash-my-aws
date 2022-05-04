@@ -840,10 +840,10 @@ _bma_stack_diff_template() {
   if ! aws cloudformation describe-stacks --stack-name "$stack" 1>/dev/null; then
     return 1;
   fi
-  if [ "x$( command -v icdiff )" != "x" ]; then
-    local DIFF_CMD=icdiff
-  elif [ "x$( command -v colordiff )" != "x" ]; then
+  if command -v colordiff; then
     local DIFF_CMD=colordiff
+  elif command -v icdiff; then
+    local DIFF_CMD=icdiff
   else
     local DIFF_CMD=diff
   fi
@@ -878,10 +878,10 @@ _bma_stack_diff_params() {
   if [ ! -f "$params" ]; then
     return 1
   fi
-  if [ "x$( command -v icdiff )" != "x" ]; then
-    local DIFF_CMD=icdiff
-  elif [ "x$( command -v colordiff )" != "x" ]; then
+  if command -v colordiff; then
     local DIFF_CMD=colordiff
+  elif command -v icdiff; then
+    local DIFF_CMD=icdiff
   else
     local DIFF_CMD=diff
   fi
