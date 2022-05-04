@@ -12,4 +12,4 @@ filelist="${filelist}$(ls lib/* | grep -v 'aws-account\|region\|stack\|instance\
 
 cp docs/.command-reference-intro.md $COMMAND_REFERENCE_FILE
 
-scripts/extract-docs $filelist | tee --append $COMMAND_REFERENCE_FILE
+scripts/extract-docs $filelist | tee -a $COMMAND_REFERENCE_FILE
