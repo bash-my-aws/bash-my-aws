@@ -41,7 +41,7 @@ funcs_after_bma=$(compgen -A function)
 exclusions=('region')
 
 for fnc in $(echo "${funcs_before_bma}" "${funcs_after_bma}" "${exclusions}" | tr ' ' '\n' | LC_ALL=C sort | uniq -u); do
-  echo "alias $fnc='${project_root}/bin/bma $fnc'" >> "$aliases_destination"
+  echo "alias $fnc='\${BMA_HOME:-\$HOME/.bash-my-aws}/bin/bma $fnc'" >> "$aliases_destination"
 done;
 
 
