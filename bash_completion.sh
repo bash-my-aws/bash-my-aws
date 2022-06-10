@@ -1,7 +1,7 @@
 # DO NOT MANUALLY MODIFY THIS FILE.
 # Use 'scripts/build' to regenerate if required.
 
-bma_path="${HOME}/.bash-my-aws"
+bma_path="${BMA_HOME:-$HOME}/.bash-my-aws"
 _bma_asgs_completion() {
   local command="$1"
   local word="$2"

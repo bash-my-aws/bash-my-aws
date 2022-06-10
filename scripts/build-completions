@@ -6,7 +6,7 @@ cat <<EOF
 # DO NOT MANUALLY MODIFY THIS FILE.
 # Use 'scripts/build' to regenerate if required.
 
-bma_path="\${HOME}/.bash-my-aws"
+bma_path="\${BMA_HOME:-\$HOME}/.bash-my-aws"
 EOF
 
 # load in all the completions from scripts/completions
