@@ -173,6 +173,7 @@ complete -F _bma_instances_completion instance-dns
 complete -F _bma_instances_completion instance-health-set-unhealthy
 complete -F _bma_instances_completion instance-iam-profile
 complete -F _bma_instances_completion instance-ip
+complete -F _bma_instances_completion instance-portforward
 complete -F _bma_instances_completion instance-ssh
 complete -F _bma_instances_completion instance-ssh-details
 complete -F _bma_instances_completion instance-ssm

@@ -77,6 +77,7 @@ instance-dns
 instance-health-set-unhealthy
 instance-iam-profile
 instance-ip
+instance-portforward
 instance-ssh
 instance-ssh-details
 instance-ssm
