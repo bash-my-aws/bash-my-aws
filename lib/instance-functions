@@ -335,7 +335,7 @@ instance-ssh() {
 
     ssh                                    \
       -t                                   \
-      -i "${BMA_SSH_DIR:-~/.ssh/}$keyname" \
+      -i "${BMA_SSH_DIR:-~/.ssh}/$keyname" \
       -o LogLevel=error                    \
       -o StrictHostKeyChecking=no          \
       -o UserKnownHostsFile=/dev/null      \
