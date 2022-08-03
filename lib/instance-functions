@@ -230,12 +230,12 @@ instance-portforward() {
 
   # Establish SSM-based portforwards from EC2 Instance(s)
   #
-  #     USAGE: instance-portforward [remote port] [local port (optional)] instance-id [instance-id]
+  #     USAGE: instance-portforward [remote port] [local port (optional)] [instance-id]
   #
-  #     Remote port may be given as a number, or as a keyword from the following list:
-  #     rdp (3389), ssh (22), http (80), https (443)
+  #     Remote port may be given as a number, or as a keyword from the list below
+  #     e.g. 'instance-portforwarding rdp' is equivalent to 'instance-portforwarding 3389'
   #
-  #     Local port is optional.
+  #     Local port is optional and must be a number
   #     If unspecified, the same port number as the remote port will be attempted.
   local instance_id remote_port local_port
 
@@ -292,7 +292,7 @@ instance-portforward() {
     return 1
   }
 
-  printf -- 'Portforwarding between EC2 instance %s port %d and localhost port %d\n' \
+  printf -- '\nPortforwarding between EC2 instance %s port %d and localhost port %d\n' \
     "${instance_id}" "${remote_port}" "${local_port}"
 
   # Ignore shellcheck alert on parameters directive
