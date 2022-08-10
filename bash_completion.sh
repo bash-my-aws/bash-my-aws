@@ -180,6 +180,9 @@ complete -F _bma_instances_completion instance-stack
 complete -F _bma_instances_completion instance-start
 complete -F _bma_instances_completion instance-state
 complete -F _bma_instances_completion instance-stop
+complete -F _bma_instances_completion instance-stop-protection
+complete -F _bma_instances_completion instance-stop-protection-disable
+complete -F _bma_instances_completion instance-stop-protection-enable
 complete -F _bma_instances_completion instance-tags
 complete -F _bma_instances_completion instance-terminate
 complete -F _bma_instances_completion instance-termination-protection
