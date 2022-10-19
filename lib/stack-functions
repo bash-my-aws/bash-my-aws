@@ -676,7 +676,7 @@ stack-tail() {
   local final_line
   local output
   local previous
-  until echo "$current" | tail -1 | egrep -q "${stack}.*_(COMPLETE|FAILED)"
+  until echo "$current" | tail -1 | grep --extended-regexp --quiet "${stack}.*_(COMPLETE|FAILED)"
   do
     if ! output=$(stack-events "$inputs"); then
       # Something went wrong with stack-events (like stack not known)
