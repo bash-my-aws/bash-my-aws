@@ -1,0 +1,231 @@
+#!/bin/bash
+# set -eu -o pipefail # I source this file and don't want my shell to exit on error.
+# shellcheck disable=SC2120
+
+# azure-functions
+#
+# WARNING, an experiment - alpha! - do not use!
+#
+# I first used the `az cli` on 25 Nov 2022 so am only at the start of a 
+# learning journey.
+#
+# Source this file in from bash terminal and enjoy the functions.
+#
+# az reference: https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest
+
+# Wishlist
+#
+# - `az login` without opening GUI web browser. username/password is an option.
+# - bash completion
+
+# Shared Functions
+
+__bma_read_filters-az() {
+
+  # Construct a string to be passed to `grep -E`
+  #
+  #     $ __bma_read_filters foo bar baz
+  #     foo|bar|baz
+
+  ( IFS=$'|'; printf -- "$*" )
+}
+
+function columnise ()
+{
+    column -t -s$'\t'
+}
+
+function skim-stdin-az ()
+{
+    # XXX Update to quote items in output
+    local skimmed_stdin="$([[ -t 0 ]] || awk -F$'\t' 'ORS=" " { print $1 }')";
+    printf -- '%s %s' "$*" "$skimmed_stdin" | awk -F$'\t' '{$1=$1;print}'
+}
+
+# Location Functions
+
+function locations(){
+  local filters=$(__bma_read_filters-az $@);
+  az account list-locations \
+    --query '[].[
+      name,
+      displayName
+    ]' \
+    --output tsv |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 3 |
+  columnise
+
+}
+
+function location() {
+
+  local location=$(skim-stdin "$@")
+  # XXX Check input is a valid location
+  if [[ -z "$location" ]]; then
+    az config get defaults.location \
+      --only-show-errors            \
+      --output tsv                  \
+      --query "value"
+  else
+    az config set defaults.location="${location}" \
+      --only-show-errors                          \
+      --output tsv
+  fi
+}
+
+location-each() {
+
+  local locations
+  if [[ -t 0 ]]; then
+    locations=$(locations | awk -F$'\t' '{print $1}')
+  else
+    locations=$(awk 'ORS=" " { print $1 }')
+  fi
+  local old_azure_default_location
+  old_azure_default_location="$(location)"
+  local location
+  for location in $locations; do
+    location "$location"
+    eval "$@" | sed "s/$/ #${location}/"
+  done
+  location "$old_azure_default_location"
+}
+
+## Resource Functions
+
+function resource-groups() {
+  local filters=$(__bma_read_filters-az $@);
+  az group list \
+    --query "[].[
+      name,
+      id,
+      location
+      ]" \
+    --output tsv |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 5 |
+  column -s$'\t' -t
+}
+
+function resources() {
+  local filters=$(__bma_read_filters-az $@);
+  az resource list \
+    --query "[].[
+      name,
+      resourceGroup,
+      type,
+      createdTime,
+      changedTime]" \
+    --output tsv |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 5 |
+  column -s$'\t' -t
+}
+
+## service-principal Functions
+
+function service-principals() {
+  local filters=$(__bma_read_filters-az $@);
+  az ad sp list \
+    --query "[].[
+      appId,
+      appOwnerTenantId,
+      appDisplayName
+    ]" \
+    --output tsv |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -b -k 3 |
+    column -s$'\t' -t
+}
+
+## Subscription Functions
+
+function subscriptions() {
+  local filters=$(__bma_read_filters-az $@);
+  az account list --all \
+    --query "[].[
+      id,
+      isDefault,
+      state,
+      name
+    ]" \
+    --output tsv |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -b -k 3 |
+    column -s$'\t' -t
+}
+
+function subscription() {
+
+  local subscription=$(skim-stdin "$@")
+  if [[ -z "$subscription" ]]; then
+    subscriptions True
+  else
+    az account set --subscription "$subscription"
+  fi
+}
+
+subscription-each() {
+
+  local subscriptions
+  if [[ -t 0 ]]; then
+    subscriptions=$(subscriptions | awk -F$'\t' '{print $1}')
+  else
+    subscriptions=$(awk 'ORS=" " { print $1 }')
+  fi
+  local old_default_subscription
+  old_default_subscription="$(subscription | awk '{print $1}')"
+  local subscription
+  for subscription in $subscriptions; do
+    subscription "$subscription"
+    eval "$@" | sed "s/$/ #${subscription}/"
+  done
+  subscription "$old_default_subscription"
+}
+
+function front-door-waf-policies() {
+  local resource_groups=$(skim-stdin "$@")
+  [[ -z $resource_groups ]] && __bma_usage "resource_group [resource_group]" && return 1
+  local resource_group
+  for resource_group in $resource_groups; do
+    az network front-door waf-policy list \
+      --resource-group "$resource_group" \
+      --output tsv \
+      --query "[].[
+        name,
+        resourceGroup,
+        resourceState
+        ]" |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -b -k 1 |
+    column -s$'\t' -t
+  done
+}
+
+function front-door-waf-policy-rules() {
+  local resource_groups=$(skim-stdin "$@")
+  [[ -z $resource_groups ]] && __bma_usage "resource_group [resource_group]" && return 1
+  local resource_group
+  for resource_group in $resource_groups; do
+    local policy_name
+    for policy_name in $(waf-policies "$resource_group" | awk '{print $1}'); do
+      az network front-door waf-policy rule list \
+        --resource-group "$resource_group" \
+        --policy-name "$policy_name" \
+        --output tsv \
+        --query "[].[
+          name,
+          enabledState,
+          priority,
+          ruleType,
+          action,
+          '$policy_name',
+          '$resource_group'
+        ]" |
+      grep -E -- "$filters" |
+      LC_ALL=C sort -b -k 1 |
+      column -s$'\t' -t
+    done
+  done
+}
