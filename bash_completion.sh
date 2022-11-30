@@ -136,6 +136,7 @@ _bma_subcommands_completion() {
   return 0
 }
 complete -F _bma_asgs_completion asg-capacity
+complete -F _bma_asgs_completion asg-detach-instances
 complete -F _bma_asgs_completion asg-instances
 complete -F _bma_asgs_completion asg-launch-configuration
 complete -F _bma_asgs_completion asg-processes_suspended
@@ -211,6 +212,7 @@ complete -F _bma_stacks_completion stack-resources
 complete -F _bma_stacks_completion stack-status
 complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
+complete -F _bma_stacks_completion stack-template-summary
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stacks
 complete -F _bma_target-groups_completion target-group-targets
