@@ -22,6 +22,7 @@ _bma_stack_params_arg
 _bma_stack_template_arg
 asg-capacity
 asg-desired-size-set
+asg-detach-instances
 asg-instances
 asg-launch-configuration
 asg-max-size-set
@@ -143,6 +144,7 @@ stack-tags
 stack-tags-text
 stack-tail
 stack-template
+stack-template-summary
 stack-update
 stack-validate
 stacks
