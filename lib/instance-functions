@@ -315,6 +315,10 @@ instance-ssm() {
   done
 }
 
+instance-rdp(){
+  instance-ssm-port-forward 13389 3389 $@
+}
+
 instance-ssm-port-forward() {
 
   # Create tunnel from localhost to remote EC2 instance
@@ -339,7 +343,6 @@ instance-ssm-port-forward() {
       --parameters "localPortNumber=${local_port_number},portNumber=${port_number}"
   done
 }
-
 
 instance-stack() {
 
