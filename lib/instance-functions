@@ -226,6 +226,83 @@ instance-ip() {
   column -s$'\t' -t
 }
 
+instance-portforward() {
+
+  # Establish SSM-based portforwards from EC2 Instance(s)
+  #
+  #     USAGE: instance-portforward [remote port] [local port (optional)] [instance-id]
+  #
+  #     Remote port may be given as a number, or as a keyword from the list below
+  #     e.g. 'instance-portforwarding rdp' is equivalent to 'instance-portforwarding 3389'
+  #
+  #     Local port is optional and must be a number
+  #     If unspecified, the same port number as the remote port will be attempted.
+  local instance_id remote_port local_port
+
+  # We want this to word split
+  # shellcheck disable=SC2046,SC2068
+  set -- $(skim-stdin ${@})
+
+  # Map our remote port
+  case "${1}" in
+    (aurora)      remote_port=3306 ;;
+    (dns)         remote_port=53 ;;
+    (elasticgfx)  remote_port=2007 ;;
+    (http)        remote_port=80 ;;
+    (https)       remote_port=443 ;;
+    (imap)        remote_port=143 ;;
+    (imaps)       remote_port=993 ;;
+    (ldap)        remote_port=398 ;;
+    (mssql)       remote_port=1433 ;;
+    (mysql)       remote_port=3306 ;;
+    (oracle)      remote_port=1521 ;;
+    (pop3)        remote_port=110 ;;
+    (pop3s)       remote_port=995 ;;
+    (postgres)    remote_port=5432 ;;
+    (redshift)    remote_port=5439 ;;
+    (rdp)         remote_port=3389 ;;
+    (smb)         remote_port=445 ;;
+    (smtp)        remote_port=25 ;;
+    (smtps)       remote_port=465 ;;
+    (ssh)         remote_port=22 ;;
+    (winrm)       remote_port=5985 ;;
+    (winrms)      remote_port=5986 ;;
+    (*)           remote_port="${1}" ;;
+  esac
+
+  # Validate that the remote port is a number.
+  printf -- '%d\n' "${remote_port}" >/dev/null 2>&1 || {
+    __bma_error "Remote Port must be a number or a recognised keyword"
+    return 1
+  }
+
+  # Map the rest of our vars based on how many params are given
+  case "${#}" in
+    (2) local_port="${remote_port}"; instance_id="${2}" ;;
+    (3) local_port="${2}"; instance_id="${3}" ;;
+    (*)
+      __bma_usage "[remote port] [local port (optional)] [instance-id]"
+      return 1
+    ;;
+  esac
+
+  # Validate that the local port is a number
+  printf -- '%d\n' "${local_port}" >/dev/null 2>&1 || {
+    __bma_error "Local Port must be a number"
+    return 1
+  }
+
+  printf -- '\nPortforwarding between EC2 instance %s port %d and localhost port %d\n' \
+    "${instance_id}" "${remote_port}" "${local_port}"
+
+  # Ignore shellcheck alert on parameters directive
+  # shellcheck disable=SC2140
+  aws ssm start-session                            \
+    --target "${instance_id}"                      \
+    --document-name AWS-StartPortForwardingSession \
+    --parameters "portNumber"=["${remote_port}"],"localPortNumber"=["${local_port}"]
+
+}
 
 instance-ssh() {
 

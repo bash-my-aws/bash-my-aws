@@ -585,6 +585,64 @@ List ip address of EC2 Instance(s)
     i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
     i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
 
+### instance-portforward
+
+Setup a SSM portforward between a port on a remote EC2 Instance and a local port.
+
+Remote port may be given as a number, or as a keyword from the following list:
+
+- aurora     (i.e. port 3306)
+- dns        (i.e. port 53)
+- elasticgfx (i.e. port 2007)
+- http       (i.e. port 80)
+- https      (i.e. port 443)
+- imap       (i.e. port 143)
+- imaps      (i.e. port 993)
+- ldap       (i.e. port 398)
+- mssql      (i.e. port 1433)
+- mysql      (i.e. port 3306)
+- oracle     (i.e. port 1521)
+- pop3       (i.e. port 110)
+- pop3s      (i.e. port 995)
+- postgres   (i.e. port 5432)
+- redshift   (i.e. port 5439)
+- rdp        (i.e. port 3389)
+- smb        (i.e. port 445)
+- smtp       (i.e. port 25)
+- smtps      (i.e. port 465)
+- ssh        (i.e. port 22)
+- winrm      (i.e. port 5985)
+- winrms     (i.e. port 5986)
+
+Local port is optional and must be a number. If unspecified, the same port number as the remote port will be attempted.
+
+    USAGE: instance-portforward [remote port] [local port (optional)] [instance-id]
+
+    # Example: Remote RDP portforwarded to localhost port 9000
+    # ec2-instance:3389 <-- portforward --> localhost:9000
+    $ instances example-windows-host | instance-portforward rdp 9000
+
+    Portforwarding between EC2 instance i-008db2027225a0a40 port 3389 and localhost port 9000
+
+    Starting session with SessionId: jo.bloggs@contoso.com-0e84c8293af47aad6.
+    Port 9000 opened for sessionId jo.bloggs@contoso.com-0e84c8293af47aad6.
+    Waiting for connections...
+
+    # At this point, we open an RDP client and connect to localhost:9000
+    Connection accepted for session [jo.bloggs@contoso.com-0e84c8293af47aad6]
+
+    # When you're finished, enter Ctrl+C to close the portforward and exit
+    ^CTerminate signal received, exiting.
+
+    Exiting session with sessionId: jo.bloggs@contoso.com-0e84c8293af47aad6.
+
+Further examples without example output:
+
+    # ec2-instance:1433 <-- portforward --> localhost:5600
+    $ instances mssql01 | instance-portforward 1433 5600
+
+    # ec2-instance:443 <-- portforward --> localhost:8080
+    $ instance-portforward https 8080 i-806d8f1592e2a2efd
 
 ### instance-ssh
 
