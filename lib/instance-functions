@@ -315,6 +315,31 @@ instance-ssm() {
   done
 }
 
+instance-ssm-port-forward() {
+
+  # Create tunnel from localhost to remote EC2 instance
+  #
+  #     USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
+
+  local local_port_number=$1
+  local port_number=$2
+  shift 2
+  local instance_ids=$(skim-stdin "$@")
+  if [[ -z $local_port_number || -z $port_number || -z $instance_ids ]] ; then
+    echo "Usage: $FUNCNAME local_port_number port_number instance-id [instance-id]"
+    return 1
+  fi
+
+  exec </dev/tty # reattach keyboard to STDIN
+
+  for instance_id in $instance_ids; do
+    aws ssm start-session                                                           \
+      --target "$instance_id" \
+      --document-name AWS-StartPortForwardingSession \
+      --parameters "localPortNumber=${local_port_number},portNumber=${port_number}"
+  done
+}
+
 
 instance-stack() {
 

@@ -4,6 +4,7 @@
 __bma-using-aws-cli-v1
 __bma_error
 __bma_read_filters
+__bma_read_filters-az
 __bma_read_inputs
 __bma_read_stdin
 __bma_usage
@@ -40,6 +41,8 @@ aws-account-each
 aws-account-id
 aws-accounts
 aws-panopticon
+az-account
+az-user
 bucket-acls
 bucket-remove
 bucket-remove-force
@@ -64,6 +67,8 @@ elbv2-dnsname
 elbv2-subnets
 elbv2-target-groups
 elbv2s
+front-door-waf-policies
+front-door-waf-policy-rules
 hosted-zone-ns-records
 hosted-zones
 iam-role-principal
@@ -81,6 +86,7 @@ instance-ip
 instance-ssh
 instance-ssh-details
 instance-ssm
+instance-ssm-port-forward
 instance-stack
 instance-start
 instance-state
@@ -114,6 +120,9 @@ lambda-function-memory-step
 lambda-functions
 launch-configuration-asgs
 launch-configurations
+location
+location-each
+locations
 log-groups
 pcxs
 rds-db-clusters
@@ -121,7 +130,12 @@ rds-db-instances
 region
 region-each
 regions
+resource-groups
+resources
+service-principals
 skim-stdin
+skim-stdin-bma
+skim-stdin-tsv
 stack-arn
 stack-asg-instances
 stack-asgs
@@ -150,6 +164,9 @@ stack-validate
 stacks
 sts-assume-role
 subnets
+subscription
+subscription-each
+subscriptions
 target-group-targets
 target-groups
 vpc-az-count

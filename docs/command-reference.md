@@ -607,6 +607,13 @@ Establish SSM connection to EC2 Instance(s)
     USAGE: instance-ssm instance-id [instance-id]
 
 
+### instance-ssm-port-forward
+
+Create tunnel from localhost to remote EC2 instance
+
+    USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
+
+
 ### instance-stack
 
 List CloudFormation stack EC2 Instance(s) belong to (if any)
@@ -743,6 +750,11 @@ List VPC of instance(s)
 ## asg-commands
 
 
+### asg-detach-instances
+
+Detach all instances from asg(s)
+
+
 ### asgs
 
 List EC2 Autoscaling Groups
@@ -811,6 +823,85 @@ List CloudFormation stack for asg(s)
 ### asg-scaling-activities
 
 List scaling activities for Autoscaling Group(s)
+
+
+## azure-commands
+Construct a string to be passed to `grep -E`
+
+    foo|bar|baz
+
+
+### function
+ skim-stdin-bma
+Append first token from each line of STDIN to argument list
+
+Implementation of `pipe-skimming` pattern.
+
+    $ stacks | skim-stdin foo bar
+    foo bar huginn mastodon grafana
+
+    $ stacks
+    huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+    mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+    grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+Typical usage within Bash-my-AWS functions:
+
+    local asg_names=$(skim-stdin "$@") # Append to arg list
+    local asg_names=$(skim-stdin)      # Only draw from STDIN
+
+
+### function
+ az-account
+
+
+### function
+ az-user
+
+
+### function
+ locations
+
+
+### function
+ location
+
+
+### location-each
+
+
+
+### function
+ resource-groups
+
+
+### function
+ resources
+
+
+### function
+ service-principals
+
+
+### function
+ subscriptions
+
+
+### function
+ subscription
+
+
+### subscription-each
+
+Ported from BMA
+
+
+### function
+ front-door-waf-policies
+
+
+### function
+ front-door-waf-policy-rules
 
 
 ## cert-commands
