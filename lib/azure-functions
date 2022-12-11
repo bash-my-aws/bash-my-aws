@@ -85,6 +85,56 @@ function az-user() {
   az ad signed-in-user show
 }
 
+# az cache functions
+
+function az-cache-items() {
+  az cache list \
+  --query '[].[
+    resourceGroup,
+    resourceType,
+    name,
+    lastSaved
+    ]' \
+  --output tsv
+}
+
+function az-cache-item() {
+  # XXX We probably want to quote args
+  # Create arguments from output of az-cache-items() (if present)
+  local args_from_stdin
+  args_from_stdin="$([[ -t 0 ]] || awk '{ print "--resource-group=" $1, " --resource-type=" $2, " --name=" $3 }')"
+  if [[ -n $1 ]]; then # if command line args provided
+    if [[ -n $1 && -n $2 && -n $3 ]]; then # if >= 3 args present
+      local args_from_cmd
+      args_from_cmd="--resource-group=$1 --resource-type=$2 --name=$3"
+    fi
+  fi
+  local $arg_list
+  arg_list=$(printf -- '%s\n%s' "$args_from_stdin" "$args_from_cmd" ) # | awk '{$1=$1;print}')  # trim leading/trailing spaces
+  echo "$arg_list"
+  while read -r line; do
+    az cache show $line
+  done <<< "$arg_list"
+}
+
+function az-cache-item-delete() {
+  # XXX We probably want to quote args
+  # Create arguments from output of az-cache-items() (if present)
+  local args_from_stdin
+  args_from_stdin="$([[ -t 0 ]] || awk '{ print "--resource-group=" $1, " --resource-type=" $2, " --name=" $3 }')"
+  if [[ -n $1 ]]; then # if command line args provided
+    if [[ -n $1 && -n $2 && -n $3 ]]; then # if >= 3 args present
+      local args_from_cmd
+      args_from_cmd="--resource-group=$1 --resource-type=$2 --name=$3"
+    fi
+  fi
+  local $arg_list
+  arg_list=$(printf -- '%s\n%s' "$args_from_stdin" "$args_from_cmd" ) # | awk '{$1=$1;print}')  # trim leading/trailing spaces
+  while read -r line; do
+    az cache delete $line
+  done <<< "$arg_list"
+}
+
 # Location Functions
 
 function locations(){
@@ -228,6 +278,10 @@ subscription-each() {
   done
   subscription "$old_default_subscription"
 }
+
+##
+## Resource Specific Functions
+##
 
 function front-door-waf-policies() {
   local resource_groups=$(skim-stdin-bma "$@")
