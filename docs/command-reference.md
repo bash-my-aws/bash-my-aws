@@ -408,7 +408,7 @@ Show all events for CF stack until update completes or fails.
 
 ### stack-template
 
-Return template of a stack
+Return template of each stack
 
 
 ### stack-tags
@@ -429,6 +429,21 @@ List outputs of a stack
 ### stack-validate
 
 Validate a stack template
+
+
+### stack-detect-drift
+
+Detect drift for provided stacks; and print coloured diff
+
+
+### stack-describe-drift
+
+List stack-tags applied to a stack
+
+
+### stack-diff-drift
+
+List stack-tags applied to a stack
 
 
 ### stack-diff

@@ -63,6 +63,8 @@ columnise
 debug
 ecr-repositories
 ecr-repository-images
+elasticaches
+elasticache-replication-groups
 elb-azs
 elb-dnsname
 elb-instances
@@ -161,7 +163,10 @@ stack-asgs
 stack-cancel-update
 stack-create
 stack-delete
+stack-describe-drift
+stack-detect-drift
 stack-diff
+stack-diff-drift
 stack-elbs
 stack-events
 stack-exports

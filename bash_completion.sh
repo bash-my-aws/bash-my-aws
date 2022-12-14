@@ -202,7 +202,10 @@ complete -F _bma_stacks_completion stack-asg-instances
 complete -F _bma_stacks_completion stack-asgs
 complete -F _bma_stacks_completion stack-cancel-update
 complete -F _bma_stacks_completion stack-delete
+complete -F _bma_stacks_completion stack-describe-drift
+complete -F _bma_stacks_completion stack-detect-drift
 complete -F _bma_stacks_completion stack-diff
+complete -F _bma_stacks_completion stack-diff-drift
 complete -F _bma_stacks_completion stack-elbs
 complete -F _bma_stacks_completion stack-events
 complete -F _bma_stacks_completion stack-exports
