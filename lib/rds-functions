@@ -19,11 +19,14 @@ rds-db-instances() {
     --output text               \
     --query "DBInstances[].[
         DBInstanceIdentifier,
+	DBInstanceClass,
         Engine,
         EngineVersion,
         DBInstanceStatus,
-        DBName
+        DBName,
+	MultiAZ
       ]"                |
+  sed 's/True$/MultiAZ/g' | sed 's/False$//' |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 1 |
   column -s$'\t' -t

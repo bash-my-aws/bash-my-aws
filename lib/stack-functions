@@ -700,19 +700,20 @@ stack-tail() {
 
 stack-template() {
 
-  # Return template of a stack
+  # Return template of each stack
+  local stacks=$(skim-stdin "$@")
 
-  local inputs=$(skim-stdin "$@")
-  local stack=$(_bma_stack_name_arg ${inputs})
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+  local stack
+  for stack in $stacks; do
 
-  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
-
-  aws cloudformation get-template       \
-    --stack-name "$stack"               \
-    --query TemplateBody                |
-  jq --raw-output --sort-keys .         |
-  sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba'   # remove trailing blank lines
+    aws cloudformation get-template       \
+      --stack-name "$stack"               \
+      --query TemplateBody                |
+    jq --raw-output --sort-keys .         |
+    sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba'   # remove trailing blank lines
                                           # sometimes appended by jq
+  done
 }
 
 
@@ -791,6 +792,87 @@ stack-validate() {
 }
 
 
+stack-detect-drift() {
+
+  # Detect drift for provided stacks; and print coloured diff
+  local stacks=$(skim-stdin "$@")
+  [[ -z ${stacks} ]] && __bma_usage "stack [stack]" && return 1
+
+  for stack in $stacks; do
+    driftDetectionId=$(aws cloudformation detect-stack-drift \
+      --stack-name "$stack" --output text)
+    DetectionStatus=""
+    while [[ "$DetectionStatus" != "DETECTION_COMPLETE" ]]; do
+      printf "."
+      DescribeDriftDetectionStatus=$(aws cloudformation describe-stack-drift-detection-status \
+        --stack-drift-detection-id $driftDetectionId )
+      DetectionStatus=$(echo $DescribeDriftDetectionStatus | jq --raw-output .DetectionStatus )
+      StackDriftStatus=$(echo $DescribeDriftDetectionStatus | jq --raw-output .StackDriftStatus) 
+      sleep 5;
+    done
+    if [[ "$StackDriftStatus" == "IN_SYNC" ]]; then
+      echo
+      echo "$stack is in sync"
+    else
+      echo "$stack has drifted"
+      stack-diff-drift $stack
+    fi
+  done
+
+}
+
+stack-describe-drift() {
+
+  # List stack-tags applied to a stack
+
+  local inputs=$(skim-stdin "$@")
+  local stack=$(_bma_stack_name_arg ${inputs})
+
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
+  stackResourceDrifts=$( aws cloudformation describe-stack-resource-drifts \
+    --stack-name "$stack"            \
+    --query 'StackResourceDrifts[*].{StackId:StackId,ExpectedProperties:ExpectedProperties,ActualProperties:ActualProperties}' )
+# jq -S <<< $stackResourceDrifts
+  ExpectedProperties=$(echo $stackResourceDrifts | jq --raw-output .[].ExpectedProperties)
+#  ExpectedPropertiesPretty=$(jq . -S --raw-output <<< "$ExpectedProperties")
+  ActualProperties=$(echo $stackResourceDrifts | jq --raw-output .[].ActualProperties)
+#  ActualPropertiesPretty=$(jq . -S --raw-output <<< "$ActualProperties")
+  echo
+ echo "Expected Properties:"
+ jq . <<< "$ExpectedProperties"
+ echo "Actual Properties:"
+ jq . <<< "$ActualProperties"
+  echo 
+
+}
+
+stack-diff-drift() {
+
+  # List stack-tags applied to a stack
+
+  local inputs=$(skim-stdin "$@")
+  local stack=$(_bma_stack_name_arg ${inputs})
+
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
+  stackResourceDrifts=$( aws cloudformation describe-stack-resource-drifts \
+    --stack-name "$stack"            \
+    --query 'StackResourceDrifts[*].{StackId:StackId,ExpectedProperties:ExpectedProperties,ActualProperties:ActualProperties}' )
+# jq -S <<< $stackResourceDrifts
+  ExpectedProperties=$(echo $stackResourceDrifts | jq --raw-output .[].ExpectedProperties)
+  ExpectedPropertiesPretty=$(jq . -S --raw-output <<< "$ExpectedProperties")
+  ActualProperties=$(echo $stackResourceDrifts | jq --raw-output .[].ActualProperties)
+  ActualPropertiesPretty=$(jq . -S --raw-output <<< "$ActualProperties")
+  echo 
+  # TODO : check whether diff is installed, otherwise just print $ExpectedPropertiesPretty and $ActualPropertiesPretty
+  echo "The diff ( Expected | Actual )"
+  diff -y --left-column --color=always <(printf %s "$ExpectedPropertiesPretty") <(printf %s "$ActualPropertiesPretty")
+
+}
+
+
+
 stack-diff(){
 
   # Compare live stack against local template (and optional params file)
@@ -845,7 +927,7 @@ _bma_stack_diff_template() {
   elif command -v icdiff; then
     local DIFF_CMD=icdiff
   else
-    local DIFF_CMD=diff
+    local DIFF_CMD='diff --color=always'
   fi
 
   $DIFF_CMD -u                     \

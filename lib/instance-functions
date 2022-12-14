@@ -22,6 +22,8 @@ instances() {
 
   local instance_ids=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
+  local sort_key=5
+  [ -z $filters ] && sort_key=6
 
   aws ec2 describe-instances            \
     ${instance_ids/#/'--instance-ids '} \
@@ -34,11 +36,10 @@ instances() {
         State.Name,
         [Tags[?Key=='Name'].Value][0][0],
         LaunchTime,
-        Placement.AvailabilityZone,
-        VpcId
+        Placement.AvailabilityZone
       ]"                |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 6 |
+  LC_ALL=C sort -b -k $sort_key |
   column -s$'\t' -t
 }
 
@@ -87,6 +88,7 @@ instance-az() {
       Reservations[].Instances[][
         [
           InstanceId,
+          VpcId,
           Placement.AvailabilityZone
         ]
       ][]"          |
