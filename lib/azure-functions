@@ -20,6 +20,10 @@
 
 # Shared Functions
 
+function debug() {
+  [[ -n $DEBUG ]] && printf "$1" >&2
+}
+
 __bma_read_filters-az() {
 
   # Construct a string to be passed to `grep -E`
@@ -34,8 +38,6 @@ function columnise ()
 {
     column -t -s$'\t'
 }
-
-
 
 function skim-stdin-tsv ()
 {
@@ -78,7 +80,6 @@ function az-account() {
     --query ' [[ name, user.name ]]' \
     --output tsv |
   columnise
-
 }
 
 function az-user() {
@@ -167,7 +168,11 @@ function location() {
   fi
 }
 
-location-each() {
+function location-unset() {
+    az config unset defaults.location
+}
+
+function location-each() {
 
   local locations
   if [[ -t 0 ]]; then
@@ -201,6 +206,26 @@ function resource-groups() {
   column -s$'\t' -t
 }
 
+function resource-group() {
+
+  local group=$(skim-stdin-bma "$@")
+  # XXX Check input is a valid location
+  if [[ -z "$group" ]]; then
+    az config get defaults.group \
+      --only-show-errors         \
+      --output tsv               \
+      --query "value"
+  else
+    az config set defaults.group="${group}" \
+      --only-show-errors                          \
+      --output tsv
+  fi
+}
+
+function resource-group-unset() {
+    az config unset defaults.group
+}
+
 function resources() {
   local filters=$(__bma_read_filters-az $@);
   az resource list                           \
@@ -216,7 +241,7 @@ function resources() {
   column -s$'\t' -t
 }
 
-## service-principal Functions
+## Service Principal Functions
 
 function service-principals() {
   local filters=$(__bma_read_filters-az $@);
@@ -259,7 +284,11 @@ function subscription() {
   fi
 }
 
-subscription-each() {
+function subscription-unset() {
+    az config unset defaults.subscription
+}
+
+function subscription-each() {
 
   # Ported from BMA
 
@@ -279,54 +308,121 @@ subscription-each() {
   subscription "$old_default_subscription"
 }
 
-##
 ## Resource Specific Functions
-##
+
+## Front Door WAF Functions
 
 function front-door-waf-policies() {
-  local resource_groups=$(skim-stdin-bma "$@")
-  echo $resource_groups
-  return 0
-  [[ -z $resource_groups ]] && __bma_usage "resource_group [resource_group]" && return 1
-  local resource_group
-  for resource_group in $resource_groups; do
-    az network front-door waf-policy list \
-      --resource-group "$resource_group" \
+  az network front-door waf-policy list \
+    --output tsv \
+    --query "[].[
+      name,
+      resourceGroup,
+      resourceState
+      ]" |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 1 |
+  column -s$'\t' -t
+}
+
+function front-door-waf-policy-rules() {
+
+  local policies=$(skim-stdin-bma "$@")
+   debug "\$policies=$policies"
+  [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
+
+  local policy
+  for policy in $policies; do
+    az network front-door waf-policy rule list \
+      --policy-name "$policy" \
       --output tsv \
       --query "[].[
         name,
-        resourceGroup,
-        resourceState
-        ]" |
+        enabledState,
+        priority,
+        ruleType,
+        action,
+        '$policy',
+        '$resource_group'
+      ]" |
     grep -E -- "$filters" |
     LC_ALL=C sort -b -k 1 |
     column -s$'\t' -t
   done
 }
 
-function front-door-waf-policy-rules() {
-  local resource_groups=$(skim-stdin-tsv "$@")
-  [[ -z $resource_groups ]] && __bma_usage "resource_group [resource_group]" && return 1
-  local resource_group
-  for resource_group in $resource_groups; do
-    local policy_name
-    for policy_name in $(front-door-waf-policies "$resource_group" | awk '{print $1}'); do
-      az network front-door waf-policy rule list \
-        --resource-group "$resource_group" \
-        --policy-name "$policy_name" \
-        --output tsv \
-        --query "[].[
-          name,
-          enabledState,
-          priority,
-          ruleType,
-          action,
-          '$policy_name',
-          '$resource_group'
-        ]" |
-      grep -E -- "$filters" |
-      LC_ALL=C sort -b -k 1 |
-      column -s$'\t' -t
-    done
+function front-door-waf-policy-rule-match-conditions() {
+
+  local policy_name="${1}"
+  shift 1
+  local rule_names=$(skim-stdin "$@")
+
+  if [[ -z $policy_name || -z $rule_names ]]; then
+    echo "Usage: ${FUNCNAME[0]} POLICY_NAME RULE_NAME [RULE_NAME]" >&2
+    return 1
+  fi
+
+  local rule_name
+  for rule_name in $rule_names; do
+    az network front-door waf-policy rule match-condition list \
+      --policy-name "$policy_name"                             \
+      --name "$rule_name"                                      \
+      --query '[].[[
+        join(`=`, [`operator`, operator]),
+        join(`=`, [`matchVariable`, matchVariable]),
+        join(`=`, [
+          `matchValues`,
+           to_string(length(matchValue))
+        ]),
+       `# view matches with front-door-waf-policy-rule-match-values()`
+      ]][]'                                                       \
+      --output tsv
   done
+}
+
+function front-door-waf-policy-rule-match-condition-values() {
+
+  local policy_name="${1}"
+  shift 1
+  local rule_names=$(skim-stdin "$@")
+
+  if [[ -z $policy_name || -z $rule_names ]]; then
+    echo "Usage: ${FUNCNAME[0]} POLICY_NAME RULE_NAME [RULE_NAME]" >&2
+    return 1
+  fi
+
+  local rule_name
+  for rule_name in $rule_names; do
+    az network front-door waf-policy rule match-condition list \
+      --policy-name "$policy_name"                             \
+      --name "$rule_name"                                      \
+      --query '[0].[matchValue][]'                             \
+      --output tsv
+  done
+}
+
+function front-door-waf-policy-rule-delete() {
+
+  local policy_name="${1:-}"
+  shift
+  local rule_names=$(skim-stdin-bma "$@")
+
+  if [[ -z $policy_name || -z $rule_names ]]; then
+    echo "Usage: front-door-waf-policy-rule-delete POLICY_NAME RULE_NAME [RULE_NAME]" >&2
+    return 1
+  fi
+
+  echo "You are about to delete the following front-door WAF policy rules from $policy_name:"
+  echo "$rule_names" | tr ' ' "\n" # | front-door-waf-policy-rules # XXX add when we have resourceGroup sorted
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+    # XXX replace with `--ids` arg when we can generate resource IDs # it's easy
+    for rule_name in $rule_names; do
+      az network front-door waf-policy rule delete --policy-name wafPremium --name "${rule_name}"
+    done
+  fi
 }
