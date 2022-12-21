@@ -607,6 +607,10 @@ Establish SSM connection to EC2 Instance(s)
     USAGE: instance-ssm instance-id [instance-id]
 
 
+### instance-rdp
+
+
+
 ### instance-ssm-port-forward
 
 Create tunnel from localhost to remote EC2 instance
@@ -657,6 +661,13 @@ Stop EC2 Instance(s)
 
     i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
     i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
+
+
+### instance-subnet
+
+List subnet for EC2 Instance(s)
+
+    USAGE: instance-subnets instance-id [instance-id]
 
 
 ### instance-tags
@@ -826,6 +837,10 @@ List scaling activities for Autoscaling Group(s)
 
 
 ## azure-commands
+
+
+### function
+ debug
 Construct a string to be passed to `grep -E`
 
     foo|bar|baz
@@ -860,6 +875,20 @@ Typical usage within Bash-my-AWS functions:
 
 
 ### function
+ az-cache-items
+
+
+### function
+ az-cache-item
+Create arguments from output of az-cache-items() (if present)
+
+
+### function
+ az-cache-item-delete
+Create arguments from output of az-cache-items() (if present)
+
+
+### function
  locations
 
 
@@ -867,12 +896,24 @@ Typical usage within Bash-my-AWS functions:
  location
 
 
-### location-each
+### function
+ location-unset
 
+
+### function
+ location-each
 
 
 ### function
  resource-groups
+
+
+### function
+ resource-group
+
+
+### function
+ resource-group-unset
 
 
 ### function
@@ -891,8 +932,12 @@ Typical usage within Bash-my-AWS functions:
  subscription
 
 
-### subscription-each
+### function
+ subscription-unset
 
+
+### function
+ subscription-each
 Ported from BMA
 
 
@@ -902,6 +947,22 @@ Ported from BMA
 
 ### function
  front-door-waf-policy-rules
+
+
+### function
+ front-door-waf-policy-rule-match-conditions
+
+
+### function
+ front-door-waf-policy-rule-match-condition-values
+
+
+### function
+ front-door-waf-policy-rule-delete
+
+
+### function
+ ad-users
 
 
 ## cert-commands

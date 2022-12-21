@@ -174,6 +174,7 @@ complete -F _bma_instances_completion instance-dns
 complete -F _bma_instances_completion instance-health-set-unhealthy
 complete -F _bma_instances_completion instance-iam-profile
 complete -F _bma_instances_completion instance-ip
+complete -F _bma_instances_completion instance-rdp
 complete -F _bma_instances_completion instance-ssh
 complete -F _bma_instances_completion instance-ssh-details
 complete -F _bma_instances_completion instance-ssm
@@ -182,6 +183,7 @@ complete -F _bma_instances_completion instance-stack
 complete -F _bma_instances_completion instance-start
 complete -F _bma_instances_completion instance-state
 complete -F _bma_instances_completion instance-stop
+complete -F _bma_instances_completion instance-subnet
 complete -F _bma_instances_completion instance-tags
 complete -F _bma_instances_completion instance-terminate
 complete -F _bma_instances_completion instance-termination-protection
@@ -213,7 +215,6 @@ complete -F _bma_stacks_completion stack-resources
 complete -F _bma_stacks_completion stack-status
 complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
-complete -F _bma_stacks_completion stack-template-summary
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stacks
 complete -F _bma_target-groups_completion target-group-targets

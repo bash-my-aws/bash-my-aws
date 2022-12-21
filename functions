@@ -21,6 +21,7 @@ _bma_stack_diff_template
 _bma_stack_name_arg
 _bma_stack_params_arg
 _bma_stack_template_arg
+ad-users
 asg-capacity
 asg-desired-size-set
 asg-detach-instances
@@ -42,6 +43,9 @@ aws-account-id
 aws-accounts
 aws-panopticon
 az-account
+az-cache-item
+az-cache-item-delete
+az-cache-items
 az-user
 bucket-acls
 bucket-remove
@@ -54,6 +58,7 @@ certs-arn
 cloudtrail-status
 cloudtrails
 columnise
+debug
 ecr-repositories
 ecr-repository-images
 elb-azs
@@ -68,6 +73,9 @@ elbv2-subnets
 elbv2-target-groups
 elbv2s
 front-door-waf-policies
+front-door-waf-policy-rule-delete
+front-door-waf-policy-rule-match-condition-values
+front-door-waf-policy-rule-match-conditions
 front-door-waf-policy-rules
 hosted-zone-ns-records
 hosted-zones
@@ -83,6 +91,7 @@ instance-dns
 instance-health-set-unhealthy
 instance-iam-profile
 instance-ip
+instance-rdp
 instance-ssh
 instance-ssh-details
 instance-ssm
@@ -91,6 +100,7 @@ instance-stack
 instance-start
 instance-state
 instance-stop
+instance-subnet
 instance-tags
 instance-terminate
 instance-termination-protection
@@ -122,6 +132,7 @@ launch-configuration-asgs
 launch-configurations
 location
 location-each
+location-unset
 locations
 log-groups
 pcxs
@@ -130,6 +141,8 @@ rds-db-instances
 region
 region-each
 regions
+resource-group
+resource-group-unset
 resource-groups
 resources
 service-principals
@@ -158,7 +171,6 @@ stack-tags
 stack-tags-text
 stack-tail
 stack-template
-stack-template-summary
 stack-update
 stack-validate
 stacks
@@ -166,6 +178,7 @@ sts-assume-role
 subnets
 subscription
 subscription-each
+subscription-unset
 subscriptions
 target-group-targets
 target-groups
