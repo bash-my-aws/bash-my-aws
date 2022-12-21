@@ -276,7 +276,7 @@ function subscriptions() {
 
 function subscription() {
 
-  local subscription=$(skim-stdin-tsv "$@")
+  local subscription=$(skim-stdin-bma "$@")
   if [[ -z $subscription ]]; then
     subscriptions True
   else
@@ -425,4 +425,24 @@ function front-door-waf-policy-rule-delete() {
       az network front-door waf-policy rule delete --policy-name wafPremium --name "${rule_name}"
     done
   fi
+}
+
+## AD Functions
+
+function ad-users() {
+
+  local filter_arg
+  [[ -n $1 ]] && filter_arg='--filter "startsWith(displayName,'"'$1'"')"'
+
+  eval "az ad user list \
+    --output tsv        \
+    ${filter_arg}       \
+    --query '[].[
+      userPrincipalName,
+      displayName,
+      mail
+      ]'"               |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 1 |
+  column -s$'\t' -t
 }
