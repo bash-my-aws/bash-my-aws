@@ -222,6 +222,16 @@ function resource-group() {
   fi
 }
 
+function resource-group-export() {
+
+  local resource_group=$(skim-stdin-bma "$@")
+  [[ -z $resource_group ]] && resource_group=$(resource-group)
+   debug "\$resource_group=$resource_group"
+  [[ -z $resource_group ]] && __bma_usage "resource_group [resource_group]" && return 1
+
+  az group export --resource-group "$resource_group"
+}
+
 function resource-group-unset() {
     az config unset defaults.group
 }
@@ -239,6 +249,26 @@ function resources() {
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 5 |
   column -s$'\t' -t
+}
+
+function resourceids() {
+  local filters=$(__bma_read_filters-az $@);
+  az resource list      \
+    --query "[].[id] "  \
+    --output tsv        |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -b -k 5 |
+  column -s$'\t' -t
+}
+
+
+function resource-export() {
+
+  local resources=$(skim-stdin-bma "$@")
+   debug "\$resources=$resources"
+  [[ -z $resources ]] && __bma_usage "resource [resource]" && return 1
+
+  az group export --resource-ids $resources
 }
 
 ## Service Principal Functions
@@ -278,7 +308,7 @@ function subscription() {
 
   local subscription=$(skim-stdin-bma "$@")
   if [[ -z $subscription ]]; then
-    subscriptions True
+    az account show --query "name" --output tsv
   else
     az account set --subscription "$subscription"
   fi
@@ -313,6 +343,7 @@ function subscription-each() {
 ## Front Door WAF Functions
 
 function front-door-waf-policies() {
+  local filters=$(__bma_read_filters-az $@);
   az network front-door waf-policy list \
     --output tsv \
     --query "[].[
@@ -345,9 +376,20 @@ function front-door-waf-policy-rules() {
         '$policy',
         '$resource_group'
       ]" |
-    grep -E -- "$filters" |
     LC_ALL=C sort -b -k 1 |
     column -s$'\t' -t
+  done
+}
+
+function front-door-waf-policy() {
+
+  local policies=$(skim-stdin-bma "$@")
+   debug "\$policies=$policies"
+  [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
+
+  local policy
+  for policy in $policies; do
+    az network front-door waf-policy show --name "$policy" --output json
   done
 }
 
@@ -432,14 +474,14 @@ function front-door-waf-policy-rule-delete() {
 function ad-users() {
 
   local filter_arg
-  [[ -n $1 ]] && filter_arg='--filter "startsWith(displayName,'"'$1'"')"'
+  [[ -n $1 ]] && filter_arg='--filter "startswith(displayname,'"'$1'"')"'
 
   eval "az ad user list \
     --output tsv        \
     ${filter_arg}       \
     --query '[].[
-      userPrincipalName,
-      displayName,
+      userprincipalname,
+      displayname,
       mail
       ]'"               |
   grep -E -- "$filters" |
