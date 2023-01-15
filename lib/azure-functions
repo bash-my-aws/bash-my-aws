@@ -18,6 +18,14 @@
 # - `az login` without opening GUI web browser. username/password is an option.
 # - bash completion
 
+
+# Notes
+#
+# az login : log in
+# az account clear: log out all users
+# az logout: only log out current user
+
+
 # Shared Functions
 
 function debug() {
@@ -147,7 +155,7 @@ function locations(){
     ]' \
     --output tsv |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 3 |
+  LC_ALL=C sort -t$'\t' -b -k 3 |
   columnise
 
 }
@@ -202,7 +210,7 @@ function resource-groups() {
       ]" \
     --output tsv |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 5 |
+  LC_ALL=C sort -t$'\t' -b -k 5 |
   column -s$'\t' -t
 }
 
@@ -247,7 +255,7 @@ function resources() {
       changedTime]" \
     --output tsv |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 5 |
+  LC_ALL=C sort -t$'\t' -b -k 5 |
   column -s$'\t' -t
 }
 
@@ -257,7 +265,7 @@ function resourceids() {
     --query "[].[id] "  \
     --output tsv        |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 5 |
+  LC_ALL=C sort -t$'\t' -b -k 5 |
   column -s$'\t' -t
 }
 
@@ -283,7 +291,7 @@ function service-principals() {
     ]" \
     --output tsv |
     grep -E -- "$filters" |
-    LC_ALL=C sort -b -k 3 |
+    LC_ALL=C sort -t$'\t' -b -k 3 |
     column -s$'\t' -t
 }
 
@@ -291,16 +299,16 @@ function service-principals() {
 
 function subscriptions() {
   local filters=$(__bma_read_filters-az $@);
-  az account list --all                      \
+  az account list            \
     --query "[].[
       id,
       isDefault,
       state,
       name
-    ]"                                       \
-    --output tsv                             |
-    grep -E -- "$filters"                    |
-    LC_ALL=C sort -b -k 3                    |
+    ]"                       \
+    --output tsv             |
+    grep -E -- "$filters"    |
+    LC_ALL=C sort -t$'\t' -b -k 3    |
     column -s$'\t' -t
 }
 
@@ -352,7 +360,7 @@ function front-door-waf-policies() {
       resourceState
       ]" |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 1 |
+  LC_ALL=C sort -t$'\t' -b -k 1 |
   column -s$'\t' -t
 }
 
@@ -376,7 +384,7 @@ function front-door-waf-policy-rules() {
         '$policy',
         '$resource_group'
       ]" |
-    LC_ALL=C sort -b -k 1 |
+    LC_ALL=C sort -t$'\t' -b -k 1 |
     column -s$'\t' -t
   done
 }
@@ -473,18 +481,54 @@ function front-door-waf-policy-rule-delete() {
 
 function ad-users() {
 
-  local filter_arg
-  [[ -n $1 ]] && filter_arg='--filter "startswith(displayname,'"'$1'"')"'
+  # Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+  #
+  # REMOTE_FILTER: filters on start of userPrincipalName
+  # LOCAL_FILTER: grep results
+
+  local filter_arg filters
+  if [[ -n $1 ]]; then
+    filter_arg='--filter "startswith(userPrincipalName,'"'$1'"')"'
+    shift
+    local filters=$(__bma_read_filters-az $@);
+  fi
 
   eval "az ad user list \
-    --output tsv        \
     ${filter_arg}       \
     --query '[].[
-      userprincipalname,
-      displayname,
+      userPrincipalName,
+      displayName,
       mail
-      ]'"               |
+      ]'                \
+    --output tsv"       |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 1 |
+  LC_ALL=C sort -t$'\t' -b -k 2 |
+  column -s$'\t' -t
+}
+
+function ad-apps() {
+
+  # Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+  #
+  # REMOTE_FILTER: filters on start of userPrincipalName
+  # LOCAL_FILTER: grep results
+
+  local filter_arg filters
+  if [[ -n $1 ]]; then
+    filter_arg='--filter "startswith(displayName,'"'$1'"')"'
+    shift
+    local filters=$(__bma_read_filters-az $@);
+  fi
+
+  eval "az ad app list  \
+    ${filter_arg}       \
+    --query '[].[
+      appId,
+      displayName,
+      createdDateTime
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 3 |
   column -s$'\t' -t
 }
