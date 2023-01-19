@@ -481,9 +481,9 @@ function front-door-waf-policy-rule-delete() {
 
 function ad-users() {
 
-  # Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+  # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
   #
-  # REMOTE_FILTER: filters on start of userPrincipalName
+  # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
   # LOCAL_FILTER: grep results
 
   local filter_arg filters
@@ -505,6 +505,36 @@ function ad-users() {
   LC_ALL=C sort -t$'\t' -b -k 2 |
   column -s$'\t' -t
 }
+
+
+function ad-user-groups() {
+
+  # List groups for AD User(s)
+  #
+  #     USAGE: ad-user-groups USER USER # object ID or principal name of the user
+  #
+  #     $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+  #     XXX
+  #     XXX
+
+  local users=$(skim-stdin "$@")
+  [[ -z $users ]] && __bma_usage "ad-user-groups USER [USER]" && return 1
+
+  local user
+  for user in $users; do
+    az ad user get-member-groups    \
+      --id "$user"                  \
+      --query '[].[
+        id,
+        displayName]'               \
+      --output tsv                  |
+      LC_ALL=C sort -t$'\t' -b -k 2 |
+      column -s$'\t' -t
+  done
+}
+
+
+
 
 function ad-apps() {
 
