@@ -524,9 +524,11 @@ function ad-user-groups() {
   for user in $users; do
     az ad user get-member-groups    \
       --id "$user"                  \
-      --query '[].[
+      --query "[].[
         id,
-        displayName]'               \
+        displayName,
+        '$user'
+        ]"               \
       --output tsv                  |
       LC_ALL=C sort -t$'\t' -b -k 2 |
       column -s$'\t' -t
