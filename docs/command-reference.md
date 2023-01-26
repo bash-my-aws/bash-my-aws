@@ -618,6 +618,26 @@ Create tunnel from localhost to remote EC2 instance
     USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
 
 
+### instance-ssm-port-forward-remote-host
+
+Start a port forwarding session to a remote host through an EC2 instance. 
+The remote host isn't required to be managed by AWS Systems Manager as long as
+it is accessible from the EC2 instance. [Reference](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-remote-port-forwarding)
+
+    USAGE: instance-ssm-port-forward-remote-host local_port_number port_number host instance-id [instance-id]
+
+    EXAMPLE: 
+    $ instance-ssm-port-forward-remote-host 3306 3306 database.ap-southeast-2.rds.amazonaws.com i-xxxx
+    Starting session with SessionId: dina-00000000000000000
+    Port 3306 opened for sessionId dina-00000000000000000.
+    Waiting for connections...
+
+    $ instances jumphost | instance-ssm-port-forward-remote-host 3306 3306 database.ap-southeast-2.rds.amazonaws.com
+    Starting session with SessionId: dina-00000000000000000
+    Port 3306 opened for sessionId dina-00000000000000000.
+    Waiting for connections...
+
+
 ### instance-stack
 
 List CloudFormation stack EC2 Instance(s) belong to (if any)
@@ -913,11 +933,23 @@ Create arguments from output of az-cache-items() (if present)
 
 
 ### function
+ resource-group-export
+
+
+### function
  resource-group-unset
 
 
 ### function
  resources
+
+
+### function
+ resourceids
+
+
+### function
+ resource-export
 
 
 ### function
@@ -950,6 +982,10 @@ Ported from BMA
 
 
 ### function
+ front-door-waf-policy
+
+
+### function
  front-door-waf-policy-rule-match-conditions
 
 
@@ -963,6 +999,27 @@ Ported from BMA
 
 ### function
  ad-users
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+
+### function
+ ad-user-groups
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
+### function
+ ad-apps
+Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
 
 
 ## cert-commands
