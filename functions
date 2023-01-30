@@ -21,6 +21,8 @@ _bma_stack_diff_template
 _bma_stack_name_arg
 _bma_stack_params_arg
 _bma_stack_template_arg
+ad-apps
+ad-user-groups
 ad-users
 asg-capacity
 asg-desired-size-set
@@ -73,6 +75,7 @@ elbv2-subnets
 elbv2-target-groups
 elbv2s
 front-door-waf-policies
+front-door-waf-policy
 front-door-waf-policy-rule-delete
 front-door-waf-policy-rule-match-condition-values
 front-door-waf-policy-rule-match-conditions
@@ -141,9 +144,12 @@ rds-db-instances
 region
 region-each
 regions
+resource-export
 resource-group
+resource-group-export
 resource-group-unset
 resource-groups
+resourceids
 resources
 service-principals
 skim-stdin

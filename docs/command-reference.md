@@ -913,11 +913,23 @@ Create arguments from output of az-cache-items() (if present)
 
 
 ### function
+ resource-group-export
+
+
+### function
  resource-group-unset
 
 
 ### function
  resources
+
+
+### function
+ resourceids
+
+
+### function
+ resource-export
 
 
 ### function
@@ -950,6 +962,10 @@ Ported from BMA
 
 
 ### function
+ front-door-waf-policy
+
+
+### function
  front-door-waf-policy-rule-match-conditions
 
 
@@ -963,6 +979,27 @@ Ported from BMA
 
 ### function
  ad-users
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+
+### function
+ ad-user-groups
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
+### function
+ ad-apps
+Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
 
 
 ## cert-commands
