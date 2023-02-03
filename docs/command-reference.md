@@ -618,6 +618,26 @@ Create tunnel from localhost to remote EC2 instance
     USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
 
 
+### instance-ssm-port-forward-remote-host
+
+Start a port forwarding session to a remote host through an EC2 instance. 
+The remote host isn't required to be managed by AWS Systems Manager as long as
+it is accessible from the EC2 instance. [Reference](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-remote-port-forwarding)
+
+    USAGE: instance-ssm-port-forward-remote-host local_port_number port_number host instance-id [instance-id]
+
+    EXAMPLE: 
+    $ instance-ssm-port-forward-remote-host 3306 3306 database.ap-southeast-2.rds.amazonaws.com i-xxxx
+    Starting session with SessionId: dina-00000000000000000
+    Port 3306 opened for sessionId dina-00000000000000000.
+    Waiting for connections...
+
+    $ instances jumphost | instance-ssm-port-forward-remote-host 3306 3306 database.ap-southeast-2.rds.amazonaws.com
+    Starting session with SessionId: dina-00000000000000000
+    Port 3306 opened for sessionId dina-00000000000000000.
+    Waiting for connections...
+
+
 ### instance-stack
 
 List CloudFormation stack EC2 Instance(s) belong to (if any)

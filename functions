@@ -99,6 +99,7 @@ instance-ssh
 instance-ssh-details
 instance-ssm
 instance-ssm-port-forward
+instance-ssm-port-forward-remote-host
 instance-stack
 instance-start
 instance-state
