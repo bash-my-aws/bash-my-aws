@@ -484,7 +484,60 @@ function ad-users() {
   # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
   #
   # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+  # - https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli
+  #
+  # Uses graph API - more functionaility than azcli but limited result count
+  #
+  # $ time ad-users | wc -l
+  # 999
+  # real    0m0.792s
+  # user    0m0.311s
+  # sys     0m0.047s
+  #
+  # [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+  # [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+
+  local filter_arg filters
+  local output_format="${2:-tsv}" #  or json, table, etc
+  local top_arg='&top=999' # max items to return # uncomment to enable
+  if [[ -n $1 ]]; then
+    filter_arg="&filter=startswith(userPrincipalName,'$1')"
+    shift
+  fi
+
+  local url="https://graph.microsoft.com/beta/users?${top_arg}${filter_arg}&select=userPrincipalName,displayName,onPremisesSyncEnabled,mail"
+  eval "az rest          \
+    --method get         \
+    --url \"$url\"         \
+    --query \"value[].[
+      userPrincipalName,
+      displayName,
+      join('=',['onPremisesSyncEnabled', to_string(onPremisesSyncEnabled)]),
+      mail
+    ]\" \
+    --output $output_format"       |
+  LC_ALL=C sort -t$'\t' -b -k 2 # | # Set to sort only when output is not set to JSON
+  # column -s$'\t' -t # Disabled to preserve tabs
+}
+
+# Similar to ad-users but uses azcli with no limit on result count
+#
+# $ time ad-users-not-graph-api | wc -l
+# 20820
+# 
+# real    0m50.309s
+# user    0m15.158s
+# sys     0m0.443s
+#
+function ad-users-not-graph-api() {
+
+  # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+  #
+  # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
   # LOCAL_FILTER: grep results
+  #
+  # [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+  # [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
 
   local filter_arg filters
   if [[ -n $1 ]]; then
@@ -505,7 +558,6 @@ function ad-users() {
   LC_ALL=C sort -t$'\t' -b -k 2 |
   column -s$'\t' -t
 }
-
 
 function ad-user-groups() {
 
