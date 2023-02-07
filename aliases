@@ -24,6 +24,7 @@ alias _bma_stack_template_arg='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma _bma_stac
 alias ad-apps='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma ad-apps'
 alias ad-user-groups='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma ad-user-groups'
 alias ad-users='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma ad-users'
+alias ad-users-not-graph-api='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma ad-users-not-graph-api'
 alias asg-capacity='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma asg-capacity'
 alias asg-desired-size-set='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma asg-desired-size-set'
 alias asg-detach-instances='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma asg-detach-instances'

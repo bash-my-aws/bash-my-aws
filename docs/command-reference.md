@@ -982,7 +982,30 @@ Ported from BMA
 Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
 
 REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+- https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli
+
+Uses graph API - more functionaility than azcli but limited result count
+
+$ time ad-users | wc -l
+999
+real    0m0.792s
+user    0m0.311s
+sys     0m0.047s
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t # Disabled to preserve tabs
+
+
+### function
+ ad-users-not-graph-api
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
 LOCAL_FILTER: grep results
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
 
 
 ### function
