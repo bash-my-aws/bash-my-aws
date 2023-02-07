@@ -479,9 +479,49 @@ function front-door-waf-policy-rule-delete() {
 
 ## AD Functions
 
+
+# Similar to ad-users-graph but uses azcli with no limit on result count
+#
+# $ time ad-users-not-graph-api | wc -l
+# 20820
+# 
+# real    0m50.309s
+# user    0m15.158s
+# sys     0m0.443s
+#
 function ad-users() {
 
   # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+  #
+  # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+  # LOCAL_FILTER: grep results
+  #
+  # [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+  # [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+
+  local filter_arg filters
+  if [[ -n $1 ]]; then
+    filter_arg='--filter "startswith(userPrincipalName,'"'$1'"')"'
+    shift
+    local filters=$(__bma_read_filters-az $@);
+  fi
+
+  eval "az ad user list \
+    ${filter_arg}       \
+    --query '[].[
+      userPrincipalName,
+      displayName,
+      mail
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 2 |
+  column -s$'\t' -t
+}
+
+function ad-users-graph() {
+
+  # Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
   #
   # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
   # - https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli
@@ -518,45 +558,6 @@ function ad-users() {
     --output $output_format"       |
   LC_ALL=C sort -t$'\t' -b -k 2 # | # Set to sort only when output is not set to JSON
   # column -s$'\t' -t # Disabled to preserve tabs
-}
-
-# Similar to ad-users but uses azcli with no limit on result count
-#
-# $ time ad-users-not-graph-api | wc -l
-# 20820
-# 
-# real    0m50.309s
-# user    0m15.158s
-# sys     0m0.443s
-#
-function ad-users-not-graph-api() {
-
-  # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
-  #
-  # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
-  # LOCAL_FILTER: grep results
-  #
-  # [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
-  # [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-
-  local filter_arg filters
-  if [[ -n $1 ]]; then
-    filter_arg='--filter "startswith(userPrincipalName,'"'$1'"')"'
-    shift
-    local filters=$(__bma_read_filters-az $@);
-  fi
-
-  eval "az ad user list \
-    ${filter_arg}       \
-    --query '[].[
-      userPrincipalName,
-      displayName,
-      mail
-      ]'                \
-    --output tsv"       |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 2 |
-  column -s$'\t' -t
 }
 
 function ad-user-groups() {

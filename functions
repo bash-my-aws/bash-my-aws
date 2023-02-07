@@ -24,7 +24,7 @@ _bma_stack_template_arg
 ad-apps
 ad-user-groups
 ad-users
-ad-users-not-graph-api
+ad-users-graph
 asg-capacity
 asg-desired-size-set
 asg-detach-instances
