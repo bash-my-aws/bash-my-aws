@@ -677,6 +677,27 @@ List tags applied EC2 Instance(s)
     USAGE: instance-tags instance-id [instance-id]
 
 
+### instance-tag
+
+List named tag on EC2 Instance(s)
+
+    USAGE: instance-tag key instance-id [instance-id]
+
+
+### instance-tag-create
+
+Create/update tag on EC2 Instance(s)
+
+    USAGE: instance-tag-create key value instance [instance]
+
+
+### instance-tag-delete
+
+Delete tag from EC2 Instance(s)
+
+    USAGE: instance-tag-delete key instance [instance]
+
+
 ### instance-terminate
 
 Terminate EC2 Instance(s)
@@ -836,18 +857,21 @@ List CloudFormation stack for asg(s)
 List scaling activities for Autoscaling Group(s)
 
 
+azure.azcli
+
+
 ## azure-commands
 
 
-### function
- debug
+### debug
+
 Construct a string to be passed to `grep -E`
 
     foo|bar|baz
 
 
-### function
- skim-stdin-bma
+### skim-stdin-bma
+
 Append first token from each line of STDIN to argument list
 
 Implementation of `pipe-skimming` pattern.
@@ -866,119 +890,119 @@ Typical usage within Bash-my-AWS functions:
     local asg_names=$(skim-stdin)      # Only draw from STDIN
 
 
-### function
- az-account
+### az-account
 
 
-### function
- az-user
+
+### az-user
 
 
-### function
- az-cache-items
+
+### az-cache-items
 
 
-### function
- az-cache-item
+
+### az-cache-item
+
 Create arguments from output of az-cache-items() (if present)
 
 
-### function
- az-cache-item-delete
+### az-cache-item-delete
+
 Create arguments from output of az-cache-items() (if present)
 
 
-### function
- locations
+### locations
 
 
-### function
- location
+
+### location
 
 
-### function
- location-unset
+
+### location-unset
 
 
-### function
- location-each
+
+### location-each
 
 
-### function
- resource-groups
+
+### resource-groups
 
 
-### function
- resource-group
+
+### resource-group
 
 
-### function
- resource-group-export
+
+### resource-group-export
 
 
-### function
- resource-group-unset
+
+### resource-group-unset
 
 
-### function
- resources
+
+### resources
 
 
-### function
- resourceids
+
+### resourceids
 
 
-### function
- resource-export
+
+### resource-export
 
 
-### function
- service-principals
+
+### service-principals
 
 
-### function
- subscriptions
+
+### subscriptions
 
 
-### function
- subscription
+
+### subscription
 
 
-### function
- subscription-unset
+
+### subscription-unset
 
 
-### function
- subscription-each
+
+### subscription-each
+
 Ported from BMA
 
 
-### function
- front-door-waf-policies
+### front-door-waf-policies
 
 
-### function
- front-door-waf-policy-rules
+
+### front-door-waf-policy-rules
 
 
-### function
- front-door-waf-policy
+
+### front-door-waf-policy
 
 
-### function
- front-door-waf-policy-rule-match-conditions
+
+### front-door-waf-policy-rule-match-conditions
 
 
-### function
- front-door-waf-policy-rule-match-condition-values
+
+### front-door-waf-policy-rule-match-condition-values
 
 
-### function
- front-door-waf-policy-rule-delete
+
+### front-door-waf-policy-rule-delete
 
 
-### function
- ad-users
+
+### ad-users
+
 Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
 
 REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
@@ -988,8 +1012,8 @@ LOCAL_FILTER: grep results
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
 
 
-### function
- ad-users-graph
+### ad-users-graph
+
 Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
 
 REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
@@ -1008,8 +1032,8 @@ sys     0m0.047s
 column -s$'\t' -t # Disabled to preserve tabs
 
 
-### function
- ad-user-groups
+### ad-user-groups
+
 List groups for AD User(s)
 
     USAGE: ad-user-groups USER USER # object ID or principal name of the user
@@ -1017,8 +1041,8 @@ List groups for AD User(s)
     $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
 
 
-### function
- ad-apps
+### ad-apps
+
 Usage: ad-users REMOTE_FILTER LOCAL_FILTER
 
 REMOTE_FILTER: filters on start of userPrincipalName
@@ -1599,6 +1623,23 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
 Assume an IAM Role
 
     USAGE: sts-assume-role role_arn
+
+
+## tag-commands
+
+
+### tag-keys
+
+List unique set of tag keys in AWS Account / Region
+
+    USAGE: tag-keys
+
+
+### tag-values
+
+List unique set of tag values for key in AWS Account / Region
+
+    USAGE: tag-values key
 
 
 ## target-group-commands

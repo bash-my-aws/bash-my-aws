@@ -28,7 +28,7 @@
 
 # Shared Functions
 
-function debug() {
+debug() {
   [[ -n $DEBUG ]] && printf "$1" >&2
 }
 
@@ -42,12 +42,12 @@ __bma_read_filters-az() {
   ( IFS=$'|'; printf -- "$*" )
 }
 
-function columnise ()
+columnise ()
 {
     column -t -s$'\t'
 }
 
-function skim-stdin-tsv ()
+skim-stdin-tsv ()
 {
     # XXX Update to quote items in output
     local skimmed_stdin="$([[ -t 0 ]] || awk -F$'\t' 'ORS=" " { print $1 }')";
@@ -55,7 +55,7 @@ function skim-stdin-tsv ()
 }
 
 # Copied from bash-my-aws
-function skim-stdin-bma() {
+skim-stdin-bma() {
 
   # Append first token from each line of STDIN to argument list
   #
@@ -83,20 +83,20 @@ function skim-stdin-bma() {
 
 # Authentication functions
 
-function az-account() {
+az-account() {
   az account show \
     --query ' [[ name, user.name ]]' \
     --output tsv |
   columnise
 }
 
-function az-user() {
+az-user() {
   az ad signed-in-user show
 }
 
 # az cache functions
 
-function az-cache-items() {
+az-cache-items() {
   az cache list \
   --query '[].[
     resourceGroup,
@@ -107,7 +107,7 @@ function az-cache-items() {
   --output tsv
 }
 
-function az-cache-item() {
+az-cache-item() {
   # XXX We probably want to quote args
   # Create arguments from output of az-cache-items() (if present)
   local args_from_stdin
@@ -126,7 +126,7 @@ function az-cache-item() {
   done <<< "$arg_list"
 }
 
-function az-cache-item-delete() {
+az-cache-item-delete() {
   # XXX We probably want to quote args
   # Create arguments from output of az-cache-items() (if present)
   local args_from_stdin
@@ -146,7 +146,7 @@ function az-cache-item-delete() {
 
 # Location Functions
 
-function locations(){
+locations(){
   local filters=$(__bma_read_filters-az $@);
   az account list-locations \
     --query '[].[
@@ -160,7 +160,7 @@ function locations(){
 
 }
 
-function location() {
+location() {
 
   local location=$(skim-stdin-tsv "$@")
   # XXX Check input is a valid location
@@ -176,11 +176,11 @@ function location() {
   fi
 }
 
-function location-unset() {
+location-unset() {
     az config unset defaults.location
 }
 
-function location-each() {
+location-each() {
 
   local locations
   if [[ -t 0 ]]; then
@@ -200,7 +200,7 @@ function location-each() {
 
 ## Resource Functions
 
-function resource-groups() {
+resource-groups() {
   local filters=$(__bma_read_filters-az $@);
   az group list \
     --query "[].[
@@ -214,7 +214,7 @@ function resource-groups() {
   column -s$'\t' -t
 }
 
-function resource-group() {
+resource-group() {
 
   local group=$(skim-stdin-bma "$@")
   # XXX Check input is a valid location
@@ -230,7 +230,7 @@ function resource-group() {
   fi
 }
 
-function resource-group-export() {
+resource-group-export() {
 
   local resource_group=$(skim-stdin-bma "$@")
   [[ -z $resource_group ]] && resource_group=$(resource-group)
@@ -240,11 +240,11 @@ function resource-group-export() {
   az group export --resource-group "$resource_group"
 }
 
-function resource-group-unset() {
+resource-group-unset() {
     az config unset defaults.group
 }
 
-function resources() {
+resources() {
   local filters=$(__bma_read_filters-az $@);
   az resource list                           \
     --query "[].[
@@ -259,7 +259,7 @@ function resources() {
   column -s$'\t' -t
 }
 
-function resourceids() {
+resourceids() {
   local filters=$(__bma_read_filters-az $@);
   az resource list      \
     --query "[].[id] "  \
@@ -269,8 +269,7 @@ function resourceids() {
   column -s$'\t' -t
 }
 
-
-function resource-export() {
+resource-export() {
 
   local resources=$(skim-stdin-bma "$@")
    debug "\$resources=$resources"
@@ -281,7 +280,7 @@ function resource-export() {
 
 ## Service Principal Functions
 
-function service-principals() {
+service-principals() {
   local filters=$(__bma_read_filters-az $@);
   az ad sp list \
     --query "[].[
@@ -297,7 +296,7 @@ function service-principals() {
 
 ## Subscription Functions
 
-function subscriptions() {
+subscriptions() {
   local filters=$(__bma_read_filters-az $@);
   az account list            \
     --query "[].[
@@ -312,7 +311,7 @@ function subscriptions() {
     column -s$'\t' -t
 }
 
-function subscription() {
+subscription() {
 
   local subscription=$(skim-stdin-bma "$@")
   if [[ -z $subscription ]]; then
@@ -322,11 +321,11 @@ function subscription() {
   fi
 }
 
-function subscription-unset() {
+subscription-unset() {
     az config unset defaults.subscription
 }
 
-function subscription-each() {
+subscription-each() {
 
   # Ported from BMA
 
@@ -350,7 +349,7 @@ function subscription-each() {
 
 ## Front Door WAF Functions
 
-function front-door-waf-policies() {
+front-door-waf-policies() {
   local filters=$(__bma_read_filters-az $@);
   az network front-door waf-policy list \
     --output tsv \
@@ -364,7 +363,7 @@ function front-door-waf-policies() {
   column -s$'\t' -t
 }
 
-function front-door-waf-policy-rules() {
+front-door-waf-policy-rules() {
 
   local policies=$(skim-stdin-bma "$@")
    debug "\$policies=$policies"
@@ -389,7 +388,7 @@ function front-door-waf-policy-rules() {
   done
 }
 
-function front-door-waf-policy() {
+front-door-waf-policy() {
 
   local policies=$(skim-stdin-bma "$@")
    debug "\$policies=$policies"
@@ -401,7 +400,7 @@ function front-door-waf-policy() {
   done
 }
 
-function front-door-waf-policy-rule-match-conditions() {
+front-door-waf-policy-rule-match-conditions() {
 
   local policy_name="${1}"
   shift 1
@@ -430,7 +429,7 @@ function front-door-waf-policy-rule-match-conditions() {
   done
 }
 
-function front-door-waf-policy-rule-match-condition-values() {
+front-door-waf-policy-rule-match-condition-values() {
 
   local policy_name="${1}"
   shift 1
@@ -451,7 +450,7 @@ function front-door-waf-policy-rule-match-condition-values() {
   done
 }
 
-function front-door-waf-policy-rule-delete() {
+front-door-waf-policy-rule-delete() {
 
   local policy_name="${1:-}"
   shift
@@ -489,7 +488,7 @@ function front-door-waf-policy-rule-delete() {
 # user    0m15.158s
 # sys     0m0.443s
 #
-function ad-users() {
+ad-users() {
 
   # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
   #
@@ -519,7 +518,7 @@ function ad-users() {
   column -s$'\t' -t
 }
 
-function ad-users-graph() {
+ad-users-graph() {
 
   # Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
   #
@@ -560,7 +559,7 @@ function ad-users-graph() {
   # column -s$'\t' -t # Disabled to preserve tabs
 }
 
-function ad-user-groups() {
+ad-user-groups() {
 
   # List groups for AD User(s)
   #
@@ -588,10 +587,7 @@ function ad-user-groups() {
   done
 }
 
-
-
-
-function ad-apps() {
+ad-apps() {
 
   # Usage: ad-users REMOTE_FILTER LOCAL_FILTER
   #

@@ -491,6 +491,59 @@ instance-tags() {
   column -s$'\t' -t
 }
 
+instance-tag() {
+
+  # List named tag on EC2 Instance(s)
+  #
+  #     USAGE: instance-tag key instance-id [instance-id]
+
+  local key="$1"
+  shift
+  local instances=$(skim-stdin "$@")
+  [[ -z $key ]] && __bma_usage "key instance [instance]" && return 1
+
+  aws ec2 describe-tags                          \
+    --filters                                    \
+     "Name=resource-type,Values=instance"        \
+     "Name=key,Values='$key'"                    \
+     "Name=resource-id,Values=${instances// /,}" \
+    --output text                                \
+    --query 'Tags[].[ResourceId, Key, Value]' |
+  column -s$'\t' -t
+}
+
+instance-tag-create() {
+
+  # Create/update tag on EC2 Instance(s)
+  #
+  #     USAGE: instance-tag-create key value instance [instance]
+
+  local key="$1"
+  local value="$2"
+  shift 2
+  local instances=$(skim-stdin "$@")
+  [[ -z $key || -z $value ]] && __bma_usage "key value instance [instance]" && return 1
+
+  aws ec2 create-tags             \
+    --resources $instances        \
+    --tags "Key=$key,Value=$value"  
+}
+
+instance-tag-delete() {
+
+  # Delete tag from EC2 Instance(s)
+  #
+  #     USAGE: instance-tag-delete key instance [instance]
+
+  local key="$1"
+  shift
+  local instances=$(skim-stdin "$@")
+  [[ -z $key || -z $instances ]] && __bma_usage "key instance [instance]" && return 1
+
+  aws ec2 delete-tags      \
+    --resources $instances \
+    --tags "Key=$key"  
+}
 
 instance-terminate() {
 
@@ -714,7 +767,7 @@ instance-vpc() {
           InstanceId
         ]
       ][]"          |
-  column -s$'\t' -t
+  column -s$"\t" -t
 }
 
 # vim: ft=sh

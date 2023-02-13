@@ -105,6 +105,9 @@ instance-start
 instance-state
 instance-stop
 instance-subnet
+instance-tag
+instance-tag-create
+instance-tag-delete
 instance-tags
 instance-terminate
 instance-termination-protection
@@ -187,6 +190,8 @@ subscription
 subscription-each
 subscription-unset
 subscriptions
+tag-keys
+tag-values
 target-group-targets
 target-groups
 vpc-az-count

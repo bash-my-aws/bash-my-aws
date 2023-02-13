@@ -184,6 +184,9 @@ complete -F _bma_instances_completion instance-start
 complete -F _bma_instances_completion instance-state
 complete -F _bma_instances_completion instance-stop
 complete -F _bma_instances_completion instance-subnet
+complete -F _bma_instances_completion instance-tag
+complete -F _bma_instances_completion instance-tag-create
+complete -F _bma_instances_completion instance-tag-delete
 complete -F _bma_instances_completion instance-tags
 complete -F _bma_instances_completion instance-terminate
 complete -F _bma_instances_completion instance-termination-protection
