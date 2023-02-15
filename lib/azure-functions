@@ -259,6 +259,15 @@ resources() {
   column -s$'\t' -t
 }
 
+management-groups() {
+  local filters=$(__bma_read_filters-az $@);
+  az account management-group list  \
+    --query "[].[ displayName]" \
+    --output tsv |
+  grep -E -- "$filters"
+}
+# az account management-group list --output tsv --query '[].[displayName]'
+
 resourceids() {
   local filters=$(__bma_read_filters-az $@);
   az resource list      \
@@ -303,6 +312,7 @@ subscriptions() {
       id,
       isDefault,
       state,
+      user.name,
       name
     ]"                       \
     --output tsv             |
@@ -559,6 +569,22 @@ ad-users-graph() {
   # column -s$'\t' -t # Disabled to preserve tabs
 }
 
+# ad-temp-access-pass() {
+
+  # local filter_arg filters
+  # local output_format="${2:-tsv}" #  or json, table, etc
+  # local top_arg='&top=999' # max items to return # uncomment to enable
+  # local upn="${1:-cp.i75186@woodside.com.au}"
+
+  # local 
+  # local url="https://graph.microsoft.com/beta/users/${upn}/authentication/temporaryAccessPassMethods"
+  # local url="https://graph.microsoft.com/beta/me/authentication/temporaryAccessPassMethods"
+  # eval "az rest          \
+    # --method get         \
+    # --url \"$url\"         \
+    # --output $output_format"
+# }
+
 ad-user-groups() {
 
   # List groups for AD User(s)
@@ -613,3 +639,5 @@ ad-apps() {
   LC_ALL=C sort -t$'\t' -b -k 3 |
   column -s$'\t' -t
 }
+
+
