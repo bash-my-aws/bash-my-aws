@@ -16,6 +16,7 @@
 # Wishlist
 #
 # - `az login` without opening GUI web browser. username/password is an option.
+#    read -sp "Azure password: " AZ_PASS && echo && az login -u <username> -p $AZ_PASS
 # - bash completion
 
 
@@ -518,14 +519,27 @@ ad-users() {
   eval "az ad user list \
     ${filter_arg}       \
     --query '[].[
+      id,
       userPrincipalName,
       displayName,
       mail
       ]'                \
     --output tsv"       |
   grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 2 |
-  column -s$'\t' -t
+  LC_ALL=C sort -t$'\t' -b -k 2
+  # column -s$'\t' -t
+}
+
+function ad-user-upns() {
+  ad-users $@ | cut -f1
+}
+
+function ad-user-upns() {
+  ad-users $@ | cut -f2
+}
+
+function ad-user-names() {
+  ad-users $@ | cut -f3
 }
 
 ad-users-graph() {
@@ -569,6 +583,8 @@ ad-users-graph() {
   # column -s$'\t' -t # Disabled to preserve tabs
 }
 
+alias az-rest='az rest --method get --url'
+
 # ad-temp-access-pass() {
 
   # local filter_arg filters
@@ -584,6 +600,9 @@ ad-users-graph() {
     # --url \"$url\"         \
     # --output $output_format"
 # }
+
+# GET https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '6b937a9d-c731-465b-a844-2d5b5368c161'
+
 
 ad-user-groups() {
 
@@ -608,8 +627,8 @@ ad-user-groups() {
         '$user'
         ]"               \
       --output tsv                  |
-      LC_ALL=C sort -t$'\t' -b -k 2 |
-      column -s$'\t' -t
+      LC_ALL=C sort -t$'\t' -b -k 2 #|
+      # column -s$'\t' -t
   done
 }
 
@@ -636,8 +655,8 @@ ad-apps() {
       ]'                \
     --output tsv"       |
   grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 3 |
-  column -s$'\t' -t
+  LC_ALL=C sort -t$'\t' -b -k 3
+  # column -s$'\t' -t
 }
 
 
