@@ -156,3 +156,44 @@ elb-azs() {
       ]"              |
     column -s$'\t' -t
 }
+
+elb-tags() {
+
+  # List tags applied ELB(s)
+  #
+  #     USAGE: elb-tags elb-id [elb-id]
+
+  local elb_ids=$(skim-stdin "$@")
+  [[ -z $elb_ids ]] && __bma_usage "elb-id [elb-id]" && return 1
+
+  aws elb describe-tags                            \
+    --load-balancer-names $elb_ids                 \
+    --output text                                  \
+    --query "
+      TagDescriptions[].[
+        LoadBalancerName,
+        join(' ', [Tags[].[join('=',[Key,Value])][]][])
+      ]
+      "            |
+  column -s$'\t' -t
+}
+
+elb-tag() {
+
+  # List named tag on ELB(s)
+  #
+  #     USAGE: elb-tag key elb-id [elb-id]
+
+  local key="$1"
+  shift
+  local elb_ids=$(skim-stdin "$@")
+  [[ -z $key ]] && __bma_usage "key elb-id [elb-id]" && return 1
+
+  aws elb describe-tags                          \
+    --load-balancer-names $elb_ids               \
+    --output text                                \
+    --query "TagDescriptions[].[
+       [ LoadBalancerName, Tags[?Key=='$key'][Key,Value][] ][]
+     ][]" |
+  column -s$'\t' -t
+}
