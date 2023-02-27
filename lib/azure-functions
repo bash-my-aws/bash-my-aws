@@ -585,23 +585,6 @@ ad-users-graph() {
 
 alias az-rest='az rest --method get --url'
 
-# ad-temp-access-pass() {
-
-  # local filter_arg filters
-  # local output_format="${2:-tsv}" #  or json, table, etc
-  # local top_arg='&top=999' # max items to return # uncomment to enable
-  # local upn="${1:-cp.i75186@woodside.com.au}"
-
-  # local 
-  # local url="https://graph.microsoft.com/beta/users/${upn}/authentication/temporaryAccessPassMethods"
-  # local url="https://graph.microsoft.com/beta/me/authentication/temporaryAccessPassMethods"
-  # eval "az rest          \
-    # --method get         \
-    # --url \"$url\"         \
-    # --output $output_format"
-# }
-
-# GET https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '6b937a9d-c731-465b-a844-2d5b5368c161'
 
 
 ad-user-groups() {
@@ -660,3 +643,32 @@ ad-apps() {
 }
 
 
+
+function connectors() {
+
+  local output_format="${1:-tsv}" #  or json, table, etc
+
+  local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors"
+  az rest          \
+    --method get         \
+    --url "$url"         \
+    --output "$output_format" \
+    --query 'value[].[id, status, machineName, externalIp]' --output tsv |
+    sort -k 3
+}
+
+function connector-groups() {
+
+  local output_format="${1:-tsv}" #  or json, table, etc
+
+  local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups"
+  az rest          \
+    --method get         \
+    --url "$url"         \
+    --output "$output_format" \
+    --query 'value[].[id, name, region, connectorGroupType, isDefault]' --output tsv |
+    sort -k 2
+}
+
+# https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
+# https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors
