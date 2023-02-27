@@ -569,16 +569,16 @@ ad-users-graph() {
   fi
 
   local url="https://graph.microsoft.com/beta/users?${top_arg}${filter_arg}&select=userPrincipalName,displayName,onPremisesSyncEnabled,mail"
-  eval "az rest          \
+  az rest          \
     --method get         \
-    --url \"$url\"         \
-    --query \"value[].[
+    --url "$url"         \
+    --query "value[].[
       userPrincipalName,
       displayName,
       join('=',['onPremisesSyncEnabled', to_string(onPremisesSyncEnabled)]),
       mail
-    ]\" \
-    --output $output_format"       |
+    ]" \
+    --output $output_format       |
   LC_ALL=C sort -t$'\t' -b -k 2 # | # Set to sort only when output is not set to JSON
   # column -s$'\t' -t # Disabled to preserve tabs
 }
@@ -598,7 +598,7 @@ ad-user-groups() {
   #     XXX
 
   local users=$(skim-stdin "$@")
-  [[ -z $users ]] && __bma_usage "ad-user-groups USER [USER]" && return 1
+  [[ -z $users ]] && __bma_usage "USER [USER]" && return 1
 
   local user
   for user in $users; do
@@ -617,10 +617,11 @@ ad-user-groups() {
 
 ad-apps() {
 
-  # Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+  # Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
   #
-  # REMOTE_FILTER: filters on start of userPrincipalName
+  # REMOTE_FILTER: filters on start of displayName
   # LOCAL_FILTER: grep results
+
 
   local filter_arg filters
   if [[ -n $1 ]]; then
@@ -642,13 +643,58 @@ ad-apps() {
   # column -s$'\t' -t
 }
 
+ad-app-owners() {
 
+  # Usage: ad-app-owners APP [APP]
+
+  local apps=$(skim-stdin "$@")
+  [[ -z $apps ]] && __bma_usage "APP [APP]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local app
+  for app in $apps; do
+    az ad app owner list  \
+      --id="$app"  \
+      --query "value[].[
+        userPrincipalName,
+        displayName,
+        join('=',['onPremisesSyncEnabled', to_string(onPremisesSyncEnabled)]),
+        mail
+      ]" \
+      --output "$output_format"       |
+      LC_ALL=C sort -k 2
+      
+  done
+
+  #     --query '[].[
+  #       appId,
+  #       displayName,
+  #       createdDateTime
+  #       ]'                \
+  #     --output tsv"       |
+  #   grep -E -- "$filters" |
+  #   LC_ALL=C sort -t$'\t' -b -k 3
+}
 
 function connectors() {
 
-  local output_format="${1:-tsv}" #  or json, table, etc
+  # Usage: connectors REMOTE_FILTER LOCAL_FILTER
+  #
+  # REMOTE_FILTER: filters on start of machineName
+  # LOCAL_FILTER: grep results
 
-  local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors"
+  local filter_arg filters
+  if [[ -n $1 ]]; then
+    filter_arg="&filter=startswith(machineName,'$1')"
+    shift
+    local filters=$(__bma_read_filters-az $@);
+  fi
+  local top_arg='&top=999' # max items to return # uncomment to enable
+
+  local output_format="${BMA_OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors?${top_arg}${filter_arg}"
   az rest          \
     --method get         \
     --url "$url"         \
@@ -659,15 +705,49 @@ function connectors() {
 
 function connector-groups() {
 
-  local output_format="${1:-tsv}" #  or json, table, etc
+  # Usage: connector-groups REMOTE_FILTER LOCAL_FILTER
+  #
+  # REMOTE_FILTER: filters on start of displayName
+  # LOCAL_FILTER: grep results
 
-  local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups"
+  local filter_arg filters
+  if [[ -n $1 ]]; then
+    filter_arg="&filter=startswith(name,'$1')"
+    shift
+    local filters=$(__bma_read_filters-az $@);
+  fi
+  local top_arg='&top=999' # max items to return # uncomment to enable
+
+  local output_format="${BMA_OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups?${top_arg}${filter_arg}"
   az rest          \
     --method get         \
     --url "$url"         \
     --output "$output_format" \
     --query 'value[].[id, name, region, connectorGroupType, isDefault]' --output tsv |
-    sort -k 2
+  sort -k 2
+}
+
+function connector-group-apps() {
+
+  # Usage: ad-app-owners APP [APP]
+
+  local cgs=$(skim-stdin "$@")
+  [[ -z $cgs ]] && __bma_usage "CONNECTOR_GROUP [CONNECTOR_GROUP]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local cg
+  for cg in $cgs; do
+    local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups/$cg/applications"
+    az rest          \
+      --method get         \
+      --url "$url"         \
+      --output "$output_format" \
+      --query 'value[].[id, name, region, connectorGroupType, isDefault]' --output tsv |
+      sort -k 2
+  done
 }
 
 # https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
