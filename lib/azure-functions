@@ -658,15 +658,6 @@ ad-app() {
       --id="$app"  \
       --output "$output_format"
   done
-
-  #     --query '[].[
-  #       appId,
-  #       displayName,
-  #       createdDateTime
-  #       ]'                \
-  #     --output tsv"       |
-  #   grep -E -- "$filters" |
-  #   LC_ALL=C sort -t$'\t' -b -k 3
 }
 
 ad-app-owners() {
