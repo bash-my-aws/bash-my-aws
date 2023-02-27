@@ -650,15 +650,13 @@ ad-app() {
   local apps=$(skim-stdin "$@")
   [[ -z $apps ]] && __bma_usage "APP [APP]" && return 1
 
-  local output_format="${OUTPUT_FORMAT:-yaml}" #  or json, table, etc
+  local output_format="${BMA_OUTPUT_FORMAT:-yaml}" #  or json, table, etc
 
   local app
   for app in $apps; do
     az ad app show \
       --id="$app"  \
-      --output "$output_format"       |
-      LC_ALL=C sort -k 2
-      
+      --output "$output_format"
   done
 
   #     --query '[].[
