@@ -948,6 +948,10 @@ Create arguments from output of az-cache-items() (if present)
 
 
 
+### management-groups
+
+
+
 ### resourceids
 
 
@@ -1010,6 +1014,19 @@ LOCAL_FILTER: grep results
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t
+
+
+### function
+ ad-user-upns
+
+
+### function
+ ad-user-upns
+
+
+### function
+ ad-user-names
 
 
 ### ad-users-graph
@@ -1043,10 +1060,55 @@ List groups for AD User(s)
 
 ### ad-apps
 
-Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
 
-REMOTE_FILTER: filters on start of userPrincipalName
+REMOTE_FILTER: filters on start of displayName
 LOCAL_FILTER: grep results
+column -s$'\t' -t
+
+
+### ad-app
+
+Usage: ad-app APP [APP]
+
+
+### ad-app-owners
+
+Usage: ad-app-owners APP [APP]
+    --query '[].[
+      appId,
+      displayName,
+      createdDateTime
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 3
+
+
+### function
+ connectors
+Usage: connectors REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of machineName
+LOCAL_FILTER: grep results
+
+
+### function
+ connector-groups
+Usage: connector-groups REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results
+
+
+### function
+ connector-group-apps
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
+
+
+### function
+ connector-group-members
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 
 ## cert-commands
@@ -1170,6 +1232,20 @@ List Availability Zones of ELB(s)
     $ elbs | elb-azs
     rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
     huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
+
+
+### elb-tags
+
+List tags applied ELB(s)
+
+    USAGE: elb-tags elb-id [elb-id]
+
+
+### elb-tag
+
+List named tag on ELB(s)
+
+    USAGE: elb-tag key elb-id [elb-id]
 
 
 ## elbv2-commands

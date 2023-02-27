@@ -21,8 +21,12 @@ _bma_stack_diff_template
 _bma_stack_name_arg
 _bma_stack_params_arg
 _bma_stack_template_arg
+ad-app
+ad-app-owners
 ad-apps
 ad-user-groups
+ad-user-names
+ad-user-upns
 ad-users
 ad-users-graph
 asg-capacity
@@ -61,6 +65,10 @@ certs-arn
 cloudtrail-status
 cloudtrails
 columnise
+connector-group-apps
+connector-group-members
+connector-groups
+connectors
 debug
 ecr-repositories
 ecr-repository-images
@@ -69,6 +77,8 @@ elb-dnsname
 elb-instances
 elb-stack
 elb-subnets
+elb-tag
+elb-tags
 elbs
 elbv2-azs
 elbv2-dnsname
@@ -142,6 +152,7 @@ location-each
 location-unset
 locations
 log-groups
+management-groups
 pcxs
 rds-db-clusters
 rds-db-instances
