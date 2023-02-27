@@ -663,17 +663,25 @@ Stop EC2 Instance(s)
     i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
 
 
+### instance-subnet
+
+List subnet for EC2 Instance(s)
+
+    USAGE: instance-subnets instance-id [instance-id]
+
+
 ### instance-stop-protection
 
-List current state of stop Protection for EC2 Instance(s)
+List current state of Stop Protection for EC2 Instance(s)
 
     USAGE: instance-stop-protection instance-id [instance-id]
 
-    $ instances | instance-stop-protection
+    $ instances | instance-termination-protection
     i-4e15ece1de1a3f869 DisableApiStop=true
     i-89cefa9403373d7a5 DisableApiStop=false
     i-806d8f1592e2a2efd DisableApiStop=false
     i-61e86ac6be1e2c193 DisableApiStop=false
+
 
 ### instance-stop-protection-disable
 
@@ -688,17 +696,13 @@ Enable EC2 Instance stop protection
 
     USAGE: instance-stop-protection-enable instance-id [instance-id]
 
-### instance-subnet
-
-List subnet for EC2 Instance(s)
-
-    USAGE: instance-subnets instance-id [instance-id]
 
 ### instance-tags
 
 List tags applied EC2 Instance(s)
 
     USAGE: instance-tags instance-id [instance-id]
+
 
 ### instance-tag
 

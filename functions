@@ -114,6 +114,9 @@ instance-stack
 instance-start
 instance-state
 instance-stop
+instance-stop-protection
+instance-stop-protection-disable
+instance-stop-protection-enable
 instance-subnet
 instance-tag
 instance-tag-create
