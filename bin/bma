@@ -13,7 +13,7 @@
 #
 # Assumes you have installed bash-my-aws to standard location
 
-for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+for f in "${BMA_HOME:-$HOME/.bash-my-aws}"/lib/*-functions; do source $f; done
 
 # Disable awcli client side pager
 #

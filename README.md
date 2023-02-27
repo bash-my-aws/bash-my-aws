@@ -185,10 +185,12 @@ a changes that would eliminate any shell compatibility problems without compromi
 the functionaility, simplicity and discoverability of the project. Massive thanks
 to [@ninth-dev](https://github.com/ninth-dev) for this.
 
+```Shell
     # bash users may source the functions instead of loading the aliases
-    if [ -d ${HOME}/.bash-my-aws ]; then
-      for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
+    if [ -d ${BMA_HOME:-$HOME/.bash-my-aws} ]; then
+      for f in ${BMA_HOME:-$HOME/.bash-my-aws}/lib/*-functions; do source $f; done
     fi
+```
 
 
 ## Usage
