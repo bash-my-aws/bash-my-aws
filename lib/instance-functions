@@ -315,6 +315,34 @@ instance-ssm() {
   done
 }
 
+instance-rdp(){
+  instance-ssm-port-forward 13389 3389 $@
+}
+
+instance-ssm-port-forward() {
+
+  # Create tunnel from localhost to remote EC2 instance
+  #
+  #     USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
+
+  local local_port_number=$1
+  local port_number=$2
+  shift 2
+  local instance_ids=$(skim-stdin "$@")
+  if [[ -z $local_port_number || -z $port_number || -z $instance_ids ]] ; then
+    echo "Usage: $FUNCNAME local_port_number port_number instance-id [instance-id]"
+    return 1
+  fi
+
+  exec </dev/tty # reattach keyboard to STDIN
+
+  for instance_id in $instance_ids; do
+    aws ssm start-session                                                           \
+      --target "$instance_id" \
+      --document-name AWS-StartPortForwardingSession \
+      --parameters "localPortNumber=${local_port_number},portNumber=${port_number}"
+  done
+}
 
 instance-stack() {
 
@@ -422,6 +450,26 @@ instance-stop() {
     column -t
 }
 
+instance-subnet() {
+
+  # List subnet for EC2 Instance(s)
+  #
+  #     USAGE: instance-subnets instance-id [instance-id]
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  aws ec2 describe-instances                            \
+    --instance-ids $instance_ids                        \
+    --output text                                       \
+    --query "
+      Reservations[].Instances[].[
+        SubnetId,
+        InstanceId,
+        [Tags[?Key=='Name'].Value][0][0]
+      ]"            |
+  column -s$'\t' -t
+}
 
 instance-stop-protection() {
 
@@ -528,6 +576,59 @@ instance-tags() {
   column -s$'\t' -t
 }
 
+instance-tag() {
+
+  # List named tag on EC2 Instance(s)
+  #
+  #     USAGE: instance-tag key instance-id [instance-id]
+
+  local key="$1"
+  shift
+  local instances=$(skim-stdin "$@")
+  [[ -z $key ]] && __bma_usage "key instance [instance]" && return 1
+
+  aws ec2 describe-tags                          \
+    --filters                                    \
+     "Name=resource-type,Values=instance"        \
+     "Name=key,Values='$key'"                    \
+     "Name=resource-id,Values=${instances// /,}" \
+    --output text                                \
+    --query 'Tags[].[ResourceId, Key, Value]' |
+  column -s$'\t' -t
+}
+
+instance-tag-create() {
+
+  # Create/update tag on EC2 Instance(s)
+  #
+  #     USAGE: instance-tag-create key value instance [instance]
+
+  local key="$1"
+  local value="$2"
+  shift 2
+  local instances=$(skim-stdin "$@")
+  [[ -z $key || -z $value ]] && __bma_usage "key value instance [instance]" && return 1
+
+  aws ec2 create-tags             \
+    --resources $instances        \
+    --tags "Key=$key,Value=$value"  
+}
+
+instance-tag-delete() {
+
+  # Delete tag from EC2 Instance(s)
+  #
+  #     USAGE: instance-tag-delete key instance [instance]
+
+  local key="$1"
+  shift
+  local instances=$(skim-stdin "$@")
+  [[ -z $key || -z $instances ]] && __bma_usage "key instance [instance]" && return 1
+
+  aws ec2 delete-tags      \
+    --resources $instances \
+    --tags "Key=$key"  
+}
 
 instance-terminate() {
 
@@ -751,7 +852,7 @@ instance-vpc() {
           InstanceId
         ]
       ][]"          |
-  column -s$'\t' -t
+  column -s$"\t" -t
 }
 
 # vim: ft=sh

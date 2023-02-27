@@ -1,5 +1,4 @@
-Bash-my-AWS
-===========
+# Bash-my-AWS
 
 Bash-my-AWS is a simple but powerful set of CLI commands for managing
 resources on Amazon Web Services.

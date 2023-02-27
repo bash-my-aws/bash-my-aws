@@ -136,6 +136,7 @@ _bma_subcommands_completion() {
   return 0
 }
 complete -F _bma_asgs_completion asg-capacity
+complete -F _bma_asgs_completion asg-detach-instances
 complete -F _bma_asgs_completion asg-instances
 complete -F _bma_asgs_completion asg-launch-configuration
 complete -F _bma_asgs_completion asg-processes_suspended
@@ -160,6 +161,8 @@ complete -F _bma_elbs_completion elb-dnsname
 complete -F _bma_elbs_completion elb-instances
 complete -F _bma_elbs_completion elb-stack
 complete -F _bma_elbs_completion elb-subnets
+complete -F _bma_elbs_completion elb-tag
+complete -F _bma_elbs_completion elb-tags
 complete -F _bma_elbs_completion elbs
 complete -F _bma_elbv2s_completion elbv2-azs
 complete -F _bma_elbv2s_completion elbv2-dnsname
@@ -173,9 +176,11 @@ complete -F _bma_instances_completion instance-dns
 complete -F _bma_instances_completion instance-health-set-unhealthy
 complete -F _bma_instances_completion instance-iam-profile
 complete -F _bma_instances_completion instance-ip
+complete -F _bma_instances_completion instance-rdp
 complete -F _bma_instances_completion instance-ssh
 complete -F _bma_instances_completion instance-ssh-details
 complete -F _bma_instances_completion instance-ssm
+complete -F _bma_instances_completion instance-ssm-port-forward
 complete -F _bma_instances_completion instance-stack
 complete -F _bma_instances_completion instance-start
 complete -F _bma_instances_completion instance-state
@@ -183,6 +188,10 @@ complete -F _bma_instances_completion instance-stop
 complete -F _bma_instances_completion instance-stop-protection
 complete -F _bma_instances_completion instance-stop-protection-disable
 complete -F _bma_instances_completion instance-stop-protection-enable
+complete -F _bma_instances_completion instance-subnet
+complete -F _bma_instances_completion instance-tag
+complete -F _bma_instances_completion instance-tag-create
+complete -F _bma_instances_completion instance-tag-delete
 complete -F _bma_instances_completion instance-tags
 complete -F _bma_instances_completion instance-terminate
 complete -F _bma_instances_completion instance-termination-protection

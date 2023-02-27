@@ -607,6 +607,17 @@ Establish SSM connection to EC2 Instance(s)
     USAGE: instance-ssm instance-id [instance-id]
 
 
+### instance-rdp
+
+
+
+### instance-ssm-port-forward
+
+Create tunnel from localhost to remote EC2 instance
+
+    USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
+
+
 ### instance-stack
 
 List CloudFormation stack EC2 Instance(s) belong to (if any)
@@ -664,7 +675,6 @@ List current state of stop Protection for EC2 Instance(s)
     i-806d8f1592e2a2efd DisableApiStop=false
     i-61e86ac6be1e2c193 DisableApiStop=false
 
-
 ### instance-stop-protection-disable
 
 Disable EC2 Instance stop protection
@@ -678,12 +688,37 @@ Enable EC2 Instance stop protection
 
     USAGE: instance-stop-protection-enable instance-id [instance-id]
 
+### instance-subnet
+
+List subnet for EC2 Instance(s)
+
+    USAGE: instance-subnets instance-id [instance-id]
 
 ### instance-tags
 
 List tags applied EC2 Instance(s)
 
     USAGE: instance-tags instance-id [instance-id]
+
+### instance-tag
+
+List named tag on EC2 Instance(s)
+
+    USAGE: instance-tag key instance-id [instance-id]
+
+
+### instance-tag-create
+
+Create/update tag on EC2 Instance(s)
+
+    USAGE: instance-tag-create key value instance [instance]
+
+
+### instance-tag-delete
+
+Delete tag from EC2 Instance(s)
+
+    USAGE: instance-tag-delete key instance [instance]
 
 
 ### instance-terminate
@@ -770,6 +805,11 @@ List VPC of instance(s)
 ## asg-commands
 
 
+### asg-detach-instances
+
+Detach all instances from asg(s)
+
+
 ### asgs
 
 List EC2 Autoscaling Groups
@@ -838,6 +878,260 @@ List CloudFormation stack for asg(s)
 ### asg-scaling-activities
 
 List scaling activities for Autoscaling Group(s)
+
+
+azure.azcli
+
+
+## azure-commands
+
+
+### debug
+
+Construct a string to be passed to `grep -E`
+
+    foo|bar|baz
+
+
+### skim-stdin-bma
+
+Append first token from each line of STDIN to argument list
+
+Implementation of `pipe-skimming` pattern.
+
+    $ stacks | skim-stdin foo bar
+    foo bar huginn mastodon grafana
+
+    $ stacks
+    huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+    mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+    grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+Typical usage within Bash-my-AWS functions:
+
+    local asg_names=$(skim-stdin "$@") # Append to arg list
+    local asg_names=$(skim-stdin)      # Only draw from STDIN
+
+
+### az-account
+
+
+
+### az-user
+
+
+
+### az-cache-items
+
+
+
+### az-cache-item
+
+Create arguments from output of az-cache-items() (if present)
+
+
+### az-cache-item-delete
+
+Create arguments from output of az-cache-items() (if present)
+
+
+### locations
+
+
+
+### location
+
+
+
+### location-unset
+
+
+
+### location-each
+
+
+
+### resource-groups
+
+
+
+### resource-group
+
+
+
+### resource-group-export
+
+
+
+### resource-group-unset
+
+
+
+### resources
+
+
+
+### management-groups
+
+
+
+### resourceids
+
+
+
+### resource-export
+
+
+
+### service-principals
+
+
+
+### subscriptions
+
+
+
+### subscription
+
+
+
+### subscription-unset
+
+
+
+### subscription-each
+
+Ported from BMA
+
+
+### front-door-waf-policies
+
+
+
+### front-door-waf-policy-rules
+
+
+
+### front-door-waf-policy
+
+
+
+### front-door-waf-policy-rule-match-conditions
+
+
+
+### front-door-waf-policy-rule-match-condition-values
+
+
+
+### front-door-waf-policy-rule-delete
+
+
+
+### ad-users
+
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t
+
+
+### function
+ ad-user-upns
+
+
+### function
+ ad-user-upns
+
+
+### function
+ ad-user-names
+
+
+### ad-users-graph
+
+Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+- https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli
+
+Uses graph API - more functionaility than azcli but limited result count
+
+$ time ad-users | wc -l
+999
+real    0m0.792s
+user    0m0.311s
+sys     0m0.047s
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t # Disabled to preserve tabs
+
+
+### ad-user-groups
+
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
+### ad-apps
+
+Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results
+column -s$'\t' -t
+
+
+### ad-app
+
+Usage: ad-app APP [APP]
+
+
+### ad-app-owners
+
+Usage: ad-app-owners APP [APP]
+    --query '[].[
+      appId,
+      displayName,
+      createdDateTime
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 3
+
+
+### function
+ connectors
+Usage: connectors REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of machineName
+LOCAL_FILTER: grep results
+
+
+### function
+ connector-groups
+Usage: connector-groups REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results
+
+
+### function
+ connector-group-apps
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
+
+
+### function
+ connector-group-members
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 
 ## cert-commands
@@ -961,6 +1255,20 @@ List Availability Zones of ELB(s)
     $ elbs | elb-azs
     rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
     huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
+
+
+### elb-tags
+
+List tags applied ELB(s)
+
+    USAGE: elb-tags elb-id [elb-id]
+
+
+### elb-tag
+
+List named tag on ELB(s)
+
+    USAGE: elb-tag key elb-id [elb-id]
 
 
 ## elbv2-commands
@@ -1414,6 +1722,23 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
 Assume an IAM Role
 
     USAGE: sts-assume-role role_arn
+
+
+## tag-commands
+
+
+### tag-keys
+
+List unique set of tag keys in AWS Account / Region
+
+    USAGE: tag-keys
+
+
+### tag-values
+
+List unique set of tag values for key in AWS Account / Region
+
+    USAGE: tag-values key
 
 
 ## target-group-commands
