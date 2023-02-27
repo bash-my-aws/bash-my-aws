@@ -233,37 +233,33 @@ instance-ssh() {
   #
   #     USAGE: instance-ssh [login] [instance-id] [instance-id]
 
+  local ssh_user instance_id keyname private_ip instance_name instance_default_user
   if [[ $1 != *i-* ]]; then
-    local user=${1}
+    ssh_user="${1}"
     shift
   fi
-  local instance_ids=$(skim-stdin "$@")
-  if [[ -z $instance_ids ]] ; then
-    echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"
+  instance_ids=$(skim-stdin "$@")
+  if [[ -z "${instance_ids}" ]] ; then
+    __bma_usage "[login] [instance-id] [instance-id]"
     return 1
   fi
 
   exec </dev/tty # reattach keyboard to STDIN
 
-  for instance_id in $instance_ids; do
-    local instance_details="$(instance-ssh-details $instance_id)"
-    local instance_id=$(echo $instance_details | awk '{print $1}')
-    local keyname=$(echo $instance_details | awk '{print $2}')
-    local private_ip=$(echo $instance_details | awk '{print $3}')
-    local instance_name=$(echo $instance_details | awk '{print $4}')
-    local instance_default_user=$(echo $instance_details | awk '{print $5}')
+  for instance_id in ${instance_ids}; do
+    read -r instance_id keyname private_ip instance_name instance_default_user < <(instance-ssh-details "${instance_id}")
 
-    local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
+    ssh_user="${ssh_user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}"
     echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
 
-    ssh                                    \
-      -t                                   \
-      -i "${BMA_SSH_DIR:-~/.ssh}/$keyname" \
-      -o LogLevel=error                    \
-      -o StrictHostKeyChecking=no          \
-      -o UserKnownHostsFile=/dev/null      \
-      -l "$USERNAME"                       \
-      "$private_ip"
+    ssh                                      \
+      -t                                     \
+      -i "${BMA_SSH_DIR:-~/.ssh}/${keyname}" \
+      -o LogLevel=error                      \
+      -o StrictHostKeyChecking=no            \
+      -o UserKnownHostsFile=/dev/null        \
+      -l "${ssh_user}"                       \
+      "${private_ip}"
   done
 }
 
