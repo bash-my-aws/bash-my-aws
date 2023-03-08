@@ -9,3 +9,4 @@ cloudformation/tags
 !cloudformation/tags/.keep
 test/cloudformation
 site/
+*.swp

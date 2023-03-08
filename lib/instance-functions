@@ -366,6 +366,9 @@ instance-stack() {
   column -s$'\t' -t
 }
 
+# When instances have uninformative names, sometimes listing them by stack name helps
+alias instance-stacks='instances | instance-stack'
+
 
 instance-start() {
 
