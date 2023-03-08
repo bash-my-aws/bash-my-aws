@@ -490,6 +490,37 @@ front-door-waf-policy-rule-delete() {
 ## AD Functions
 
 
+ad-groups() {
+
+  # Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+  #
+  # REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+  # LOCAL_FILTER: grep results
+  #
+  # [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+  # [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+
+  local filter_arg filters
+  if [[ -n $1 ]]; then
+    filter_arg='--filter "startswith(displayName,'"'$1'"')"'
+    shift
+    local filters=$(__bma_read_filters-az $@);
+  fi
+
+  eval "az ad group list \
+    ${filter_arg}        \
+    --query '[].[
+      id,
+      displayName,
+      createdDateTime
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 2
+  # column -s$'\t' -t
+}
+
+
 # Similar to ad-users-graph but uses azcli with no limit on result count
 #
 # $ time ad-users-not-graph-api | wc -l
@@ -585,8 +616,6 @@ ad-users-graph() {
 
 alias az-rest='az rest --method get --url'
 
-
-
 ad-user-groups() {
 
   # List groups for AD User(s)
@@ -631,6 +660,7 @@ ad-apps() {
   fi
 
   eval "az ad app list  \
+    --all \
     ${filter_arg}       \
     --query '[].[
       appId,
