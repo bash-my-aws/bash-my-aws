@@ -14,6 +14,7 @@ certs() {
   [[ -n ${include_arn:-} ]] && include_arn_bit="CertificateArn,"
   local retrieved_cert_arns=$(
     aws acm list-certificates      \
+      --includes keyTypes=RSA_1024,RSA_2048,EC_secp384r1,EC_prime256v1,EC_secp521r1,RSA_3072,RSA_4096 \
       --output text                \
       --query "
         CertificateSummaryList[${cert_arns:+?contains(['${cert_arns// /"','"}'], CertificateArn)}].[
