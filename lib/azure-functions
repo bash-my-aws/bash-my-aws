@@ -520,6 +520,34 @@ ad-groups() {
   # column -s$'\t' -t
 }
 
+ad-group-members() {
+
+  # List groups for AD User(s)
+  #
+  #     USAGE: ad-user-groups USER USER # object ID or principal name of the user
+  #
+  #     $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+  #     XXX
+  #     XXX
+
+  local groups=$(skim-stdin "$@")
+  [[ -z $groups ]] && __bma_usage "GROUP [GROUP]" && return 1
+
+  local group
+  for group in $groups; do
+    az ad group member list \
+      --group "$group" \
+      --output tsv \
+      --query '[].[
+        id,
+        userPrincipalName,
+        displayName,
+        mail
+      ]'                 |
+      LC_ALL=C sort -t$'\t' -b -k 2 #|
+      # column -s$'\t' -t
+  done
+}
 
 # Similar to ad-users-graph but uses azcli with no limit on result count
 #
