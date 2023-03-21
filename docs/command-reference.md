@@ -1032,6 +1032,27 @@ Ported from BMA
 
 
 
+### ad-groups
+
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t
+
+
+### ad-group-members
+
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
 ### ad-users
 
 Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
@@ -1136,6 +1157,10 @@ Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 ### function
  connector-group-members
 Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
+
+
+### deployment-groups
+
 
 
 ## cert-commands

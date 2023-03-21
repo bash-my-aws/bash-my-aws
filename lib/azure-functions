@@ -858,3 +858,21 @@ function connector-group-members() {
 }
 # https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
 # https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors
+
+
+
+deployment-groups() {
+  local filters=$(__bma_read_filters-az $@);
+  az deployment group list \
+    --query '[].[
+      name,
+      properties.timestamp
+    ]' \
+     --output tsv |
+    grep -E -- "$filters"    |
+    LC_ALL=C sort -k 2 
+}
+
+# az afd custom-domain list --profile-name afd-azureappproxy-global-001
+# az deployment group list --query '[].[name, properties.timestamp]' --output tsv
+# https://learn.microsoft.com/en-gb/azure/azure-resource-manager/templates/deployment-history?tabs=azure-cli#deployment-operations-and-error-message

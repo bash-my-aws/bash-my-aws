@@ -24,6 +24,8 @@ _bma_stack_template_arg
 ad-app
 ad-app-owners
 ad-apps
+ad-group-members
+ad-groups
 ad-user-groups
 ad-user-names
 ad-user-upns
@@ -70,6 +72,7 @@ connector-group-members
 connector-groups
 connectors
 debug
+deployment-groups
 ecr-repositories
 ecr-repository-images
 elb-azs
