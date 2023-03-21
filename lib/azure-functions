@@ -358,134 +358,6 @@ subscription-each() {
 
 ## Resource Specific Functions
 
-## Front Door WAF Functions
-
-front-door-waf-policies() {
-  local filters=$(__bma_read_filters-az $@);
-  az network front-door waf-policy list \
-    --output tsv \
-    --query "[].[
-      name,
-      resourceGroup,
-      resourceState
-      ]" |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 1 |
-  column -s$'\t' -t
-}
-
-front-door-waf-policy-rules() {
-
-  local policies=$(skim-stdin-bma "$@")
-   debug "\$policies=$policies"
-  [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
-
-  local policy
-  for policy in $policies; do
-    az network front-door waf-policy rule list \
-      --policy-name "$policy" \
-      --output tsv \
-      --query "[].[
-        name,
-        enabledState,
-        priority,
-        ruleType,
-        action,
-        '$policy',
-        '$resource_group'
-      ]" |
-    LC_ALL=C sort -t$'\t' -b -k 1 |
-    column -s$'\t' -t
-  done
-}
-
-front-door-waf-policy() {
-
-  local policies=$(skim-stdin-bma "$@")
-   debug "\$policies=$policies"
-  [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
-
-  local policy
-  for policy in $policies; do
-    az network front-door waf-policy show --name "$policy" --output json
-  done
-}
-
-front-door-waf-policy-rule-match-conditions() {
-
-  local policy_name="${1}"
-  shift 1
-  local rule_names=$(skim-stdin "$@")
-
-  if [[ -z $policy_name || -z $rule_names ]]; then
-    echo "Usage: ${FUNCNAME[0]} POLICY_NAME RULE_NAME [RULE_NAME]" >&2
-    return 1
-  fi
-
-  local rule_name
-  for rule_name in $rule_names; do
-    az network front-door waf-policy rule match-condition list \
-      --policy-name "$policy_name"                             \
-      --name "$rule_name"                                      \
-      --query '[].[[
-        join(`=`, [`operator`, operator]),
-        join(`=`, [`matchVariable`, matchVariable]),
-        join(`=`, [
-          `matchValues`,
-           to_string(length(matchValue))
-        ]),
-       `# view matches with front-door-waf-policy-rule-match-values()`
-      ]][]'                                                       \
-      --output tsv
-  done
-}
-
-front-door-waf-policy-rule-match-condition-values() {
-
-  local policy_name="${1}"
-  shift 1
-  local rule_names=$(skim-stdin "$@")
-
-  if [[ -z $policy_name || -z $rule_names ]]; then
-    echo "Usage: ${FUNCNAME[0]} POLICY_NAME RULE_NAME [RULE_NAME]" >&2
-    return 1
-  fi
-
-  local rule_name
-  for rule_name in $rule_names; do
-    az network front-door waf-policy rule match-condition list \
-      --policy-name "$policy_name"                             \
-      --name "$rule_name"                                      \
-      --query '[0].[matchValue][]'                             \
-      --output tsv
-  done
-}
-
-front-door-waf-policy-rule-delete() {
-
-  local policy_name="${1:-}"
-  shift
-  local rule_names=$(skim-stdin-bma "$@")
-
-  if [[ -z $policy_name || -z $rule_names ]]; then
-    echo "Usage: front-door-waf-policy-rule-delete POLICY_NAME RULE_NAME [RULE_NAME]" >&2
-    return 1
-  fi
-
-  echo "You are about to delete the following front-door WAF policy rules from $policy_name:"
-  echo "$rule_names" | tr ' ' "\n" # | front-door-waf-policy-rules # XXX add when we have resourceGroup sorted
-  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
-  local regex_yes="^[Yy]$"
-  read -p "Are you sure you want to continue? " -n 1 -r
-  echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
-    # XXX replace with `--ids` arg when we can generate resource IDs # it's easy
-    for rule_name in $rule_names; do
-      az network front-door waf-policy rule delete --policy-name wafPremium --name "${rule_name}"
-    done
-  fi
-}
 
 ## AD Functions
 
@@ -858,6 +730,282 @@ function connector-group-members() {
 }
 # https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
 # https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors
+
+
+# TODO 
+
+deployments-group() {
+  local filters=$(__bma_read_filters-az $@);
+  az deployment group list \
+    --query '[].[
+      name,
+      properties.timestamp
+    ]' \
+     --output tsv |
+    grep -E -- "$filters"    |
+    LC_ALL=C sort -k 2 
+}
+
+alias deployments=deployments-group
+
+# Azure Front Door
+#
+# Subgroups:
+#     custom-domain    : Manage custom domains within the specified profile.
+#     endpoint         : Manage AFD endpoints within the specified profile.
+#     log-analytic     : Manage afd log analytic results.
+#     origin           : Manage origins within the specified origin group.
+#     origin-group     : Manage origin groups under the specified profile.
+#     profile          : Manage AFD profiles.
+#     route            : Manage routes under an AFD endpoint.
+#     rule             : Manage delivery rules within the specified rule set.
+#     rule-set         : Manage rule set for the specified profile.
+#     secret           : Manage secrets within the specified profile.
+#     security-policy  : Manage security policies within the specified profile.
+#     waf-log-analytic : Manage afd WAF related log analytic results.
+
+
+afds() {
+  local filters=$(__bma_read_filters-az $@);
+  az afd profile list \
+    --only-show-errors \
+    --output tsv \
+    --query '[].[
+      name,
+      resourceState
+    ]' \
+    --output tsv |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -k 2 
+}
+
+afd-endpoints() {
+  local profiles=$(skim-stdin "$@")
+  [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local profile
+  for profile in $profiles; do
+    echo $profile
+    az afd endpoint list \
+      --only-show-errors \
+      --profile-name "$profile" \
+      --output tsv \
+      --query "[].[
+        name, 
+        enabledState,
+        hostName
+      ]" \
+      --output tsv |
+    LC_ALL=C sort -k 1 
+  done
+}
+
+afd-routes() {
+  local profiles=$(skim-stdin "$@")
+  [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local profile
+  local endpoint
+  for profile in $profiles; do
+    echo $profile
+    for endpoint in $(afd-endpoints "$profile" | cut -f1); do
+      echo $endpoint
+      az afd route list \
+        --only-show-errors \
+        --profile-name "$profile" \
+        --endpoint-name "$endpoint" \
+        --output tsv \
+        --query "[].[
+          name, 
+          hostName, 
+          domainValidationState, 
+          validationProperties.validationToken,
+          '$profile',
+          '$endpoint'
+        ]" \
+        --output tsv |
+      LC_ALL=C sort -k 1 
+    done
+  done
+}
+
+afd-custom-domains() {
+  local profiles=$(skim-stdin "$@")
+  [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local profile
+  for profile in $profiles; do
+    echo $profile
+    az afd custom-domain list \
+      --only-show-errors \
+      --profile-name "$profile" \
+      --output tsv \
+      --query "[].[
+        name, 
+        hostName, 
+        domainValidationState, 
+        validationProperties.validationToken
+      ]" \
+      --output tsv |
+    LC_ALL=C sort -k 1 
+  done
+}
+
+afd-origin-groups() {
+  local profiles=$(skim-stdin "$@")
+  [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local profile
+  for profile in $profiles; do
+    echo $profile
+    az afd origin-group list \
+      --only-show-errors \
+      --profile-name "$profile" \
+      --output tsv \
+      --query "[].[
+        name
+      ]" \
+      --output tsv |
+    LC_ALL=C sort -k 1 
+  done
+}
+
+## Front Door WAF Functions
+
+afd-waf-policies() {
+  local filters=$(__bma_read_filters-az $@);
+  az network front-door waf-policy list \
+    --output tsv \
+    --query "[].[
+      name,
+      resourceGroup,
+      resourceState
+      ]" |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 1 |
+  column -s$'\t' -t
+}
+
+afd-waf-policy-rules() {
+
+  local policies=$(skim-stdin-bma "$@")
+   debug "\$policies=$policies"
+  [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
+
+  local policy
+  for policy in $policies; do
+    az network front-door waf-policy rule list \
+      --policy-name "$policy" \
+      --output tsv \
+      --query "[].[
+        name,
+        enabledState,
+        priority,
+        ruleType,
+        action,
+        '$policy',
+        '$resource_group'
+      ]" |
+    LC_ALL=C sort -t$'\t' -b -k 1 |
+    column -s$'\t' -t
+  done
+}
+
+afd-waf-policy() {
+
+  local policies=$(skim-stdin-bma "$@")
+   debug "\$policies=$policies"
+  [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
+
+  local policy
+  for policy in $policies; do
+    az network front-door waf-policy show --name "$policy" --output json
+  done
+}
+
+afd-waf-policy-rule-match-conditions() {
+
+  local policy_name="${1}"
+  shift 1
+  local rule_names=$(skim-stdin "$@")
+
+  if [[ -z $policy_name || -z $rule_names ]]; then
+    echo "Usage: ${FUNCNAME[0]} POLICY_NAME RULE_NAME [RULE_NAME]" >&2
+    return 1
+  fi
+
+  local rule_name
+  for rule_name in $rule_names; do
+    az network front-door waf-policy rule match-condition list \
+      --policy-name "$policy_name"                             \
+      --name "$rule_name"                                      \
+      --query '[].[[
+        join(`=`, [`operator`, operator]),
+        join(`=`, [`matchVariable`, matchVariable]),
+        join(`=`, [
+          `matchValues`,
+           to_string(length(matchValue))
+        ]),
+       `# view matches with afd-waf-policy-rule-match-values()`
+      ]][]'                                                       \
+      --output tsv
+  done
+}
+
+afd-waf-policy-rule-match-condition-values() {
+
+  local policy_name="${1}"
+  shift 1
+  local rule_names=$(skim-stdin "$@")
+
+  if [[ -z $policy_name || -z $rule_names ]]; then
+    echo "Usage: ${FUNCNAME[0]} POLICY_NAME RULE_NAME [RULE_NAME]" >&2
+    return 1
+  fi
+
+  local rule_name
+  for rule_name in $rule_names; do
+    az network front-door waf-policy rule match-condition list \
+      --policy-name "$policy_name"                             \
+      --name "$rule_name"                                      \
+      --query '[0].[matchValue][]'                             \
+      --output tsv
+  done
+}
+
+afd-waf-policy-rule-delete() {
+
+  local policy_name="${1:-}"
+  shift
+  local rule_names=$(skim-stdin-bma "$@")
+
+  if [[ -z $policy_name || -z $rule_names ]]; then
+    echo "Usage: afd-waf-policy-rule-delete POLICY_NAME RULE_NAME [RULE_NAME]" >&2
+    return 1
+  fi
+
+  echo "You are about to delete the following front-door WAF policy rules from $policy_name:"
+  echo "$rule_names" | tr ' ' "\n" # | afd-waf-policy-rules # XXX add when we have resourceGroup sorted
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]
+  then
+    # XXX replace with `--ids` arg when we can generate resource IDs # it's easy
+    for rule_name in $rule_names; do
+      az network front-door waf-policy rule delete --policy-name wafPremium --name "${rule_name}"
+    done
+  fi
+}
 
 
 

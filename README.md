@@ -8,17 +8,28 @@ They harness the power of Amazon's AWSCLI, while abstracting away verbosity.
 The project implements some innovative patterns but (arguably) remains simple,
 beautiful and readable.
 
-**Note: Extensive documentation at https://bash-my-aws.org/**
+**Note: Extensive documentation at <https://bash-my-aws.org/>**
 
 ![screencast](docs/images/bma-02-2.gif)
 
 ## Introduction
 
-- [Short, Memorable Commands](#short-memorable-commands)
-- [Shell Command Completion (including AWS resources)](#shell-command-completion)
-- [Unix Pipeline Friendly (instead of JSON)](#unix-pipeline-friendly)
-- [Convenient Shortcuts](#convenient-shortcuts)
-
+- [Bash-my-AWS](#bash-my-aws)
+  - [Introduction](#introduction)
+    - [Short, Memorable Commands](#short-memorable-commands)
+    - [Shell Command Completion](#shell-command-completion)
+    - [Unix Pipeline Friendly](#unix-pipeline-friendly)
+    - [Convenient Shortcuts](#convenient-shortcuts)
+  - [Quickstart](#quickstart)
+    - [Prerequisites](#prerequisites)
+    - [Optional Packages](#optional-packages)
+    - [Installation](#installation)
+      - [Why use shell aliases?](#why-use-shell-aliases)
+  - [Usage](#usage)
+    - [Running Commands](#running-commands)
+    - [Discovering Commands](#discovering-commands)
+    - [Piping Between Commands](#piping-between-commands)
+    - [Inspecting Commands](#inspecting-commands)
 
 ### Short, Memorable Commands
 
@@ -67,7 +78,6 @@ Are you sure you want to continue? y
 
 See the [Command Reference](https://bash-my-aws.org/command-reference/) for a full list of commands.
 
-
 ### Shell Command Completion
 
 In the example above, shell autocompletion retrieved the existing EC2 Keypair
@@ -93,7 +103,6 @@ They also work incredibly well with each other due to the way they treat input
 from STDIN. The first token from each line of STDIN is taken to be a resource
 identifier (and the rest is discarded).
 
-
 ```shell
 $ stacks | grep postgres | stack-delete
 You are about to delete the following stacks:
@@ -103,7 +112,6 @@ Are you sure you want to continue? y
 ```
 
 *Some users have compared this User Experience to functionality in Windows Powershell.*
-
 
 ### Convenient Shortcuts
 
@@ -125,6 +133,7 @@ stack-with-a-annoyingly-long-name  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_
 ```
 
 This affects the output when we look at our Postgres stacks:
+
 ```shell
 $ stacks | grep postgres
 postgres01                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
@@ -132,25 +141,25 @@ postgres02                         DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_
 ```
 
 The resource listing command can filter output before applying `column`.
+
 ```shell
 $ stacks postgres
 postgres01  DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
 postgres02  DELETE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED
 ```
 
-
 ## Quickstart
 
 ### Prerequisites
 
-* [awscli](http://aws.amazon.com/cli/)
-* [bash](https://www.gnu.org/software/bash/)
-* [jq-1.4](http://stedolan.github.io/jq/download/) or later (for stack-diff)
+- [awscli](http://aws.amazon.com/cli/)
+- [bash](https://www.gnu.org/software/bash/)
+- [jq-1.4](http://stedolan.github.io/jq/download/) or later (for stack-diff)
 
 ### Optional Packages
 
-* [colordiff](https://www.colordiff.org/) to show stack-diff in color
-* [icdiff](https://github.com/jeffkaufman/icdiff) to show stack-diff in color and side-by-side
+- [colordiff](https://www.colordiff.org/) to show stack-diff in color
+- [icdiff](https://github.com/jeffkaufman/icdiff) to show stack-diff in color and side-by-side
 
 ### Installation
 
@@ -158,7 +167,7 @@ As shown below, you may simply clone the GitHub repo and source the files requir
 (You should probably fork it instead to keep your customisations)
 
 ```Shell
-$ git clone https://github.com/bash-my-aws/bash-my-aws.git ${BMA_HOME:-$HOME/.bash-my-aws}
+git clone https://github.com/bash-my-aws/bash-my-aws.git ${BMA_HOME:-$HOME/.bash-my-aws}
 ```
 
 Put the following in your shell's startup file:
@@ -192,9 +201,7 @@ to [@ninth-dev](https://github.com/ninth-dev) for this.
     fi
 ```
 
-
 ## Usage
-
 
 ### Running Commands
 
@@ -252,7 +259,6 @@ makes discovering these commands simple.
 
 See the [Command Reference](https://bash-my-aws.org/command-reference/) for a full list of commands and usage examples.
 
-
 ### Piping Between Commands
 
 This is where the magic happens!
@@ -274,7 +280,6 @@ i-fed39ebe7204dfd37  10.135.204.82  54.214.26.190
         $ instances postfix | instance-ip
         i-b983805b4b254f749  10.190.1.70    54.214.71.51
         i-fed39ebe7204dfd37  10.135.204.82  54.214.26.190
-
 
 ### Inspecting Commands
 
@@ -302,7 +307,7 @@ instances ()
         LaunchTime,
         Placement.AvailabilityZone,
         VpcId
-      ]" --output text | grep -E -- "$filters" | LC_ALL=C sort -b -k 6 | column -s'	' -t
+      ]" --output text | grep -E -- "$filters" | LC_ALL=C sort -b -k 6 | column -s' ' -t
 }
 ```
 
@@ -335,4 +340,3 @@ instances() {
 ```
 
 For more info on AWSCLI query syntax, check out [http://jmespath.org/tutorial.html](http://jmespath.org/tutorial.html)
-

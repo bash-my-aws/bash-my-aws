@@ -1008,30 +1008,6 @@ Create arguments from output of az-cache-items() (if present)
 Ported from BMA
 
 
-### front-door-waf-policies
-
-
-
-### front-door-waf-policy-rules
-
-
-
-### front-door-waf-policy
-
-
-
-### front-door-waf-policy-rule-match-conditions
-
-
-
-### front-door-waf-policy-rule-match-condition-values
-
-
-
-### front-door-waf-policy-rule-delete
-
-
-
 ### ad-groups
 
 Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
@@ -1159,7 +1135,51 @@ Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 
-### deployment-groups
+### deployments-group
+
+
+
+### afds
+
+
+
+### afd-endpoints
+
+
+
+### afd-routes
+
+
+
+### afd-custom-domains
+
+
+
+### afd-origin-groups
+
+
+
+### afd-waf-policies
+
+
+
+### afd-waf-policy-rules
+
+
+
+### afd-waf-policy
+
+
+
+### afd-waf-policy-rule-match-conditions
+
+
+
+### afd-waf-policy-rule-match-condition-values
+
+
+
+### afd-waf-policy-rule-delete
 
 
 
