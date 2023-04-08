@@ -6,7 +6,7 @@
 #
 # WARNING, an experiment - alpha! - do not use!
 #
-# I first used the `az cli` on 25 Nov 2022 so am only at the start of a 
+# I first used the `az cli` on 25 Nov 2022 so am only at the start of a
 # learning journey.
 #
 # Source this file in from bash terminal and enjoy the functions.
@@ -19,13 +19,11 @@
 #    read -sp "Azure password: " AZ_PASS && echo && az login -u <username> -p $AZ_PASS
 # - bash completion
 
-
 # Notes
 #
 # az login : log in
 # az account clear: log out all users
 # az logout: only log out current user
-
 
 # Shared Functions
 
@@ -40,19 +38,20 @@ __bma_read_filters-az() {
   #     $ __bma_read_filters foo bar baz
   #     foo|bar|baz
 
-  ( IFS=$'|'; printf -- "$*" )
+  (
+    IFS=$'|'
+    printf -- "$*"
+  )
 }
 
-columnise ()
-{
-    column -t -s$'\t'
+columnise() {
+  column -t -s$'\t'
 }
 
-skim-stdin-tsv ()
-{
-    # XXX Update to quote items in output
-    local skimmed_stdin="$([[ -t 0 ]] || awk -F$'\t' 'ORS=" " { print $1 }')";
-    printf -- '%s %s' "$*" "$skimmed_stdin" | awk '{$1=$1;print}'
+skim-stdin-tsv() {
+  # XXX Update to quote items in output
+  local skimmed_stdin="$([[ -t 0 ]] || awk -F$'\t' 'ORS=" " { print $1 }')"
+  printf -- '%s %s' "$*" "$skimmed_stdin" | awk '{$1=$1;print}'
 }
 
 # Copied from bash-my-aws
@@ -78,7 +77,7 @@ skim-stdin-bma() {
   local skimmed_stdin="$([[ -t 0 ]] || awk 'ORS=" " { print $1 }')"
 
   printf -- '%s %s' "$*" "$skimmed_stdin" |
-    awk '{$1=$1;print}'  # trim leading/trailing spaces
+    awk '{$1=$1;print}' # trim leading/trailing spaces
 
 }
 
@@ -88,7 +87,7 @@ az-account() {
   az account show \
     --query ' [[ name, user.name ]]' \
     --output tsv |
-  columnise
+    columnise
 }
 
 az-user() {
@@ -99,13 +98,13 @@ az-user() {
 
 az-cache-items() {
   az cache list \
-  --query '[].[
+    --query '[].[
     resourceGroup,
     resourceType,
     name,
     lastSaved
     ]' \
-  --output tsv
+    --output tsv
 }
 
 az-cache-item() {
@@ -113,18 +112,18 @@ az-cache-item() {
   # Create arguments from output of az-cache-items() (if present)
   local args_from_stdin
   args_from_stdin="$([[ -t 0 ]] || awk '{ print "--resource-group=" $1, " --resource-type=" $2, " --name=" $3 }')"
-  if [[ -n $1 ]]; then # if command line args provided
+  if [[ -n $1 ]]; then                     # if command line args provided
     if [[ -n $1 && -n $2 && -n $3 ]]; then # if >= 3 args present
       local args_from_cmd
       args_from_cmd="--resource-group=$1 --resource-type=$2 --name=$3"
     fi
   fi
   local $arg_list
-  arg_list=$(printf -- '%s\n%s' "$args_from_stdin" "$args_from_cmd" ) # | awk '{$1=$1;print}')  # trim leading/trailing spaces
+  arg_list=$(printf -- '%s\n%s' "$args_from_stdin" "$args_from_cmd") # | awk '{$1=$1;print}')  # trim leading/trailing spaces
   echo "$arg_list"
   while read -r line; do
     az cache show $line
-  done <<< "$arg_list"
+  done <<<"$arg_list"
 }
 
 az-cache-item-delete() {
@@ -132,32 +131,32 @@ az-cache-item-delete() {
   # Create arguments from output of az-cache-items() (if present)
   local args_from_stdin
   args_from_stdin="$([[ -t 0 ]] || awk '{ print "--resource-group=" $1, " --resource-type=" $2, " --name=" $3 }')"
-  if [[ -n $1 ]]; then # if command line args provided
+  if [[ -n $1 ]]; then                     # if command line args provided
     if [[ -n $1 && -n $2 && -n $3 ]]; then # if >= 3 args present
       local args_from_cmd
       args_from_cmd="--resource-group=$1 --resource-type=$2 --name=$3"
     fi
   fi
   local $arg_list
-  arg_list=$(printf -- '%s\n%s' "$args_from_stdin" "$args_from_cmd" ) # | awk '{$1=$1;print}')  # trim leading/trailing spaces
+  arg_list=$(printf -- '%s\n%s' "$args_from_stdin" "$args_from_cmd") # | awk '{$1=$1;print}')  # trim leading/trailing spaces
   while read -r line; do
     az cache delete $line
-  done <<< "$arg_list"
+  done <<<"$arg_list"
 }
 
 # Location Functions
 
-locations(){
-  local filters=$(__bma_read_filters-az $@);
+locations() {
+  local filters=$(__bma_read_filters-az $@)
   az account list-locations \
     --query '[].[
       name,
       displayName
     ]' \
     --output tsv |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 3 |
-  columnise
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 3 |
+    columnise
 
 }
 
@@ -167,18 +166,18 @@ location() {
   # XXX Check input is a valid location
   if [[ -z "$location" ]]; then
     az config get defaults.location \
-      --only-show-errors            \
-      --output tsv                  \
+      --only-show-errors \
+      --output tsv \
       --query "value"
   else
     az config set defaults.location="${location}" \
-      --only-show-errors                          \
+      --only-show-errors \
       --output tsv
   fi
 }
 
 location-unset() {
-    az config unset defaults.location
+  az config unset defaults.location
 }
 
 location-each() {
@@ -202,7 +201,7 @@ location-each() {
 ## Resource Functions
 
 resource-groups() {
-  local filters=$(__bma_read_filters-az $@);
+  local filters=$(__bma_read_filters-az $@)
   az group list \
     --query "[].[
       name,
@@ -210,9 +209,9 @@ resource-groups() {
       location
       ]" \
     --output tsv |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 5 |
-  column -s$'\t' -t
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 5 |
+    column -s$'\t' -t
 }
 
 resource-group() {
@@ -221,12 +220,12 @@ resource-group() {
   # XXX Check input is a valid location
   if [[ -z "$group" ]]; then
     az config get defaults.group \
-      --only-show-errors         \
-      --output tsv               \
+      --only-show-errors \
+      --output tsv \
       --query "value"
   else
     az config set defaults.group="${group}" \
-      --only-show-errors                          \
+      --only-show-errors \
       --output tsv
   fi
 }
@@ -235,19 +234,19 @@ resource-group-export() {
 
   local resource_group=$(skim-stdin-bma "$@")
   [[ -z $resource_group ]] && resource_group=$(resource-group)
-   debug "\$resource_group=$resource_group"
+  debug "\$resource_group=$resource_group"
   [[ -z $resource_group ]] && __bma_usage "resource_group [resource_group]" && return 1
 
   az group export --resource-group "$resource_group"
 }
 
 resource-group-unset() {
-    az config unset defaults.group
+  az config unset defaults.group
 }
 
 resources() {
-  local filters=$(__bma_read_filters-az $@);
-  az resource list                           \
+  local filters=$(__bma_read_filters-az $@)
+  az resource list \
     --query "[].[
       name,
       resourceGroup,
@@ -255,34 +254,34 @@ resources() {
       createdTime,
       changedTime]" \
     --output tsv |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 5 |
-  column -s$'\t' -t
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 5 |
+    column -s$'\t' -t
 }
 
 management-groups() {
-  local filters=$(__bma_read_filters-az $@);
-  az account management-group list  \
+  local filters=$(__bma_read_filters-az $@)
+  az account management-group list \
     --query "[].[ displayName]" \
     --output tsv |
-  grep -E -- "$filters"
+    grep -E -- "$filters"
 }
 # az account management-group list --output tsv --query '[].[displayName]'
 
 resourceids() {
-  local filters=$(__bma_read_filters-az $@);
-  az resource list      \
-    --query "[].[id] "  \
-    --output tsv        |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 5 |
-  column -s$'\t' -t
+  local filters=$(__bma_read_filters-az $@)
+  az resource list \
+    --query "[].[id] " \
+    --output tsv |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 5 |
+    column -s$'\t' -t
 }
 
 resource-export() {
 
   local resources=$(skim-stdin-bma "$@")
-   debug "\$resources=$resources"
+  debug "\$resources=$resources"
   [[ -z $resources ]] && __bma_usage "resource [resource]" && return 1
 
   az group export --resource-ids $resources
@@ -291,7 +290,7 @@ resource-export() {
 ## Service Principal Functions
 
 service-principals() {
-  local filters=$(__bma_read_filters-az $@);
+  local filters=$(__bma_read_filters-az $@)
   az ad sp list \
     --query "[].[
       appId,
@@ -307,18 +306,18 @@ service-principals() {
 ## Subscription Functions
 
 subscriptions() {
-  local filters=$(__bma_read_filters-az $@);
-  az account list            \
+  local filters=$(__bma_read_filters-az $@)
+  az account list \
     --query "[].[
       id,
       isDefault,
       state,
       user.name,
       name
-    ]"                       \
-    --output tsv             |
-    grep -E -- "$filters"    |
-    LC_ALL=C sort -t$'\t' -b -k 3    |
+    ]" \
+    --output tsv |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 3 |
     column -s$'\t' -t
 }
 
@@ -333,7 +332,7 @@ subscription() {
 }
 
 subscription-unset() {
-    az config unset defaults.subscription
+  az config unset defaults.subscription
 }
 
 subscription-each() {
@@ -358,9 +357,7 @@ subscription-each() {
 
 ## Resource Specific Functions
 
-
 ## AD Functions
-
 
 ad-groups() {
 
@@ -376,7 +373,7 @@ ad-groups() {
   if [[ -n $1 ]]; then
     filter_arg='--filter "startswith(displayName,'"'$1'"')"'
     shift
-    local filters=$(__bma_read_filters-az $@);
+    local filters=$(__bma_read_filters-az $@)
   fi
 
   eval "az ad group list \
@@ -386,9 +383,9 @@ ad-groups() {
       displayName,
       createdDateTime
       ]'                \
-    --output tsv"       |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 2
+    --output tsv" |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 2
   # column -s$'\t' -t
 }
 
@@ -415,9 +412,9 @@ ad-group-members() {
         userPrincipalName,
         displayName,
         mail
-      ]'                 |
+      ]' |
       LC_ALL=C sort -t$'\t' -b -k 2 #|
-      # column -s$'\t' -t
+    # column -s$'\t' -t
   done
 }
 
@@ -425,7 +422,7 @@ ad-group-members() {
 #
 # $ time ad-users-not-graph-api | wc -l
 # 20820
-# 
+#
 # real    0m50.309s
 # user    0m15.158s
 # sys     0m0.443s
@@ -444,7 +441,7 @@ ad-users() {
   if [[ -n $1 ]]; then
     filter_arg='--filter "startswith(userPrincipalName,'"'$1'"')"'
     shift
-    local filters=$(__bma_read_filters-az $@);
+    local filters=$(__bma_read_filters-az $@)
   fi
 
   eval "az ad user list \
@@ -455,9 +452,9 @@ ad-users() {
       displayName,
       mail
       ]'                \
-    --output tsv"       |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 2
+    --output tsv" |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 2
   # column -s$'\t' -t
 }
 
@@ -493,24 +490,24 @@ ad-users-graph() {
 
   local filter_arg filters
   local output_format="${2:-tsv}" #  or json, table, etc
-  local top_arg='&top=999' # max items to return # uncomment to enable
+  local top_arg='&top=999'        # max items to return # uncomment to enable
   if [[ -n $1 ]]; then
     filter_arg="&filter=startswith(userPrincipalName,'$1')"
     shift
   fi
 
   local url="https://graph.microsoft.com/beta/users?${top_arg}${filter_arg}&select=userPrincipalName,displayName,onPremisesSyncEnabled,mail"
-  az rest          \
-    --method get         \
-    --url "$url"         \
+  az rest \
+    --method get \
+    --url "$url" \
     --query "value[].[
       userPrincipalName,
       displayName,
       join('=',['onPremisesSyncEnabled', to_string(onPremisesSyncEnabled)]),
       mail
     ]" \
-    --output $output_format       |
-  LC_ALL=C sort -t$'\t' -b -k 2 # | # Set to sort only when output is not set to JSON
+    --output $output_format |
+    LC_ALL=C sort -t$'\t' -b -k 2 # | # Set to sort only when output is not set to JSON
   # column -s$'\t' -t # Disabled to preserve tabs
 }
 
@@ -531,16 +528,16 @@ ad-user-groups() {
 
   local user
   for user in $users; do
-    az ad user get-member-groups    \
-      --id "$user"                  \
+    az ad user get-member-groups \
+      --id "$user" \
       --query "[].[
         id,
         displayName,
         '$user'
-        ]"               \
-      --output tsv                  |
+        ]" \
+      --output tsv |
       LC_ALL=C sort -t$'\t' -b -k 2 #|
-      # column -s$'\t' -t
+    # column -s$'\t' -t
   done
 }
 
@@ -551,12 +548,11 @@ ad-apps() {
   # REMOTE_FILTER: filters on start of displayName
   # LOCAL_FILTER: grep results
 
-
   local filter_arg filters
   if [[ -n $1 ]]; then
     filter_arg='--filter "startswith(displayName,'"'$1'"')"'
     shift
-    local filters=$(__bma_read_filters-az $@);
+    local filters=$(__bma_read_filters-az $@)
   fi
 
   eval "az ad app list  \
@@ -567,9 +563,9 @@ ad-apps() {
       displayName,
       createdDateTime
       ]'                \
-    --output tsv"       |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 3
+    --output tsv" |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 3
   # column -s$'\t' -t
 }
 
@@ -585,7 +581,7 @@ ad-app() {
   local app
   for app in $apps; do
     az ad app show \
-      --id="$app"  \
+      --id="$app" \
       --output "$output_format"
   done
 }
@@ -601,17 +597,17 @@ ad-app-owners() {
 
   local app
   for app in $apps; do
-    az ad app owner list  \
-      --id="$app"  \
+    az ad app owner list \
+      --id="$app" \
       --query "value[].[
         userPrincipalName,
         displayName,
         join('=',['onPremisesSyncEnabled', to_string(onPremisesSyncEnabled)]),
         mail
       ]" \
-      --output "$output_format"       |
+      --output "$output_format" |
       LC_ALL=C sort -k 2
-      
+
   done
 
   #     --query '[].[
@@ -635,16 +631,16 @@ function connectors() {
   if [[ -n $1 ]]; then
     filter_arg="&filter=startswith(machineName,'$1')"
     shift
-    local filters=$(__bma_read_filters-az $@);
+    local filters=$(__bma_read_filters-az $@)
   fi
   local top_arg='&top=999' # max items to return # uncomment to enable
 
   local output_format="${BMA_OUTPUT_FORMAT:-tsv}" #  or json, table, etc
 
   local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors?${top_arg}${filter_arg}"
-  az rest          \
-    --method get         \
-    --url "$url"         \
+  az rest \
+    --method get \
+    --url "$url" \
     --output "$output_format" \
     --query 'value[].[id, status, machineName, externalIp]' --output tsv |
     sort -k 3
@@ -661,19 +657,19 @@ function connector-groups() {
   if [[ -n $1 ]]; then
     filter_arg="&filter=startswith(name,'$1')"
     shift
-    local filters=$(__bma_read_filters-az $@);
+    local filters=$(__bma_read_filters-az $@)
   fi
   local top_arg='&top=999' # max items to return # uncomment to enable
 
   local output_format="${BMA_OUTPUT_FORMAT:-tsv}" #  or json, table, etc
 
   local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups?${top_arg}${filter_arg}"
-  az rest          \
-    --method get         \
-    --url "$url"         \
+  az rest \
+    --method get \
+    --url "$url" \
     --output "$output_format" \
     --query 'value[].[id, name, region, connectorGroupType, isDefault]' --output tsv |
-  sort -k 2
+    sort -k 2
 }
 
 function connector-group-apps() {
@@ -688,9 +684,9 @@ function connector-group-apps() {
   local cg
   for cg in $cgs; do
     local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups/$cg/applications"
-    az rest          \
-      --method get         \
-      --url "$url"         \
+    az rest \
+      --method get \
+      --url "$url" \
       --output "$output_format" \
       --query 'value[].[
         appId,
@@ -714,9 +710,9 @@ function connector-group-members() {
   local cg
   for cg in $cgs; do
     local url="https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectorGroups/$cg/members"
-    az rest          \
-      --method get         \
-      --url "$url"         \
+    az rest \
+      --method get \
+      --url "$url" \
       --output "$output_format" \
       --query 'value[].[
         id,
@@ -731,19 +727,18 @@ function connector-group-members() {
 # https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
 # https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors
 
-
-# TODO 
+# TODO
 
 deployments-group() {
-  local filters=$(__bma_read_filters-az $@);
+  local filters=$(__bma_read_filters-az $@)
   az deployment group list \
     --query '[].[
       name,
       properties.timestamp
     ]' \
-     --output tsv |
-    grep -E -- "$filters"    |
-    LC_ALL=C sort -k 2 
+    --output tsv |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -k 2
 }
 
 alias deployments=deployments-group
@@ -764,9 +759,8 @@ alias deployments=deployments-group
 #     security-policy  : Manage security policies within the specified profile.
 #     waf-log-analytic : Manage afd WAF related log analytic results.
 
-
 afds() {
-  local filters=$(__bma_read_filters-az $@);
+  local filters=$(__bma_read_filters-az $@)
   az afd profile list \
     --only-show-errors \
     --output tsv \
@@ -775,8 +769,8 @@ afds() {
       resourceState
     ]' \
     --output tsv |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -k 2 
+    grep -E -- "$filters" |
+    LC_ALL=C sort -k 2
 }
 
 afd-endpoints() {
@@ -787,7 +781,6 @@ afd-endpoints() {
 
   local profile
   for profile in $profiles; do
-    echo $profile
     az afd endpoint list \
       --only-show-errors \
       --profile-name "$profile" \
@@ -795,14 +788,16 @@ afd-endpoints() {
       --query "[].[
         name, 
         enabledState,
-        hostName
+        hostName,
+        '$profile'
       ]" \
       --output tsv |
-    LC_ALL=C sort -k 1 
+      LC_ALL=C sort -k 1
   done
 }
 
 afd-routes() {
+  # List routes of all endpoints for Front Door Profile(s)
   local profiles=$(skim-stdin "$@")
   [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
 
@@ -811,9 +806,7 @@ afd-routes() {
   local profile
   local endpoint
   for profile in $profiles; do
-    echo $profile
     for endpoint in $(afd-endpoints "$profile" | cut -f1); do
-      echo $endpoint
       az afd route list \
         --only-show-errors \
         --profile-name "$profile" \
@@ -828,7 +821,7 @@ afd-routes() {
           '$endpoint'
         ]" \
         --output tsv |
-      LC_ALL=C sort -k 1 
+        LC_ALL=C sort -k 1
     done
   done
 }
@@ -853,7 +846,7 @@ afd-custom-domains() {
         validationProperties.validationToken
       ]" \
       --output tsv |
-    LC_ALL=C sort -k 1 
+      LC_ALL=C sort -k 1
   done
 }
 
@@ -874,14 +867,14 @@ afd-origin-groups() {
         name
       ]" \
       --output tsv |
-    LC_ALL=C sort -k 1 
+      LC_ALL=C sort -k 1
   done
 }
 
 ## Front Door WAF Functions
 
 afd-waf-policies() {
-  local filters=$(__bma_read_filters-az $@);
+  local filters=$(__bma_read_filters-az $@)
   az network front-door waf-policy list \
     --output tsv \
     --query "[].[
@@ -889,15 +882,15 @@ afd-waf-policies() {
       resourceGroup,
       resourceState
       ]" |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t$'\t' -b -k 1 |
-  column -s$'\t' -t
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t$'\t' -b -k 1 |
+    column -s$'\t' -t
 }
 
 afd-waf-policy-rules() {
 
   local policies=$(skim-stdin-bma "$@")
-   debug "\$policies=$policies"
+  debug "\$policies=$policies"
   [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
 
   local policy
@@ -914,15 +907,15 @@ afd-waf-policy-rules() {
         '$policy',
         '$resource_group'
       ]" |
-    LC_ALL=C sort -t$'\t' -b -k 1 |
-    column -s$'\t' -t
+      LC_ALL=C sort -t$'\t' -b -k 1 |
+      column -s$'\t' -t
   done
 }
 
 afd-waf-policy() {
 
   local policies=$(skim-stdin-bma "$@")
-   debug "\$policies=$policies"
+  debug "\$policies=$policies"
   [[ -z $policies ]] && __bma_usage "policy [policy]" && return 1
 
   local policy
@@ -945,8 +938,8 @@ afd-waf-policy-rule-match-conditions() {
   local rule_name
   for rule_name in $rule_names; do
     az network front-door waf-policy rule match-condition list \
-      --policy-name "$policy_name"                             \
-      --name "$rule_name"                                      \
+      --policy-name "$policy_name" \
+      --name "$rule_name" \
       --query '[].[[
         join(`=`, [`operator`, operator]),
         join(`=`, [`matchVariable`, matchVariable]),
@@ -955,7 +948,7 @@ afd-waf-policy-rule-match-conditions() {
            to_string(length(matchValue))
         ]),
        `# view matches with afd-waf-policy-rule-match-values()`
-      ]][]'                                                       \
+      ]][]' \
       --output tsv
   done
 }
@@ -974,9 +967,9 @@ afd-waf-policy-rule-match-condition-values() {
   local rule_name
   for rule_name in $rule_names; do
     az network front-door waf-policy rule match-condition list \
-      --policy-name "$policy_name"                             \
-      --name "$rule_name"                                      \
-      --query '[0].[matchValue][]'                             \
+      --policy-name "$policy_name" \
+      --name "$rule_name" \
+      --query '[0].[matchValue][]' \
       --output tsv
   done
 }
@@ -994,12 +987,11 @@ afd-waf-policy-rule-delete() {
 
   echo "You are about to delete the following front-door WAF policy rules from $policy_name:"
   echo "$rule_names" | tr ' ' "\n" # | afd-waf-policy-rules # XXX add when we have resourceGroup sorted
-  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  [ -t 0 ] || exec </dev/tty       # reattach keyboard to STDIN
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     # XXX replace with `--ids` arg when we can generate resource IDs # it's easy
     for rule_name in $rule_names; do
       az network front-door waf-policy rule delete --policy-name wafPremium --name "${rule_name}"
@@ -1007,20 +999,63 @@ afd-waf-policy-rule-delete() {
   fi
 }
 
-
-
 deployment-groups() {
-  local filters=$(__bma_read_filters-az $@);
+  local filters=$(__bma_read_filters-az $@)
   az deployment group list \
     --query '[].[
       name,
       properties.timestamp
     ]' \
-     --output tsv |
-    grep -E -- "$filters"    |
-    LC_ALL=C sort -k 2 
+    --output tsv |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -k 2
 }
 
 # az afd custom-domain list --profile-name afd-azureappproxy-global-001
 # az deployment group list --query '[].[name, properties.timestamp]' --output tsv
 # https://learn.microsoft.com/en-gb/azure/azure-resource-manager/templates/deployment-history?tabs=azure-cli#deployment-operations-and-error-message
+
+# Doesn't account for dependencies
+deployment-delete-danger() {
+  local deployments=$(skim-stdin-bma "$@")
+  local resource_group="$(resource-group)" # XXX allow for provision of resource_group
+
+  if [[ -z $resource_group || -z $deployments ]]; then
+    __bma_usage "DEPLOYMENT [DEPLOYMENT]"
+    return 1
+  fi
+
+  echo "You're about to delete the following Azure Deployment(s) in Resource Group '$(resource-group)':"
+  echo "$deployments" | tr ' ' "\n"
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  read -p "Are you sure you want to continue? (y/n)" -n 1 -r
+  echo
+  [[ ! $REPLY =~ y ]] && return
+
+  local deployment
+  for deployment in $deployments; do
+    echo "Deployment '$deployment'"
+
+    # Get list of resources in the deployment
+    resources=$(az deployment group show \
+      --verbose \
+      --resource-group "$resource_group" \
+      --name "$deployment" \
+      --query "properties.outputResources[].id" \
+      --output tsv)
+
+    echo "You're about to delete the following Azure Resources in Deployment '$deployment':"
+    echo "$resources" | tr ' ' "\n"
+    read -p "Are you sure you want to continue? (y/n)" -n 1 -r
+    echo
+    [[ ! $REPLY =~ y ]] && return
+
+    az resource delete --verbose --ids $resources
+
+    # Delete the deployment
+    az deployment group delete \
+      --verbose \
+      --resource-group "$resource_group" \
+      --name "$deployment"
+  done
+}
