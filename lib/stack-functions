@@ -428,14 +428,13 @@ stack-resources() {
     stack=$(_bma_stack_name_arg "$stack")
     aws cloudformation describe-stack-resources                       \
       --stack-name $(_bma_stack_name_arg "$stack")                    \
-      --output text                                                   \
-      --query "
-        StackResources[].[
-          PhysicalResourceId,
-          ResourceType,
-          ResourceStatus,
-          '$stack'
-      ]"              |
+      --output "${BMA_OUTPUT_AWS:-text}" \
+      --query "StackResources[].{
+               PhysicalResourceId: PhysicalResourceId,
+               ResourceType: ResourceType,
+               ResourceStatus: ResourceStatus,
+               Stack: '${stack}'
+             }" |
     column -s$'\t' -t
   done
 }
