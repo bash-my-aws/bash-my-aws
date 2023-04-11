@@ -46,6 +46,8 @@ target-group-targets() {
 
   local tg_names=$(skim-stdin "$@")
 
+  [[ -z $tg_names ]] && __bma_usage "tg-name [tg-name]" && return 1
+
   for tg_name in $tg_names; do
     local tg_arn=$(aws elbv2 describe-target-groups \
       --names "$tg_name"                   \
@@ -63,6 +65,7 @@ target-group-targets() {
           Target.Id,
           Target.Port,
           TargetHealth.State,
+          TargetHealth.Description,
           '${tg_name}'
         ]
       "
