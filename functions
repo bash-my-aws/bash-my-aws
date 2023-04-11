@@ -26,14 +26,13 @@ ad-app-owners
 ad-apps
 ad-group-members
 ad-groups
-ad-group-members
-ad-groups
 ad-user-groups
 ad-user-names
 ad-user-upns
 ad-users
 ad-users-graph
 afd-custom-domains
+afd-custom-domains-validation-request
 afd-endpoints
 afd-origin-groups
 afd-routes
@@ -85,7 +84,9 @@ connector-group-members
 connector-groups
 connectors
 debug
+deployment-delete-danger
 deployment-groups
+deployments-group
 ecr-repositories
 ecr-repository-images
 elb-azs
@@ -154,6 +155,7 @@ kms-key-details
 kms-key-disable
 kms-key-enable
 kms-keys
+lambda-function-logs
 lambda-function-memory
 lambda-function-memory-set
 lambda-function-memory-step
@@ -179,6 +181,7 @@ resource-group-unset
 resource-groups
 resourceids
 resources
+secrets
 service-principals
 skim-stdin
 skim-stdin-bma

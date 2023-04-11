@@ -897,6 +897,14 @@ Construct a string to be passed to `grep -E`
     foo|bar|baz
 
 
+### columnise
+
+
+
+### skim-stdin-tsv
+
+
+
 ### skim-stdin-bma
 
 Append first token from each line of STDIN to argument list
@@ -1149,9 +1157,14 @@ Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 ### afd-routes
 
+List routes of all endpoints for Front Door Profile(s)
 
 
 ### afd-custom-domains
+
+
+
+### afd-custom-domains-validation-request
 
 
 
@@ -1180,6 +1193,14 @@ Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 
 ### afd-waf-policy-rule-delete
+
+
+
+### deployment-groups
+
+
+
+### deployment-delete-danger
 
 
 
@@ -1657,6 +1678,10 @@ function execution.
     USAGE: lambda-function-memory-step memory function [function]
 
 
+### lambda-function-logs
+
+
+
 ## log-commands
 
 
@@ -1761,6 +1786,13 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
     Are you sure you want to continue? y
     delete: s3://another-example-bucket/aliases
     remove_bucket: another-example-bucket
+
+
+## secretsmanager-commands
+
+
+### secrets
+
 
 
 ## sts-commands
