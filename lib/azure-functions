@@ -558,14 +558,14 @@ ad-apps() {
   eval "az ad app list  \
     --all \
     ${filter_arg}       \
-    --query '[].[
-      appId,
-      displayName,
-      createdDateTime
-      ]'                \
-    --output tsv" |
-    grep -E -- "$filters" |
-    LC_ALL=C sort -t$'\t' -b -k 3
+   --query 'sort_by([].{
+        "appId": appId,
+        "displayName": displayName,
+        "createdDateTime": createdDateTime,
+        "identifierUris": to_string(identifierUris)
+    },
+    &createdDateTime)'        \
+    --output ${BMA_OUTPUT_AZ:-${BMA_OUTPUT:-tsv}}"
   # column -s$'\t' -t
 }
 
@@ -830,23 +830,41 @@ afd-custom-domains() {
   local profiles=$(skim-stdin "$@")
   [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
 
-  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
-
   local profile
   for profile in $profiles; do
-    echo $profile
     az afd custom-domain list \
       --only-show-errors \
       --profile-name "$profile" \
-      --output tsv \
-      --query "[].[
-        name, 
-        hostName, 
-        domainValidationState, 
-        validationProperties.validationToken
-      ]" \
-      --output tsv |
-      LC_ALL=C sort -k 1
+      --query "sort_by([].{
+        Hostname: hostName,
+        Provisioning: provisioningState,
+        DomainValidation: domainValidationState,
+        AFDProfile: '$profile'
+        }, &Hostname)" \
+      --output "${BMA_OUTPUT_AZ:-${BMA_OUTPUT:-tsv}}"
+  done
+}
+
+afd-custom-domains-validation-request() {
+  local profiles=$(skim-stdin "$@")
+  [[ -z $profiles ]] && __bma_usage "PROFILE [PROFILE]" && return 1
+
+  local profile
+  for profile in $profiles; do
+    az afd custom-domain list \
+      --only-show-errors \
+      --profile-name "$profile" \
+      --query "sort_by([].{
+        Hostname:hostName,
+        DomainValidation:domainValidationState,
+        ValidationExpiration:validationProperties.expirationDate
+        DNSValidationRequest:join(' ', [
+          join('.', ['_dnsauth', hostName]),
+            'IN TXT',
+            validationProperties.validationToken
+          ])
+        }, &ValidationExpiration)" \
+      --output "${BMA_OUTPUT_AZ:-${BMA_OUTPUT:-tsv}}"
   done
 }
 
