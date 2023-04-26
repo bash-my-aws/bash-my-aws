@@ -134,3 +134,32 @@ cert-chain() {
       --query CertificateChain
   done
 }
+
+
+# openssl verify -CAfile trusted-ca.crt -untrusted chain.crt cert.crt
+
+cert-verify() {
+
+  # Verify ACM cert(s)
+  #
+  #     USAGE: cert-chain cert-arn [cert-arn]
+
+  local cert_arns=$(skim-stdin "$@")
+  # Be quiet - makes it easier to scan with "cert-arns | cert_verify"
+  # [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
+
+  local cert_arns
+  for cert_arn in $cert_arns; do
+
+    local cert_name=$(echo "$cert_arn" | bma certs | awk '{print $1}')
+    echo -n "$cert_name ($cert_arn): "
+    
+    openssl verify \
+      -verbose \
+      -CAfile /etc/ssl/certs/ca-certificates.crt  \
+      -untrusted <(cert-chain "$cert_arn") \
+      <(cert-ificate "$cert_arn") |
+      sed 's#/dev/fd/[0-9]*: ##'
+  done
+}
+
