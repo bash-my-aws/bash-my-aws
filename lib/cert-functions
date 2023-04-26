@@ -98,3 +98,39 @@ cert-delete() {
     done
   fi
 }
+
+cert-ificate() {
+
+  # Return Certificate for ACM Cert(s)
+  #
+  #     USAGE: cert-ificate cert-arn [cert-arn]
+
+  local cert_arns=$(skim-stdin "$@")
+  [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
+
+  local cert_arns
+  for cert_arn in $cert_arns; do
+    aws acm get-certificate \
+      --certificate-arn "$cert_arn"  \
+      --output text \
+      --query Certificate
+  done
+}
+
+cert-chain() {
+
+  # Return Cert Chain for ACM Cert(s)
+  #
+  #     USAGE: cert-chain cert-arn [cert-arn]
+
+  local cert_arns=$(skim-stdin "$@")
+  [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
+
+  local cert_arns
+  for cert_arn in $cert_arns; do
+    aws acm get-certificate \
+      --certificate-arn "$cert_arn"  \
+      --output text \
+      --query CertificateChain
+  done
+}

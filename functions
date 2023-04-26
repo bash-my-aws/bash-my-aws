@@ -73,7 +73,9 @@ bucket-acls
 bucket-remove
 bucket-remove-force
 buckets
+cert-chain
 cert-delete
+cert-ificate
 cert-users
 certs
 certs-arn

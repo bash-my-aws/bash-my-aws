@@ -1428,6 +1428,20 @@ Delete ACM Cert(s)
     USAGE: cert-delete cert-arn [cert-arn]
 
 
+### cert-ificate
+
+Return Certificate for ACM Cert(s)
+
+    USAGE: cert-ificate cert-arn [cert-arn]
+
+
+### cert-chain
+
+Return Cert Chain for ACM Cert(s)
+
+    USAGE: cert-chain cert-arn [cert-arn]
+
+
 ## cloudtrail-commands
 
 
