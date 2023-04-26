@@ -77,6 +77,7 @@ cert-chain
 cert-delete
 cert-ificate
 cert-users
+cert-verify
 certs
 certs-arn
 cloudtrail-status

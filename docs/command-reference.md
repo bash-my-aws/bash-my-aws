@@ -1442,6 +1442,14 @@ Return Cert Chain for ACM Cert(s)
     USAGE: cert-chain cert-arn [cert-arn]
 
 
+### cert-verify
+
+Verify ACM cert(s)
+
+    USAGE: cert-chain cert-arn [cert-arn]
+Be quiet - makes it easier to scan with "cert-arns | cert_verify"
+
+
 ## cloudtrail-commands
 
 

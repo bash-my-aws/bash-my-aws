@@ -156,6 +156,7 @@ complete -F _bma_certs_completion cert-chain
 complete -F _bma_certs_completion cert-delete
 complete -F _bma_certs_completion cert-ificate
 complete -F _bma_certs_completion cert-users
+complete -F _bma_certs_completion cert-verify
 complete -F _bma_certs_completion certs
 complete -F _bma_certs_completion certs-arn
 complete -F _bma_elbs_completion elb-azs
