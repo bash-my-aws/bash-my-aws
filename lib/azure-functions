@@ -541,6 +541,10 @@ ad-user-groups() {
   done
 }
 
+ad-user-group-diff() {
+  diff <(ad-users "${1:?}" | ad-user-groups | cut -f2) <(ad-users "${2:?}" | ad-user-groups | cut -f2)
+}
+
 ad-apps() {
 
   # Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
@@ -585,6 +589,32 @@ ad-app() {
       --output "$output_format"
   done
 }
+
+# ad-app-signins() {
+#   local apps=$(skim-stdin "$@")
+#   [[ -z $apps ]] && __bma_usage "APP [APP]" && return 1
+# 
+#   local output_format="${OUTPUT_FORMAT:-table}" #  or json, table, etc
+# 
+#   : ${WORKSPACE_ID:?}
+# 
+#   local app
+#   for app in $apps; do
+# 
+#     az monitor log-analytics query \
+#       --workspace "${WORKSPACE_ID}" \
+#       --analytics-query "
+#         SigninLogs
+#         | where TimeGenerated >= ago(7d)
+#         | where AppId == '$app'
+#         | where NetworkLocationDetails contains 'trustedNamedLocation'
+#         | summarize SignInCount=count() by Identity
+#         | sort by SignInCount" \
+#       --output "$output_format" \
+#       --query '[].{Identity:Identity, SignInCount:SignInCount}'
+# 
+#   done
+# }
 
 ad-app-owners() {
 
