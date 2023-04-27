@@ -146,15 +146,16 @@ cert-verify() {
   for cert_arn in $cert_arns; do
 
     local cert_name=$(echo "$cert_arn" | bma certs | awk '{print $1}')
-    echo -n "$cert_name ($cert_arn): "
 
-    openssl verify \
-      \
+    # echo -n "$cert_name ($cert_arn): "
+    echo -n "$cert_name : "
+
+    local output=$(openssl verify \
       -CAfile /etc/ssl/certs/ca-certificates.crt \
       -untrusted <(cert-chain "$cert_arn") \
       <(cert-ificate "$cert_arn") 2>&1 |
-      tr '\n' ' ' |
       sed 's#/dev/fd/[0-9]*: ##'
-    # -verbose \
+    )
+    [[ -n $output ]] && echo $output # lose the newlines
   done
 }
