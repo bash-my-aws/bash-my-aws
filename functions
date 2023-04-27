@@ -91,6 +91,7 @@ debug
 deployment-delete-danger
 deployment-groups
 deployments-group
+distributions
 ecr-repositories
 ecr-repository-images
 elb-azs
