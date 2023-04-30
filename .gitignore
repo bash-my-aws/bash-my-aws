@@ -10,3 +10,4 @@ cloudformation/tags
 test/cloudformation
 site/
 *.swp
+cloudformation/stars2.yml
