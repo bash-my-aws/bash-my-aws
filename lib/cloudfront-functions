@@ -2,7 +2,6 @@
 #
 # cloudfront-functions
 
-
 distributions() {
 
   # List Cloudfront Distributions
