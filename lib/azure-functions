@@ -259,15 +259,6 @@ resources() {
     column -s$'\t' -t
 }
 
-management-groups() {
-  local filters=$(__bma_read_filters-az $@)
-  az account management-group list \
-    --query "[].[ displayName]" \
-    --output tsv |
-    grep -E -- "$filters"
-}
-# az account management-group list --output tsv --query '[].[displayName]'
-
 resourceids() {
   local filters=$(__bma_read_filters-az $@)
   az resource list \
@@ -278,6 +269,24 @@ resourceids() {
     column -s$'\t' -t
 }
 
+resource-show() {
+
+  local resources=$(skim-stdin-bma "$@")
+  debug "\$resources=$resources"
+  [[ -z $resources ]] && __bma_usage "resource [resource]" && return 1
+
+  az resource show --ids $resources
+}
+
+resource-diff() {
+  read -ra resources <<< "$(skim-stdin-bma "$@")"
+  if [[ "${#resources[@]}" -ne 2 ]]; then
+    __bma_usage "RESOURCE_ID RESOURCE_ID"
+    echo 1 
+  fi
+  diff -u <(resource-show "${resources[0]}") <(resource-show "${resources[1]}")
+}
+
 resource-export() {
 
   local resources=$(skim-stdin-bma "$@")
@@ -286,6 +295,7 @@ resource-export() {
 
   az group export --resource-ids $resources
 }
+
 
 ## Service Principal Functions
 
@@ -302,6 +312,15 @@ service-principals() {
     LC_ALL=C sort -t$'\t' -b -k 3 |
     column -s$'\t' -t
 }
+
+management-groups() {
+  local filters=$(__bma_read_filters-az $@)
+  az account management-group list \
+    --query "[].[ displayName]" \
+    --output tsv |
+    grep -E -- "$filters"
+}
+# az account management-group list --output tsv --query '[].[displayName]'
 
 ## Subscription Functions
 
@@ -593,14 +612,14 @@ ad-app() {
 # ad-app-signins() {
 #   local apps=$(skim-stdin "$@")
 #   [[ -z $apps ]] && __bma_usage "APP [APP]" && return 1
-# 
+#
 #   local output_format="${OUTPUT_FORMAT:-table}" #  or json, table, etc
-# 
+#
 #   : ${WORKSPACE_ID:?}
-# 
+#
 #   local app
 #   for app in $apps; do
-# 
+#
 #     az monitor log-analytics query \
 #       --workspace "${WORKSPACE_ID}" \
 #       --analytics-query "
@@ -612,7 +631,7 @@ ad-app() {
 #         | sort by SignInCount" \
 #       --output "$output_format" \
 #       --query '[].{Identity:Identity, SignInCount:SignInCount}'
-# 
+#
 #   done
 # }
 
