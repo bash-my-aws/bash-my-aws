@@ -983,11 +983,15 @@ Create arguments from output of az-cache-items() (if present)
 
 
 
-### management-groups
-
-
-
 ### resourceids
+
+
+
+### resource-show
+
+
+
+### resource-diff
 
 
 
@@ -996,6 +1000,10 @@ Create arguments from output of az-cache-items() (if present)
 
 
 ### service-principals
+
+
+
+### management-groups
 
 
 

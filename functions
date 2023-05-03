@@ -179,11 +179,13 @@ rds-db-instances
 region
 region-each
 regions
+resource-diff
 resource-export
 resource-group
 resource-group-export
 resource-group-unset
 resource-groups
+resource-show
 resourceids
 resources
 secrets
