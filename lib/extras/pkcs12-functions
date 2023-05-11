@@ -26,7 +26,7 @@ pkcs12-verify() {
   trap 'rm -f "$cert_file" "$chain_file"' EXIT
 
   # Extract certificate and chain from PFX file
-  openssl pkcs12 -in "$pfx_file" -nodes -passin "pass:${pfx_pass:?}" |
+  openssl pkcs12 $BMA_PKCS12_ARGS -in "$pfx_file" -nodes -passin "pass:${pfx_pass:?}" |
     openssl x509 -noout -issuer -subject -dates || return 1
 
   cat "$pfx_file" | pkcs12-cert "$pfx_pass" > "$cert_file"
@@ -56,7 +56,7 @@ pkcs12-extract() {
 pkcs12-key() {
   [[ $# -ne 1 ]] && echo "Usage: pkcs12-key <password>" >&2 && return 1
   pass="${1:?}"
-  if ! openssl pkcs12 -nocerts -passin "pass:${pass:?}" 2>/dev/null; then
+  if ! openssl pkcs12 $BMA_PKCS12_ARGS -nocerts -passin "pass:${pass:?}" 2>/dev/null; then
     echo "Error: Failed to extract key from PFX input" >&2
     return 1
   fi
@@ -65,7 +65,7 @@ pkcs12-key() {
 pkcs12-chain() {
   [[ $# -ne 1 ]] && echo "Usage: pkcs12-chain <password>" >&2 && return 1
   pass="${1:?}"
-  if ! openssl pkcs12 -cacerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
+  if ! openssl pkcs12 $BMA_PKCS12_ARGS -cacerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
     echo "Error: Failed to extract chain from PFX input" >&2
     return 1
   fi
@@ -74,7 +74,7 @@ pkcs12-chain() {
 pkcs12-cert() {
   [[ $# -ne 1 ]] && echo "Usage: pkcs12-cert <password>" >&2 && return 1
   pass="${1:?}"
-  if ! openssl pkcs12 -clcerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
+  if ! openssl pkcs12 $BMA_PKCS12_ARGS -clcerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
     echo "Error: Failed to extract certificate from PFX input" >&2
     return 1
   fi
