@@ -13,5 +13,10 @@ columnise() {
   # Looped commands (such as those with multiple resources piped in) do
   # not delay output by sending the aggregate through `column`.
 
-  column -s$'\t' -t
+  if [[ -t 1 ]] ; then
+    column -t -s $'\t'
+  else
+    cat
+  fi
 }
+

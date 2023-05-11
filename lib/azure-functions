@@ -44,8 +44,13 @@ __bma_read_filters-az() {
   )
 }
 
+
 columnise() {
-  column -t -s$'\t'
+  if [[ -t 1 ]] ; then
+    column -t
+  else
+    cat
+  fi
 }
 
 skim-stdin-tsv() {
@@ -279,10 +284,10 @@ resource-show() {
 }
 
 resource-diff() {
-  read -ra resources <<< "$(skim-stdin-bma "$@")"
+  read -ra resources <<<"$(skim-stdin-bma "$@")"
   if [[ "${#resources[@]}" -ne 2 ]]; then
     __bma_usage "RESOURCE_ID RESOURCE_ID"
-    echo 1 
+    echo 1
   fi
   diff -u <(resource-show "${resources[0]}") <(resource-show "${resources[1]}")
 }
@@ -295,7 +300,6 @@ resource-export() {
 
   az group export --resource-ids $resources
 }
-
 
 ## Service Principal Functions
 
@@ -890,7 +894,8 @@ afd-custom-domains() {
         DomainValidation: domainValidationState,
         AFDProfile: '$profile'
         }, &Hostname)" \
-      --output "${BMA_OUTPUT_AZ:-${BMA_OUTPUT:-tsv}}"
+      --output "${BMA_OUTPUT_AZ:-${BMA_OUTPUT:-tsv}}" |
+      columnise
   done
 }
 

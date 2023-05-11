@@ -1220,6 +1220,516 @@ List routes of all endpoints for Front Door Profile(s)
 
 
 
+## azure-commands.sync-conflict-20230420-211127-HJV7N3G
+
+
+### function
+ debug
+Construct a string to be passed to `grep -E`
+
+    foo|bar|baz
+
+
+### function
+ skim-stdin-bma
+Append first token from each line of STDIN to argument list
+
+Implementation of `pipe-skimming` pattern.
+
+    $ stacks | skim-stdin foo bar
+    foo bar huginn mastodon grafana
+
+    $ stacks
+    huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+    mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+    grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+Typical usage within Bash-my-AWS functions:
+
+    local asg_names=$(skim-stdin "$@") # Append to arg list
+    local asg_names=$(skim-stdin)      # Only draw from STDIN
+
+
+### function
+ az-account
+
+
+### function
+ az-user
+
+
+### function
+ az-cache-items
+
+
+### function
+ az-cache-item
+Create arguments from output of az-cache-items() (if present)
+
+
+### function
+ az-cache-item-delete
+Create arguments from output of az-cache-items() (if present)
+
+
+### function
+ locations
+
+
+### function
+ location
+
+
+### function
+ location-unset
+
+
+### function
+ location-each
+
+
+### function
+ resource-groups
+
+
+### function
+ resource-group
+
+
+### function
+ resource-group-export
+
+
+### function
+ resource-group-unset
+
+
+### function
+ resources
+
+
+### function
+ resourceids
+
+
+### function
+ resource-export
+
+
+### function
+ service-principals
+
+
+### function
+ subscriptions
+
+
+### function
+ subscription
+
+
+### function
+ subscription-unset
+
+
+### function
+ subscription-each
+Ported from BMA
+
+
+### function
+ front-door-waf-policies
+
+
+### function
+ front-door-waf-policy-rules
+
+
+### function
+ front-door-waf-policy
+
+
+### function
+ front-door-waf-policy-rule-match-conditions
+
+
+### function
+ front-door-waf-policy-rule-match-condition-values
+
+
+### function
+ front-door-waf-policy-rule-delete
+
+
+### function
+ ad-users
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+
+
+### function
+ ad-users-graph
+Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+- https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli
+
+Uses graph API - more functionaility than azcli but limited result count
+
+$ time ad-users | wc -l
+999
+real    0m0.792s
+user    0m0.311s
+sys     0m0.047s
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t # Disabled to preserve tabs
+
+
+### function
+ ad-user-groups
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
+### function
+ ad-apps
+Usage: ad-users REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+
+## azure-commands.sync-conflict-20230506-164126-HJV7N3G
+
+
+### debug
+
+Construct a string to be passed to `grep -E`
+
+    foo|bar|baz
+
+
+### columnise
+
+
+
+### skim-stdin-tsv
+
+
+
+### skim-stdin-bma
+
+Append first token from each line of STDIN to argument list
+
+Implementation of `pipe-skimming` pattern.
+
+    $ stacks | skim-stdin foo bar
+    foo bar huginn mastodon grafana
+
+    $ stacks
+    huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+    mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+    grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+Typical usage within Bash-my-AWS functions:
+
+    local asg_names=$(skim-stdin "$@") # Append to arg list
+    local asg_names=$(skim-stdin)      # Only draw from STDIN
+
+
+### az-account
+
+
+
+### az-user
+
+
+
+### az-cache-items
+
+
+
+### az-cache-item
+
+Create arguments from output of az-cache-items() (if present)
+
+
+### az-cache-item-delete
+
+Create arguments from output of az-cache-items() (if present)
+
+
+### locations
+
+
+
+### location
+
+
+
+### location-unset
+
+
+
+### location-each
+
+
+
+### resource-groups
+
+
+
+### resource-group
+
+
+
+### resource-group-export
+
+
+
+### resource-group-unset
+
+
+
+### resources
+
+
+
+### management-groups
+
+
+
+### resourceids
+
+
+
+### resource-export
+
+
+
+### service-principals
+
+
+
+### subscriptions
+
+
+
+### subscription
+
+
+
+### subscription-unset
+
+
+
+### subscription-each
+
+Ported from BMA
+
+
+### ad-groups
+
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t
+
+
+### ad-group-members
+
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
+### ad-users
+
+Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t
+
+
+### function
+ ad-user-upns
+
+
+### function
+ ad-user-upns
+
+
+### function
+ ad-user-names
+
+
+### ad-users-graph
+
+Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER
+
+REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+- https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli
+
+Uses graph API - more functionaility than azcli but limited result count
+
+$ time ad-users | wc -l
+999
+real    0m0.792s
+user    0m0.311s
+sys     0m0.047s
+
+[User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
+[List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
+column -s$'\t' -t # Disabled to preserve tabs
+
+
+### ad-user-groups
+
+List groups for AD User(s)
+
+    USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+    $ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+
+
+### ad-apps
+
+Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results
+column -s$'\t' -t
+
+
+### ad-app
+
+Usage: ad-app APP [APP]
+
+
+### #
+ ad-app-signins
+
+
+### ad-app-owners
+
+Usage: ad-app-owners APP [APP]
+    --query '[].[
+      appId,
+      displayName,
+      createdDateTime
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 3
+
+
+### function
+ connectors
+Usage: connectors REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of machineName
+LOCAL_FILTER: grep results
+
+
+### function
+ connector-groups
+Usage: connector-groups REMOTE_FILTER LOCAL_FILTER
+
+REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results
+
+
+### function
+ connector-group-apps
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
+
+
+### function
+ connector-group-members
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
+
+
+### deployments-group
+
+
+
+### afds
+
+
+
+### afd-endpoints
+
+
+
+### afd-routes
+
+List routes of all endpoints for Front Door Profile(s)
+
+
+### afd-custom-domains
+
+
+
+### afd-custom-domains-validation-request
+
+
+
+### afd-origin-groups
+
+
+
+### afd-waf-policies
+
+
+
+### afd-waf-policy-rules
+
+
+
+### afd-waf-policy
+
+
+
+### afd-waf-policy-rule-match-conditions
+
+
+
+### afd-waf-policy-rule-match-condition-values
+
+
+
+### afd-waf-policy-rule-delete
+
+
+
+### deployment-groups
+
+
+
+### deployment-delete-danger
+
+
+
 ## cert-commands
 
 
@@ -1267,6 +1777,33 @@ Verify ACM cert(s)
 
     USAGE: cert-chain cert-arn [cert-arn]
 Be quiet - makes it easier to scan with "cert-arns | cert_verify"
+
+
+## cert-commands.sync-conflict-20230506-162348-HJV7N3G
+
+
+### certs
+
+List ACM Certificates
+
+
+### certs-arn
+
+Same as `certs` but with the ARN in first column
+
+
+### cert-users
+
+List resources using ACM Cert(s)
+
+    USAGE: cert-users cert-arn [cert-arn]
+
+
+### cert-delete
+
+Delete ACM Cert(s)
+
+    USAGE: cert-delete cert-arn [cert-arn]
 
 
 ## cloudfront-commands
@@ -1385,6 +1922,71 @@ List tags applied ELB(s)
 List named tag on ELB(s)
 
     USAGE: elb-tag key elb-id [elb-id]
+
+
+## elb-commands.sync-conflict-20230420-211051-HJV7N3G
+
+
+### elbs
+
+List ELBs
+Accepts LoadBalancer names on STDIN and converts to LoadBalancer names
+
+    $ elbs
+    elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
+    another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z
+
+
+### elb-dnsname
+
+List DNS Names of ELB(s)
+
+     USAGE: elb-dnsname load-balancer [load-balancer]
+
+     $ elbs | elb-dnsname
+     elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
+     another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
+
+
+### elb-instances
+
+List instances of ELB(s)
+
+     USAGE: elb-instances load-balancer [load-balancer]
+
+
+### elb-stack
+
+List CloudFormation stack names of ELB(s)
+
+    USAGE: elb-stack load-balancer [load-balancer]
+
+    $ elbs | elb-stack
+    elb          elb-MyLoadBalancer-1FNISWJN0W6N9
+    another-elb  another-e-MyLoadBa-171CPCZF2E84T
+
+
+### elb-subnets
+
+List subnets of ELB(s)
+
+    USAGE: elb-subnets load-balancer [load-balancer]
+
+    $ elbs | elb-subnets
+    rails-demo-ELB-FRBEQPCYSZQD  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+    huginn-ELB-BMD0QUX179PK      subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+    prometheus-ELB-C0FGVLGQ64UH  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
+
+
+### elb-azs
+
+List Availability Zones of ELB(s)
+
+    USAGE: elb-azs load-balancer [load-balancer]
+
+    $ elbs | elb-azs
+    rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
+    huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
 
 
 ## elbv2-commands
@@ -1728,6 +2330,45 @@ function execution.
 
 
 
+## lambda-commands.sync-conflict-20230420-211121-HJV7N3G
+
+
+### lambda-functions
+
+List lambda functions
+
+    $ lambda-functions
+    stars    2019-12-18T10:00:00.000+0000  python2.7  256
+    stripes  2019-12-19T10:21:42.444+0000  python3.7  128
+
+
+### lambda-function-memory
+
+List memorySize for lambda function(s)
+
+    USAGE: lambda-function-memory function [function]
+
+
+### lambda-function-memory-set
+
+Update memorySize for lambda function(s)
+
+    USAGE: lambda-function-memory-set memory function [function]
+
+
+### lambda-function-memory-step
+
+Repeatedly update memorySize for lambda function(s)
+
+Useful for measuring impact of memory on cost/performance.
+The function increases memorySize by 64KB every two minutes
+until it reaches the value requested. There is a two minute
+delay between increases to provide time to collect data from
+function execution.
+
+    USAGE: lambda-function-memory-step memory function [function]
+
+
 ## log-commands
 
 
@@ -1890,6 +2531,28 @@ Accepts Target Group names on stdin or as arguments
     i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
 
 
+## target-group-commands.sync-conflict-20230420-211127-HJV7N3G
+
+
+### target-groups
+
+List EC2 ELBv2 target groups
+
+    $ target-groups
+    bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
+    bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
+
+
+### target-group-targets
+
+List EC2 ELBv2 target group targets
+Accepts Target Group names on stdin or as arguments
+
+    $ target-group-targets bash-my-aws-nlb-tg
+    i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
+    i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
+
+
 ## vpc-commands
 
 
@@ -2031,3 +2694,21 @@ Exclude default VPCs that contain:
     aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-9eea2c07
     aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-34fd9cfa
     aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
+
+
+extras:
+
+
+## github-commands
+
+
+## github-commands.sync-conflict-20230506-170308-HJV7N3G
+
+
+## github-commands.sync-conflict-20230506-175706-HJV7N3G
+
+
+## pkcs12-commands
+
+
+## pkcs12-commands-bak
