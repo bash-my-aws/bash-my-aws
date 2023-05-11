@@ -26,7 +26,7 @@ pkcs12-verify() {
 
   # Extract certificate and chain from PFX file
   openssl pkcs12 -in "$pfx_file" -nodes -passin "pass:${pfx_pass:?}" |
-    openssl x509 -noout -issuer -subject -dates || exit 1
+    openssl x509 -noout -issuer -subject -dates || return 1
 
   cat "$pfx_file" | pkcs12-cert "$pfx_pass" > "$cert_file"
   cat "$pfx_file" | pkcs12-chain "$pfx_pass" > "$chain_file"
