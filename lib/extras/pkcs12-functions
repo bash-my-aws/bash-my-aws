@@ -14,6 +14,7 @@ pkcs12-create() {
 
 pkcs12-verify() {
   local pfx_file="${1:?}"
+  local pfx_file_basename="$(basename $pfx_file)"
   read -p "Please enter PFX password: " -sr pfx_pass
   cafile=/etc/ssl/certs/ca-certificates.crt
 
@@ -35,7 +36,8 @@ pkcs12-verify() {
   openssl verify \
     -CAfile "$cafile" \
     -untrusted "$chain_file" \
-    "$cert_file"
+    "$cert_file" |
+    sed "s#$cert_file#$pfx_file_basename#"
 }
 
 pkcs12-extract() {
@@ -63,7 +65,7 @@ pkcs12-key() {
 pkcs12-chain() {
   [[ $# -ne 1 ]] && echo "Usage: pkcs12-chain <password>" >&2 && return 1
   pass="${1:?}"
-  if ! openssl pkcs12  -cacerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
+  if ! openssl pkcs12 -cacerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
     echo "Error: Failed to extract chain from PFX input" >&2
     return 1
   fi
@@ -72,7 +74,7 @@ pkcs12-chain() {
 pkcs12-cert() {
   [[ $# -ne 1 ]] && echo "Usage: pkcs12-cert <password>" >&2 && return 1
   pass="${1:?}"
-  if ! openssl pkcs12  -clcerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
+  if ! openssl pkcs12 -clcerts -nokeys -passin "pass:${pass:?}" 2>/dev/null; then
     echo "Error: Failed to extract certificate from PFX input" >&2
     return 1
   fi
