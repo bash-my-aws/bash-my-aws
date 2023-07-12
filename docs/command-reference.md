@@ -1033,7 +1033,7 @@ LOCAL_FILTER: grep results
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t
+columnise
 
 
 ### ad-group-members
@@ -1054,7 +1054,7 @@ LOCAL_FILTER: grep results
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t
+columnise
 
 
 ### function
@@ -1086,7 +1086,7 @@ sys     0m0.047s
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t # Disabled to preserve tabs
+columnise # Disabled to preserve tabs
 
 
 ### ad-user-groups
@@ -1108,7 +1108,7 @@ Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
 
 REMOTE_FILTER: filters on start of displayName
 LOCAL_FILTER: grep results
-column -s$'\t' -t
+columnise
 
 
 ### ad-app
@@ -1389,7 +1389,7 @@ sys     0m0.047s
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t # Disabled to preserve tabs
+columnise # Disabled to preserve tabs
 
 
 ### function
@@ -1547,7 +1547,7 @@ LOCAL_FILTER: grep results
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t
+columnise
 
 
 ### ad-group-members
@@ -1568,7 +1568,7 @@ LOCAL_FILTER: grep results
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t
+columnise
 
 
 ### function
@@ -1600,7 +1600,7 @@ sys     0m0.047s
 
 [User Properties](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties)
 [List Users](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http)
-column -s$'\t' -t # Disabled to preserve tabs
+columnise # Disabled to preserve tabs
 
 
 ### ad-user-groups
@@ -1618,7 +1618,7 @@ Usage: ad-apps REMOTE_FILTER LOCAL_FILTER
 
 REMOTE_FILTER: filters on start of displayName
 LOCAL_FILTER: grep results
-column -s$'\t' -t
+columnise
 
 
 ### ad-app

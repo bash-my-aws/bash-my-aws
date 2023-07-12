@@ -4,7 +4,6 @@
 #
 # EC2 Enterprise Load Balancers (A.K.A. Classic load Balancers)
 
-
 elbs() {
 
   # List ELBs
@@ -27,9 +26,8 @@ elbs() {
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -k 2    |
-  column -s$'\t' -t
+    columnise
 }
-
 
 elb-dnsname(){
 
@@ -52,9 +50,8 @@ elb-dnsname(){
         LoadBalancerName,
         DNSName
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
-
 
 elb-instances() {
 
@@ -77,10 +74,9 @@ elb-instances() {
           ReasonCode,
           '${elb_name}'
         ]"              |
-      column -s$'\t' -t
+      columnise
   done
 }
-
 
 elb-stack() {
 
@@ -103,9 +99,8 @@ elb-stack() {
         [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
         LoadBalancerName
       ]"            |
-  column -s$'\t' -t
+    columnise
 }
-
 
 elb-subnets() {
 
@@ -129,9 +124,8 @@ elb-subnets() {
         LoadBalancerName,
         join(' ', sort(Subnets))
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
-
 
 elb-azs() {
 
@@ -154,7 +148,7 @@ elb-azs() {
         LoadBalancerName,
         join(' ', sort(AvailabilityZones))
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
 
 elb-tags() {
@@ -175,7 +169,7 @@ elb-tags() {
         join(' ', [Tags[].[join('=',[Key,Value])][]][])
       ]
       "            |
-  column -s$'\t' -t
+    columnise
 }
 
 elb-tag() {
@@ -195,5 +189,5 @@ elb-tag() {
     --query "TagDescriptions[].[
        [ LoadBalancerName, Tags[?Key=='$key'][Key,Value][] ][]
      ][]" |
-  column -s$'\t' -t
+    columnise
 }

@@ -20,11 +20,11 @@ instances() {
   #     i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
   #     i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
 
-  local instance_ids=$(skim-stdin)
+  local instances=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
   aws ec2 describe-instances            \
-    ${instance_ids/#/'--instance-ids '} \
+    ${instances/#/'--instance-ids '} \
     --output text                       \
     --query "
       Reservations[].Instances[][
@@ -39,9 +39,8 @@ instances() {
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 6 |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-asg() {
 
@@ -63,9 +62,8 @@ instance-asg() {
           "InstanceId": InstanceId
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-az() {
 
@@ -90,9 +88,8 @@ instance-az() {
           Placement.AvailabilityZone
         ]
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-console() {
 
@@ -127,7 +124,6 @@ instance-console() {
   done
 }
 
-
 instance-dns() {
 
   # List DNS name of EC2 Instance(s)
@@ -152,9 +148,8 @@ instance-dns() {
           "Public": PublicDnsName
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-health-set-unhealthy() {
 
@@ -175,7 +170,6 @@ instance-health-set-unhealthy() {
   done
 }
 
-
 instance-iam-profile() {
 
   # List iam-profile of EC2 Instance(s)
@@ -195,9 +189,8 @@ instance-iam-profile() {
           IamInstanceProfile.Id
         ]
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-ip() {
 
@@ -223,9 +216,8 @@ instance-ip() {
           "Public": PublicIpAddress
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-ssh() {
 
@@ -263,7 +255,6 @@ instance-ssh() {
   done
 }
 
-
 instance-ssh-details() {
 
   # List details needed to SSH into EC2 Instance(s)
@@ -288,9 +279,8 @@ instance-ssh-details() {
         join(' ', [Tags[?Key=='Name'].Value][] || ['not-named']),
         join(' ', [Tags[?Key=='default-user'].Value][] || [''])
       ]"            |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-ssm() {
 
@@ -363,12 +353,11 @@ instance-stack() {
           InstanceId
         ]
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
 
 # When instances have uninformative names, sometimes listing them by stack name helps
 alias instance-stacks='instances | instance-stack'
-
 
 instance-start() {
 
@@ -395,7 +384,6 @@ instance-start() {
     column -t
 }
 
-
 instance-state() {
 
   # List state of EC2 Instance(s)
@@ -419,9 +407,8 @@ instance-state() {
           "State": State.Name
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-stop() {
 
@@ -467,7 +454,7 @@ instance-subnet() {
         InstanceId,
         [Tags[?Key=='Name'].Value][0][0]
       ]"            |
-  column -s$'\t' -t
+    columnise
 }
 
 instance-stop-protection() {
@@ -500,7 +487,6 @@ instance-stop-protection() {
   done
 }
 
-
 instance-stop-protection-disable() {
 
   # Disable EC2 Instance stop protection
@@ -516,8 +502,7 @@ instance-stop-protection-disable() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     for instance_id in $instance_ids; do
       aws ec2 modify-instance-attribute   \
         --attribute disableApiStop        \
@@ -526,7 +511,6 @@ instance-stop-protection-disable() {
     done
   fi
 }
-
 
 instance-stop-protection-enable() {
 
@@ -543,8 +527,7 @@ instance-stop-protection-enable() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     for instance_id in $instance_ids; do
       aws ec2 modify-instance-attribute   \
         --attribute disableApiStop        \
@@ -553,7 +536,6 @@ instance-stop-protection-enable() {
     done
   fi
 }
-
 
 instance-tags() {
 
@@ -572,7 +554,7 @@ instance-tags() {
         InstanceId,
         join(' ', [Tags[].[join('=',[Key,Value])][]][])
       ]"            |
-  column -s$'\t' -t
+    columnise
 }
 
 instance-tag() {
@@ -593,7 +575,7 @@ instance-tag() {
      "Name=resource-id,Values=${instances// /,}" \
     --output text                                \
     --query 'Tags[].[ResourceId, Key, Value]' |
-  column -s$'\t' -t
+    columnise
 }
 
 instance-tag-create() {
@@ -653,8 +635,7 @@ instance-terminate() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     aws ec2 terminate-instances    \
       --instance-ids $instance_ids \
       --output text                \
@@ -667,7 +648,6 @@ instance-terminate() {
       column -t
   fi
 }
-
 
 instance-termination-protection() {
 
@@ -699,7 +679,6 @@ instance-termination-protection() {
   done
 }
 
-
 instance-termination-protection-disable() {
 
   # Disable EC2 Instance termination protection
@@ -715,8 +694,7 @@ instance-termination-protection-disable() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     for instance_id in $instance_ids; do
       aws ec2 modify-instance-attribute   \
         --attribute disableApiTermination \
@@ -725,7 +703,6 @@ instance-termination-protection-disable() {
     done
   fi
 }
-
 
 instance-termination-protection-enable() {
 
@@ -742,8 +719,7 @@ instance-termination-protection-enable() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     for instance_id in $instance_ids; do
       aws ec2 modify-instance-attribute   \
         --attribute disableApiTermination \
@@ -752,7 +728,6 @@ instance-termination-protection-enable() {
     done
   fi
 }
-
 
 instance-type() {
 
@@ -779,9 +754,8 @@ instance-type() {
         ]
       ][]"                                                              \
     --output text                                                       |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-userdata() {
 
@@ -803,7 +777,6 @@ instance-userdata() {
     echo
   done
 }
-
 
 instance-volumes() {
 
@@ -828,9 +801,8 @@ instance-volumes() {
         ]
       ][]"                                                              \
     --output text                                                       |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-vpc() {
 

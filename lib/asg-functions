@@ -22,8 +22,7 @@ asg-detach-instances() {
     local regex_yes="^[Yy]$"
     read -p "Are you sure you want to continue? " -n 1 -r
     echo
-    if [[ $REPLY =~ $regex_yes ]]
-    then
+    if [[ $REPLY =~ $regex_yes ]]; then
       asg-suspend "$asg_name"
       asg-min-size-set 0 "$asg_name"
       aws autoscaling detach-instances        \
@@ -53,9 +52,8 @@ asgs() {
     ]"                  |
   grep -E -- "$filters" |
   sort -k 3             |
-  column -s$'\t' -t
+    columnise
 }
-
 
 asg-capacity() {
 
@@ -74,9 +72,8 @@ asg-capacity() {
       DesiredCapacity,
       MaxSize
     ]"              |
-  column -s$'\t' -t
+    columnise
 }
-
 
 asg-desired-size-set() {
 
@@ -97,7 +94,6 @@ asg-desired-size-set() {
       --desired-capacity "$capacity"
   done
 }
-
 
 asg-instances() {
 
@@ -120,7 +116,6 @@ asg-instances() {
     echo "$instance_ids" | instances
   fi
 }
-
 
 asg-launch-configuration() {
 
@@ -145,7 +140,6 @@ asg-launch-configuration() {
   fi
 }
 
-
 launch-configurations() {
 
   # List Launch Configurations
@@ -162,9 +156,8 @@ launch-configurations() {
         ImageId,
         InstanceType
     ]" |
-  column -s$'\t' -t
+    columnise
 }
-
 
 launch-configuration-asgs() {
 
@@ -186,9 +179,8 @@ launch-configuration-asgs() {
           AutoScalingGroupName
         )"
   done |
-  column -s$'\t' -t
+    columnise
 }
-
 
 asg-max-size-set() {
 
@@ -210,7 +202,6 @@ asg-max-size-set() {
   done
 }
 
-
 asg-min-size-set() {
 
   # Set minimum size of autoscaling group(s)
@@ -231,7 +222,6 @@ asg-min-size-set() {
   done
 }
 
-
 asg-processes_suspended() {
 
   # List suspended processes of an autoscaling group
@@ -248,9 +238,8 @@ asg-processes_suspended() {
       AutoScalingGroupName,
       SuspendedProcesses
     ]"              |
-  column -s$'\t' -t
+    columnise
 }
-
 
 asg-resume() {
 
@@ -265,7 +254,6 @@ asg-resume() {
   done
 }
 
-
 asg-suspend() {
 
   # Suspend all processes of an autoscaling group
@@ -279,7 +267,6 @@ asg-suspend() {
       --auto-scaling-group-name "$asg_name"
   done
 }
-
 
 asg-stack() {
 
@@ -296,9 +283,8 @@ asg-stack() {
       [Tags[?Key=='aws:cloudformation:stack-name'].Value][0][0],
       AutoScalingGroupName
     ]"              |
-  column -s$'\t' -t
+    columnise
 }
-
 
 asg-scaling-activities() {
 

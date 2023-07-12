@@ -68,7 +68,7 @@ cert-users() {
         \`$cert_arn\`
       ]"
   done |
-    column -s$'\t' -t
+    columnise
 }
 
 cert-delete() {
@@ -150,7 +150,8 @@ cert-verify() {
     # echo -n "$cert_name ($cert_arn): "
     echo -n "$cert_name : "
 
-    local output=$(openssl verify \
+    local output=$(
+      openssl verify \
       -CAfile /etc/ssl/certs/ca-certificates.crt \
       -untrusted <(cert-chain "$cert_arn") \
       <(cert-ificate "$cert_arn") 2>&1 |

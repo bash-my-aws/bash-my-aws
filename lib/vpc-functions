@@ -2,7 +2,6 @@
 #
 # vpc-functions
 
-
 pcxs(){
 
   # List VPC Peering connections
@@ -28,9 +27,8 @@ pcxs(){
      --output text      |
   grep -E -- "$filters" |
   LC_ALL=C sort -k 5    |
-  column -s$'\t' -t
+    columnise
 }
-
 
 subnets(){
 
@@ -56,9 +54,8 @@ subnets(){
     ]"                  |
   grep -E -- "$filters" |
   LC_ALL=C sort -k 5    |
-  column -s$'\t' -t
+    columnise
 }
-
 
 vpcs() {
 
@@ -83,9 +80,8 @@ vpcs() {
         join(`,`, [Tags[?Key==`version`].Value || `NO_VERSION`][])
       ]'                |
   grep -E -- "$filters" |
-  column -s$'\t' -t
+    columnise
 }
-
 
 vpc-azs() {
 
@@ -107,7 +103,6 @@ vpc-azs() {
   done
 }
 
-
 vpc-az-count() {
 
   # List number of Availability Zones of VPC(s)
@@ -126,7 +121,6 @@ vpc-az-count() {
   done
 }
 
-
 vpc-lambda-functions(){
 
   # List lambda functions of VPC(s)
@@ -144,9 +138,8 @@ vpc-lambda-functions(){
         VpcConfig.VpcId,
         FunctionName
       ]"
-  done | column -s$'\t' -t
+  done | columnise
 }
-
 
 vpc-dhcp-options-ntp(){
 
@@ -160,7 +153,6 @@ vpc-dhcp-options-ntp(){
       DhcpOptions[].DhcpConfigurations[?Key=='ntp-servers'].Values[][].Value
     "
 }
-
 
 vpc-endpoints(){
 
@@ -184,9 +176,8 @@ vpc-endpoints(){
       ]'                |
   grep -E -- "$filters" |
   sort -k 5             |
-  column -s$'\t' -t
+    columnise
 }
-
 
 vpc-endpoint-services(){
 
@@ -204,10 +195,9 @@ vpc-endpoint-services(){
       join(',', ServiceType[].ServiceType)
     ]"                  |
   grep -E -- "$filters" |
-  column -s$'\t' -t     |
+    columnise |
   sort
 }
-
 
 vpc-igw() {
 
@@ -227,9 +217,8 @@ vpc-igw() {
           InternetGatewayId,
           join(',', Attachments[].VpcId)
       ]"
-  done | column -s$'\t' -t
+  done | columnise
 }
-
 
 vpc-route-tables(){
 
@@ -253,10 +242,9 @@ vpc-route-tables(){
           VpcId,
           join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
         ]"            |
-    column -s$'\t' -t
+      columnise
   done
 }
-
 
 vpc-nat-gateways(){
 
@@ -277,9 +265,8 @@ vpc-nat-gateways(){
         join(',', NatGatewayAddresses[].PublicIp)
       ]"
   done              |
-  column -s$'\t' -t
+    columnise
 }
-
 
 vpc-subnets(){
 
@@ -303,7 +290,6 @@ vpc-subnets(){
   done | subnets
 }
 
-
 vpc-network-acls(){
 
   # List Network ACLs of VPC(s)
@@ -321,9 +307,8 @@ vpc-network-acls(){
     aws ec2 describe-network-acls                                    \
       --output text                                                  \
       --query "NetworkAcls[?VpcId=='$vpc_id'].[NetworkAclId, VpcId]"
-  done | column -s$'\t' -t
+  done | columnise
 }
-
 
 vpc-rds(){
 
@@ -343,9 +328,8 @@ vpc-rds(){
         DBSubnetGroup.VpcId,
         DBName
       ]"
-  done | column -s$'\t' -t
+  done | columnise
 }
-
 
 vpc-default-delete() {
 

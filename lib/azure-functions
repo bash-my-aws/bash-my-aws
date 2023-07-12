@@ -44,15 +44,6 @@ __bma_read_filters-az() {
   )
 }
 
-
-columnise() {
-  if [[ -t 1 ]] ; then
-    column -t
-  else
-    cat
-  fi
-}
-
 skim-stdin-tsv() {
   # XXX Update to quote items in output
   local skimmed_stdin="$([[ -t 0 ]] || awk -F$'\t' 'ORS=" " { print $1 }')"
@@ -216,7 +207,7 @@ resource-groups() {
     --output tsv |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 5 |
-    column -s$'\t' -t
+    columnise
 }
 
 resource-group() {
@@ -261,7 +252,7 @@ resources() {
     --output tsv |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 5 |
-    column -s$'\t' -t
+    columnise
 }
 
 resourceids() {
@@ -271,7 +262,7 @@ resourceids() {
     --output tsv |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 5 |
-    column -s$'\t' -t
+    columnise
 }
 
 resource-show() {
@@ -314,7 +305,7 @@ service-principals() {
     --output tsv |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 3 |
-    column -s$'\t' -t
+    columnise
 }
 
 management-groups() {
@@ -341,7 +332,7 @@ subscriptions() {
     --output tsv |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 3 |
-    column -s$'\t' -t
+    columnise
 }
 
 subscription() {
@@ -409,7 +400,7 @@ ad-groups() {
     --output tsv" |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 2
-  # column -s$'\t' -t
+  # columnise
 }
 
 ad-group-members() {
@@ -437,7 +428,7 @@ ad-group-members() {
         mail
       ]' |
       LC_ALL=C sort -t$'\t' -b -k 2 #|
-    # column -s$'\t' -t
+    # columnise
   done
 }
 
@@ -478,7 +469,7 @@ ad-users() {
     --output tsv" |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 2
-  # column -s$'\t' -t
+  # columnise
 }
 
 function ad-user-upns() {
@@ -531,7 +522,7 @@ ad-users-graph() {
     ]" \
     --output $output_format |
     LC_ALL=C sort -t$'\t' -b -k 2 # | # Set to sort only when output is not set to JSON
-  # column -s$'\t' -t # Disabled to preserve tabs
+  # columnise # Disabled to preserve tabs
 }
 
 alias az-rest='az rest --method get --url'
@@ -560,7 +551,7 @@ ad-user-groups() {
         ]" \
       --output tsv |
       LC_ALL=C sort -t$'\t' -b -k 2 #|
-    # column -s$'\t' -t
+    # columnise
   done
 }
 
@@ -593,7 +584,7 @@ ad-apps() {
     },
     &createdDateTime)'        \
     --output ${BMA_OUTPUT_AZ:-${BMA_OUTPUT:-tsv}}"
-  # column -s$'\t' -t
+  # columnise
 }
 
 ad-app() {
@@ -956,7 +947,7 @@ afd-waf-policies() {
       ]" |
     grep -E -- "$filters" |
     LC_ALL=C sort -t$'\t' -b -k 1 |
-    column -s$'\t' -t
+    columnise
 }
 
 afd-waf-policy-rules() {
@@ -980,7 +971,7 @@ afd-waf-policy-rules() {
         '$resource_group'
       ]" |
       LC_ALL=C sort -t$'\t' -b -k 1 |
-      column -s$'\t' -t
+      columnise
   done
 }
 

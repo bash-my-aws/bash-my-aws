@@ -335,7 +335,7 @@ instances() {
     --output text       |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 6 |
-  column -s$'\t' -t
+  columnise
 }
 ```
 

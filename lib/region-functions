@@ -55,7 +55,7 @@ region-each() {
   # Run a command in every region.
   # Any output lines will be appended with "#${REGION}".
   #
-  #     $ region-each stacks | column -t
+  #     $ region-each stacks
   #     example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-1
   #     example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
   #     ...

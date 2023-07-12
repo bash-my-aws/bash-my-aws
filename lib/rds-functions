@@ -26,9 +26,8 @@ rds-db-instances() {
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 1 |
-  column -s$'\t' -t
+    columnise
 }
-
 
 rds-db-clusters() {
 
@@ -47,5 +46,5 @@ rds-db-clusters() {
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 5 |
-  column -s$'\t' -t
+    columnise
 }
