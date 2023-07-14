@@ -26,6 +26,7 @@ aws-accounts() {
     --query "
       Accounts[${account_ids:+?contains(['${account_ids// /"','"}'], Id)}].[
         Id,
+        Name,
         Status,
         JoinedMethod,
         JoinedTimestamp,
