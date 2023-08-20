@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+ 
+import json
+import os
+import jmespath
+import argparse
+
+CACHEWS_DIR = os.environ.get('CACHEWS_DIR')
+AWS_DEFAULT_REGION = os.environ.get('AWS_DEFAULT_REGION')
+AWS_PROFILE = os.environ.get('AWS_PROFILE')
+AWS_ACCOUNT_ALIAS = AWS_PROFILE[:-6] if AWS_PROFILE and AWS_PROFILE.endswith('-admin') else AWS_PROFILE
+
+def list_or_describe(service, api_call, output_format='json', query=None):
+    file_path = f"{CACHEWS_DIR}/{AWS_ACCOUNT_ALIAS}/{AWS_DEFAULT_REGION}/{service}/{api_call}.json"
+    
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+
+    if query:
+        data = jmespath.search(query, data)
+
+    if output_format == 'text':
+        for item in data:
+            print('\t'.join(str(value) for value in item))
+    elif output_format == 'table':
+        print('Not yet implemented')
+    else:
+        print(json.dumps(data, indent=4))
+
+def main():
+    parser = argparse.ArgumentParser(description='Mimics AWS list and describe functions')
+    parser.add_argument('service', help='AWS service name')
+    parser.add_argument('api_call', help='API call to execute (list or describe)')
+    parser.add_argument('--output', choices=['json', 'text', 'table'], default='json', help='Output format')
+    parser.add_argument('--query', help='JMESPath query string')
+
+    args, unknown_args = parser.parse_known_args()
+    list_or_describe(args.service, args.api_call, args.output, args.query)
+
+if __name__ == '__main__':
+    main()
+

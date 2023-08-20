@@ -13,6 +13,7 @@ EOF
 available_completions=($(
   find "$bma_path/scripts/completions" -type f -exec basename {} ';' |
   grep -v bma-completion                                             |
+  grep -v cachews-completion                                         |
   sed 's/-completion//g'                                             |
   LC_ALL=C sort
 ))
@@ -23,6 +24,7 @@ for type in "${available_completions[@]}"; do
 done
 
 cat "${bma_path}/scripts/completions/bma-completion"
+cat "${bma_path}/scripts/completions/cachews-completion"
 
 # dont add auto_completions for these functions
 funcs_no_completion=(

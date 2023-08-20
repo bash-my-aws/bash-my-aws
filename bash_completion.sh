@@ -135,6 +135,30 @@ _bma_subcommands_completion() {
   fi
   return 0
 }
+_cachews_completion() {
+    local cur prev
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ $COMP_CWORD -eq 1 ]]; then
+        local services=$(ls ${CACHEWS_DIR}/${AWS_PROFILE/-admin}/${AWS_DEFAULT_REGION}/ | sed 's/\/.*//')
+        COMPREPLY=( $(compgen -W "$services" -- $cur) )
+        return 0
+    elif [[ $COMP_CWORD -eq 2 ]]; then
+        local api_calls=$(ls ${CACHEWS_DIR}/${AWS_PROFILE/-admin}/${AWS_DEFAULT_REGION}/$prev | sed 's/\.json//')
+        COMPREPLY=( $(compgen -W "$api_calls" -- $cur) )
+        return 0
+    elif [[ $COMP_CWORD -eq 3 && $prev == '--output' ]]; then
+        COMPREPLY=( $(compgen -W "json text table" -- $cur) )
+        return 0
+    elif [[ $COMP_CWORD -ge 3 ]]; then
+        COMPREPLY=( $(compgen -W "--output --query" -- $cur) )
+        return 0
+    fi
+}
+
+complete -F _cachews_completion cachews
 complete -F _bma_asgs_completion asg-capacity
 complete -F _bma_asgs_completion asg-detach-instances
 complete -F _bma_asgs_completion asg-instances

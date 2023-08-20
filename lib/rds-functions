@@ -13,6 +13,8 @@ rds-db-instances() {
 
   # List RDS Database Instances
 
+  # Tip: Filter on whether DB is in cluster with: `awk -F'\t' '$6 != "None"'`
+
   local filters=$(__bma_read_filters "$@")
 
   aws rds describe-db-instances \
@@ -22,12 +24,15 @@ rds-db-instances() {
         Engine,
         EngineVersion,
         DBInstanceStatus,
-        DBName
+        DBName,
+        DBClusterIdentifier
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 1 |
     columnise
 }
+
+
 
 rds-db-clusters() {
 
