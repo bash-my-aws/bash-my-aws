@@ -11,3 +11,4 @@ test/cloudformation
 site/
 *.swp
 cloudformation/stars2.yml
+lib/extras/github-functions
