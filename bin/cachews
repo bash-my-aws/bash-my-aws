@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
- 
+
 import json
 import os
+import subprocess
 import jmespath
 import argparse
 
@@ -12,9 +13,17 @@ AWS_ACCOUNT_ALIAS = AWS_PROFILE[:-6] if AWS_PROFILE and AWS_PROFILE.endswith('-a
 
 def list_or_describe(service, api_call, output_format='json', query=None):
     file_path = f"{CACHEWS_DIR}/{AWS_ACCOUNT_ALIAS}/{AWS_DEFAULT_REGION}/{service}/{api_call}.json"
-    
-    with open(file_path, 'r') as file:
-        data = json.load(file)
+
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        cmd = f"aws {service} {api_call} --region {AWS_DEFAULT_REGION} --profile {AWS_PROFILE}"
+        print(cmd)
+        data = json.loads(subprocess.check_output(cmd, shell=True))
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w') as file:
+            json.dump(data, file)
 
     if query:
         data = jmespath.search(query, data)
@@ -39,4 +48,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
