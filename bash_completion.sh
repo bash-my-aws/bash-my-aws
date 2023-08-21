@@ -149,10 +149,10 @@ _cachews_completion() {
         local api_calls=$(ls ${CACHEWS_DIR}/${AWS_PROFILE/-admin}/${AWS_DEFAULT_REGION}/$prev | sed 's/\.json//')
         COMPREPLY=( $(compgen -W "$api_calls" -- $cur) )
         return 0
-    elif [[ $COMP_CWORD -eq 3 && $prev == '--output' ]]; then
+    elif [[ $COMP_CWORD -ge 3 && $prev == '--output' ]]; then
         COMPREPLY=( $(compgen -W "json text table" -- $cur) )
         return 0
-    elif [[ $COMP_CWORD -ge 3 ]]; then
+    elif [[ $COMP_CWORD -ge 3 && $prev != '--query' ]]; then
         COMPREPLY=( $(compgen -W "--output --query" -- $cur) )
         return 0
     fi
