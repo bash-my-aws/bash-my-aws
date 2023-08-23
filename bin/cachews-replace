@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# cachews-replace - Run a command with awscli replaced by cachews
+#
+# This allows scripts that call awscli to use caching without modification.
+#
+# It works by prepending BMA_HOME/bin/replacements to your PATH
+#
+# For running bash-my-aws commands, a built-in approach is BMA_AWSCLI:
+#
+#   BMA_AWSCLI=cachews instances
+
+SLF_DIR="$(readlink -f "$(dirname -- "${BASH_SOURCE[0]:-${0:A}}")/../")"
+export PATH="${SLF_DIR}/bin/replacements:${PATH}"
+
+"$@"
