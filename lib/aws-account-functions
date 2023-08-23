@@ -60,6 +60,23 @@ aws-account-id() {
   aws sts get-caller-identity --query Account --output text
 }
 
+aws-profiles() {
+
+  credentials_file="${AWS_SHARED_CREDENTIALS_FILE:-$HOME/.aws/credentials}"
+
+  awk -F'=' '
+    /^\[.*\]$/ {
+      if (access_key != "" && secret_key != "" || source_profile != "") print profile;
+      profile=$0; access_key=""; secret_key=""; source_profile=""
+    }
+    $1 ~ /aws_access_key_id/ { access_key=$2 }
+    $1 ~ /aws_secret_access_key/ { secret_key=$2 }
+    $1 ~ /source_profile/ { source_profile=$2 }
+    END { if (access_key != "" && secret_key != "" || source_profile != "") print profile }
+  ' "$credentials_file" | tr -d '[]' | sort -u
+}
+
+
 aws-account-each() {
 
   # Run a script/command across a number of AWS Accounts
