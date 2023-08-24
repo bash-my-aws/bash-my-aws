@@ -15,6 +15,32 @@ It supports the following arguments (and ignores the rest):
   `--query`   : JMESPath querys as found in awscli (and azcli)  
   `--output`  : `json` or `text` (tab separated values)
 
+## Installation
+
+cachews comes included with bash-my-aws which is installed as follows:
+
+1. Clone the repo
+
+```Shell
+git clone https://github.com/bash-my-aws/bash-my-aws.git ${BMA_HOME:-$HOME/.bash-my-aws}
+```
+
+2.  Put the following in your shell's startup file:
+
+```Shell
+export PATH="$PATH:${BMA_HOME:-$HOME/.bash-my-aws}/bin"
+source ${BMA_HOME:-$HOME/.bash-my-aws}/aliases
+
+# For ZSH users, uncomment the following two lines:
+# autoload -U +X compinit && compinit
+# autoload -U +X bashcompinit && bashcompinit
+
+source ${BMA_HOME:-$HOME/.bash-my-aws}/bash_completion.sh
+```
+
+3. [Optional] Set CACHEWS_DIR environment variable.
+
+
 ## Usage
 
 Choose from two commands two suit your needs:
