@@ -331,8 +331,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bash-my-aws-commands-using-bma_awscli-environment-variable" class="md-nav__link">
-    bash-my-aws commands using BMA_AWSCLI environment variable
+  <a href="#bash-my-aws-commands-can-use-bma_awscli-env-var" class="md-nav__link">
+    bash-my-aws commands can use $BMA_AWSCLI env var
   </a>
   
 </li>
@@ -456,8 +456,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bash-my-aws-commands-using-bma_awscli-environment-variable" class="md-nav__link">
-    bash-my-aws commands using BMA_AWSCLI environment variable
+  <a href="#bash-my-aws-commands-can-use-bma_awscli-env-var" class="md-nav__link">
+    bash-my-aws commands can use $BMA_AWSCLI env var
   </a>
   
 </li>
@@ -490,8 +490,8 @@
 </ul>
 <p><img alt="Cache of Cachews" src="../images/cachews.png" /></p>
 <p>It supports the following arguments (and ignores the rest):</p>
-<p><code>--query</code>   : JMESPath querys as found in awscli (and azcli)
-  <code>--output</code>  : <code>json</code> or <code>text</code> (tab separated values)</p>
+<p><code>--query</code>   : JMESPath querys as found in awscli (and azcli)<br />
+<code>--output</code>  : <code>json</code> or <code>text</code> (tab separated values)</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>Choose from one of the two commands depending on your needs:</p>
 <ul>
@@ -502,7 +502,11 @@
 <p>See below for real world examples.</p>
 <h3 id="cachews-replace-aws-command-with-cachews"><code>cachews</code> - Replace <code>aws</code> command with <code>cachews</code><a class="headerlink" href="#cachews-replace-aws-command-with-cachews" title="Permanent link">&para;</a></h3>
 <p>The simplest use case is to substitute <code>aws</code> for <code>cachews</code> in your command.</p>
-<p>$ export CACHEWS_DIR="$(mktemp -d)"</p>
+<p>Start a fresh cachedir for this demo:</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">CACHEWS_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>mktemp<span class="w"> </span>-d<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<p>AWS command takes ~1s:</p>
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>aws<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 <span class="m">844</span>
 
@@ -511,6 +515,7 @@ user<span class="w">    </span>0m0.823s
 sys<span class="w">     </span>0m0.076s
 </code></pre></div>
 
+<p>cachews takes ~1s but caches the response:</p>
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>cachews<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 <span class="m">844</span>
 
@@ -519,6 +524,7 @@ user<span class="w">    </span>0m0.861s
 sys<span class="w">     </span>0m0.088s
 </code></pre></div>
 
+<p>cachews takes ~0.08 seconds the second time:</p>
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>cachews<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 <span class="m">844</span>
 
@@ -537,7 +543,7 @@ user<span class="w">    </span>0m0.065s
 sys<span class="w"> </span>0m0.020s
 </code></pre></div>
 
-<h2 id="bash-my-aws-commands-using-bma_awscli-environment-variable">bash-my-aws commands using BMA_AWSCLI environment variable<a class="headerlink" href="#bash-my-aws-commands-using-bma_awscli-environment-variable" title="Permanent link">&para;</a></h2>
+<h2 id="bash-my-aws-commands-can-use-bma_awscli-env-var">bash-my-aws commands can use <code>$BMA_AWSCLI</code> env var<a class="headerlink" href="#bash-my-aws-commands-can-use-bma_awscli-env-var" title="Permanent link">&para;</a></h2>
 <p>The <code>bma</code> command exports a function called <code>aws</code> that calls the
 command in BMA_AWSCLI=cachews if one is set.</p>
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>bma<span class="w"> </span>instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
@@ -545,7 +551,7 @@ command in BMA_AWSCLI=cachews if one is set.</p>
 
 real<span class="w">    </span>0m1.200s
 user<span class="w">    </span>0m0.834s
-sys<span class="w">     </span>0m0.098s
+sys<span class="w">   </span>0m0.098s
 </code></pre></div>
 
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="nv">BMA_AWSCLI</span><span class="o">=</span>cachews<span class="w"> </span>bma<span class="w"> </span>instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
@@ -553,7 +559,7 @@ sys<span class="w">     </span>0m0.098s
 
 real<span class="w">    </span>0m0.099s
 user<span class="w">    </span>0m0.079s
-sys<span class="w">     </span>0m0.026s
+sys<span class="w">   </span>0m0.026s
 </code></pre></div>
 
 <p>bash-my-aws added <code>$BMA_AWSCLI</code> support back in 2020 to assist testing breaking
