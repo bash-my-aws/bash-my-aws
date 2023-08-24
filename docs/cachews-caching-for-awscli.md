@@ -1,4 +1,4 @@
-# Cachews
+# Cachews - Zero Configuration Caching for AWSCLI
 
 cachews is a zero-config caching proxy for awscli.
 
