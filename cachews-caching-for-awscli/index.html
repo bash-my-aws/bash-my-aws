@@ -304,6 +304,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     Usage
   </a>
@@ -429,6 +436,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     Usage
   </a>
@@ -492,8 +506,32 @@
 <p>It supports the following arguments (and ignores the rest):</p>
 <p><code>--query</code>   : JMESPath querys as found in awscli (and azcli)<br />
 <code>--output</code>  : <code>json</code> or <code>text</code> (tab separated values)</p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p>cachews comes included with bash-my-aws which is installed as follows:</p>
+<ol>
+<li>Clone the repo</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/bash-my-aws/bash-my-aws.git<span class="w"> </span><span class="si">${</span><span class="nv">BMA_HOME</span><span class="k">:-</span><span class="nv">$HOME</span><span class="p">/.bash-my-aws</span><span class="si">}</span>
+</code></pre></div>
+
+<ol>
+<li>Put the following in your shell's startup file:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">:</span><span class="si">${</span><span class="nv">BMA_HOME</span><span class="k">:-</span><span class="nv">$HOME</span><span class="p">/.bash-my-aws</span><span class="si">}</span><span class="s2">/bin&quot;</span>
+<span class="nb">source</span><span class="w"> </span><span class="si">${</span><span class="nv">BMA_HOME</span><span class="k">:-</span><span class="nv">$HOME</span><span class="p">/.bash-my-aws</span><span class="si">}</span>/aliases
+
+<span class="c1"># For ZSH users, uncomment the following two lines:</span>
+<span class="c1"># autoload -U +X compinit &amp;&amp; compinit</span>
+<span class="c1"># autoload -U +X bashcompinit &amp;&amp; bashcompinit</span>
+
+<span class="nb">source</span><span class="w"> </span><span class="si">${</span><span class="nv">BMA_HOME</span><span class="k">:-</span><span class="nv">$HOME</span><span class="p">/.bash-my-aws</span><span class="si">}</span>/bash_completion.sh
+</code></pre></div>
+
+<ol>
+<li>[Optional] Set CACHEWS_DIR environment variable.</li>
+</ol>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>Choose from one of the two commands depending on your needs:</p>
+<p>Choose from two commands two suit your needs:</p>
 <ul>
 <li><code>cachews</code>: A drop in replacement for <code>aws</code> command</li>
 <li><code>cachews-replace</code>: Runs any command, replacing <code>aws</code> with <code>cachews</code> executable</li>
