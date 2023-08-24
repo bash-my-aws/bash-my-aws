@@ -1,236 +1,211 @@
 
-
-
-
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-      <meta http-equiv="x-ua-compatible" content="ie=edge">
       
         <meta name="description" content="Command reference for Bash-my-AWS - CLI Tools for AWS. Bash-my-AWS provides short memorable commands for managing resources in Amazon Web Services.">
-      
-      
-        <link rel="canonical" href="https://bash-my-aws.org/command-reference/">
       
       
         <meta name="author" content="Mike Bailey">
       
       
-        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+        <link rel="canonical" href="https://bash-my-aws.org/command-reference/">
       
-        <meta name="lang:clipboard.copied" content="Copied to clipboard">
       
-        <meta name="lang:search.language" content="en">
+        <link rel="prev" href="..">
       
-        <meta name="lang:search.pipeline.stopwords" content="True">
       
-        <meta name="lang:search.pipeline.trimmer" content="True">
+        <link rel="next" href="../cachews-caching-for-awscli/">
       
-        <meta name="lang:search.result.none" content="No matching documents">
       
-        <meta name="lang:search.result.one" content="1 matching document">
-      
-        <meta name="lang:search.result.other" content="# matching documents">
-      
-        <meta name="lang:search.tokenizer" content="[\s\-]+">
-      
-      <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.3">
     
     
       
-        <title>Bash-my-AWS Command Reference</title>
+        <title>Bash-my-AWS Command Reference - Bash-my-AWS</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.0e669242.min.css">
       
       
-    
-    
-      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+
+
     
     
       
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
-      
-    
-    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
-    
     
     
       
         
-<script>
-  window.ga = window.ga || function() {
-    (ga.q = ga.q || []).push(arguments)
-  }
-  ga.l = +new Date
-  /* Setup integration and send page view */
-  ga("create", "UA-154550647-1", "bash-my-aws.org")
-  ga("set", "anonymizeIp", true)
-  ga("send", "pageview")
-  /* Register handler to log search on blur */
-  document.addEventListener("DOMContentLoaded", () => {
-    if (document.forms.search) {
-      var query = document.forms.search.query
-      query.addEventListener("blur", function() {
-        if (this.value) {
-          var path = document.location.pathname;
-          ga("send", "pageview", path + "?q=" + this.value)
-        }
-      })
-    }
-  })
-</script>
-<script async src="https://www.google-analytics.com/analytics.js"></script>
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
     
     
   </head>
   
+  
     <body dir="ltr">
   
-    <svg class="md-svg">
-      <defs>
-        
-        
-          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
-        
-      </defs>
-    </svg>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-    
-      <a href="#aws-account-commands" tabindex="1" class="md-skip">
-        Skip to content
-      </a>
-    
-    
-      <header class="md-header" data-md-component="header">
-  <nav class="md-header-nav md-grid">
-    <div class="md-flex">
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://bash-my-aws.org/" title="Bash-my-AWS" class="md-header-nav__button md-logo">
-          
-            <i class="md-icon"></i>
-          
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#aws-account-commands" class="md-skip">
+          Skip to content
         </a>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
-      </div>
-      <div class="md-flex__cell md-flex__cell--stretch">
-        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-          
-            <span class="md-header-nav__topic">
-              Bash-my-AWS
-            </span>
-            <span class="md-header-nav__topic">
-              
-                Bash-my-AWS Command Reference
-              
-            </span>
-          
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Bash-my-AWS" class="md-header__button md-logo" aria-label="Bash-my-AWS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Bash-my-AWS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bash-my-AWS Command Reference
+            
+          </span>
         </div>
       </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
         
-          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
-          
-<div class="md-search" data-md-component="search" role="dialog">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
-      <label class="md-icon md-search__icon" for="__search"></label>
-      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
-        &#xE5CD;
-      </button>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="result">
+        <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
-            Type to start searching
+            Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
   </div>
 </div>
-        
-      </div>
-      
-        <div class="md-flex__cell md-flex__cell--shrink">
-          <div class="md-header-nav__source">
-            
-
-
-  
-
-<a href="https://github.com/bash-my-aws/bash-my-aws/" title="Go to repository" class="md-source" data-md-source="github">
-  
-    <div class="md-source__icon">
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>
-    </div>
-  
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bash-my-aws/bash-my-aws" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
   <div class="md-source__repository">
     bash-my-aws/bash-my-aws
   </div>
 </a>
-          </div>
-        </div>
-      
-    </div>
+      </div>
+    
   </nav>
+  
 </header>
     
-    <div class="md-container">
+    <div class="md-container" data-md-component="container">
+      
       
         
+          
+        
       
-      
-      <main class="md-main" role="main">
-        <div class="md-main__inner md-grid" data-md-component="container">
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
           
             
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    <nav class="md-nav md-nav--primary" data-md-level="0">
-  <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="https://bash-my-aws.org/" title="Bash-my-AWS" class="md-nav__button md-logo">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Bash-my-AWS" class="md-nav__button md-logo" aria-label="Bash-my-AWS" data-md-component="logo">
       
-        <i class="md-icon"></i>
-      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
     </a>
     Bash-my-AWS
   </label>
   
     <div class="md-nav__source">
-      
-
-
-  
-
-<a href="https://github.com/bash-my-aws/bash-my-aws/" title="Go to repository" class="md-source" data-md-source="github">
-  
-    <div class="md-source__icon">
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>
-    </div>
-  
+      <a href="https://github.com/bash-my-aws/bash-my-aws" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
   <div class="md-source__repository">
     bash-my-aws/bash-my-aws
   </div>
@@ -241,50 +216,76 @@
     
       
       
-      
-
-
-  <li class="md-nav__item">
-    <a href=".." title="Home" class="md-nav__link">
-      Home
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Command Reference
-      </label>
-    
-    <a href="./" title="Command Reference" class="md-nav__link md-nav__link--active">
-      Command Reference
-    </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
   
   
   
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Command Reference
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Command Reference
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
   <a href="#aws-account-commands" class="md-nav__link">
     aws-account-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="aws-account-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -346,7 +347,7 @@
     region-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="region-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -380,7 +381,7 @@
     stack-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="stack-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -568,7 +569,7 @@
     instance-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="instance-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -642,6 +643,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#instance-ssm" class="md-nav__link">
+    instance-ssm
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-rdp" class="md-nav__link">
+    instance-rdp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ssm-port-forward" class="md-nav__link">
+    instance-ssm-port-forward
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#instance-stack" class="md-nav__link">
     instance-stack
   </a>
@@ -670,8 +692,57 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#instance-subnet" class="md-nav__link">
+    instance-subnet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop-protection" class="md-nav__link">
+    instance-stop-protection
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop-protection-disable" class="md-nav__link">
+    instance-stop-protection-disable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop-protection-enable" class="md-nav__link">
+    instance-stop-protection-enable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#instance-tags" class="md-nav__link">
     instance-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tag" class="md-nav__link">
+    instance-tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tag-create" class="md-nav__link">
+    instance-tag-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tag-delete" class="md-nav__link">
+    instance-tag-delete
   </a>
   
 </li>
@@ -742,8 +813,15 @@
     asg-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="asg-commands">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asg-detach-instances" class="md-nav__link">
+    asg-detach-instances
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#asgs" class="md-nav__link">
@@ -849,11 +927,437 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#azure-commands" class="md-nav__link">
+    azure-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="azure-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug" class="md-nav__link">
+    debug
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skim-stdin-tsv" class="md-nav__link">
+    skim-stdin-tsv
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skim-stdin-bma" class="md-nav__link">
+    skim-stdin-bma
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-account" class="md-nav__link">
+    az-account
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-user" class="md-nav__link">
+    az-user
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-cache-items" class="md-nav__link">
+    az-cache-items
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-cache-item" class="md-nav__link">
+    az-cache-item
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-cache-item-delete" class="md-nav__link">
+    az-cache-item-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#locations" class="md-nav__link">
+    locations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location" class="md-nav__link">
+    location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location-unset" class="md-nav__link">
+    location-unset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location-each" class="md-nav__link">
+    location-each
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-groups" class="md-nav__link">
+    resource-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group" class="md-nav__link">
+    resource-group
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group-export" class="md-nav__link">
+    resource-group-export
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group-unset" class="md-nav__link">
+    resource-group-unset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resourceids" class="md-nav__link">
+    resourceids
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-show" class="md-nav__link">
+    resource-show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-diff" class="md-nav__link">
+    resource-diff
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-export" class="md-nav__link">
+    resource-export
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-principals" class="md-nav__link">
+    service-principals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#management-groups" class="md-nav__link">
+    management-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriptions" class="md-nav__link">
+    subscriptions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription" class="md-nav__link">
+    subscription
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription-unset" class="md-nav__link">
+    subscription-unset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription-each" class="md-nav__link">
+    subscription-each
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-groups" class="md-nav__link">
+    ad-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-group-members" class="md-nav__link">
+    ad-group-members
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-users" class="md-nav__link">
+    ad-users
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_1" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_2" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-users-graph" class="md-nav__link">
+    ad-users-graph
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-user-groups" class="md-nav__link">
+    ad-user-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-user-group-diff" class="md-nav__link">
+    ad-user-group-diff
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-apps" class="md-nav__link">
+    ad-apps
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-app" class="md-nav__link">
+    ad-app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-app-owners" class="md-nav__link">
+    ad-app-owners
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_3" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_4" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_5" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_6" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployments-group" class="md-nav__link">
+    deployments-group
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afds" class="md-nav__link">
+    afds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-endpoints" class="md-nav__link">
+    afd-endpoints
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-routes" class="md-nav__link">
+    afd-routes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-custom-domains" class="md-nav__link">
+    afd-custom-domains
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-custom-domains-validation-request" class="md-nav__link">
+    afd-custom-domains-validation-request
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-origin-groups" class="md-nav__link">
+    afd-origin-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policies" class="md-nav__link">
+    afd-waf-policies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rules" class="md-nav__link">
+    afd-waf-policy-rules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy" class="md-nav__link">
+    afd-waf-policy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rule-match-conditions" class="md-nav__link">
+    afd-waf-policy-rule-match-conditions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rule-match-condition-values" class="md-nav__link">
+    afd-waf-policy-rule-match-condition-values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rule-delete" class="md-nav__link">
+    afd-waf-policy-rule-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-groups" class="md-nav__link">
+    deployment-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-delete-danger" class="md-nav__link">
+    deployment-delete-danger
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cert-commands" class="md-nav__link">
     cert-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="cert-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -884,6 +1388,47 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#cert-ificate" class="md-nav__link">
+    cert-ificate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-chain" class="md-nav__link">
+    cert-chain
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-verify" class="md-nav__link">
+    cert-verify
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudfront-commands" class="md-nav__link">
+    cloudfront-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="cloudfront-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distributions" class="md-nav__link">
+    distributions
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -894,7 +1439,7 @@
     cloudtrail-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="cloudtrail-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -921,7 +1466,7 @@
     ecr-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="ecr-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -948,7 +1493,7 @@
     elb-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="elb-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -993,6 +1538,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elb-tags" class="md-nav__link">
+    elb-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-tag" class="md-nav__link">
+    elb-tag
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1003,7 +1562,7 @@
     elbv2-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="elbv2-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1034,6 +1593,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elbv2-target-groups" class="md-nav__link">
+    elbv2-target-groups
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1044,7 +1610,7 @@
     iam-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="iam-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1078,7 +1644,7 @@
     image-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="image-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1105,7 +1671,7 @@
     keypair-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="keypair-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1139,7 +1705,7 @@
     kms-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="kms-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1222,7 +1788,7 @@
     lambda-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="lambda-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1253,6 +1819,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#lambda-function-logs" class="md-nav__link">
+    lambda-function-logs
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1263,7 +1836,7 @@
     log-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="log-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1283,7 +1856,7 @@
     rds-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="rds-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1310,7 +1883,7 @@
     route53-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="route53-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1337,7 +1910,7 @@
     s3-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="s3-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1374,11 +1947,31 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#secretsmanager-commands" class="md-nav__link">
+    secretsmanager-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="secretsmanager-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secrets" class="md-nav__link">
+    secrets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sts-commands" class="md-nav__link">
     sts-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="sts-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1394,11 +1987,65 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tag-commands" class="md-nav__link">
+    tag-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="tag-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tag-keys" class="md-nav__link">
+    tag-keys
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tag-values" class="md-nav__link">
+    tag-values
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-group-commands" class="md-nav__link">
+    target-group-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="target-group-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#target-groups" class="md-nav__link">
+    target-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-group-targets" class="md-nav__link">
+    target-group-targets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#vpc-commands" class="md-nav__link">
     vpc-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="vpc-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1518,51 +2165,88 @@
   
 </li>
       
-      
-      
-      
-      
     </ul>
   
 </nav>
-    
-  </li>
+      
+    </li>
+  
 
     
       
       
-      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cachews-caching-for-awscli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cachews (zeroconf caching)
+  </span>
+  
 
-
-  <li class="md-nav__item">
-    <a href="../pipe-skimming/" title="Pipe-Skimming" class="md-nav__link">
-      Pipe-Skimming
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../cloudformation-naming/" title="CloudFormation Naming" class="md-nav__link">
-      CloudFormation Naming
-    </a>
-  </li>
+      </a>
+    </li>
+  
 
     
       
       
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipe-skimming/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pipe-Skimming
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
       
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloudformation-naming/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudFormation Naming
+  </span>
+  
 
+      </a>
+    </li>
+  
 
-  <li class="md-nav__item">
-    <a href="../linuxconf2020/" title="LCA 2020 Video" class="md-nav__link">
-      LCA 2020 Video
-    </a>
-  </li>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linuxconf2020/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LCA 2020 Video
+  </span>
+  
+
+      </a>
+    </li>
+  
 
     
   </ul>
@@ -1572,23 +2256,29 @@
               </div>
             
             
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
-<nav class="md-nav md-nav--secondary">
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
   
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
   <a href="#aws-account-commands" class="md-nav__link">
     aws-account-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="aws-account-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1650,7 +2340,7 @@
     region-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="region-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1684,7 +2374,7 @@
     stack-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="stack-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1872,7 +2562,7 @@
     instance-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="instance-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1946,6 +2636,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#instance-ssm" class="md-nav__link">
+    instance-ssm
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-rdp" class="md-nav__link">
+    instance-rdp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-ssm-port-forward" class="md-nav__link">
+    instance-ssm-port-forward
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#instance-stack" class="md-nav__link">
     instance-stack
   </a>
@@ -1974,8 +2685,57 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#instance-subnet" class="md-nav__link">
+    instance-subnet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop-protection" class="md-nav__link">
+    instance-stop-protection
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop-protection-disable" class="md-nav__link">
+    instance-stop-protection-disable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-stop-protection-enable" class="md-nav__link">
+    instance-stop-protection-enable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#instance-tags" class="md-nav__link">
     instance-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tag" class="md-nav__link">
+    instance-tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tag-create" class="md-nav__link">
+    instance-tag-create
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-tag-delete" class="md-nav__link">
+    instance-tag-delete
   </a>
   
 </li>
@@ -2046,8 +2806,15 @@
     asg-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="asg-commands">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asg-detach-instances" class="md-nav__link">
+    asg-detach-instances
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#asgs" class="md-nav__link">
@@ -2153,11 +2920,437 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#azure-commands" class="md-nav__link">
+    azure-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="azure-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug" class="md-nav__link">
+    debug
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skim-stdin-tsv" class="md-nav__link">
+    skim-stdin-tsv
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skim-stdin-bma" class="md-nav__link">
+    skim-stdin-bma
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-account" class="md-nav__link">
+    az-account
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-user" class="md-nav__link">
+    az-user
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-cache-items" class="md-nav__link">
+    az-cache-items
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-cache-item" class="md-nav__link">
+    az-cache-item
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#az-cache-item-delete" class="md-nav__link">
+    az-cache-item-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#locations" class="md-nav__link">
+    locations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location" class="md-nav__link">
+    location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location-unset" class="md-nav__link">
+    location-unset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location-each" class="md-nav__link">
+    location-each
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-groups" class="md-nav__link">
+    resource-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group" class="md-nav__link">
+    resource-group
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group-export" class="md-nav__link">
+    resource-group-export
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-group-unset" class="md-nav__link">
+    resource-group-unset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resourceids" class="md-nav__link">
+    resourceids
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-show" class="md-nav__link">
+    resource-show
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-diff" class="md-nav__link">
+    resource-diff
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-export" class="md-nav__link">
+    resource-export
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-principals" class="md-nav__link">
+    service-principals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#management-groups" class="md-nav__link">
+    management-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriptions" class="md-nav__link">
+    subscriptions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription" class="md-nav__link">
+    subscription
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription-unset" class="md-nav__link">
+    subscription-unset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription-each" class="md-nav__link">
+    subscription-each
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-groups" class="md-nav__link">
+    ad-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-group-members" class="md-nav__link">
+    ad-group-members
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-users" class="md-nav__link">
+    ad-users
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_1" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_2" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-users-graph" class="md-nav__link">
+    ad-users-graph
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-user-groups" class="md-nav__link">
+    ad-user-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-user-group-diff" class="md-nav__link">
+    ad-user-group-diff
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-apps" class="md-nav__link">
+    ad-apps
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-app" class="md-nav__link">
+    ad-app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ad-app-owners" class="md-nav__link">
+    ad-app-owners
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_3" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_4" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_5" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function_6" class="md-nav__link">
+    function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployments-group" class="md-nav__link">
+    deployments-group
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afds" class="md-nav__link">
+    afds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-endpoints" class="md-nav__link">
+    afd-endpoints
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-routes" class="md-nav__link">
+    afd-routes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-custom-domains" class="md-nav__link">
+    afd-custom-domains
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-custom-domains-validation-request" class="md-nav__link">
+    afd-custom-domains-validation-request
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-origin-groups" class="md-nav__link">
+    afd-origin-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policies" class="md-nav__link">
+    afd-waf-policies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rules" class="md-nav__link">
+    afd-waf-policy-rules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy" class="md-nav__link">
+    afd-waf-policy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rule-match-conditions" class="md-nav__link">
+    afd-waf-policy-rule-match-conditions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rule-match-condition-values" class="md-nav__link">
+    afd-waf-policy-rule-match-condition-values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afd-waf-policy-rule-delete" class="md-nav__link">
+    afd-waf-policy-rule-delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-groups" class="md-nav__link">
+    deployment-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-delete-danger" class="md-nav__link">
+    deployment-delete-danger
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cert-commands" class="md-nav__link">
     cert-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="cert-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2188,6 +3381,47 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#cert-ificate" class="md-nav__link">
+    cert-ificate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-chain" class="md-nav__link">
+    cert-chain
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-verify" class="md-nav__link">
+    cert-verify
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudfront-commands" class="md-nav__link">
+    cloudfront-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="cloudfront-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distributions" class="md-nav__link">
+    distributions
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2198,7 +3432,7 @@
     cloudtrail-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="cloudtrail-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2225,7 +3459,7 @@
     ecr-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="ecr-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2252,7 +3486,7 @@
     elb-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="elb-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2297,6 +3531,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elb-tags" class="md-nav__link">
+    elb-tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elb-tag" class="md-nav__link">
+    elb-tag
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2307,7 +3555,7 @@
     elbv2-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="elbv2-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2338,6 +3586,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elbv2-target-groups" class="md-nav__link">
+    elbv2-target-groups
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2348,7 +3603,7 @@
     iam-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="iam-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2382,7 +3637,7 @@
     image-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="image-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2409,7 +3664,7 @@
     keypair-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="keypair-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2443,7 +3698,7 @@
     kms-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="kms-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2526,7 +3781,7 @@
     lambda-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="lambda-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2557,6 +3812,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#lambda-function-logs" class="md-nav__link">
+    lambda-function-logs
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2567,7 +3829,7 @@
     log-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="log-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2587,7 +3849,7 @@
     rds-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="rds-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2614,7 +3876,7 @@
     route53-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="route53-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2641,7 +3903,7 @@
     s3-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="s3-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2678,11 +3940,31 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#secretsmanager-commands" class="md-nav__link">
+    secretsmanager-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="secretsmanager-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secrets" class="md-nav__link">
+    secrets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sts-commands" class="md-nav__link">
     sts-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="sts-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2698,11 +3980,65 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tag-commands" class="md-nav__link">
+    tag-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="tag-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tag-keys" class="md-nav__link">
+    tag-keys
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tag-values" class="md-nav__link">
+    tag-values
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-group-commands" class="md-nav__link">
+    target-group-commands
+  </a>
+  
+    <nav class="md-nav" aria-label="target-group-commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#target-groups" class="md-nav__link">
+    target-groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-group-targets" class="md-nav__link">
+    target-group-targets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#vpc-commands" class="md-nav__link">
     vpc-commands
   </a>
   
-    <nav class="md-nav">
+    <nav class="md-nav" aria-label="vpc-commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2822,10 +4158,6 @@
   
 </li>
       
-      
-      
-      
-      
     </ul>
   
 </nav>
@@ -2834,16 +4166,19 @@
               </div>
             
           
-          <div class="md-content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
-                  <a href="https://github.com/bash-my-aws/bash-my-aws/edit/master/docs/command-reference.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
-                
-                
-                  <h1>Command Reference</h1>
-                
-                <p>Bash-my-AWS provides over 120 commands for managing AWS Resources but fear not!</p>
+                  
+
+  
+  
+
+
+  <h1>Command Reference</h1>
+
+<p>Bash-my-AWS provides over 120 commands for managing AWS Resources but fear not!</p>
 <p>Effort has been put into making them <em>discoverable</em>, <em>memorable</em> and hopefully in most
 cases <em>obvious</em>.</p>
 <p>The reference material below is all extracted from the source of the commands.</p>
@@ -2868,33 +4203,28 @@ the most interest to readers.</p>
 <h2 id="aws-account-commands">aws-account-commands<a class="headerlink" href="#aws-account-commands" title="Permanent link">&para;</a></h2>
 <h3 id="aws-accounts">aws-accounts<a class="headerlink" href="#aws-accounts" title="Permanent link">&para;</a></h3>
 <p>List AWS Accounts in an <a href="https://aws.amazon.com/organizations/">Organization</a></p>
-<div class="codehilite"><pre><span></span>$ aws-accounts
-089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
-812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
-001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
-867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
-892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
-</pre></div>
-
-
+<p>$ aws-accounts
+   089834043791  account1 ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
+   812094344564  account2 ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
+   001721147249  account3 ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
+   867077406134  account4 ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
+   892345420873  account5 ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au</p>
 <p><em>Optionally provide a filter string for a <code>| grep</code> effect with tighter columisation:</em></p>
 <h3 id="aws-account-alias">aws-account-alias<a class="headerlink" href="#aws-account-alias" title="Permanent link">&para;</a></h3>
 <p>Retrieve AWS Account Alias for current account</p>
-<div class="codehilite"><pre><span></span>$ aws-account-alias
+<div class="codehilite"><pre><span></span><code>$ aws-account-alias
 example-account-prod
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="aws-account-id">aws-account-id<a class="headerlink" href="#aws-account-id" title="Permanent link">&para;</a></h3>
 <p>Retrieve AWS Account ID for current account</p>
-<div class="codehilite"><pre><span></span>$ aws-account-id
+<div class="codehilite"><pre><span></span><code>$ aws-account-id
 012345678901
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="aws-account-each">aws-account-each<a class="headerlink" href="#aws-account-each" title="Permanent link">&para;</a></h3>
 <p>Run a script/command across a number of AWS Accounts</p>
-<div class="codehilite"><pre><span></span>USAGE: aws-account-each cmd # pipe in AWS_ACCOUNT_IDS
+<div class="codehilite"><pre><span></span><code>USAGE: aws-account-each cmd # pipe in AWS_ACCOUNT_IDS
 
 $ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
 
@@ -2904,8 +4234,7 @@ example-stack2-prod  UPDATE_ROLLBACK_FAILED
 # account=123456789012 alias=example-account-staging
 example-stack1-staging  CREATED_FAILED
 example-stack2-staging  UPDATE_ROLLBACK_FAILED
-</pre></div>
-
+</code></pre></div>
 
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -2918,18 +4247,16 @@ Check the source for more info.</p>
 <h3 id="aws-account-cost-explorer">aws-account-cost-explorer<a class="headerlink" href="#aws-account-cost-explorer" title="Permanent link">&para;</a></h3>
 <p>Use with an AWS Organisations Master Account to open multiple accounts
 in Cost Explorer.</p>
-<div class="codehilite"><pre><span></span>$ grep demo AWS_ACCOUNTS | aws-account-cost-explorer
+<div class="codehilite"><pre><span></span><code>$ grep demo AWS_ACCOUNTS | aws-account-cost-explorer
 #=&gt; Opens web browser to AWS Cost Explorer with accounts selected
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="aws-account-cost-recommendations">aws-account-cost-recommendations<a class="headerlink" href="#aws-account-cost-recommendations" title="Permanent link">&para;</a></h3>
 <p>Use with an AWS Organisations Master Account to open multiple accounts
 in Cost Recommendations.</p>
-<div class="codehilite"><pre><span></span>$ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
+<div class="codehilite"><pre><span></span><code>$ grep non_prod AWS_ACCOUNTS | aws-account-each stacks FAILED
 #=&gt; Opens web browser to AWS Cost Recommendations with accounts selected
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="region-commands">region-commands<a class="headerlink" href="#region-commands" title="Permanent link">&para;</a></h2>
 <h3 id="regions">regions<a class="headerlink" href="#regions" title="Permanent link">&para;</a></h3>
@@ -2937,7 +4264,7 @@ in Cost Recommendations.</p>
 <p>The region() function must be sourced in order to update the
 AWS_DEFAULT_REGION environment variable. This is because it
 cannot update an environment variable when run as a subprocess.</p>
-<div class="codehilite"><pre><span></span>$ regions
+<div class="codehilite"><pre><span></span><code>$ regions
 ap-northeast-1
 ap-northeast-2
 ap-south-1
@@ -2945,69 +4272,62 @@ ap-southeast-1
 ap-southeast-2
 ...
 us-west-2
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="region">region<a class="headerlink" href="#region" title="Permanent link">&para;</a></h3>
 <p>Get/Set <code>$AWS_DEFAULT_REGION</code> shell environment variable</p>
-<div class="codehilite"><pre><span></span>$ region
+<div class="codehilite"><pre><span></span><code>$ region
 us-east-1
 
 $ region ap-southeast-2
 
 $ region
 ap-southeast-2
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="region-each">region-each<a class="headerlink" href="#region-each" title="Permanent link">&para;</a></h3>
 <p>Run a command in every region.
 Any output lines will be appended with "#${REGION}".</p>
-<div class="codehilite"><pre><span></span>$ region-each stacks | column -t
+<div class="codehilite"><pre><span></span><code>$ region-each stacks
 example-ec2-ap-northeast-1  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-1
 example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
 ...
 example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="stack-commands">stack-commands<a class="headerlink" href="#stack-commands" title="Permanent link">&para;</a></h2>
 <h3 id="stacks">stacks<a class="headerlink" href="#stacks" title="Permanent link">&para;</a></h3>
 <p>List CloudFormation stacks.</p>
 <p>To make it fly we omit stacks with status of DELETE_COMPLETE
 Output is sorted by CreationTime</p>
-<div class="codehilite"><pre><span></span>$ stacks
+<div class="codehilite"><pre><span></span><code>$ stacks
 nagios          CREATE_COMPLETE  2018-03-12T11:41:31Z  NEVER_UPDATED  NOT_NESTED
 postgres1       CREATE_COMPLETE  2019-04-14T15:22:44Z  NEVER_UPDATED  NOT_NESTED
 postgres2       CREATE_COMPLETE  2019-05-18T05:45:50Z  NEVER_UPDATED  NOT_NESTED
 prometheus-web  CREATE_COMPLETE  2019-11-23T15:57:04Z  NEVER_UPDATED  NOT_NESTED
-</pre></div>
-
+</code></pre></div>
 
 <p><em>Provide a filter string for a <code>| grep</code> effect with tighter columisation:</em></p>
-<div class="codehilite"><pre><span></span>$ stacks postgres
+<div class="codehilite"><pre><span></span><code>$ stacks postgres
 postgres1  CREATE_COMPLETE  2019-04-14T15:22:44Z  NEVER_UPDATED  NOT_NESTED
 postgres2  CREATE_COMPLETE  2019-05-18T05:45:50Z  NEVER_UPDATED  NOT_NESTED
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-arn">stack-arn<a class="headerlink" href="#stack-arn" title="Permanent link">&para;</a></h3>
 <p>Returns ARN(s) for stacks.</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-arn stack [stack]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-arn stack [stack]
 
 $ stack-arn prometheus-web
 arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb-4f6c-9872-2b5cddc77fba
-</pre></div>
-
+</code></pre></div>
 
 <p><em>Supports multiple stack names from STDIN</em>:</p>
-<div class="codehilite"><pre><span></span>$ stacks | stack-arn
+<div class="codehilite"><pre><span></span><code>$ stacks | stack-arn
 arn:aws:cloudformation:us-east-1:000000000000:stack/nagios/c0f0ef04-b505-4c0c-87cd-ca924153ad1c
 arn:aws:cloudformation:us-east-1:000000000000:stack/postgres1/758b0ba2-60f2-4432-8935-f79f47708f23
 arn:aws:cloudformation:us-east-1:000000000000:stack/postgres2/7420bbd4-3026-444f-b55b-fa0a9d564730
 arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb-4f6c-9872-2b5cddc77fba
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-cancel-update">stack-cancel-update<a class="headerlink" href="#stack-cancel-update" title="Permanent link">&para;</a></h3>
 <p>Cancel an in-progress stack update</p>
@@ -3015,7 +4335,7 @@ arn:aws:cloudformation:us-east-1:000000000000:stack/prometheus-web/805e081c-b8eb
 <p>Create a CloudFormation Stack</p>
 <p><em>See suggested <a href="/cloudformation-naming/">CloudFormation File Naming Conventions</a>
 to take advantage of shorter commands</em></p>
-<div class="codehilite"><pre><span></span>USAGE: stack-create stack [template-file] [parameters-file]             \
+<div class="codehilite"><pre><span></span><code>USAGE: stack-create stack [template-file] [parameters-file]             \
             [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]
 
 $ stack-create params/asg-params-prod.json
@@ -3037,14 +4357,13 @@ arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg-prod/98d40130-23f2-
 |  2019-12-21T13:05:52.950Z|  AutoScalingGroup    |  AWS::AutoScaling::AutoScalingGroup     |  CREATE_COMPLETE     |
 |  2019-12-21T13:05:54.493Z|  asg-prod            |  AWS::CloudFormation::Stack             |  CREATE_COMPLETE     |
 +--------------------------+----------------------+-----------------------------------------+----------------------+
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-update">stack-update<a class="headerlink" href="#stack-update" title="Permanent link">&para;</a></h3>
 <p>Update a CloudFormation Stack</p>
 <p><em>See suggested <a href="/cloudformation-naming/">CloudFormation File Naming Conventions</a>
 to take advantage of shorter commands</em></p>
-<div class="codehilite"><pre><span></span>USAGE: stack-update stack [template-file] [parameters-file] \
+<div class="codehilite"><pre><span></span><code>USAGE: stack-update stack [template-file] [parameters-file] \
               [--capabilities=OPTIONAL_VALUE] [--role-arn=OPTIONAL_VALUE]
 
 $ stack-update params/asg-params-prod.json
@@ -3080,12 +4399,11 @@ arn:aws:cloudformation:ap-southeast-2:812094344564:stack/asg-prod/98d40130-23f2-
 |  2019-12-21T13:14:07.118Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE_CLEANUP_IN_PROGRESS  |
 |  2019-12-21T13:14:07.820Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE                      |
 +--------------------------+----------------------+-----------------------------------------+---------------------------------------+
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-delete">stack-delete<a class="headerlink" href="#stack-delete" title="Permanent link">&para;</a></h3>
 <p>Delete a CloudFormation Stack</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-delete stack [stack]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-delete stack [stack]
 
 $ stacks | stack-delete
 You are about to delete the following stacks:
@@ -3111,8 +4429,7 @@ Are you sure you want to continue? y
 |  2019-12-21T13:18:08.931Z|  AutoScalingGroup    |  AWS::AutoScaling::AutoScalingGroup     |  DELETE_IN_PROGRESS                   |
 
 An error occurred (ValidationError) when calling the DescribeStackEvents operation: Stack [asg-prod] does not exist
-</pre></div>
-
+</code></pre></div>
 
 <p><em>Note that the error reported at the end of <code>stack-delete</code> command is just AWSCLI saying it can't find the stack anymore.</em></p>
 <h3 id="stack-exports">stack-exports<a class="headerlink" href="#stack-exports" title="Permanent link">&para;</a></h3>
@@ -3121,13 +4438,12 @@ An error occurred (ValidationError) when calling the DescribeStackEvents operati
 <p>Return reason a stack failed to update/create/delete</p>
 <h3 id="stack-events">stack-events<a class="headerlink" href="#stack-events" title="Permanent link">&para;</a></h3>
 <p>List event history for a single Stack</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-events stack
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: stack-events stack
+</code></pre></div>
 
 <h3 id="stack-resources">stack-resources<a class="headerlink" href="#stack-resources" title="Permanent link">&para;</a></h3>
 <p>List all resources in Stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-resources stack [stack]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-resources stack [stack]
 
 $ stacks | stack-resources
 i-7d54924538baa7a1f  AWS::EC2::Instance  ec2
@@ -3135,41 +4451,37 @@ i-c54279c6055c3c794  AWS::EC2::Instance  nagios
 i-a8b8dd6783e1a40cc  AWS::EC2::Instance  postgres1
 i-5d74753e210bfe04d  AWS::EC2::Instance  postgres2
 i-2aa95cc214a461398  AWS::EC2::Instance  prometheus-web
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-asgs">stack-asgs<a class="headerlink" href="#stack-asgs" title="Permanent link">&para;</a></h3>
 <p>List ASGs in Stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-asgs stack [stack]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-asgs stack [stack]
 
 $ stacks | stack-asgs
 asg-bash-my-aws-AutoScalingGroup-MSBCWRTI3PVM  AWS::AutoScaling::AutoScalingGroup  asg-bash-my-aws
 asg2-AutoScalingGroup-1FHUVUJ7SLPU7            AWS::AutoScaling::AutoScalingGroup  asg2
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-asg-instances">stack-asg-instances<a class="headerlink" href="#stack-asg-instances" title="Permanent link">&para;</a></h3>
 <p>List EC2 Instances of EC2 Autoscaling Groups in Stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-asg-instances stack [stack]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-asg-instances stack [stack]
 
 $ stacks | stack-asg-instances
 i-06ee900565652ecc5  ami-0119aa4d67e59007c  t3.nano  running  asg-bash-my-aws  2019-12-13T03:15:22.000Z  ap-southeast-2c  vpc-deb8edb9
 i-01c7edb986c18c16a  ami-0119aa4d67e59007c  t3.nano  running  asg2             2019-12-13T03:37:51.000Z  ap-southeast-2c  vpc-deb8edb9
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-elbs">stack-elbs<a class="headerlink" href="#stack-elbs" title="Permanent link">&para;</a></h3>
 <p>List EC2 Elastic Load Balancers in Stack(s)</p>
 <p>USAGE: stack-elbs stack [stack]</p>
-<div class="codehilite"><pre><span></span>$ stacks | stack-elbs
+<div class="codehilite"><pre><span></span><code>$ stacks | stack-elbs
 elb-MyLoadBalancer-NA5S72MLA5KI   AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-1
 load-bala-MyLoadBa-11HZ0DHUHJZZI  AWS::ElasticLoadBalancing::LoadBalancer  elb-stack-2
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-instances">stack-instances<a class="headerlink" href="#stack-instances" title="Permanent link">&para;</a></h3>
 <p>List instances in stack(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-instances stack [stack]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-instances stack [stack]
 
 $ stacks | stack-instances
 i-7d54924538baa7a1f  ami-123456789012  t3.nano  stopped  ec2             2019-12-11T09:31:03.000Z  ap-southeast-2a  None
@@ -3177,8 +4489,7 @@ i-c54279c6055c3c794  ami-123456789012  t3.nano  running  nagios          2019-12
 i-a8b8dd6783e1a40cc  ami-123456789012  t3.nano  running  postgres1       2019-12-13T02:24:32.000Z  ap-southeast-2a  None
 i-5d74753e210bfe04d  ami-123456789012  t3.nano  running  postgres2       2019-12-13T02:24:34.000Z  ap-southeast-2a  None
 i-2aa95cc214a461398  ami-123456789012  t3.nano  running  prometheus-web  2019-12-13T02:24:36.000Z  ap-southeast-2a  None
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="stack-parameters">stack-parameters<a class="headerlink" href="#stack-parameters" title="Permanent link">&para;</a></h3>
 <p>List parameters of stack</p>
@@ -3200,7 +4511,7 @@ i-2aa95cc214a461398  ami-123456789012  t3.nano  running  prometheus-web  2019-12
 <p>Validate a stack template</p>
 <h3 id="stack-diff">stack-diff<a class="headerlink" href="#stack-diff" title="Permanent link">&para;</a></h3>
 <p>Compare live stack against local template (and optional params file)</p>
-<div class="codehilite"><pre><span></span>USAGE: stack-diff stack [template-file]
+<div class="codehilite"><pre><span></span><code>USAGE: stack-diff stack [template-file]
 
 $ stack-diff params/asg-params-prod.json
 Resolved arguments: asg-prod ./asg.yml params/asg-params-prod.json
@@ -3223,8 +4534,7 @@ Resolved arguments: asg-prod ./asg.yml params/asg-params-prod.json
    },
    {
      &quot;ParameterKey&quot;: &quot;InstanceType&quot;,
-</pre></div>
-
+</code></pre></div>
 
 <p>report changes which would be made to stack if template were applied
 report on what changes would be made to stack by applying params
@@ -3259,40 +4569,36 @@ determine what (if any) capabilities a given stack was deployed with</p>
 <h2 id="instance-commands">instance-commands<a class="headerlink" href="#instance-commands" title="Permanent link">&para;</a></h2>
 <h3 id="instances">instances<a class="headerlink" href="#instances" title="Permanent link">&para;</a></h3>
 <p>List EC2 Instances</p>
-<div class="codehilite"><pre><span></span>$ instances
+<div class="codehilite"><pre><span></span><code>$ instances
 i-4e15ece1de1a3f869  ami-123456789012  t3.nano  running  nagios          2019-12-10T08:17:18.000Z  ap-southeast-2a  None
 i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1       2019-12-10T08:17:20.000Z  ap-southeast-2a  None
 i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2       2019-12-10T08:17:22.000Z  ap-southeast-2a  None
 i-61e86ac6be1e2c193  ami-123456789012  t3.nano  running  prometheus-web  2019-12-10T08:17:24.000Z  ap-southeast-2a  None
-</pre></div>
-
+</code></pre></div>
 
 <p><em>Optionally provide a filter string for a <code>| grep</code> effect with tighter columisation:</em></p>
-<div class="codehilite"><pre><span></span>$ instances postgres
+<div class="codehilite"><pre><span></span><code>$ instances postgres
 i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
 i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-asg">instance-asg<a class="headerlink" href="#instance-asg" title="Permanent link">&para;</a></h3>
 <p>List autoscaling group membership of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-asg instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-asg instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-az">instance-az<a class="headerlink" href="#instance-az" title="Permanent link">&para;</a></h3>
 <p>List availability zone of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-az instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-az instance-id [instance-id]
 
 $ instances postgres | instance-az
 i-89cefa9403373d7a5  ap-southeast-2a
 i-806d8f1592e2a2efd  ap-southeast-2a
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-console">instance-console<a class="headerlink" href="#instance-console" title="Permanent link">&para;</a></h3>
 <p>List console output of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-console instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-console instance-id [instance-id]
 
 $ instances postgres | instance-console
 Console output for EC2 Instance i-89cefa9403373d7a5
@@ -3306,103 +4612,143 @@ Linux version 2.6.16-xenU (builder@patchbat.amazonsa) (gcc version 4.0.1 2005072
 BIOS-provided physical RAM map:
 Xen: 0000000000000000 - 000000006a400000 (usable)
 ...snip...
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-dns">instance-dns<a class="headerlink" href="#instance-dns" title="Permanent link">&para;</a></h3>
 <p>List DNS name of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-dns instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-dns instance-id [instance-id]
 
 $ instances postgres | instance-dns
 i-89cefa9403373d7a5  ip-10-155-35-61.ap-southeast-2.compute.internal   ec2-54-214-206-114.ap-southeast-2.compute.amazonaws.com
 i-806d8f1592e2a2efd  ip-10-178-243-63.ap-southeast-2.compute.internal  ec2-54-214-244-90.ap-southeast-2.compute.amazonaws.com
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-health-set-unhealthy">instance-health-set-unhealthy<a class="headerlink" href="#instance-health-set-unhealthy" title="Permanent link">&para;</a></h3>
 <p>Mark EC2 Instance(s) as unhealthy (to trigger replacement by ASG)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-health-set-unhealthy instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-health-set-unhealthy instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-iam-profile">instance-iam-profile<a class="headerlink" href="#instance-iam-profile" title="Permanent link">&para;</a></h3>
 <p>List iam-profile of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-iam-profile instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-iam-profile instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-ip">instance-ip<a class="headerlink" href="#instance-ip" title="Permanent link">&para;</a></h3>
 <p>List ip address of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-ip instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-ip instance-id [instance-id]
 
 $ instances postgres | instance-ip
 i-89cefa9403373d7a5  10.155.35.61   54.214.206.114
 i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-ssh">instance-ssh<a class="headerlink" href="#instance-ssh" title="Permanent link">&para;</a></h3>
 <p>Establish SSH connection to EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-ssh [login] [instance-id] [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-ssh [login] [instance-id] [instance-id]
+</code></pre></div>
 
 <h3 id="instance-ssh-details">instance-ssh-details<a class="headerlink" href="#instance-ssh-details" title="Permanent link">&para;</a></h3>
 <p>List details needed to SSH into EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-ssh-details [login] [instance-id] [instance-id]
-</pre></div>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-ssh-details [login] [instance-id] [instance-id]
+</code></pre></div>
 
+<h3 id="instance-ssm">instance-ssm<a class="headerlink" href="#instance-ssm" title="Permanent link">&para;</a></h3>
+<p>Establish SSM connection to EC2 Instance(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-ssm instance-id [instance-id]
+</code></pre></div>
+
+<h3 id="instance-rdp">instance-rdp<a class="headerlink" href="#instance-rdp" title="Permanent link">&para;</a></h3>
+<h3 id="instance-ssm-port-forward">instance-ssm-port-forward<a class="headerlink" href="#instance-ssm-port-forward" title="Permanent link">&para;</a></h3>
+<p>Create tunnel from localhost to remote EC2 instance</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-ssm-port-forward local_port_number port_number instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-stack">instance-stack<a class="headerlink" href="#instance-stack" title="Permanent link">&para;</a></h3>
 <p>List CloudFormation stack EC2 Instance(s) belong to (if any)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-stack instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-stack instance-id [instance-id]
 
 $ instances postgres | instance-stack
 postgres1  i-89cefa9403373d7a5
 postgres2  i-806d8f1592e2a2efd
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-start">instance-start<a class="headerlink" href="#instance-start" title="Permanent link">&para;</a></h3>
 <p>Start stopped EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-start instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-start instance-id [instance-id]
 
 $ instances postgres | instance-start
 i-a8b8dd6783e1a40cc  PreviousState=stopped  CurrentState=pending
 i-5d74753e210bfe04d  PreviousState=stopped  CurrentState=pending
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-state">instance-state<a class="headerlink" href="#instance-state" title="Permanent link">&para;</a></h3>
 <p>List state of EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-state instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-state instance-id [instance-id]
 
 $ instances postgres | instance-state
 i-89cefa9403373d7a5  running
 i-806d8f1592e2a2efd  running
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-stop">instance-stop<a class="headerlink" href="#instance-stop" title="Permanent link">&para;</a></h3>
 <p>Stop EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-stop instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-stop instance-id [instance-id]
 
 $ instances postgres | instance-stop
 
 i-a8b8dd6783e1a40cc  PreviousState=running  CurrentState=stopping
 i-5d74753e210bfe04d  PreviousState=running  CurrentState=stopping
-</pre></div>
+</code></pre></div>
 
+<h3 id="instance-subnet">instance-subnet<a class="headerlink" href="#instance-subnet" title="Permanent link">&para;</a></h3>
+<p>List subnet for EC2 Instance(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-subnets instance-id [instance-id]
+</code></pre></div>
+
+<h3 id="instance-stop-protection">instance-stop-protection<a class="headerlink" href="#instance-stop-protection" title="Permanent link">&para;</a></h3>
+<p>List current state of Stop Protection for EC2 Instance(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-stop-protection instance-id [instance-id]
+
+$ instances | instance-termination-protection
+i-4e15ece1de1a3f869 DisableApiStop=true
+i-89cefa9403373d7a5 DisableApiStop=false
+i-806d8f1592e2a2efd DisableApiStop=false
+i-61e86ac6be1e2c193 DisableApiStop=false
+</code></pre></div>
+
+<h3 id="instance-stop-protection-disable">instance-stop-protection-disable<a class="headerlink" href="#instance-stop-protection-disable" title="Permanent link">&para;</a></h3>
+<p>Disable EC2 Instance stop protection</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-stop-protection-disable instance-id [instance-id]
+</code></pre></div>
+
+<h3 id="instance-stop-protection-enable">instance-stop-protection-enable<a class="headerlink" href="#instance-stop-protection-enable" title="Permanent link">&para;</a></h3>
+<p>Enable EC2 Instance stop protection</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-stop-protection-enable instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-tags">instance-tags<a class="headerlink" href="#instance-tags" title="Permanent link">&para;</a></h3>
 <p>List tags applied EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-tags instance-id [instance-id]
-</pre></div>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-tags instance-id [instance-id]
+</code></pre></div>
 
+<h3 id="instance-tag">instance-tag<a class="headerlink" href="#instance-tag" title="Permanent link">&para;</a></h3>
+<p>List named tag on EC2 Instance(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-tag key instance-id [instance-id]
+</code></pre></div>
+
+<h3 id="instance-tag-create">instance-tag-create<a class="headerlink" href="#instance-tag-create" title="Permanent link">&para;</a></h3>
+<p>Create/update tag on EC2 Instance(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-tag-create key value instance [instance]
+</code></pre></div>
+
+<h3 id="instance-tag-delete">instance-tag-delete<a class="headerlink" href="#instance-tag-delete" title="Permanent link">&para;</a></h3>
+<p>Delete tag from EC2 Instance(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: instance-tag-delete key instance [instance]
+</code></pre></div>
 
 <h3 id="instance-terminate">instance-terminate<a class="headerlink" href="#instance-terminate" title="Permanent link">&para;</a></h3>
 <p>Terminate EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-terminate instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-terminate instance-id [instance-id]
 
 $ instances | head -3 | instance-terminate
 You are about to terminate the following instances:
@@ -3412,68 +4758,62 @@ Are you sure you want to continue? y
 i-06ee900565652ecc5  PreviousState=terminated  CurrentState=terminated
 i-01c7edb986c18c16a  PreviousState=terminated  CurrentState=terminated
 i-012dded46894dfa04  PreviousState=running     CurrentState=shutting-down
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-termination-protection">instance-termination-protection<a class="headerlink" href="#instance-termination-protection" title="Permanent link">&para;</a></h3>
 <p>List current state of Termination Protection for EC2 Instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-termination-protection instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-termination-protection instance-id [instance-id]
 
 $ instances | instance-termination-protection
 i-4e15ece1de1a3f869 DisableApiTermination=true
 i-89cefa9403373d7a5 DisableApiTermination=false
 i-806d8f1592e2a2efd DisableApiTermination=false
 i-61e86ac6be1e2c193 DisableApiTermination=false
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-termination-protection-disable">instance-termination-protection-disable<a class="headerlink" href="#instance-termination-protection-disable" title="Permanent link">&para;</a></h3>
 <p>Disable EC2 Instance termination protection</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-termination-protection-disable instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-termination-protection-disable instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-termination-protection-enable">instance-termination-protection-enable<a class="headerlink" href="#instance-termination-protection-enable" title="Permanent link">&para;</a></h3>
 <p>Enable EC2 Instance termination protection</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-termination-protection-enable instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-termination-protection-enable instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-type">instance-type<a class="headerlink" href="#instance-type" title="Permanent link">&para;</a></h3>
 <p>List type of instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-type instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-type instance-id [instance-id]
 
 $ instances | instance-type
 i-4e15ece1de1a3f869  t3.nano
 i-89cefa9403373d7a5  t3.nano
 i-806d8f1592e2a2efd  t3.nano
 i-61e86ac6be1e2c193  t3.nano
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-userdata">instance-userdata<a class="headerlink" href="#instance-userdata" title="Permanent link">&para;</a></h3>
 <p>List userdata for instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-userdata instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-userdata instance-id [instance-id]
+</code></pre></div>
 
 <h3 id="instance-volumes">instance-volumes<a class="headerlink" href="#instance-volumes" title="Permanent link">&para;</a></h3>
 <p>List volumes of instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-volumes instance-id [instance-id]
+<div class="codehilite"><pre><span></span><code>USAGE: instance-volumes instance-id [instance-id]
 
 $ instances postgres | instance-volumes
 i-89cefa9403373d7a5  vol-cf5ddae9
 i-806d8f1592e2a2efd  vol-38fd45c3
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="instance-vpc">instance-vpc<a class="headerlink" href="#instance-vpc" title="Permanent link">&para;</a></h3>
 <p>List VPC of instance(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: instance-vpcs instance-id [instance-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: instance-vpcs instance-id [instance-id]
+</code></pre></div>
 
 <h2 id="asg-commands">asg-commands<a class="headerlink" href="#asg-commands" title="Permanent link">&para;</a></h2>
+<h3 id="asg-detach-instances">asg-detach-instances<a class="headerlink" href="#asg-detach-instances" title="Permanent link">&para;</a></h3>
+<p>Detach all instances from asg(s)</p>
 <h3 id="asgs">asgs<a class="headerlink" href="#asgs" title="Permanent link">&para;</a></h3>
 <p>List EC2 Autoscaling Groups</p>
 <h3 id="asg-capacity">asg-capacity<a class="headerlink" href="#asg-capacity" title="Permanent link">&para;</a></h3>
@@ -3502,6 +4842,157 @@ i-806d8f1592e2a2efd  vol-38fd45c3
 <p>List CloudFormation stack for asg(s)</p>
 <h3 id="asg-scaling-activities">asg-scaling-activities<a class="headerlink" href="#asg-scaling-activities" title="Permanent link">&para;</a></h3>
 <p>List scaling activities for Autoscaling Group(s)</p>
+<p>azure.azcli</p>
+<h2 id="azure-commands">azure-commands<a class="headerlink" href="#azure-commands" title="Permanent link">&para;</a></h2>
+<h3 id="debug">debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
+<p>Construct a string to be passed to <code>grep -E</code></p>
+<div class="codehilite"><pre><span></span><code>foo|bar|baz
+</code></pre></div>
+
+<h3 id="skim-stdin-tsv">skim-stdin-tsv<a class="headerlink" href="#skim-stdin-tsv" title="Permanent link">&para;</a></h3>
+<h3 id="skim-stdin-bma">skim-stdin-bma<a class="headerlink" href="#skim-stdin-bma" title="Permanent link">&para;</a></h3>
+<p>Append first token from each line of STDIN to argument list</p>
+<p>Implementation of <code>pipe-skimming</code> pattern.</p>
+<div class="codehilite"><pre><span></span><code>$ stacks | skim-stdin foo bar
+foo bar huginn mastodon grafana
+
+$ stacks
+huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+</code></pre></div>
+
+<p>Typical usage within Bash-my-AWS functions:</p>
+<div class="codehilite"><pre><span></span><code>local asg_names=$(skim-stdin &quot;$@&quot;) # Append to arg list
+local asg_names=$(skim-stdin)      # Only draw from STDIN
+</code></pre></div>
+
+<h3 id="az-account">az-account<a class="headerlink" href="#az-account" title="Permanent link">&para;</a></h3>
+<h3 id="az-user">az-user<a class="headerlink" href="#az-user" title="Permanent link">&para;</a></h3>
+<h3 id="az-cache-items">az-cache-items<a class="headerlink" href="#az-cache-items" title="Permanent link">&para;</a></h3>
+<h3 id="az-cache-item">az-cache-item<a class="headerlink" href="#az-cache-item" title="Permanent link">&para;</a></h3>
+<p>Create arguments from output of az-cache-items() (if present)</p>
+<h3 id="az-cache-item-delete">az-cache-item-delete<a class="headerlink" href="#az-cache-item-delete" title="Permanent link">&para;</a></h3>
+<p>Create arguments from output of az-cache-items() (if present)</p>
+<h3 id="locations">locations<a class="headerlink" href="#locations" title="Permanent link">&para;</a></h3>
+<h3 id="location">location<a class="headerlink" href="#location" title="Permanent link">&para;</a></h3>
+<h3 id="location-unset">location-unset<a class="headerlink" href="#location-unset" title="Permanent link">&para;</a></h3>
+<h3 id="location-each">location-each<a class="headerlink" href="#location-each" title="Permanent link">&para;</a></h3>
+<h3 id="resource-groups">resource-groups<a class="headerlink" href="#resource-groups" title="Permanent link">&para;</a></h3>
+<h3 id="resource-group">resource-group<a class="headerlink" href="#resource-group" title="Permanent link">&para;</a></h3>
+<h3 id="resource-group-export">resource-group-export<a class="headerlink" href="#resource-group-export" title="Permanent link">&para;</a></h3>
+<h3 id="resource-group-unset">resource-group-unset<a class="headerlink" href="#resource-group-unset" title="Permanent link">&para;</a></h3>
+<h3 id="resources">resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h3>
+<h3 id="resourceids">resourceids<a class="headerlink" href="#resourceids" title="Permanent link">&para;</a></h3>
+<h3 id="resource-show">resource-show<a class="headerlink" href="#resource-show" title="Permanent link">&para;</a></h3>
+<h3 id="resource-diff">resource-diff<a class="headerlink" href="#resource-diff" title="Permanent link">&para;</a></h3>
+<h3 id="resource-export">resource-export<a class="headerlink" href="#resource-export" title="Permanent link">&para;</a></h3>
+<h3 id="service-principals">service-principals<a class="headerlink" href="#service-principals" title="Permanent link">&para;</a></h3>
+<h3 id="management-groups">management-groups<a class="headerlink" href="#management-groups" title="Permanent link">&para;</a></h3>
+<h3 id="subscriptions">subscriptions<a class="headerlink" href="#subscriptions" title="Permanent link">&para;</a></h3>
+<h3 id="subscription">subscription<a class="headerlink" href="#subscription" title="Permanent link">&para;</a></h3>
+<h3 id="subscription-unset">subscription-unset<a class="headerlink" href="#subscription-unset" title="Permanent link">&para;</a></h3>
+<h3 id="subscription-each">subscription-each<a class="headerlink" href="#subscription-each" title="Permanent link">&para;</a></h3>
+<p>Ported from BMA</p>
+<h3 id="ad-groups">ad-groups<a class="headerlink" href="#ad-groups" title="Permanent link">&para;</a></h3>
+<p>Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER</p>
+<p>REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results</p>
+<p><a href="https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties">User Properties</a>
+<a href="https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&amp;tabs=http">List Users</a>
+columnise</p>
+<h3 id="ad-group-members">ad-group-members<a class="headerlink" href="#ad-group-members" title="Permanent link">&para;</a></h3>
+<p>List groups for AD User(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+$ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+</code></pre></div>
+
+<h3 id="ad-users">ad-users<a class="headerlink" href="#ad-users" title="Permanent link">&para;</a></h3>
+<p>Usage: ad-users REMOTE_STARTS_WITH_FILTER LOCAL_FILTER</p>
+<p>REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+LOCAL_FILTER: grep results</p>
+<p><a href="https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties">User Properties</a>
+<a href="https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&amp;tabs=http">List Users</a>
+columnise</p>
+<h3 id="function">function<a class="headerlink" href="#function" title="Permanent link">&para;</a></h3>
+<p>ad-user-upns</p>
+<h3 id="function_1">function<a class="headerlink" href="#function_1" title="Permanent link">&para;</a></h3>
+<p>ad-user-upns</p>
+<h3 id="function_2">function<a class="headerlink" href="#function_2" title="Permanent link">&para;</a></h3>
+<p>ad-user-names</p>
+<h3 id="ad-users-graph">ad-users-graph<a class="headerlink" href="#ad-users-graph" title="Permanent link">&para;</a></h3>
+<p>Usage: ad-users-graph REMOTE_STARTS_WITH_FILTER LOCAL_FILTER</p>
+<p>REMOTE_STARTS_WITH_FILTER: filters on start of userPrincipalName
+- https://learn.microsoft.com/en-us/cli/azure/format-output-azure-cli</p>
+<p>Uses graph API - more functionaility than azcli but limited result count</p>
+<p>$ time ad-users | wc -l
+999
+real    0m0.792s
+user    0m0.311s
+sys     0m0.047s</p>
+<p><a href="https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties">User Properties</a>
+<a href="https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&amp;tabs=http">List Users</a>
+columnise # Disabled to preserve tabs</p>
+<h3 id="ad-user-groups">ad-user-groups<a class="headerlink" href="#ad-user-groups" title="Permanent link">&para;</a></h3>
+<p>List groups for AD User(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: ad-user-groups USER USER # object ID or principal name of the user
+
+$ ad-users mike.bailey@bash-my-aws.org | ad-user-groups
+</code></pre></div>
+
+<h3 id="ad-user-group-diff">ad-user-group-diff<a class="headerlink" href="#ad-user-group-diff" title="Permanent link">&para;</a></h3>
+<h3 id="ad-apps">ad-apps<a class="headerlink" href="#ad-apps" title="Permanent link">&para;</a></h3>
+<p>Usage: ad-apps REMOTE_FILTER LOCAL_FILTER</p>
+<p>REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results
+columnise</p>
+<h3 id="ad-app">ad-app<a class="headerlink" href="#ad-app" title="Permanent link">&para;</a></h3>
+<p>Usage: ad-app APP [APP]</p>
+<h3 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>ad-app-signins</p>
+<h3 id="ad-app-owners">ad-app-owners<a class="headerlink" href="#ad-app-owners" title="Permanent link">&para;</a></h3>
+<p>Usage: ad-app-owners APP [APP]
+    --query '[].[
+      appId,
+      displayName,
+      createdDateTime
+      ]'                \
+    --output tsv"       |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t$'\t' -b -k 3</p>
+<h3 id="function_3">function<a class="headerlink" href="#function_3" title="Permanent link">&para;</a></h3>
+<p>connectors
+Usage: connectors REMOTE_FILTER LOCAL_FILTER</p>
+<p>REMOTE_FILTER: filters on start of machineName
+LOCAL_FILTER: grep results</p>
+<h3 id="function_4">function<a class="headerlink" href="#function_4" title="Permanent link">&para;</a></h3>
+<p>connector-groups
+Usage: connector-groups REMOTE_FILTER LOCAL_FILTER</p>
+<p>REMOTE_FILTER: filters on start of displayName
+LOCAL_FILTER: grep results</p>
+<h3 id="function_5">function<a class="headerlink" href="#function_5" title="Permanent link">&para;</a></h3>
+<p>connector-group-apps
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]</p>
+<h3 id="function_6">function<a class="headerlink" href="#function_6" title="Permanent link">&para;</a></h3>
+<p>connector-group-members
+Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]</p>
+<h3 id="deployments-group">deployments-group<a class="headerlink" href="#deployments-group" title="Permanent link">&para;</a></h3>
+<h3 id="afds">afds<a class="headerlink" href="#afds" title="Permanent link">&para;</a></h3>
+<h3 id="afd-endpoints">afd-endpoints<a class="headerlink" href="#afd-endpoints" title="Permanent link">&para;</a></h3>
+<h3 id="afd-routes">afd-routes<a class="headerlink" href="#afd-routes" title="Permanent link">&para;</a></h3>
+<p>List routes of all endpoints for Front Door Profile(s)</p>
+<h3 id="afd-custom-domains">afd-custom-domains<a class="headerlink" href="#afd-custom-domains" title="Permanent link">&para;</a></h3>
+<h3 id="afd-custom-domains-validation-request">afd-custom-domains-validation-request<a class="headerlink" href="#afd-custom-domains-validation-request" title="Permanent link">&para;</a></h3>
+<h3 id="afd-origin-groups">afd-origin-groups<a class="headerlink" href="#afd-origin-groups" title="Permanent link">&para;</a></h3>
+<h3 id="afd-waf-policies">afd-waf-policies<a class="headerlink" href="#afd-waf-policies" title="Permanent link">&para;</a></h3>
+<h3 id="afd-waf-policy-rules">afd-waf-policy-rules<a class="headerlink" href="#afd-waf-policy-rules" title="Permanent link">&para;</a></h3>
+<h3 id="afd-waf-policy">afd-waf-policy<a class="headerlink" href="#afd-waf-policy" title="Permanent link">&para;</a></h3>
+<h3 id="afd-waf-policy-rule-match-conditions">afd-waf-policy-rule-match-conditions<a class="headerlink" href="#afd-waf-policy-rule-match-conditions" title="Permanent link">&para;</a></h3>
+<h3 id="afd-waf-policy-rule-match-condition-values">afd-waf-policy-rule-match-condition-values<a class="headerlink" href="#afd-waf-policy-rule-match-condition-values" title="Permanent link">&para;</a></h3>
+<h3 id="afd-waf-policy-rule-delete">afd-waf-policy-rule-delete<a class="headerlink" href="#afd-waf-policy-rule-delete" title="Permanent link">&para;</a></h3>
+<h3 id="deployment-groups">deployment-groups<a class="headerlink" href="#deployment-groups" title="Permanent link">&para;</a></h3>
+<h3 id="deployment-delete-danger">deployment-delete-danger<a class="headerlink" href="#deployment-delete-danger" title="Permanent link">&para;</a></h3>
 <h2 id="cert-commands">cert-commands<a class="headerlink" href="#cert-commands" title="Permanent link">&para;</a></h2>
 <h3 id="certs">certs<a class="headerlink" href="#certs" title="Permanent link">&para;</a></h3>
 <p>List ACM Certificates</p>
@@ -3509,29 +5000,44 @@ i-806d8f1592e2a2efd  vol-38fd45c3
 <p>Same as <code>certs</code> but with the ARN in first column</p>
 <h3 id="cert-users">cert-users<a class="headerlink" href="#cert-users" title="Permanent link">&para;</a></h3>
 <p>List resources using ACM Cert(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: cert-users cert-arn [cert-arn]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: cert-users cert-arn [cert-arn]
+</code></pre></div>
 
 <h3 id="cert-delete">cert-delete<a class="headerlink" href="#cert-delete" title="Permanent link">&para;</a></h3>
 <p>Delete ACM Cert(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: cert-delete cert-arn [cert-arn]
-</pre></div>
+<div class="codehilite"><pre><span></span><code>USAGE: cert-delete cert-arn [cert-arn]
+</code></pre></div>
 
+<h3 id="cert-ificate">cert-ificate<a class="headerlink" href="#cert-ificate" title="Permanent link">&para;</a></h3>
+<p>Return Certificate for ACM Cert(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: cert-ificate cert-arn [cert-arn]
+</code></pre></div>
 
+<h3 id="cert-chain">cert-chain<a class="headerlink" href="#cert-chain" title="Permanent link">&para;</a></h3>
+<p>Return Cert Chain for ACM Cert(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: cert-chain cert-arn [cert-arn]
+</code></pre></div>
+
+<h3 id="cert-verify">cert-verify<a class="headerlink" href="#cert-verify" title="Permanent link">&para;</a></h3>
+<p>Verify ACM cert(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: cert-chain cert-arn [cert-arn]
+</code></pre></div>
+
+<p>Be quiet - makes it easier to scan with "cert-arns | cert_verify"</p>
+<h2 id="cloudfront-commands">cloudfront-commands<a class="headerlink" href="#cloudfront-commands" title="Permanent link">&para;</a></h2>
+<h3 id="distributions">distributions<a class="headerlink" href="#distributions" title="Permanent link">&para;</a></h3>
+<p>List Cloudfront Distributions</p>
 <h2 id="cloudtrail-commands">cloudtrail-commands<a class="headerlink" href="#cloudtrail-commands" title="Permanent link">&para;</a></h2>
 <h3 id="cloudtrails">cloudtrails<a class="headerlink" href="#cloudtrails" title="Permanent link">&para;</a></h3>
 <p>List Cloudtrails</p>
-<div class="codehilite"><pre><span></span>$ cloudtrails
+<div class="codehilite"><pre><span></span><code>$ cloudtrails
 failmode    failmode-cloudtrail ap-southeast-2  IsMultiRegionTrail=true IncludeGlobalServiceEvents=true
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="cloudtrail-status">cloudtrail-status<a class="headerlink" href="#cloudtrail-status" title="Permanent link">&para;</a></h3>
 <p>List logging status of Cloudtrails</p>
-<div class="codehilite"><pre><span></span>USAGE: cloudtrail-status cloudtrail [cloudtrail]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: cloudtrail-status cloudtrail [cloudtrail]
+</code></pre></div>
 
 <h2 id="ecr-commands">ecr-commands<a class="headerlink" href="#ecr-commands" title="Permanent link">&para;</a></h2>
 <h3 id="ecr-repositories">ecr-repositories<a class="headerlink" href="#ecr-repositories" title="Permanent link">&para;</a></h3>
@@ -3542,123 +5048,129 @@ failmode    failmode-cloudtrail ap-southeast-2  IsMultiRegionTrail=true IncludeG
 <h3 id="elbs">elbs<a class="headerlink" href="#elbs" title="Permanent link">&para;</a></h3>
 <p>List ELBs
 Accepts LoadBalancer names on STDIN and converts to LoadBalancer names</p>
-<div class="codehilite"><pre><span></span>$ elbs
+<div class="codehilite"><pre><span></span><code>$ elbs
 elb-MyLoadBalancer-1FNISWJN0W6N9  2019-12-13T10:24:55.220Z
 another-e-MyLoadBa-171CPCZF2E84T  2019-12-13T10:25:24.300Z
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elb-dnsname">elb-dnsname<a class="headerlink" href="#elb-dnsname" title="Permanent link">&para;</a></h3>
 <p>List DNS Names of ELB(s)</p>
-<div class="codehilite"><pre><span></span> USAGE: elb-dnsname load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code> USAGE: elb-dnsname load-balancer [load-balancer]
 
  $ elbs | elb-dnsname
  elb-MyLoadBalancer-1FNISWJN0W6N9  elb-MyLoadBalancer-1FNISWJN0W6N9-563832045.ap-southeast-2.elb.amazonaws.com
  another-e-MyLoadBa-171CPCZF2E84T  another-e-MyLoadBa-171CPCZF2E84T-1832721930.ap-southeast-2.elb.amazonaws.com
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elb-instances">elb-instances<a class="headerlink" href="#elb-instances" title="Permanent link">&para;</a></h3>
 <p>List instances of ELB(s)</p>
-<div class="codehilite"><pre><span></span> USAGE: elb-instances load-balancer [load-balancer]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code> USAGE: elb-instances load-balancer [load-balancer]
+</code></pre></div>
 
 <h3 id="elb-stack">elb-stack<a class="headerlink" href="#elb-stack" title="Permanent link">&para;</a></h3>
 <p>List CloudFormation stack names of ELB(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: elb-stack load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code>USAGE: elb-stack load-balancer [load-balancer]
 
 $ elbs | elb-stack
 elb          elb-MyLoadBalancer-1FNISWJN0W6N9
 another-elb  another-e-MyLoadBa-171CPCZF2E84T
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elb-subnets">elb-subnets<a class="headerlink" href="#elb-subnets" title="Permanent link">&para;</a></h3>
 <p>List subnets of ELB(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: elb-subnets load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code>USAGE: elb-subnets load-balancer [load-balancer]
 
 $ elbs | elb-subnets
 rails-demo-ELB-FRBEQPCYSZQD  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
 huginn-ELB-BMD0QUX179PK      subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
 prometheus-ELB-C0FGVLGQ64UH  subnet-5e257318 subnet-7828cd0f subnet-c25fa0a7
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elb-azs">elb-azs<a class="headerlink" href="#elb-azs" title="Permanent link">&para;</a></h3>
 <p>List Availability Zones of ELB(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: elb-azs load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code>USAGE: elb-azs load-balancer [load-balancer]
 
 $ elbs | elb-azs
 rails-demo-ELB-FRBEQPCYSZQD  ap-southeast-2a ap-southeast-2b ap-southeast-2c
 huginn-ELB-BMD0QUX179PK      ap-southeast-2a ap-southeast-2b ap-southeast-2c
-</pre></div>
+</code></pre></div>
 
+<h3 id="elb-tags">elb-tags<a class="headerlink" href="#elb-tags" title="Permanent link">&para;</a></h3>
+<p>List tags applied ELB(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: elb-tags elb-id [elb-id]
+</code></pre></div>
+
+<h3 id="elb-tag">elb-tag<a class="headerlink" href="#elb-tag" title="Permanent link">&para;</a></h3>
+<p>List named tag on ELB(s)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: elb-tag key elb-id [elb-id]
+</code></pre></div>
 
 <h2 id="elbv2-commands">elbv2-commands<a class="headerlink" href="#elbv2-commands" title="Permanent link">&para;</a></h2>
 <h3 id="elbv2s">elbv2s<a class="headerlink" href="#elbv2s" title="Permanent link">&para;</a></h3>
 <p>List EC2 ELBv2 load balancers (both Network and Application types)
 Accepts Load Balancer names on STDIN and converts to Network Load Balancer names</p>
-<div class="codehilite"><pre><span></span>$ elbv2s
+<div class="codehilite"><pre><span></span><code>$ elbv2s
 bash-my-aws      network      internet-facing  active        2020-01-04T11:18:49.733Z
 bash-my-aws-alb  application  internet-facing  provisioning  2020-01-04T11:29:45.030Z
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elbv2-dnsname">elbv2-dnsname<a class="headerlink" href="#elbv2-dnsname" title="Permanent link">&para;</a></h3>
 <p>List DNS Names of elbv2(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: elbv2-dnsname load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code>USAGE: elbv2-dnsname load-balancer [load-balancer]
 
 $ elbv2s | elbv2-dnsname
 bash-my-aws      bash-my-aws-c23c598688520e51.elb.ap-southeast-2.amazonaws.com
 bash-my-aws-alb  bash-my-aws-alb-2036199590.ap-southeast-2.elb.amazonaws.com
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elbv2-subnets">elbv2-subnets<a class="headerlink" href="#elbv2-subnets" title="Permanent link">&para;</a></h3>
 <p>List subnets of ELBv2(s) [Application and Network Load Balancers)</p>
-<div class="codehilite"><pre><span></span>USAGE: elbv2-subnets load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code>USAGE: elbv2-subnets load-balancer [load-balancer]
 
 $ elbv2s | elbv2-subnets
 bash-my-aws      subnet-c25fa0a7
 bash-my-aws-alb  subnet-7828cd0f subnet-c25fa0a7
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="elbv2-azs">elbv2-azs<a class="headerlink" href="#elbv2-azs" title="Permanent link">&para;</a></h3>
 <p>List Availability Zones of ELB(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: elb-azs load-balancer [load-balancer]
+<div class="codehilite"><pre><span></span><code>USAGE: elb-azs load-balancer [load-balancer]
 
 $ elbv2s | elbv2-subnets
 bash-my-aws      ap-southeast-2a
 bash-my-aws-alb  ap-southeast-2a ap-southeast-2b
-</pre></div>
+</code></pre></div>
 
+<h3 id="elbv2-target-groups">elbv2-target-groups<a class="headerlink" href="#elbv2-target-groups" title="Permanent link">&para;</a></h3>
+<p>List target groups of ELBv2(s) [Application and Network Load Balancers)</p>
+<div class="codehilite"><pre><span></span><code>USAGE: elbv2-target-groups load-balancer [load-balancer]
+
+$ elbv2s | elbv2-target-groups
+bash-my-aws-nlb-tg  TCP   22   vpc-018d9739  bash-my-aws-nlb
+bash-my-aws-alb-tg  HTTP  443  vpc-018d9739  bash-my-aws-alb
+</code></pre></div>
 
 <h2 id="iam-commands">iam-commands<a class="headerlink" href="#iam-commands" title="Permanent link">&para;</a></h2>
 <h3 id="iam-roles">iam-roles<a class="headerlink" href="#iam-roles" title="Permanent link">&para;</a></h3>
 <p>List IAM Roles</p>
-<div class="codehilite"><pre><span></span>$ iam-roles
+<div class="codehilite"><pre><span></span><code>$ iam-roles
 config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
 AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
 ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="iam-role-principal">iam-role-principal<a class="headerlink" href="#iam-role-principal" title="Permanent link">&para;</a></h3>
 <p>List role principal for IAM Role(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: iam-role-principal role-name [role-name]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: iam-role-principal role-name [role-name]
+</code></pre></div>
 
 <h3 id="iam-users">iam-users<a class="headerlink" href="#iam-users" title="Permanent link">&para;</a></h3>
 <p>List IAM Users</p>
-<div class="codehilite"><pre><span></span>$ iam-users
+<div class="codehilite"><pre><span></span><code>$ iam-users
 config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
 AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
 ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="image-commands">image-commands<a class="headerlink" href="#image-commands" title="Permanent link">&para;</a></h2>
 <h3 id="images">images<a class="headerlink" href="#images" title="Permanent link">&para;</a></h3>
@@ -3683,18 +5195,16 @@ This is more like the output of <code>ls -la</code></p>
 </ul>
 <h3 id="image-deregister">image-deregister<a class="headerlink" href="#image-deregister" title="Permanent link">&para;</a></h3>
 <p>Deregister AMI(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: image-deregister image_id [image_id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: image-deregister image_id [image_id]
+</code></pre></div>
 
 <h2 id="keypair-commands">keypair-commands<a class="headerlink" href="#keypair-commands" title="Permanent link">&para;</a></h2>
 <h3 id="keypairs">keypairs<a class="headerlink" href="#keypairs" title="Permanent link">&para;</a></h3>
 <p>List EC2 SSH Keypairs in current Region</p>
-<div class="codehilite"><pre><span></span>$ keypairs
+<div class="codehilite"><pre><span></span><code>$ keypairs
 alice  8f:85:9a:1e:6c:76:29:34:37:45:de:7f:8d:f9:70:eb
 bob    56:73:29:c2:ad:7b:6f:b6:f2:f3:b4:de:e4:2b:12:d4
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="keypair-create">keypair-create<a class="headerlink" href="#keypair-create" title="Permanent link">&para;</a></h3>
 <p>Create SSH Keypair on local machine and import public key into new EC2 Keypair.</p>
@@ -3739,7 +5249,7 @@ The key's randomart image is:
 </div>
 <h3 id="keypair-delete">keypair-delete<a class="headerlink" href="#keypair-delete" title="Permanent link">&para;</a></h3>
 <p>Delete EC2 SSH Keypairs by providing their names as arguments or via STDIN</p>
-<div class="codehilite"><pre><span></span>USAGE: keypair-delete key_name [key_name]
+<div class="codehilite"><pre><span></span><code>USAGE: keypair-delete key_name [key_name]
 
 $ keypair-delete alice bob
 You are about to delete the following EC2 SSH KeyPairs:
@@ -3751,41 +5261,37 @@ $ keypairs | keypair-delete
 You are about to delete the following EC2 SSH KeyPairs:
 yet-another-keypair
 Are you sure you want to continue? y
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="kms-commands">kms-commands<a class="headerlink" href="#kms-commands" title="Permanent link">&para;</a></h2>
 <h3 id="kms-encrypt">kms-encrypt<a class="headerlink" href="#kms-encrypt" title="Permanent link">&para;</a></h3>
 <p>Encrypt and base64 encode STDIN or file</p>
-<div class="codehilite"><pre><span></span>USAGE: kms-encrypt key_id/alias_id [plaintext_file]
+<div class="codehilite"><pre><span></span><code>USAGE: kms-encrypt key_id/alias_id [plaintext_file]
 
 $ echo foobar | kms-encrypt alias/default
 AQICAHgcyN4vd3V/OB7NKI6IMbpENEu1+UfyiU...
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-decrypt">kms-decrypt<a class="headerlink" href="#kms-decrypt" title="Permanent link">&para;</a></h3>
 <p>base64 decode and decrypt KMS Encrypted file or STDIN</p>
-<div class="codehilite"><pre><span></span>USAGE: kms-decrypt [ciphertext_file]
+<div class="codehilite"><pre><span></span><code>USAGE: kms-decrypt [ciphertext_file]
 
 $ kms-decrypt ciphertext.txt
 foobar
 
 $ echo foobar | kms-encrypt alias/default | kms-decrypt
 foobar
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-aliases">kms-aliases<a class="headerlink" href="#kms-aliases" title="Permanent link">&para;</a></h3>
 <p>List KMS Aliases</p>
-<div class="codehilite"><pre><span></span>$ kms-aliases default
+<div class="codehilite"><pre><span></span><code>$ kms-aliases default
 alias/default  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/default
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-alias-create">kms-alias-create<a class="headerlink" href="#kms-alias-create" title="Permanent link">&para;</a></h3>
 <p>Create alias for KMS Key</p>
-<div class="codehilite"><pre><span></span>USAGE: kms-alias-create alias_name key_id
+<div class="codehilite"><pre><span></span><code>USAGE: kms-alias-create alias_name key_id
 
 $ kms-keys | tail -1
 d714a175-db12-4574-8f27-aa071a1dfd8a
@@ -3794,74 +5300,65 @@ $ kms-keys | tail -1 | kms-alias-create alias/foobar
 
 $ kms-aliases foobar
 alias/foobar  d714a175-db12-4574-8f27-aa071a1dfd8a  arn:aws:kms:ap-southeast-2:089834043791:alias/foobar
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-alias-delete">kms-alias-delete<a class="headerlink" href="#kms-alias-delete" title="Permanent link">&para;</a></h3>
 <p>Delete alias for KMS Key</p>
-<div class="codehilite"><pre><span></span>USAGE: kms-alias-delete alias_name [alias_name]
+<div class="codehilite"><pre><span></span><code>USAGE: kms-alias-delete alias_name [alias_name]
 
 $ kms-aliases foobar | kms-alias-delete
 You are about to delete the following kms aliases:
 alias/foobar
 Are you sure you want to continue? y
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-keys">kms-keys<a class="headerlink" href="#kms-keys" title="Permanent link">&para;</a></h3>
 <p>List KMS Keys</p>
-<div class="codehilite"><pre><span></span>$ kms-keys
+<div class="codehilite"><pre><span></span><code>$ kms-keys
 5044958c-151d-4995-bed4-dd05c1385b48
 8ada3e65-e377-4435-a709-fbe75dfa1dd0
 d714a175-db12-4574-8f27-aa071a1dfd8a
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-key-create">kms-key-create<a class="headerlink" href="#kms-key-create" title="Permanent link">&para;</a></h3>
 <p>Create a KMS Key</p>
-<div class="codehilite"><pre><span></span>$ kms-key-create
+<div class="codehilite"><pre><span></span><code>$ kms-key-create
 9e94333b-8e85-497a-9791-e7c5edf9c35e
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-key-details">kms-key-details<a class="headerlink" href="#kms-key-details" title="Permanent link">&para;</a></h3>
 <p>List details for KMS Key(s)</p>
 <h3 id="kms-key-disable">kms-key-disable<a class="headerlink" href="#kms-key-disable" title="Permanent link">&para;</a></h3>
 <p>Disable KMS Key(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: kms-key-disable key_id [key_id]
+<div class="codehilite"><pre><span></span><code>USAGE: kms-key-disable key_id [key_id]
 
 $ kms-key-disable  9e94333b-8e85-497a-9791-e7c5edf9c35e
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="kms-key-enable">kms-key-enable<a class="headerlink" href="#kms-key-enable" title="Permanent link">&para;</a></h3>
 <p>Enable KMS Key(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: kms-key-enable key_id [key_id]
+<div class="codehilite"><pre><span></span><code>USAGE: kms-key-enable key_id [key_id]
 
 $ kms-key-enable  9e94333b-8e85-497a-9791-e7c5edf9c35e
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="lambda-commands">lambda-commands<a class="headerlink" href="#lambda-commands" title="Permanent link">&para;</a></h2>
 <h3 id="lambda-functions">lambda-functions<a class="headerlink" href="#lambda-functions" title="Permanent link">&para;</a></h3>
 <p>List lambda functions</p>
-<div class="codehilite"><pre><span></span>$ lambda-functions
+<div class="codehilite"><pre><span></span><code>$ lambda-functions
 stars    2019-12-18T10:00:00.000+0000  python2.7  256
 stripes  2019-12-19T10:21:42.444+0000  python3.7  128
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="lambda-function-memory">lambda-function-memory<a class="headerlink" href="#lambda-function-memory" title="Permanent link">&para;</a></h3>
 <p>List memorySize for lambda function(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: lambda-function-memory function [function]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: lambda-function-memory function [function]
+</code></pre></div>
 
 <h3 id="lambda-function-memory-set">lambda-function-memory-set<a class="headerlink" href="#lambda-function-memory-set" title="Permanent link">&para;</a></h3>
 <p>Update memorySize for lambda function(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: lambda-function-memory-set memory function [function]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: lambda-function-memory-set memory function [function]
+</code></pre></div>
 
 <h3 id="lambda-function-memory-step">lambda-function-memory-step<a class="headerlink" href="#lambda-function-memory-step" title="Permanent link">&para;</a></h3>
 <p>Repeatedly update memorySize for lambda function(s)</p>
@@ -3870,40 +5367,39 @@ The function increases memorySize by 64KB every two minutes
 until it reaches the value requested. There is a two minute
 delay between increases to provide time to collect data from
 function execution.</p>
-<div class="codehilite"><pre><span></span>USAGE: lambda-function-memory-step memory function [function]
-</pre></div>
+<div class="codehilite"><pre><span></span><code>USAGE: lambda-function-memory-step memory function [function]
+</code></pre></div>
 
-
+<h3 id="lambda-function-logs">lambda-function-logs<a class="headerlink" href="#lambda-function-logs" title="Permanent link">&para;</a></h3>
 <h2 id="log-commands">log-commands<a class="headerlink" href="#log-commands" title="Permanent link">&para;</a></h2>
 <h3 id="log-groups">log-groups<a class="headerlink" href="#log-groups" title="Permanent link">&para;</a></h3>
 <p>List CloudWatch Log Groups</p>
-<div class="codehilite"><pre><span></span>$ log-groups
+<div class="codehilite"><pre><span></span><code>$ log-groups
 /aws/lambda/stars2  1576495961429  0   11736
 /aws/lambda/stars   1576566745961  0  107460
 /aws/lambda/walk    1576567300172  0   11794
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="rds-commands">rds-commands<a class="headerlink" href="#rds-commands" title="Permanent link">&para;</a></h2>
 <h3 id="rds-db-instances">rds-db-instances<a class="headerlink" href="#rds-db-instances" title="Permanent link">&para;</a></h3>
-<p>List RDS Database Instances</p>
+<p>List RDS Database Instances
+Tip: Filter on whether DB is in cluster with: <code>awk -F'\t' '$6 != "None"'</code></p>
 <h3 id="rds-db-clusters">rds-db-clusters<a class="headerlink" href="#rds-db-clusters" title="Permanent link">&para;</a></h3>
 <p>List RDS Database Clusters</p>
 <h2 id="route53-commands">route53-commands<a class="headerlink" href="#route53-commands" title="Permanent link">&para;</a></h2>
 <h3 id="hosted-zones">hosted-zones<a class="headerlink" href="#hosted-zones" title="Permanent link">&para;</a></h3>
 <p>List Route53 Hosted Zones</p>
-<div class="codehilite"><pre><span></span>$ hosted-zones
+<div class="codehilite"><pre><span></span><code>$ hosted-zones
 /hostedzone/Z3333333333333  5   NotPrivateZone  bash-my-aws.org.
 /hostedzone/Z5555555555555  2   NotPrivateZone  bash-my-universe.com.
 /hostedzone/Z4444444444444  3   NotPrivateZone  bashmyaws.org.
 /hostedzone/Z1111111111111  3   NotPrivateZone  bash-my-aws.com.
 /hostedzone/Z2222222222222  3   NotPrivateZone  bashmyaws.com.
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="hosted-zone-ns-records">hosted-zone-ns-records<a class="headerlink" href="#hosted-zone-ns-records" title="Permanent link">&para;</a></h3>
 <p>Generate NS records for delegating domain to AWS</p>
-<div class="codehilite"><pre><span></span>$ hosted-zones bash-my-aws.org
+<div class="codehilite"><pre><span></span><code>$ hosted-zones bash-my-aws.org
 /hostedzone/ZJ6ZCG2UD6OKX  5  NotPrivateZone  bash-my-aws.org.
 
 $ hosted-zones bash-my-aws.org | hosted-zone-ns-records
@@ -3911,25 +5407,22 @@ bash-my-aws.org. 300 IN NS  ns-786.awsdns-34.net.
 bash-my-aws.org. 300 IN NS  ns-1549.awsdns-01.co.uk.
 bash-my-aws.org. 300 IN NS  ns-362.awsdns-45.com.
 bash-my-aws.org. 300 IN NS  ns-1464.awsdns-55.org.
-</pre></div>
-
+</code></pre></div>
 
 <h2 id="s3-commands">s3-commands<a class="headerlink" href="#s3-commands" title="Permanent link">&para;</a></h2>
 <h3 id="buckets">buckets<a class="headerlink" href="#buckets" title="Permanent link">&para;</a></h3>
 <p>List S3 Buckets</p>
-<div class="codehilite"><pre><span></span>$ buckets
+<div class="codehilite"><pre><span></span><code>$ buckets
 web-assets  2019-12-20  08:24:38.182045
 backups     2019-12-20  08:24:44.351215
 archive     2019-12-20  08:24:57.567652
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="bucket-acls">bucket-acls<a class="headerlink" href="#bucket-acls" title="Permanent link">&para;</a></h3>
 <p>List S3 Bucket Access Control Lists.</p>
-<div class="codehilite"><pre><span></span>$ bucket-acls another-example-bucket
+<div class="codehilite"><pre><span></span><code>$ bucket-acls another-example-bucket
 another-example-bucket
-</pre></div>
-
+</code></pre></div>
 
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -3940,233 +5433,206 @@ objects to your bucket. <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev
 <h3 id="bucket-remove">bucket-remove<a class="headerlink" href="#bucket-remove" title="Permanent link">&para;</a></h3>
 <p>Remove an empty S3 Bucket.</p>
 <p><em>In this example the bucket is not empty.</em></p>
-<div class="codehilite"><pre><span></span>$ bucket-remove another-example-bucket
+<div class="codehilite"><pre><span></span><code>$ bucket-remove another-example-bucket
 You are about to remove the following buckets:
 another-example-bucket  2019-12-07  06:51:12.022496
 Are you sure you want to continue? y
 remove_bucket failed: s3://another-example-bucket An error occurred (BucketNotEmpty) when calling the DeleteBucket operation: The bucket you tried to delete is not empty
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="bucket-remove-force">bucket-remove-force<a class="headerlink" href="#bucket-remove-force" title="Permanent link">&para;</a></h3>
 <p>Remove an S3 Bucket, and delete all objects if it's not empty.</p>
-<div class="codehilite"><pre><span></span>$ bucket-remove-force another-example-bucket
+<div class="codehilite"><pre><span></span><code>$ bucket-remove-force another-example-bucket
 You are about to delete all objects from and remove the following buckets:
 another-example-bucket  2019-12-07  06:51:12.022496
 Are you sure you want to continue? y
 delete: s3://another-example-bucket/aliases
 remove_bucket: another-example-bucket
-</pre></div>
+</code></pre></div>
 
-
+<h2 id="secretsmanager-commands">secretsmanager-commands<a class="headerlink" href="#secretsmanager-commands" title="Permanent link">&para;</a></h2>
+<h3 id="secrets">secrets<a class="headerlink" href="#secrets" title="Permanent link">&para;</a></h3>
 <h2 id="sts-commands">sts-commands<a class="headerlink" href="#sts-commands" title="Permanent link">&para;</a></h2>
 <h3 id="sts-assume-role">sts-assume-role<a class="headerlink" href="#sts-assume-role" title="Permanent link">&para;</a></h3>
 <p>Assume an IAM Role</p>
-<div class="codehilite"><pre><span></span>USAGE: sts-assume-role role_arn
-</pre></div>
+<div class="codehilite"><pre><span></span><code>USAGE: sts-assume-role role_arn
+</code></pre></div>
 
+<h2 id="tag-commands">tag-commands<a class="headerlink" href="#tag-commands" title="Permanent link">&para;</a></h2>
+<h3 id="tag-keys">tag-keys<a class="headerlink" href="#tag-keys" title="Permanent link">&para;</a></h3>
+<p>List unique set of tag keys in AWS Account / Region</p>
+<div class="codehilite"><pre><span></span><code>USAGE: tag-keys
+</code></pre></div>
+
+<h3 id="tag-values">tag-values<a class="headerlink" href="#tag-values" title="Permanent link">&para;</a></h3>
+<p>List unique set of tag values for key in AWS Account / Region</p>
+<div class="codehilite"><pre><span></span><code>USAGE: tag-values key
+</code></pre></div>
+
+<h2 id="target-group-commands">target-group-commands<a class="headerlink" href="#target-group-commands" title="Permanent link">&para;</a></h2>
+<h3 id="target-groups">target-groups<a class="headerlink" href="#target-groups" title="Permanent link">&para;</a></h3>
+<p>List EC2 ELBv2 target groups</p>
+<div class="codehilite"><pre><span></span><code>$ target-groups
+bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
+bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
+</code></pre></div>
+
+<h3 id="target-group-targets">target-group-targets<a class="headerlink" href="#target-group-targets" title="Permanent link">&para;</a></h3>
+<p>List EC2 ELBv2 target group targets
+Accepts Target Group names on stdin or as arguments</p>
+<div class="codehilite"><pre><span></span><code>$ target-group-targets bash-my-aws-nlb-tg
+i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
+i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
+</code></pre></div>
 
 <h2 id="vpc-commands">vpc-commands<a class="headerlink" href="#vpc-commands" title="Permanent link">&para;</a></h2>
 <h3 id="pcxs">pcxs<a class="headerlink" href="#pcxs" title="Permanent link">&para;</a></h3>
 <p>List VPC Peering connections</p>
 <h3 id="subnets">subnets<a class="headerlink" href="#subnets" title="Permanent link">&para;</a></h3>
 <p>List subnets for all VPCs</p>
-<div class="codehilite"><pre><span></span>$ subnets
+<div class="codehilite"><pre><span></span><code>$ subnets
 subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
 subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
 subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpcs">vpcs<a class="headerlink" href="#vpcs" title="Permanent link">&para;</a></h3>
 <p>List VPCs</p>
-<div class="codehilite"><pre><span></span>$ vpcs
+<div class="codehilite"><pre><span></span><code>$ vpcs
 vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpc-azs">vpc-azs<a class="headerlink" href="#vpc-azs" title="Permanent link">&para;</a></h3>
 <p>List availability zones of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-azs vpc-id [vpc-id]
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-azs vpc-id [vpc-id]
 
 $ vpcs | vpc-azs
 vpc-018d9739 ap-southeast-2a ap-southeast-2b ap-southeast-2c
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpc-az-count">vpc-az-count<a class="headerlink" href="#vpc-az-count" title="Permanent link">&para;</a></h3>
 <p>List number of Availability Zones of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-az-count vpc-id [vpc-id]
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-az-count vpc-id [vpc-id]
 
 $ vpcs | vpc-az-count
 vpc-018d9739 3
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpc-lambda-functions">vpc-lambda-functions<a class="headerlink" href="#vpc-lambda-functions" title="Permanent link">&para;</a></h3>
 <p>List lambda functions of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-lambda-functions vpc-id [vpc-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-lambda-functions vpc-id [vpc-id]
+</code></pre></div>
 
 <h3 id="vpc-dhcp-options-ntp">vpc-dhcp-options-ntp<a class="headerlink" href="#vpc-dhcp-options-ntp" title="Permanent link">&para;</a></h3>
 <p>List NTP servers of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-dhcp-options-ntp vpc-id [vpc-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-dhcp-options-ntp vpc-id [vpc-id]
+</code></pre></div>
 
 <h3 id="vpc-endpoints">vpc-endpoints<a class="headerlink" href="#vpc-endpoints" title="Permanent link">&para;</a></h3>
 <p>List VPC Endpoints</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-endpoints [filter]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-endpoints [filter]
+</code></pre></div>
 
 <h3 id="vpc-endpoint-services">vpc-endpoint-services<a class="headerlink" href="#vpc-endpoint-services" title="Permanent link">&para;</a></h3>
 <p>List available VPC endpoint services</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-endpoint-services
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-endpoint-services
+</code></pre></div>
 
 <h3 id="vpc-igw">vpc-igw<a class="headerlink" href="#vpc-igw" title="Permanent link">&para;</a></h3>
 <p>List Internet Gateway of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-igw vpc-id [vpc-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-igw vpc-id [vpc-id]
+</code></pre></div>
 
 <h3 id="vpc-route-tables">vpc-route-tables<a class="headerlink" href="#vpc-route-tables" title="Permanent link">&para;</a></h3>
 <p>List Route Tables of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-route-tables vpc-id [vpc-id]
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-route-tables vpc-id [vpc-id]
 
 $ vpcs | vpc-route-tables
 rtb-8e841c39  vpc-018d9739  NO_NAME
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpc-nat-gateways">vpc-nat-gateways<a class="headerlink" href="#vpc-nat-gateways" title="Permanent link">&para;</a></h3>
 <p>List NAT Gateways of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-nat-gateways vpc-id [vpc-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-nat-gateways vpc-id [vpc-id]
+</code></pre></div>
 
 <h3 id="vpc-subnets">vpc-subnets<a class="headerlink" href="#vpc-subnets" title="Permanent link">&para;</a></h3>
 <p>List subnets of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-subnets vpc-id [vpc-id]
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-subnets vpc-id [vpc-id]
 
 $ vpcs | vpc-subnets
 subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
 subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
 subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpc-network-acls">vpc-network-acls<a class="headerlink" href="#vpc-network-acls" title="Permanent link">&para;</a></h3>
 <p>List Network ACLs of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-network-acls vpc-id [vpc-id]
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-network-acls vpc-id [vpc-id]
 
 $ vpcs | vpc-network-acls
 acl-ff4914d1  vpc-018d9739
-</pre></div>
-
+</code></pre></div>
 
 <h3 id="vpc-rds">vpc-rds<a class="headerlink" href="#vpc-rds" title="Permanent link">&para;</a></h3>
 <p>List RDS instances of VPC(s)</p>
-<div class="codehilite"><pre><span></span>USAGE: vpc-rds vpc-id [vpc-id]
-</pre></div>
-
+<div class="codehilite"><pre><span></span><code>USAGE: vpc-rds vpc-id [vpc-id]
+</code></pre></div>
 
 <h3 id="vpc-default-delete">vpc-default-delete<a class="headerlink" href="#vpc-default-delete" title="Permanent link">&para;</a></h3>
 <p>Print commands you would need to run to delete that pesky default VPC
 Exclude default VPCs that contain:
 - instances
 - lambda functions</p>
-<div class="codehilite"><pre><span></span>$ vpc-default-delete
+<div class="codehilite"><pre><span></span><code>$ vpc-default-delete
 
 # Deleting default VPC vpc-018d9739 in ap-southeast-2
 aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-8bb774fe
 aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-9eea2c07
 aws --region ap-southeast-2 ec2 delete-subnet --subnet-id=subnet-34fd9cfa
 aws --region ap-southeast-2 ec2 delete-vpc --vpc-id=vpc-018d9739
-</pre></div>
-                
-                  
-                
-                
-              
-              
-                
+</code></pre></div>
 
 
-              
-            </article>
-          </div>
+
+
+
+                
+              </article>
+            </div>
+          
+          
         </div>
+        
       </main>
       
-        
-<footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
-        
-          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
-            </div>
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Previous
-                </span>
-                Home
-              </span>
-            </div>
-          </a>
-        
-        
-          <a href="../pipe-skimming/" title="Pipe-Skimming" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                Pipe-Skimming
-              </span>
-            </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
+        <footer class="md-footer">
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-        powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
-        and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
-          Material for MkDocs</a>
-      </div>
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
       
-  <div class="md-footer-social">
-    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
-    
-      <a href="https://github.com/bash-my-aws" class="md-footer-social__link fa fa-github"></a>
-    
-  </div>
-
     </div>
   </div>
 </footer>
       
     </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
     
-      <script src="../assets/javascripts/application.808e90bb.js"></script>
-      
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.78eede0e.min.js"></script>
       
     
   </body>

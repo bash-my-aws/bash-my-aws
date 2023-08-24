@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-     <loc>https://bash-my-aws.org/</loc>
-     <lastmod>2020-03-27</lastmod>
-     <changefreq>daily</changefreq>
+         <loc>https://bash-my-aws.org/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://bash-my-aws.org/command-reference/</loc>
-     <lastmod>2020-03-27</lastmod>
-     <changefreq>daily</changefreq>
+         <loc>https://bash-my-aws.org/cachews-caching-for-awscli/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://bash-my-aws.org/pipe-skimming/</loc>
-     <lastmod>2020-03-27</lastmod>
-     <changefreq>daily</changefreq>
+         <loc>https://bash-my-aws.org/cloudformation-naming/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://bash-my-aws.org/cloudformation-naming/</loc>
-     <lastmod>2020-03-27</lastmod>
-     <changefreq>daily</changefreq>
+         <loc>https://bash-my-aws.org/command-reference/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://bash-my-aws.org/linuxconf2020/</loc>
-     <lastmod>2020-03-27</lastmod>
-     <changefreq>daily</changefreq>
+         <loc>https://bash-my-aws.org/developer-guide/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bash-my-aws.org/linuxconf2020/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bash-my-aws.org/pipe-skimming/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bash-my-aws.org/style/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bash-my-aws.org/tour/</loc>
+         <lastmod>2023-08-24</lastmod>
+         <changefreq>daily</changefreq>
     </url>
 </urlset>

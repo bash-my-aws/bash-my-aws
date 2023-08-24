@@ -12,9 +12,13 @@
         <meta name="author" content="Mike Bailey">
       
       
-        <link rel="canonical" href="https://bash-my-aws.org/developer-guide/">
+        <link rel="canonical" href="https://bash-my-aws.org/cachews-caching-for-awscli/">
       
       
+        <link rel="prev" href="../command-reference/">
+      
+      
+        <link rel="next" href="../pipe-skimming/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +26,7 @@
     
     
       
-        <title>bash-my-aws development guide. - Bash-my-AWS</title>
+        <title>cachews (zeroconf caching) - Bash-my-AWS</title>
       
     
     
@@ -67,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bash-my-aws-development-guide" class="md-skip">
+        <a href="#cachews-zero-configuration-caching-for-awscli" class="md-skip">
           Skip to content
         </a>
       
@@ -103,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              bash-my-aws development guide.
+              cachews (zeroconf caching)
             
           </span>
         </div>
@@ -252,9 +256,29 @@
       
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../cachews-caching-for-awscli/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    cachews (zeroconf caching)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -263,6 +287,60 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cachews-replace-aws-command-with-cachews" class="md-nav__link">
+    cachews - Replace aws command with cachews
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cachews-replace-avoids-need-to-change-code" class="md-nav__link">
+    cachews-replace - avoids need to change code
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bash-my-aws-commands-using-bma_awscli-environment-variable" class="md-nav__link">
+    bash-my-aws commands using BMA_AWSCLI environment variable
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -351,30 +429,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#namespacing" class="md-nav__link">
-    Namespacing
+  <a href="#usage" class="md-nav__link">
+    Usage
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    Resources
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#query-functions" class="md-nav__link">
-    Query Functions
-  </a>
-  
-    <nav class="md-nav" aria-label="Query Functions">
+    <nav class="md-nav" aria-label="Usage">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#default-query" class="md-nav__link">
-    Default Query
+  <a href="#cachews-replace-aws-command-with-cachews" class="md-nav__link">
+    cachews - Replace aws command with cachews
   </a>
   
 </li>
@@ -385,29 +449,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#detail-functions" class="md-nav__link">
-    Detail Functions
+  <a href="#cachews-replace-avoids-need-to-change-code" class="md-nav__link">
+    cachews-replace - avoids need to change code
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#action-functions" class="md-nav__link">
-    Action Functions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tests" class="md-nav__link">
-    Tests
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stdin" class="md-nav__link">
-    STDIN
+  <a href="#bash-my-aws-commands-using-bma_awscli-environment-variable" class="md-nav__link">
+    bash-my-aws commands using BMA_AWSCLI environment variable
   </a>
   
 </li>
@@ -430,113 +480,98 @@
   
 
 
-<h1 id="bash-my-aws-development-guide">bash-my-aws development guide.<a class="headerlink" href="#bash-my-aws-development-guide" title="Permanent link">&para;</a></h1>
-<p>There are three distinct classes of functions types within <code>bash-my-aws</code>;
-<em>query</em>, <em>detail</em>, and <em>action</em> functions.</p>
-<p>Query functions are responsible for requesting AWS return a list of resources
-by their unique identifier. That would mean that when querying EC2 instances,
-it should return a list of instance-ids. If we were to query CloudFormation,
-then stacks are what would be returned.</p>
-<p>Detail functions should provide you an output of one or more attributes.</p>
-<p>eg. instance-asg(), instance-state()</p>
-<p>Action functions should perform an action against a resource. An action for an
-EC2 instance may be something like <em>terminate</em> or <em>associate_eip</em>.</p>
-<p>e.g. stack-create(), instance-terminate(), asg-suspend()</p>
-<p>There are some great things about <code>bash-my-aws</code> which I would hate to lose.</p>
+<h1 id="cachews-zero-configuration-caching-for-awscli">Cachews - Zero Configuration Caching for AWSCLI<a class="headerlink" href="#cachews-zero-configuration-caching-for-awscli" title="Permanent link">&para;</a></h1>
+<p>cachews is a zero-config caching proxy for awscli.</p>
+<p>Reducing request time by around 90% may also reduce:</p>
 <ul>
-<li>It's easy to look at the code and learn how <code>awscli</code> works.</li>
-<li>Simple tasks have simple commands.</li>
-<li>It's really easy to extend.</li>
+<li>cycle time when constructing commands or scripts that use awscli</li>
+<li>your resistance to running a query across 500 accounts</li>
+<li>the number of cups of tea you drink</li>
 </ul>
-<p>stdin should always be supported. You should be able to pipe one function into
-the next with ease. If an action function cannot be piped the output of a query
-function and have it work, without manipulation though other tools, then
-something is wrong.</p>
-<h2 id="namespacing">Namespacing<a class="headerlink" href="#namespacing" title="Permanent link">&para;</a></h2>
-<p>We've decided to namespace functions by the resource they're concerned with.
-Yes, this may seem a bit like postgres naming their command createdb but that's
-OK. bash-my-aws reduces my keystrokes. We'll work something out if this becomes
-a problem.</p>
-<div class="codehilite"><pre><span></span><code>stack-asgs        stack-elbs        stack-outputs     stack-tags      stack-validate
-stack-create      stack-events      stack-parameters  stack-tail      stacks
-stack-delete      stack-failure     stack-resources   stack-template
-stack-diff        stack-instances   stack-status      stack-update
-</code></pre></div>
-
-<div class="codehilite"><pre><span></span><code>instance-asg          instance-ssh          instance-stop         instance-volumes
-instance-console      instance-ssh-details  instance-tags         instances
-instance-dns          instance-stack        instance-terminate
-instance-iam-profile  instance-start        instance-type
-instance-ip           instance-state        instance-userdata
-</code></pre></div>
-
-<div class="codehilite"><pre><span></span><code>asg-capacity             asg-max-size-set         asg-resume               asgs
-asg-desired-size-set     asg-min-size-set         asg-suspend
-asg-instances            asg-processes_suspended  asgard
-</code></pre></div>
-
-<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
-<p>This is a partial list of resources, with possible alternative names in brackets.</p>
+<p>It supports the following arguments (and ignores the rest):</p>
+<p>--query
+  --output</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>Choose from one of the two commands depending on your needs:</p>
 <ul>
-<li>asg               (autoscaling_group)</li>
-<li>bucket</li>
-<li>elb               (load_balancer)</li>
-<li>instance</li>
-<li>instance_type</li>
-<li>rds               (relational_database)</li>
-<li>dynamodb          (relational_database)</li>
-<li>sg                (security_group)</li>
-<li>stack             (cloudformation_stack)</li>
+<li><code>cachews</code>: A drop in replacement for <code>aws</code> command</li>
+<li><code>cachews-replace</code>: Runs any command, replacing <code>aws</code> with <code>cachews</code> executable</li>
 </ul>
-<h2 id="query-functions">Query Functions<a class="headerlink" href="#query-functions" title="Permanent link">&para;</a></h2>
-<p>Query functions are always namespaced under the plural of the resource.</p>
-<h3 id="default-query">Default Query<a class="headerlink" href="#default-query" title="Permanent link">&para;</a></h3>
-<p>TODO: lets talk about the details.</p>
-<p>Some example usage of this function would be:</p>
-<div class="codehilite"><pre><span></span><code>$ &lt;resources&gt;
-resource_id1  attribute attribute
-resource_id2  attribute attribute
-resource_id3  attribute attribute
+<p>As a bonus, you can set <code>BMA_AWSCLI=cashews</code> to enable for all bash-my-aws commands.</p>
+<h3 id="cachews-replace-aws-command-with-cachews"><code>cachews</code> - Replace <code>aws</code> command with <code>cachews</code><a class="headerlink" href="#cachews-replace-aws-command-with-cachews" title="Permanent link">&para;</a></h3>
+<p>The simplest use case is to substitute <code>aws</code> for <code>cachews</code> in your command.</p>
+<p>$ export CACHEWS_DIR="$(mktemp -d)"</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>aws<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="m">844</span>
+
+real<span class="w">    </span>0m1.113s
+user<span class="w">    </span>0m0.823s
+sys<span class="w">     </span>0m0.076s
 </code></pre></div>
 
-<h2 id="detail-functions">Detail Functions<a class="headerlink" href="#detail-functions" title="Permanent link">&para;</a></h2>
-<p>Detail functions are always namespaced under the singular of the resource.</p>
-<p>Some example usage of this function would be:</p>
-<div class="codehilite"><pre><span></span><code>$ &lt;resource&gt; &lt;resource_id&gt;
-attribute1: value1
-attribute2: value2
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>cachews<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="m">844</span>
+
+real<span class="w">    </span>0m1.147s
+user<span class="w">    </span>0m0.861s
+sys<span class="w">     </span>0m0.088s
 </code></pre></div>
 
-<p>Some example responses:</p>
-<div class="codehilite"><pre><span></span><code>$ instance_security_groups i-abcd1234
-sg-00000001 i-abcd1234
-sg-00000002 i-abcd1234
-sg-00000003 i-abcd1234
-sg-00000004 i-abcd1234
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>cachews<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="m">844</span>
 
-$ security_group_rules
-TODO: I&#39;m not sure yet how to present a security group rule.
-
-$ instance_type i-abcd1234
-c3.large i-abcd1234
-
-$ instance_type_memory c3.large
-3.75 c3.large
+real<span class="w">    </span>0m0.081s
+user<span class="w">    </span>0m0.061s
+sys<span class="w">     </span>0m0.023s
 </code></pre></div>
 
-<h2 id="action-functions">Action Functions<a class="headerlink" href="#action-functions" title="Permanent link">&para;</a></h2>
-<p>Action functions are always namespaced under the singular of the resource and are suffixed with the action they are responsible for undertaking.</p>
-<p>Some example usage of this function would be:</p>
-<div class="codehilite"><pre><span></span><code>$ &lt;resource&gt;_&lt;action&gt; &lt;resource_id&gt;
+<h2 id="cachews-replace-avoids-need-to-change-code">cachews-replace - avoids need to change code<a class="headerlink" href="#cachews-replace-avoids-need-to-change-code" title="Permanent link">&para;</a></h2>
+<p>This could be a script with AWSCLI calls or even this crazy example.</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>cachews-replace<span class="w"> </span>aws<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="m">844</span>
+
+real<span class="w">    </span>0m0.083s
+user<span class="w">    </span>0m0.065s
+sys<span class="w"> </span>0m0.020s
 </code></pre></div>
 
-<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h2>
-<p>You can start the test suite by running the command <code>make test</code>.</p>
-<h2 id="stdin">STDIN<a class="headerlink" href="#stdin" title="Permanent link">&para;</a></h2>
-<ul>
-<li>The first word of each line must be a resource.</li>
-<li>Additional information will be disregarded.</li>
-</ul>
+<h2 id="bash-my-aws-commands-using-bma_awscli-environment-variable">bash-my-aws commands using BMA_AWSCLI environment variable<a class="headerlink" href="#bash-my-aws-commands-using-bma_awscli-environment-variable" title="Permanent link">&para;</a></h2>
+<p>The <code>bma</code> command exports a function called <code>aws</code> that calls the
+command in BMA_AWSCLI=cachews if one is set.</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>bma<span class="w"> </span>instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="m">4</span>
+
+real<span class="w">    </span>0m1.200s
+user<span class="w">    </span>0m0.834s
+sys<span class="w">     </span>0m0.098s
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="nv">BMA_AWSCLI</span><span class="o">=</span>cachews<span class="w"> </span>bma<span class="w"> </span>instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="m">4</span>
+
+real<span class="w">    </span>0m0.099s
+user<span class="w">    </span>0m0.079s
+sys<span class="w">     </span>0m0.026s
+</code></pre></div>
+
+<p>bash-my-aws added <code>$BMA_AWSCLI</code> support back in 2020 to assist testing breaking
+changes in aws-cli-v2. Almost four years later when I wrote cachews it was a
+nice surprise to rediscover it.</p>
+<div class="codehilite"><pre><span></span><code>commit 17376e63222033fef2a1005be6bccb0123263629
+Author: Mike Bailey &lt;mike@bailey.net.au&gt;
+Date:   Sun Mar 8 12:25:00 2020 +1100
+
+    Set $BMA_AWSCLI to specify which awscli to use
+
+    Added while testing breaking changes in aws-cli-v2
+
+    Also useful for testing with
+    [localstack](https://github.com/localstack/localstack)
+
+      e.g. `$ BMA_AWSCLI=awslocal stacks`
+
+    Also, print AWSCLI version when BMA_DEBUG=true
+</code></pre></div>
 
 
 
