@@ -11,7 +11,7 @@ nav:
   - Home: index.md
   # - Tour: tour.md
   - Command Reference: command-reference.md
-  - cachews (zeroconf caching): cachews-caching-for-awscli.md
+  - cachews (caching for awscli): cachews-caching-for-awscli.md
   - Pipe-Skimming: pipe-skimming.md
   - CloudFormation Naming: cloudformation-naming.md
   - LCA 2020 Video: linuxconf2020.md
