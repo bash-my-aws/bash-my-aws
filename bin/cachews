@@ -25,7 +25,7 @@ def list_or_describe(service, api_call, output_format='json', query=None):
            data = json.load(file)
     except FileNotFoundError:
         cmd = f"aws {service} {api_call} --region {AWS_DEFAULT_REGION} --profile {AWS_PROFILE}"
-        print(f"Executing command: {cmd}")
+        print(f"Executing command: {cmd}", file=sys.stderr)
         try:
             data = json.loads(subprocess.check_output(cmd, shell=True, timeout=60))
         except subprocess.TimeoutExpired:
