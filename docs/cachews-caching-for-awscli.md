@@ -70,7 +70,7 @@ user	0m0.061s
 sys	    0m0.023s
 ```
 
-## cachews-replace - avoids need to change code
+### cachews-replace - avoids need to change code
 
 This could be a script with AWSCLI calls or even this crazy example.
 
@@ -83,7 +83,7 @@ user	0m0.065s
 sys	0m0.020s
 ```
 
-## bash-my-aws commands can use `$BMA_AWSCLI` env var
+### bash-my-aws commands can use `$BMA_AWSCLI` env var
 
 The `bma` command exports a function called `aws` that calls the
 command in BMA_AWSCLI=cachews if one is set.
