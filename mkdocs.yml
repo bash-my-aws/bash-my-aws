@@ -20,10 +20,10 @@ theme:
   name: material
 repo_name: 'bash-my-aws/bash-my-aws'
 repo_url: 'https://github.com/bash-my-aws/bash-my-aws'
-extra:
-  social:
-    - type: 'github'
-      link: 'https://github.com/bash-my-aws'
+  # extra:
+  #   social:
+  #     - type: 'github'
+  #       link: 'https://github.com/bash-my-aws'
 markdown_extensions:
   - admonition
   - codehilite:

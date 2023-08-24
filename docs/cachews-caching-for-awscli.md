@@ -8,10 +8,13 @@ Reducing request time by around 90% may also reduce:
 - your resistance to running a query across 500 accounts
 - the number of cups of tea you drink
 
+![Cache of Cachews](images/cachews.png)
+
 It supports the following arguments (and ignores the rest):
 
-  --query
-  --output
+  `--query`   : JMESPath querys as found in awscli (and azcli)
+  `--output`  : `json` or `text` (tab separated values)
+
 
 ## Usage
 
@@ -21,6 +24,8 @@ Choose from one of the two commands depending on your needs:
 - `cachews-replace`: Runs any command, replacing `aws` with `cachews` executable
 
 As a bonus, you can set `BMA_AWSCLI=cashews` to enable for all bash-my-aws commands.
+
+See below for real world examples.
 
 ### `cachews` - Replace `aws` command with `cachews`
 
