@@ -318,22 +318,22 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
+          <li class="md-nav__item">
   <a href="#cachews-replace-avoids-need-to-change-code" class="md-nav__link">
     cachews-replace - avoids need to change code
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#bash-my-aws-commands-can-use-bma_awscli-env-var" class="md-nav__link">
     bash-my-aws commands can use $BMA_AWSCLI env var
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -443,22 +443,22 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
+          <li class="md-nav__item">
   <a href="#cachews-replace-avoids-need-to-change-code" class="md-nav__link">
     cachews-replace - avoids need to change code
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#bash-my-aws-commands-can-use-bma_awscli-env-var" class="md-nav__link">
     bash-my-aws commands can use $BMA_AWSCLI env var
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -533,7 +533,7 @@ user<span class="w">    </span>0m0.061s
 sys<span class="w">     </span>0m0.023s
 </code></pre></div>
 
-<h2 id="cachews-replace-avoids-need-to-change-code">cachews-replace - avoids need to change code<a class="headerlink" href="#cachews-replace-avoids-need-to-change-code" title="Permanent link">&para;</a></h2>
+<h3 id="cachews-replace-avoids-need-to-change-code">cachews-replace - avoids need to change code<a class="headerlink" href="#cachews-replace-avoids-need-to-change-code" title="Permanent link">&para;</a></h3>
 <p>This could be a script with AWSCLI calls or even this crazy example.</p>
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>cachews-replace<span class="w"> </span>aws<span class="w"> </span>ec2<span class="w"> </span>describe-instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 <span class="m">844</span>
@@ -543,7 +543,7 @@ user<span class="w">    </span>0m0.065s
 sys<span class="w"> </span>0m0.020s
 </code></pre></div>
 
-<h2 id="bash-my-aws-commands-can-use-bma_awscli-env-var">bash-my-aws commands can use <code>$BMA_AWSCLI</code> env var<a class="headerlink" href="#bash-my-aws-commands-can-use-bma_awscli-env-var" title="Permanent link">&para;</a></h2>
+<h3 id="bash-my-aws-commands-can-use-bma_awscli-env-var">bash-my-aws commands can use <code>$BMA_AWSCLI</code> env var<a class="headerlink" href="#bash-my-aws-commands-can-use-bma_awscli-env-var" title="Permanent link">&para;</a></h3>
 <p>The <code>bma</code> command exports a function called <code>aws</code> that calls the
 command in BMA_AWSCLI=cachews if one is set.</p>
 <div class="codehilite"><pre><span></span><code>$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>bma<span class="w"> </span>instances<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
