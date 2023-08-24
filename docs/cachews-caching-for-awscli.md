@@ -12,7 +12,7 @@ Reducing request time by around 90% may also reduce:
 
 It supports the following arguments (and ignores the rest):
 
-  `--query`   : JMESPath querys as found in awscli (and azcli)
+  `--query`   : JMESPath querys as found in awscli (and azcli)  
   `--output`  : `json` or `text` (tab separated values)
 
 
@@ -31,7 +31,13 @@ See below for real world examples.
 
 The simplest use case is to substitute `aws` for `cachews` in your command.
 
+Start a fresh cachedir for this demo:
+
+```shell
 $ export CACHEWS_DIR="$(mktemp -d)"
+```
+
+AWS command takes ~1s:
 
 ```shell
 $ time aws ec2 describe-instances | wc -l
@@ -42,6 +48,8 @@ user	0m0.823s
 sys	    0m0.076s
 ```
 
+cachews takes ~1s but caches the response:
+
 ```shell
 $ time cachews ec2 describe-instances | wc -l
 844
@@ -50,6 +58,8 @@ real	0m1.147s
 user	0m0.861s
 sys	    0m0.088s
 ```
+
+cachews takes ~0.08 seconds the second time:
 
 ```shell
 $ time cachews ec2 describe-instances | wc -l
@@ -73,7 +83,7 @@ user	0m0.065s
 sys	0m0.020s
 ```
 
-## bash-my-aws commands using BMA_AWSCLI environment variable
+## bash-my-aws commands can use `$BMA_AWSCLI` env var
 
 The `bma` command exports a function called `aws` that calls the
 command in BMA_AWSCLI=cachews if one is set.
@@ -84,7 +94,7 @@ $ time bma instances | wc -l
 
 real	0m1.200s
 user	0m0.834s
-sys	    0m0.098s
+sys	  0m0.098s
 ```
 
 ```shell
@@ -93,7 +103,7 @@ $ time BMA_AWSCLI=cachews bma instances | wc -l
 
 real	0m0.099s
 user	0m0.079s
-sys	    0m0.026s
+sys	  0m0.026s
 ```
 
 bash-my-aws added `$BMA_AWSCLI` support back in 2020 to assist testing breaking
