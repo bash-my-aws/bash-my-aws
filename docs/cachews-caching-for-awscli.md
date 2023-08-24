@@ -6,7 +6,7 @@ Reducing request time by around 90% may also reduce:
 
 - cycle time when constructing commands or scripts that use awscli
 - your resistance to running a query across 500 accounts
-- the number of cups of tea you drink
+- how often you put the kettle on
 
 ![Cache of Cachews](images/cachews.png)
 
