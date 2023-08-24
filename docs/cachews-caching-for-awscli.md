@@ -1,4 +1,4 @@
-# Cachews - Zero Configuration Caching for AWSCLI
+# Cachews - Caching for AWSCLI
 
 cachews is a zero-config caching proxy for awscli.
 
@@ -14,7 +14,6 @@ It supports the following arguments (and ignores the rest):
 
   `--query`   : JMESPath querys as found in awscli (and azcli)  
   `--output`  : `json` or `text` (tab separated values)
-
 
 ## Usage
 
