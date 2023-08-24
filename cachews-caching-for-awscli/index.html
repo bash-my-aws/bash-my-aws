@@ -489,8 +489,8 @@
 <li>the number of cups of tea you drink</li>
 </ul>
 <p>It supports the following arguments (and ignores the rest):</p>
-<p>--query
-  --output</p>
+<p><code>--query</code>   : JMESPath querys as found in awscli (and azcli)
+  <code>--output</code>  : <code>json</code> or <code>text</code> (tab separated values)</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>Choose from one of the two commands depending on your needs:</p>
 <ul>
@@ -498,6 +498,7 @@
 <li><code>cachews-replace</code>: Runs any command, replacing <code>aws</code> with <code>cachews</code> executable</li>
 </ul>
 <p>As a bonus, you can set <code>BMA_AWSCLI=cashews</code> to enable for all bash-my-aws commands.</p>
+<p>See below for real world examples.</p>
 <h3 id="cachews-replace-aws-command-with-cachews"><code>cachews</code> - Replace <code>aws</code> command with <code>cachews</code><a class="headerlink" href="#cachews-replace-aws-command-with-cachews" title="Permanent link">&para;</a></h3>
 <p>The simplest use case is to substitute <code>aws</code> for <code>cachews</code> in your command.</p>
 <p>$ export CACHEWS_DIR="$(mktemp -d)"</p>
