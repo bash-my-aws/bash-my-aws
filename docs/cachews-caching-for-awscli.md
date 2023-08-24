@@ -17,7 +17,7 @@ It supports the following arguments (and ignores the rest):
 
 ## Usage
 
-Choose from one of the two commands depending on your needs:
+Choose from two commands two suit your needs:
 
 - `cachews`: A drop in replacement for `aws` command
 - `cachews-replace`: Runs any command, replacing `aws` with `cachews` executable
