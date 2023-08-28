@@ -69,6 +69,7 @@ az-cache-item
 az-cache-item-delete
 az-cache-items
 az-user
+backup-jobs
 bucket-acls
 bucket-remove
 bucket-remove-force
