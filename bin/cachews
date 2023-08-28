@@ -10,7 +10,7 @@ import sys
 CACHEWS_DIR = (
     os.environ.get('CACHEWS_DIR') or
     os.environ.get('XDG_CACHE_HOME') or
-    os.path.expanduser('~/.cache')
+    os.path.expanduser('~/.cache/cachews')
 )
 AWS_DEFAULT_REGION = os.environ.get('AWS_DEFAULT_REGION')
 AWS_PROFILE = os.environ.get('AWS_PROFILE')
