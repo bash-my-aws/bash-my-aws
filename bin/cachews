@@ -6,6 +6,7 @@ import subprocess
 import jmespath
 import argparse
 import sys
+import shlex
 
 CACHEWS_DIR = (
     os.environ.get('CACHEWS_DIR') or
@@ -24,7 +25,8 @@ def list_or_describe(service, api_call, output_format='json', query=None):
            data = json.load(file)
     except FileNotFoundError:
         print(f'Cache miss for file: {file_path}', file=sys.stderr)
-        cmd = f"aws {service} {api_call} --region {AWS_DEFAULT_REGION} --profile {AWS_PROFILE}"
+        args = ' '.join(shlex.quote(arg) for arg in sys.argv[1:])
+        cmd = f"aws {args} --output json"
         print(f"Executing command: {cmd}", file=sys.stderr)
         try:
             data = json.loads(subprocess.check_output(cmd, shell=True, timeout=60))
@@ -40,8 +42,9 @@ def list_or_describe(service, api_call, output_format='json', query=None):
         data = jmespath.search(query, data)
 
     if output_format == 'text':
-        for item in data:
-            print('\t'.join(str(value) for value in item))
+        if data is not None:
+            for item in data:
+                print('\t'.join(str(value) for value in item))
     elif output_format == 'table':
         print('Not yet implemented')
     else:
