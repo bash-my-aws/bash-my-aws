@@ -216,6 +216,7 @@ stack-tags
 stack-tags-text
 stack-tail
 stack-template
+stack-template-changeset-latest
 stack-update
 stack-validate
 stacks

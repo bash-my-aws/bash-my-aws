@@ -696,6 +696,30 @@ stack-template() {
                                           # sometimes appended by jq
 }
 
+stack-template-changeset-latest() {
+
+  # Return template of a stack's latest changeset
+
+  local inputs=$(skim-stdin "$@")
+  local stack=$(_bma_stack_name_arg ${inputs})
+
+  [[ -z ${stack} ]] && __bma_usage "stack" && return 1
+
+  # Try to get the latest changeset ARN
+  local changeset_arn=$(aws cloudformation list-change-sets --stack-name "$stack" \
+    --query 'Summaries[-1].ChangeSetId' --output text)
+
+  if [ "$changeset_arn" != "None" ]; then
+    # Output the template for the latest changeset
+    aws cloudformation get-template \
+      --stack-name "$stack" \
+      --change-set-name "$changeset_arn" \
+      --query 'TemplateBody' |
+    jq --raw-output --sort-keys . |
+    sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba'
+  fi
+}
+
 stack-tags() {
 
   # List stack-tags applied to a stack

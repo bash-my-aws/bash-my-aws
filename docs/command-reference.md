@@ -411,6 +411,12 @@ Show all events for CF stack until update completes or fails.
 Return template of a stack
 
 
+### stack-template-changeset-latest
+
+Return template of a stack's latest changeset
+Try to get the latest changeset ARN
+
+
 ### stack-tags
 
 List stack-tags applied to a stack

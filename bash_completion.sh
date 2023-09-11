@@ -250,6 +250,7 @@ complete -F _bma_stacks_completion stack-resources
 complete -F _bma_stacks_completion stack-status
 complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
+complete -F _bma_stacks_completion stack-template-changeset-latest
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stacks
 complete -F _bma_target-groups_completion target-group-targets
