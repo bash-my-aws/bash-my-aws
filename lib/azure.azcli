@@ -1,0 +1,5 @@
+
+
+url='https://graph.microsoft.com/beta/users?${top_arg}${filter_arg}&select=userPrincipalName,displayName,onPremisesSyncEnabled,mail"
+
+az rest --method get --url 'https://graph.microsoft.com/beta/me/calendar/events'

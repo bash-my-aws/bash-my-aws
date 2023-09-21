@@ -2,7 +2,6 @@
 #
 # miscellaneous functions that don't belong anywhere else
 
-columnise() {
 
   # Handy function to columnise output
   #
@@ -13,5 +12,11 @@ columnise() {
   # Looped commands (such as those with multiple resources piped in) do
   # not delay output by sending the aggregate through `column`.
 
-  column -s$'\t' -t
+columnise() {
+
+  if [[ $BMA_COLUMNISE_ONLY_WHEN_TERMINAL_PRESENT == 'true' ]] && ! [[ -t 1 ]]; then
+    cat
+  else
+    column -t -s $'\t'
+  fi
 }

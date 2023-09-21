@@ -89,7 +89,7 @@ from each line of piped input on STDIN to its argument list:
               "InstanceId": InstanceId
             }
           ][]"          |
-      column -s$'\t' -t
+      columnise
     }
 
 

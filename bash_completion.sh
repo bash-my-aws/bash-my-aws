@@ -1,7 +1,7 @@
 # DO NOT MANUALLY MODIFY THIS FILE.
 # Use 'scripts/build' to regenerate if required.
 
-bma_path="${BMA_HOME:-$HOME}/.bash-my-aws"
+bma_path="${BMA_HOME:-$HOME/.bash-my-aws}"
 _bma_asgs_completion() {
   local command="$1"
   local word="$2"
@@ -135,6 +135,30 @@ _bma_subcommands_completion() {
   fi
   return 0
 }
+_cachews_completion() {
+    local cur prev
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ $COMP_CWORD -eq 1 ]]; then
+        local services=$(ls ${CACHEWS_DIR}/${AWS_PROFILE/-admin}/${AWS_DEFAULT_REGION}/ | sed 's/\/.*//')
+        COMPREPLY=( $(compgen -W "$services" -- $cur) )
+        return 0
+    elif [[ $COMP_CWORD -eq 2 ]]; then
+        local api_calls=$(ls ${CACHEWS_DIR}/${AWS_PROFILE/-admin}/${AWS_DEFAULT_REGION}/$prev | sed 's/\.json//')
+        COMPREPLY=( $(compgen -W "$api_calls" -- $cur) )
+        return 0
+    elif [[ $COMP_CWORD -ge 3 && $prev == '--output' ]]; then
+        COMPREPLY=( $(compgen -W "json text table" -- $cur) )
+        return 0
+    elif [[ $COMP_CWORD -ge 3 && $prev != '--query' ]]; then
+        COMPREPLY=( $(compgen -W "--output --query" -- $cur) )
+        return 0
+    fi
+}
+
+complete -F _cachews_completion cachews
 complete -F _bma_asgs_completion asg-capacity
 complete -F _bma_asgs_completion asg-detach-instances
 complete -F _bma_asgs_completion asg-instances
@@ -152,8 +176,11 @@ complete -F _bma_buckets_completion bucket-acls
 complete -F _bma_buckets_completion bucket-remove
 complete -F _bma_buckets_completion bucket-remove-force
 complete -F _bma_buckets_completion buckets
+complete -F _bma_certs_completion cert-chain
 complete -F _bma_certs_completion cert-delete
+complete -F _bma_certs_completion cert-ificate
 complete -F _bma_certs_completion cert-users
+complete -F _bma_certs_completion cert-verify
 complete -F _bma_certs_completion certs
 complete -F _bma_certs_completion certs-arn
 complete -F _bma_elbs_completion elb-azs
@@ -161,6 +188,8 @@ complete -F _bma_elbs_completion elb-dnsname
 complete -F _bma_elbs_completion elb-instances
 complete -F _bma_elbs_completion elb-stack
 complete -F _bma_elbs_completion elb-subnets
+complete -F _bma_elbs_completion elb-tag
+complete -F _bma_elbs_completion elb-tags
 complete -F _bma_elbs_completion elbs
 complete -F _bma_elbv2s_completion elbv2-azs
 complete -F _bma_elbv2s_completion elbv2-dnsname
@@ -183,7 +212,13 @@ complete -F _bma_instances_completion instance-stack
 complete -F _bma_instances_completion instance-start
 complete -F _bma_instances_completion instance-state
 complete -F _bma_instances_completion instance-stop
+complete -F _bma_instances_completion instance-stop-protection
+complete -F _bma_instances_completion instance-stop-protection-disable
+complete -F _bma_instances_completion instance-stop-protection-enable
 complete -F _bma_instances_completion instance-subnet
+complete -F _bma_instances_completion instance-tag
+complete -F _bma_instances_completion instance-tag-create
+complete -F _bma_instances_completion instance-tag-delete
 complete -F _bma_instances_completion instance-tags
 complete -F _bma_instances_completion instance-terminate
 complete -F _bma_instances_completion instance-termination-protection
@@ -218,6 +253,7 @@ complete -F _bma_stacks_completion stack-resources
 complete -F _bma_stacks_completion stack-status
 complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
+complete -F _bma_stacks_completion stack-template-changeset-latest
 complete -F _bma_stacks_completion stack-update
 complete -F _bma_stacks_completion stacks
 complete -F _bma_target-groups_completion target-group-targets

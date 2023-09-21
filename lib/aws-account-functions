@@ -5,17 +5,16 @@
 # These functions target AWS Accounts and act on either the account you're
 # authenticated to or the Account IDs provided to them.
 
-
 aws-accounts() {
 
   # List AWS Accounts in an [Organization](https://aws.amazon.com/organizations/)
   #
   #    $ aws-accounts
-  #    089834043791  ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
-  #    812094344564  ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
-  #    001721147249  ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
-  #    867077406134  ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
-  #    892345420873  ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
+  #    089834043791  account1 ACTIVE  INVITED  1488257653.638  mike-aws@bailey.net.au
+  #    812094344564  account2 ACTIVE  CREATED  1537922950.972  mike-bash-my-aws@bailey.net.au
+  #    001721147249  account3 ACTIVE  INVITED  1548752330.723  mike@bailey.net.au
+  #    867077406134  account4 ACTIVE  CREATED  1557910982.885  mike-deleteme@bailey.net.au
+  #    892345420873  account5 ACTIVE  CREATED  1557911243.358  mike-delete@bailey.net.au
   #
   # *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
 
@@ -27,17 +26,17 @@ aws-accounts() {
     --query "
       Accounts[${account_ids:+?contains(['${account_ids// /"','"}'], Id)}].[
         Id,
+        Name,
         Status,
         JoinedMethod,
         JoinedTimestamp,
         Email
       ]"                |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 4 |
-  column -s$'\t' -t
+  LC_ALL=C sort -b -k 2 |
+  columnise
 
 }
-
 
 aws-account-alias() {
 
@@ -51,7 +50,6 @@ aws-account-alias() {
     --output text
 }
 
-
 aws-account-id() {
 
   # Retrieve AWS Account ID for current account
@@ -61,7 +59,6 @@ aws-account-id() {
 
   aws sts get-caller-identity --query Account --output text
 }
-
 
 aws-account-each() {
 
@@ -103,14 +100,12 @@ aws-account-each() {
   done
 }
 
-
 aws-panopticon() {
 
   # aws-panopticon was previous name for aws-account-each()
 
   aws-account-each $@
 }
-
 
 aws-account-cost-explorer(){
 
@@ -127,7 +122,6 @@ aws-account-cost-explorer(){
   $cmd_open "https://console.aws.amazon.com/cost-reports/home?#/custom?groupBy=None&hasBlended=false&hasAmortized=false&excludeDiscounts=true&excludeTaggedResources=false&chartStyle=Group&granularity=Monthly&reportType=CostUsage&isTemplate=false&filter=%5B%7B%22dimension%22:%22LinkedAccount%22,%22values%22:%5B$accounts_formatted%5D,%22include%22:true,%22children%22:null%7D%5D&usageAs=usageQuantity&forecastTimeRangeOption=None&&timeRangeOption=YearToDate"
 
 }
-
 
 # View a list of AWS_ACCOUNT_IDs in AWS Cost Recommendations
 

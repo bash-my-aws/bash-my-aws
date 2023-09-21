@@ -45,9 +45,8 @@ images() {
         OwnerId,
         Name
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
-
 
 image-deregister() {
 

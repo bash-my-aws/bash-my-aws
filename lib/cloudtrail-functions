@@ -2,7 +2,6 @@
 #
 # cloudtrail-functions
 
-
 cloudtrails() {
 
   # List Cloudtrails
@@ -34,7 +33,6 @@ cloudtrails() {
 
 }
 
-
 cloudtrail-status() {
 
   # List logging status of Cloudtrails
@@ -54,6 +52,5 @@ cloudtrail-status() {
         join('=', ['IsLogging', to_string(IsLogging)])
       ]"
   done              |
-  column -s$'\t' -t
+    columnise
 }
-

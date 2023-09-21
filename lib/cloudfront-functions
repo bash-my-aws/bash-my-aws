@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# cloudfront-functions
+
+distributions() {
+
+  # List Cloudfront Distributions
+  
+  aws cloudfront list-distributions \
+   --output "${BMA_OUTPUT_AWS:-${BMA_OUTPUT:-text}}" \
+   --query 'DistributionList.Items[].{
+      "ARN": ARN,
+      "DomainName": DomainName,
+      "Enabled": Enabled,
+      "Comment": Comment
+    }'
+}
