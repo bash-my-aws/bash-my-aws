@@ -44,6 +44,18 @@ instances() {
 }
 
 
+instance-id() {
+
+  # Just return the instance ID of whatever was passed in (so you can run a for loop, for instance)
+  #
+  #     USAGE: instances [grep] | instance-id
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+  echo $instance_ids |
+  column -s$'\t' -t
+}
+
 instance-asg() {
 
   # List autoscaling group membership of EC2 Instance(s)
