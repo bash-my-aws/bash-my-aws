@@ -2,7 +2,6 @@
 #
 # ecr-functions
 
-
 ecr-repositories() {
 
   # List ECR Repositories
@@ -21,9 +20,8 @@ ecr-repositories() {
     --output text       |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 1 |
-  column -s$'\t' -t
+    columnise
 }
-
 
 ecr-repository-images() {
 
@@ -36,6 +34,8 @@ ecr-repository-images() {
   local repository_names=$(skim-stdin "$@")
 
   # XXX Display USAGE if no repository_names passed in
+  local repository_names=$(skim-stdin "$@")
+  [[ -z ${repository_names} ]] && __bma_usage "ecr" && return 1
 
   local repository_name
   for repository_name in $repository_names; do
@@ -56,5 +56,5 @@ ecr-repository-images() {
     LC_ALL=C sort -b -k 4                            |
     sed -E 's/DIGEST=.*:(.{12})\S*/\1/g' # short sha
   done |
-  column -s$'\t' -t
+    columnise
 }

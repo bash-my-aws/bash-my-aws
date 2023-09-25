@@ -20,13 +20,13 @@ instances() {
   #     i-89cefa9403373d7a5  ami-123456789012  t3.nano  running  postgres1  2019-12-10T08:17:20.000Z  ap-southeast-2a  None
   #     i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
 
-  local instance_ids=$(skim-stdin)
+  local instances=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
   local sort_key=5
   [ -z $filters ] && sort_key=6
 
   aws ec2 describe-instances            \
-    ${instance_ids/#/'--instance-ids '} \
+    ${instances/#/'--instance-ids '} \
     --output text                       \
     --query "
       Reservations[].Instances[][
@@ -39,8 +39,11 @@ instances() {
         Placement.AvailabilityZone
       ]"                |
   grep -E -- "$filters" |
-  LC_ALL=C sort -b -k $sort_key |
-  column -s$'\t' -t
+# andrew did this
+#  LC_ALL=C sort -b -k $sort_key |
+#  column -s$'\t' -t
+  LC_ALL=C sort -b -k 6 |
+    columnise
 }
 
 
@@ -76,9 +79,8 @@ instance-asg() {
           "InstanceId": InstanceId
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-az() {
 
@@ -104,9 +106,8 @@ instance-az() {
           Placement.AvailabilityZone
         ]
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-console() {
 
@@ -141,7 +142,6 @@ instance-console() {
   done
 }
 
-
 instance-dns() {
 
   # List DNS name of EC2 Instance(s)
@@ -166,9 +166,8 @@ instance-dns() {
           "Public": PublicDnsName
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-health-set-unhealthy() {
 
@@ -189,7 +188,6 @@ instance-health-set-unhealthy() {
   done
 }
 
-
 instance-iam-profile() {
 
   # List iam-profile of EC2 Instance(s)
@@ -209,9 +207,8 @@ instance-iam-profile() {
           IamInstanceProfile.Id
         ]
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-ip() {
 
@@ -237,9 +234,8 @@ instance-ip() {
           "Public": PublicIpAddress
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-ssh() {
 
@@ -247,40 +243,35 @@ instance-ssh() {
   #
   #     USAGE: instance-ssh [login] [instance-id] [instance-id]
 
+  local ssh_user instance_id keyname private_ip instance_name instance_default_user
   if [[ $1 != *i-* ]]; then
-    local user=${1}
+    ssh_user="${1}"
     shift
   fi
-  local instance_ids=$(skim-stdin "$@")
-  if [[ -z $instance_ids ]] ; then
-    echo "Usage: $FUNCNAME [login] [instance-id] [instance-id]"
+  instance_ids=$(skim-stdin "$@")
+  if [[ -z "${instance_ids}" ]] ; then
+    __bma_usage "[login] [instance-id] [instance-id]"
     return 1
   fi
 
   exec </dev/tty # reattach keyboard to STDIN
 
-  for instance_id in $instance_ids; do
-    local instance_details="$(instance-ssh-details $instance_id)"
-    local instance_id=$(echo $instance_details | awk '{print $1}')
-    local keyname=$(echo $instance_details | awk '{print $2}')
-    local private_ip=$(echo $instance_details | awk '{print $3}')
-    local instance_name=$(echo $instance_details | awk '{print $4}')
-    local instance_default_user=$(echo $instance_details | awk '{print $5}')
+  for instance_id in ${instance_ids}; do
+    read -r instance_id keyname private_ip instance_name instance_default_user < <(instance-ssh-details "${instance_id}")
 
-    local USERNAME=${user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}
+    ssh_user="${ssh_user:-${instance_default_user:-${AWS_DEFAULT_USER:-root}}}"
     echo "Connecting to EC2 Instance $instance_id '$instance_name'" 2>&1
 
-    ssh                                    \
-      -t                                   \
-      -i "${BMA_SSH_DIR:-~/.ssh}/$keyname" \
-      -o LogLevel=error                    \
-      -o StrictHostKeyChecking=no          \
-      -o UserKnownHostsFile=/dev/null      \
-      -l "$USERNAME"                       \
-      "$private_ip"
+    ssh                                      \
+      -t                                     \
+      -i "${BMA_SSH_DIR:-~/.ssh}/${keyname}" \
+      -o LogLevel=error                      \
+      -o StrictHostKeyChecking=no            \
+      -o UserKnownHostsFile=/dev/null        \
+      -l "${ssh_user}"                       \
+      "${private_ip}"
   done
 }
-
 
 instance-ssh-details() {
 
@@ -306,9 +297,8 @@ instance-ssh-details() {
         join(' ', [Tags[?Key=='Name'].Value][] || ['not-named']),
         join(' ', [Tags[?Key=='default-user'].Value][] || [''])
       ]"            |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-ssm() {
 
@@ -381,9 +371,11 @@ instance-stack() {
           InstanceId
         ]
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
 
+# When instances have uninformative names, sometimes listing them by stack name helps
+alias instance-stacks='instances | instance-stack'
 
 instance-start() {
 
@@ -410,7 +402,6 @@ instance-start() {
     column -t
 }
 
-
 instance-state() {
 
   # List state of EC2 Instance(s)
@@ -434,9 +425,8 @@ instance-state() {
           "State": State.Name
         }
       ][]"          |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-stop() {
 
@@ -482,7 +472,87 @@ instance-subnet() {
         InstanceId,
         [Tags[?Key=='Name'].Value][0][0]
       ]"            |
-  column -s$'\t' -t
+    columnise
+}
+
+instance-stop-protection() {
+
+  # List current state of Stop Protection for EC2 Instance(s)
+  #
+  #     USAGE: instance-stop-protection instance-id [instance-id]
+  #
+  #     $ instances | instance-termination-protection
+  #     i-4e15ece1de1a3f869 DisableApiStop=true
+  #     i-89cefa9403373d7a5 DisableApiStop=false
+  #     i-806d8f1592e2a2efd DisableApiStop=false
+  #     i-61e86ac6be1e2c193 DisableApiStop=false
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  for instance_id in $instance_ids; do
+    aws ec2 describe-instance-attribute \
+      --attribute disableApiStop        \
+      --instance-id "$instance_id"      \
+      --output text                     \
+      --query "[
+        InstanceId,
+        join('=', [
+          'DisableApiStop',
+          to_string(DisableApiStop.Value)
+        ])
+      ]"
+  done
+}
+
+instance-stop-protection-disable() {
+
+  # Disable EC2 Instance stop protection
+  #
+  #     USAGE: instance-stop-protection-disable instance-id [instance-id]
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  echo "You are about to disable stop protection on the following instances:"
+  echo "$instance_ids" | tr ' ' "\n" | instances
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]; then
+    for instance_id in $instance_ids; do
+      aws ec2 modify-instance-attribute   \
+        --attribute disableApiStop        \
+        --value false                     \
+        --instance-id "$instance_id"
+    done
+  fi
+}
+
+instance-stop-protection-enable() {
+
+  # Enable EC2 Instance stop protection
+  #
+  #     USAGE: instance-stop-protection-enable instance-id [instance-id]
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  echo "You are about to enable stop protection on the following instances:"
+  echo "$instance_ids" | tr ' ' "\n" | instances
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]; then
+    for instance_id in $instance_ids; do
+      aws ec2 modify-instance-attribute   \
+        --attribute disableApiStop        \
+        --value true                      \
+        --instance-id "$instance_id"
+    done
+  fi
 }
 
 instance-tags() {
@@ -502,9 +572,62 @@ instance-tags() {
         InstanceId,
         join(' ', [Tags[].[join('=',[Key,Value])][]][])
       ]"            |
-  column -s$'\t' -t
+    columnise
 }
 
+instance-tag() {
+
+  # List named tag on EC2 Instance(s)
+  #
+  #     USAGE: instance-tag key instance-id [instance-id]
+
+  local key="$1"
+  shift
+  local instances=$(skim-stdin "$@")
+  [[ -z $key ]] && __bma_usage "key instance [instance]" && return 1
+
+  aws ec2 describe-tags                          \
+    --filters                                    \
+     "Name=resource-type,Values=instance"        \
+     "Name=key,Values='$key'"                    \
+     "Name=resource-id,Values=${instances// /,}" \
+    --output text                                \
+    --query 'Tags[].[ResourceId, Key, Value]' |
+    columnise
+}
+
+instance-tag-create() {
+
+  # Create/update tag on EC2 Instance(s)
+  #
+  #     USAGE: instance-tag-create key value instance [instance]
+
+  local key="$1"
+  local value="$2"
+  shift 2
+  local instances=$(skim-stdin "$@")
+  [[ -z $key || -z $value ]] && __bma_usage "key value instance [instance]" && return 1
+
+  aws ec2 create-tags             \
+    --resources $instances        \
+    --tags "Key=$key,Value=$value"
+}
+
+instance-tag-delete() {
+
+  # Delete tag from EC2 Instance(s)
+  #
+  #     USAGE: instance-tag-delete key instance [instance]
+
+  local key="$1"
+  shift
+  local instances=$(skim-stdin "$@")
+  [[ -z $key || -z $instances ]] && __bma_usage "key instance [instance]" && return 1
+
+  aws ec2 delete-tags      \
+    --resources $instances \
+    --tags "Key=$key"
+}
 
 instance-terminate() {
 
@@ -530,8 +653,7 @@ instance-terminate() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     aws ec2 terminate-instances    \
       --instance-ids $instance_ids \
       --output text                \
@@ -544,7 +666,6 @@ instance-terminate() {
       column -t
   fi
 }
-
 
 instance-termination-protection() {
 
@@ -576,7 +697,6 @@ instance-termination-protection() {
   done
 }
 
-
 instance-termination-protection-disable() {
 
   # Disable EC2 Instance termination protection
@@ -592,8 +712,7 @@ instance-termination-protection-disable() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     for instance_id in $instance_ids; do
       aws ec2 modify-instance-attribute   \
         --attribute disableApiTermination \
@@ -602,7 +721,6 @@ instance-termination-protection-disable() {
     done
   fi
 }
-
 
 instance-termination-protection-enable() {
 
@@ -619,8 +737,7 @@ instance-termination-protection-enable() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     for instance_id in $instance_ids; do
       aws ec2 modify-instance-attribute   \
         --attribute disableApiTermination \
@@ -629,7 +746,6 @@ instance-termination-protection-enable() {
     done
   fi
 }
-
 
 instance-type() {
 
@@ -656,9 +772,8 @@ instance-type() {
         ]
       ][]"                                                              \
     --output text                                                       |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-userdata() {
 
@@ -680,7 +795,6 @@ instance-userdata() {
     echo
   done
 }
-
 
 instance-volumes() {
 
@@ -705,9 +819,8 @@ instance-volumes() {
         ]
       ][]"                                                              \
     --output text                                                       |
-  column -s$'\t' -t
+    columnise
 }
-
 
 instance-vpc() {
 
@@ -728,7 +841,7 @@ instance-vpc() {
           InstanceId
         ]
       ][]"          |
-  column -s$'\t' -t
+  column -s$"\t" -t
 }
 
 # vim: ft=sh

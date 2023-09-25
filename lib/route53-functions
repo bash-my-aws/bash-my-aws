@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 hosted-zones(){
 
   # List Route53 Hosted Zones
@@ -26,9 +25,8 @@ hosted-zones(){
       ]"                |
   sort -k 4             |
   grep -E -- "$filters" |
-  column -s$'\t' -t
+    columnise
 }
-
 
 hosted-zone-ns-records(){
 

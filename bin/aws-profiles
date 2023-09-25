@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import configparser
+import os
+import sys
+
+# Get patterns from command-line arguments
+patterns = sys.argv[1:]
+
+# Get patterns from stdin if available
+if not sys.stdin.isatty():
+    for line in sys.stdin:
+        patterns.append(line.strip().split()[0])
+
+# Define the path to the AWS credentials file
+credentials_file = os.environ.get('AWS_SHARED_CREDENTIALS_FILE', os.path.expanduser('~/.aws/credentials'))
+
+# Read and parse the AWS credentials file
+config = configparser.ConfigParser(interpolation=None)
+config.read(credentials_file)
+
+# Iterate through the sections and print those that match the patterns
+for section in config.sections():
+    if not patterns or any(pattern in section for pattern in patterns):
+        print(section)
+

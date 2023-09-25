@@ -35,8 +35,6 @@ lambda-functions() {
   $column_command
 }
 
-
-
 lambda-function-memory(){
 
   # List memorySize for lambda function(s)
@@ -149,5 +147,17 @@ lambda-function-memory-step(){
   echo "Resetting to original values"
   for function_name in $function_names; do
     lambda-function-memory-set "${memory_old[$function_name]}" "$function_name"
+  done
+}
+
+# aws lambda list-layers --output text --query "Layers[].[LayerName, LatestMatchingVersion.CreatedDate, LatestMatchingVersion.Version, LayerArn]"
+
+lambda-function-logs() {
+  local function_names=$(skim-stdin "$@")
+  [[ -z "${function_names}" && -t 0 ]] && __bma_usage "$usage_msg" && return 1
+
+  local function_name
+  for function_name in $function_names; do
+    aws logs tail "/aws/lambda/${function_name}"
   done
 }

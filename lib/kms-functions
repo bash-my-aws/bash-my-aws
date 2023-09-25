@@ -4,7 +4,6 @@
 #
 # List, create, delete and use kms keys / aliases
 
-
 kms-encrypt() {
 
   # Encrypt and base64 encode STDIN or file
@@ -34,7 +33,6 @@ kms-encrypt() {
     --plaintext "$plaintext" \
     --query CiphertextBlob
 }
-
 
 kms-decrypt() {
 
@@ -67,7 +65,6 @@ kms-decrypt() {
   rm -f "$TMPFILE"
 }
 
-
 kms-aliases() {
 
   # List KMS Aliases
@@ -87,9 +84,8 @@ kms-aliases() {
         AliasArn
       ]"                |
   grep -E -- "$filters" |
-  column -s$'\t' -t
+    columnise
 }
-
 
 kms-alias-create() {
 
@@ -114,7 +110,6 @@ kms-alias-create() {
     --alias-name "$alias_name" \
     --target-key-id "$key_id"
 }
-
 
 kms-alias-delete() {
 
@@ -146,7 +141,6 @@ kms-alias-delete() {
   fi
 }
 
-
 kms-keys() {
 
   # List KMS Keys
@@ -165,9 +159,8 @@ kms-keys() {
       ]"                                      \
     --output text       |
   grep -E -- "$filters" |
-  column -s$'\t' -t
+    columnise
 }
-
 
 kms-key-create() {
 
@@ -180,7 +173,6 @@ kms-key-create() {
     --query "KeyMetadata.[KeyId]" \
     --output text
 }
-
 
 kms-key-details() {
 
@@ -204,9 +196,8 @@ kms-key-details() {
       ]"
   done |
   LC_ALL=C sort -b -k 4 |
-  column -s$'\t' -t
+    columnise
 }
-
 
 kms-key-disable() {
 
@@ -224,7 +215,6 @@ kms-key-disable() {
     aws kms disable-key --key-id "$key_id"
   done
 }
-
 
 kms-key-enable() {
 

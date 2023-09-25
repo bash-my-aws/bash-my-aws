@@ -9,3 +9,6 @@ cloudformation/tags
 !cloudformation/tags/.keep
 test/cloudformation
 site/
+*.swp
+cloudformation/stars2.yml
+lib/extras/github-functions

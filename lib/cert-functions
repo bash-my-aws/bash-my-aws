@@ -2,7 +2,6 @@
 #
 # cert-functions
 
-
 certs() {
 
   # List ACM Certificates
@@ -13,8 +12,8 @@ certs() {
   local include_arn_bit=''
   [[ -n ${include_arn:-} ]] && include_arn_bit="CertificateArn,"
   local retrieved_cert_arns=$(
-    aws acm list-certificates      \
-      --output text                \
+    aws acm list-certificates \
+      --output text \
       --query "
         CertificateSummaryList[${cert_arns:+?contains(['${cert_arns// /"','"}'], CertificateArn)}].[
           CertificateArn
@@ -23,9 +22,9 @@ certs() {
 
   local cert_arn
   for cert_arn in $retrieved_cert_arns; do
-    aws acm describe-certificate    \
+    aws acm describe-certificate \
       --certificate-arn "$cert_arn" \
-      --output text                 \
+      --output text \
       --query "
         Certificate.[
           $include_arn_bit
@@ -37,11 +36,10 @@ certs() {
           join(',', [DomainValidationOptions[].ValidationMethod][])
       ]"
   done |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -b -k 5 | # sort by NotAfter
-  column -t
+    grep -E -- "$filters" |
+    LC_ALL=C sort -b -k 5 | # sort by NotAfter
+    column -t
 }
-
 
 certs-arn() {
 
@@ -50,7 +48,6 @@ certs-arn() {
   local include_arn=true
   certs $@
 }
-
 
 cert-users() {
 
@@ -63,17 +60,16 @@ cert-users() {
 
   local cert_arns
   for cert_arn in $cert_arns; do
-    aws acm describe-certificate       \
-      --certificate-arn "$cert_arn"  \
-      --output text                    \
+    aws acm describe-certificate \
+      --certificate-arn "$cert_arn" \
+      --output text \
       --query "Certificate.InUseBy[].[
         @,
         \`$cert_arn\`
       ]"
   done |
-  column -s$'\t' -t
+    columnise
 }
-
 
 cert-delete() {
 
@@ -90,11 +86,77 @@ cert-delete() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     local cert_arn
     for cert_arn in $cert_arns; do
       aws acm delete-certificate --certificate-arn "$cert_arn"
     done
   fi
+}
+
+cert-ificate() {
+
+  # Return Certificate for ACM Cert(s)
+  #
+  #     USAGE: cert-ificate cert-arn [cert-arn]
+
+  local cert_arns=$(skim-stdin "$@")
+  [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
+
+  local cert_arns
+  for cert_arn in $cert_arns; do
+    aws acm get-certificate \
+      --certificate-arn "$cert_arn" \
+      --output text \
+      --query Certificate
+  done
+}
+
+cert-chain() {
+
+  # Return Cert Chain for ACM Cert(s)
+  #
+  #     USAGE: cert-chain cert-arn [cert-arn]
+
+  local cert_arns=$(skim-stdin "$@")
+  [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
+
+  local cert_arns
+  for cert_arn in $cert_arns; do
+    aws acm get-certificate \
+      --certificate-arn "$cert_arn" \
+      --output text \
+      --query CertificateChain
+  done
+}
+
+# openssl verify -CAfile trusted-ca.crt -untrusted chain.crt cert.crt
+
+cert-verify() {
+
+  # Verify ACM cert(s)
+  #
+  #     USAGE: cert-chain cert-arn [cert-arn]
+
+  local cert_arns=$(skim-stdin "$@")
+  # Be quiet - makes it easier to scan with "cert-arns | cert_verify"
+  # [[ -z "$cert_arns" ]] && __bma_usage "cert-arn [cert-arn]" && return 1
+
+  local cert_arns
+  for cert_arn in $cert_arns; do
+
+    local cert_name=$(echo "$cert_arn" | bma certs | awk '{print $1}')
+
+    # echo -n "$cert_name ($cert_arn): "
+    echo -n "$cert_name : "
+
+    local output=$(
+      openssl verify \
+      -CAfile /etc/ssl/certs/ca-certificates.crt \
+      -untrusted <(cert-chain "$cert_arn") \
+      <(cert-ificate "$cert_arn") 2>&1 |
+      sed 's#/dev/fd/[0-9]*: ##'
+    )
+    [[ -n $output ]] && echo $output # lose the newlines
+  done
 }

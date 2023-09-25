@@ -157,20 +157,20 @@ As shown below, you may simply clone the GitHub repo and source the files requir
 (You should probably fork it instead to keep your customisations)
 
 ```Shell
-$ git clone https://github.com/bash-my-aws/bash-my-aws.git ~/.bash-my-aws
+$ git clone https://github.com/bash-my-aws/bash-my-aws.git ${BMA_HOME:-$HOME/.bash-my-aws}
 ```
 
 Put the following in your shell's startup file:
 
 ```Shell
-export PATH="$PATH:$HOME/.bash-my-aws/bin"
-source ~/.bash-my-aws/aliases
+export PATH="$PATH:${BMA_HOME:-$HOME/.bash-my-aws}/bin"
+source ${BMA_HOME:-$HOME/.bash-my-aws}/aliases
 
 # For ZSH users, uncomment the following two lines:
 # autoload -U +X compinit && compinit
 # autoload -U +X bashcompinit && bashcompinit
 
-source ~/.bash-my-aws/bash_completion.sh
+source ${BMA_HOME:-$HOME/.bash-my-aws}/bash_completion.sh
 ```
 
 !!! note "Why use shell aliases?"
@@ -184,11 +184,13 @@ source ~/.bash-my-aws/bash_completion.sh
     the functionaility, simplicity and discoverability of the project. Massive thanks
     to [@ninth-dev](https://github.com/ninth-dev) for this.
 
-
+```Shell
         # bash users may source the functions instead of loading the aliases
-        if [ -d ${HOME}/.bash-my-aws ]; then
+        if [ -d ${BMA_HOME:-$HOME/.bash-my-aws} ]; then
+          for f in ${BMA_HOME:-$HOME/.bash-my-aws}/lib/*-functions; do source $f; done
           for f in ~/.bash-my-aws/lib/*-functions; do source $f; done
         fi
+```
 
 ## Usage
 
@@ -327,7 +329,7 @@ instances() {
     --output text       |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 6 |
-  column -s$'\t' -t
+  columnise
 }
 ```
 

@@ -4,7 +4,6 @@
 #
 # Network and Application Load Balancers (2nd Generation)
 
-
 elbv2s() {
 
   # List EC2 ELBv2 load balancers (both Network and Application types)
@@ -30,9 +29,8 @@ elbv2s() {
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -k 5    |
-  column -s$'\t' -t
+    columnise
 }
-
 
 elbv2-dnsname(){
 
@@ -55,9 +53,8 @@ elbv2-dnsname(){
         LoadBalancerName,
         DNSName
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
-
 
 elbv2-subnets() {
 
@@ -80,9 +77,8 @@ elbv2-subnets() {
         LoadBalancerName,
         join(' ', AvailabilityZones[].SubnetId)
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
-
 
 elbv2-azs() {
 
@@ -105,9 +101,8 @@ elbv2-azs() {
         LoadBalancerName,
         join(' ', sort(AvailabilityZones[].ZoneName))
       ]"              |
-    column -s$'\t' -t
+    columnise
 }
-
 
 elbv2-target-groups() {
 

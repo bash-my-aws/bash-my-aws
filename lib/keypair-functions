@@ -4,7 +4,6 @@
 #
 # List, create and delete EC2 SSH Keypairs
 
-
 keypairs() {
 
   # List EC2 SSH Keypairs in current Region
@@ -21,9 +20,8 @@ keypairs() {
     --query 'KeyPairs[].[KeyName, KeyFingerprint]' \
     --output text       |
   grep -E -- "$filters" |
-  column -s$'\t' -t
+    columnise
 }
-
 
 keypair-create() {
 
@@ -83,7 +81,6 @@ keypair-create() {
     --public-key-material "fileb://${KEY_DIR}/${KEY_NAME}.pub"
 }
 
-
 keypair-delete() {
 
   # Delete EC2 SSH Keypairs by providing their names as arguments or via STDIN
@@ -110,8 +107,7 @@ keypair-delete() {
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
-  if [[ $REPLY =~ $regex_yes ]]
-  then
+  if [[ $REPLY =~ $regex_yes ]]; then
     local keypair
     for keypair in $keypairs; do
       aws ec2 delete-key-pair --key-name "$keypair"

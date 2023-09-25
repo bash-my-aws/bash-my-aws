@@ -8,7 +8,6 @@
 #
 # `iam-roles | iam-role-principal | grep AROA`
 
-
 iam-roles() {
 
   # List IAM Roles
@@ -31,9 +30,8 @@ iam-roles() {
     ]"                  |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
-  column -s$'\t' -t
+    columnise
 }
-
 
 iam-role-principal(){
 
@@ -55,9 +53,8 @@ iam-role-principal(){
         join(',', values(AssumeRolePolicyDocument.Statement[0].Principal)[])
     ]"              |
   LC_ALL=C sort     |
-  column -s$'\t' -t
+    columnise
 }
-
 
 iam-users() {
 
@@ -80,6 +77,5 @@ iam-users() {
     ]'                  |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
-  column -s$'\t' -t
+    columnise
 }
-
