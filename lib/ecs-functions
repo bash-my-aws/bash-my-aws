@@ -98,6 +98,7 @@ ecs-tasks() {
 
   for cluster_name in $(ecs-clusters |skim-stdin); do
    #echo "cluster_name=$cluster_name"
+   # TODO: remove the account bit from the task definition, ie print gc3-test1-public:27 instead of arn:aws:ecs:ap-southeast-2:167642850091:task-definition/gc3-test1-public:27
       aws ecs describe-tasks            \
         --cluster $cluster_name         \
         --query "
