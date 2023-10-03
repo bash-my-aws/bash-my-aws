@@ -533,6 +533,13 @@ List EC2 Instances
     i-806d8f1592e2a2efd  ami-123456789012  t3.nano  running  postgres2  2019-12-10T08:17:22.000Z  ap-southeast-2a  None
 
 
+### instance-id
+
+Just return the instance ID of whatever was passed in (so you can run a for loop, for instance)
+
+    USAGE: instances [grep] | instance-id
+
+
 ### instance-asg
 
 List autoscaling group membership of EC2 Instance(s)
@@ -905,7 +912,16 @@ List CloudFormation stack for asg(s)
 List scaling activities for Autoscaling Group(s)
 
 
-azure.azcli
+## autoscaling-commands
+
+
+### scaling-ecs
+
+List autoscaling actions
+filter by environment (eg test1) or namespace (eg ecs)
+if you pass an argument, it'll filter for clusters whose ARN contains your text
+
+  $ scaling-ecs 'test.*down'     # list the scale-down times of all our test environments
 
 
 ## azure-commands
@@ -1237,6 +1253,9 @@ List routes of all endpoints for Front Door Profile(s)
 
 
 
+azure.azcli
+
+
 ## backup-commands
 
 
@@ -1326,6 +1345,19 @@ List logging status of Cloudtrails
     USAGE: cloudtrail-status cloudtrail [cloudtrail]
 
 
+## codedeploy-commands
+
+
+### deployment
+
+List deployments
+
+
+### deployment-groups
+
+List min, desired and maximum capacities of EC2 Autoscaling Group(s)
+
+
 ## ecr-commands
 
 
@@ -1337,6 +1369,96 @@ List ECR Repositories
 ### ecr-repository-images
 
 List images for ECR Repositories
+
+
+## ecs-commands
+
+
+### ecs-clusters
+
+List ECS clusters
+output includes clusterName,status,activeServicesCount,runningTasksCount,pendingTasksCount
+if you pass an argument, it'll filter for clusters whose ARN contains your text
+
+  $ ecs-clusters test
+  test-octopus-ecs-cluster  ACTIVE  1  1  0
+  test1-ecs-cluster        ACTIVE  3  1  0
+  test3-ecs-cluster        ACTIVE  3  1  0
+  test2-ecs-cluster        ACTIVE  3  3  0
+
+
+### ecs-services
+
+List ECS services
+output includes serviceName,status,desiredCount,runningCount,pendingCount,createdAt
+
+gets all clusters if no filter passed in
+if you do pass a filter:
+1. if your filter is the name of one of your clusters, it will list the services in that cluster (eg ecs-clusters test1 | ecs-services)
+2. if your filter is not a cluster name, it will list the services in all clusters whose names match your filter (ie it filters on cluster name not service name)
+3. if you do not pass a filter, it will list all services in all clusters
+
+  $ ecs-clusters test1|ecs-services
+  test1-ecs-admin-7URaUr0YGJHi        ACTIVE  0  0  0  2023-09-13T17:16:48.198000+10:00
+  test1-ecs-public-wEaTAqGXqbpq      ACTIVE  0  0  0  2023-09-13T16:54:54.162000+10:00
+  test1-ecs-hangfire-YNIo1hlx8rjn  ACTIVE  1  1  0  2023-09-13T16:39:06.218000+10:00
+
+
+### ecs-tasks
+
+List ECS tasks
+output includes taskDefinitionArn, createdAt, cpu, memory
+
+gets all tasks if no filter passed in
+if you do pass a filter, it filters on the task name.  All clusters are included (I haven't worked out a way of passing a cluster name AND a filter)
+
+  $ ecs-tasks test2
+  arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-public:18    2023-09-19T17:51:56.418000+10:00  2048  4096
+  arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-admin:20     2023-08-29T10:03:36.956000+10:00  2048  4096
+  arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-hangfire:22  2023-09-19T17:11:06.622000+10:00  1024  2048
+
+
+## elasticache-commands
+
+
+### elasticaches
+
+List elasticache thingies (code borrowed from target-groups)
+
+    $ target-groups
+    bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
+    bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
+
+
+### elasticache-replication-groups
+
+
+Accepts a string to filter on
+This is not very useful without column headings.
+Most of the things you want to know about a replication group are boolean
+eg AutomaticFailover, MultiAZClusterEnabled, AtRestEncryptionEnabled etc
+
+
+## elasticache-commands-littlelaptop
+
+
+### elasticaches
+
+List elasticache thingies
+
+    $ target-groups
+    bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
+    bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
+
+
+### elasticache-replication-groups
+
+
+Accepts Target Group names on stdin or as arguments
+
+    $ target-group-targets bash-my-aws-nlb-tg
+    i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
+    i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
 
 
 ## elb-commands

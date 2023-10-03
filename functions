@@ -92,7 +92,6 @@ debug
 deployment
 deployment-delete-danger
 deployment-groups
-deployments
 deployments-group
 distributions
 ecr-repositories
@@ -115,9 +114,6 @@ elbv2-dnsname
 elbv2-subnets
 elbv2-target-groups
 elbv2s
-fargate-clusters
-fargate-services
-fargate-tasks
 hosted-zone-ns-records
 hosted-zones
 iam-role-principal
@@ -131,6 +127,7 @@ instance-console
 instance-dns
 instance-health-set-unhealthy
 instance-iam-profile
+instance-id
 instance-ip
 instance-rdp
 instance-ssh
@@ -199,6 +196,7 @@ resource-groups
 resource-show
 resourceids
 resources
+scaling-ecs
 secrets
 service-principals
 skim-stdin
