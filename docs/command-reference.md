@@ -1353,9 +1353,33 @@ List logging status of Cloudtrails
 List deployments
 
 
+### deployments
+
+List all deployment IDs for a deployment group (not useful for the user, only internal)
+# ?? if no deployment group, could we list all deployments for this application, with their groups and statuses?
+
+
 ### deployment-groups
 
-List min, desired and maximum capacities of EC2 Autoscaling Group(s)
+List all deployment groups for an application
+
+
+## codedeploy-commands~
+
+
+### deployment
+
+List deployments
+
+
+### deployments
+
+List all deployment IDs for a deployment group (not useful for the user, only internal)
+
+
+### deployment-groups
+
+List all deployment groups for an application
 
 
 ## ecr-commands
@@ -1437,28 +1461,6 @@ Accepts a string to filter on
 This is not very useful without column headings.
 Most of the things you want to know about a replication group are boolean
 eg AutomaticFailover, MultiAZClusterEnabled, AtRestEncryptionEnabled etc
-
-
-## elasticache-commands-littlelaptop
-
-
-### elasticaches
-
-List elasticache thingies
-
-    $ target-groups
-    bash-my-aws-nlb-tg  TCP   22   vpc-04636ebe5573f6f65  instance  bash-my-aws-nlb
-    bash-my-aws-alb-tg  HTTP  443  vpc-04636ebe5573f6f65  instance  bash-my-aws-alb
-
-
-### elasticache-replication-groups
-
-
-Accepts Target Group names on stdin or as arguments
-
-    $ target-group-targets bash-my-aws-nlb-tg
-    i-4e15ece1de1a3f869  443  healthy    bash-my-aws-nlb-tg
-    i-89cefa9403373d7a5  443  unhealthy  bash-my-aws-nlb-tg
 
 
 ## elb-commands
@@ -1595,6 +1597,28 @@ List target groups of ELBv2(s) [Application and Network Load Balancers)
     $ elbv2s | elbv2-target-groups
     bash-my-aws-nlb-tg  TCP   22   vpc-018d9739  bash-my-aws-nlb
     bash-my-aws-alb-tg  HTTP  443  vpc-018d9739  bash-my-aws-alb
+
+
+## fargate-commands
+
+
+### fargate-clusters
+
+List ECS clusters
+
+
+### fargate-services
+
+List ECS services
+gets all clusters if no cluster_names passed in
+echo "cluster_names=$cluster_names"
+
+
+### fargate-tasks
+
+List ECS services
+gets all clusters if no cluster_names passed in
+echo "service_names=$service_names"
 
 
 ## iam-commands
