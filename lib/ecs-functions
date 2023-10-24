@@ -126,7 +126,7 @@ ecs-tasks() {
         --cluster $cluster_name         \
         --query "
             tasks[?contains(taskDefinitionArn, \`$filter\`) == \`true\`]
-            .[taskDefinitionArn, createdAt, cpu, memory]
+            .[taskDefinitionArn, healthStatus, lastStatus, createdAt, cpu, memory]
             "                           \
         --tasks $(                      \
           aws ecs list-tasks            \
@@ -135,6 +135,7 @@ ecs-tasks() {
             sed 's/.*\///'              \
         )                               \
     --output text                       |
+    sed 's/arn.*task-definition\///g' |
     columnise
   done
 
