@@ -587,6 +587,25 @@ ad-apps() {
   # columnise
 }
 
+
+ad-app-cert() {
+
+  # Usage: ad-app APP [APP]
+
+  local apps=$(skim-stdin "$@")
+  [[ -z $apps ]] && __bma_usage "APP [APP]" && return 1
+
+  local output_format="${BMA_OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  local app
+  for app in $apps; do
+    az ad app show \
+      --id="$app" \
+      --output "$output_format" \
+      --query "{displayName:displayName, cert:appRoles.cert}"
+  done
+}
+
 ad-app() {
 
   # Usage: ad-app APP [APP]

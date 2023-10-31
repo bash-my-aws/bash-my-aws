@@ -79,3 +79,49 @@ iam-users() {
   LC_ALL=C sort -b -k 3 |
     columnise
 }
+
+iam-role-policies-attached() {
+  local role_names=$(skim-stdin "$@")
+  [[ -z $role_names ]] && __bma_usage "role-name [role-name]" && return 1
+
+  local role_name
+  for role_name in $role_names; do
+    aws iam list-attached-role-policies \
+      --role-name "${role_name}" \
+      --output text \
+      --query "AttachedPolicies[].[
+        PolicyName,
+        '$role_name'
+        ]"
+  done
+}
+
+iam-role-policies-inline() {
+  local role_names=$(skim-stdin "$@")
+  [[ -z $role_names ]] && __bma_usage "role-name [role-name]" && return 1
+
+  local role_name
+  for role_name in $role_names; do
+    aws iam list-role-policies \
+      --role-name "${role_name}" \
+      --query "PolicyNames[]" \
+      --output text
+  done
+}
+
+iam-policy-documents() {
+  local policy_names=$(skim-stdin "$@")
+  [[ -z $policy_names ]] && __bma_usage "policy-name [policy-name]" && return 1
+
+  local policy_name
+  for policy_name in $policy_names; do
+    local policy_arn=$(aws iam list-policies --query "Policies[?PolicyName=='${policy_name}'].Arn | [0]" --output text)
+    if [[ $policy_arn != "None" ]]; then
+      local version_id=$(aws iam get-policy --policy-arn "${policy_arn}" --query "Policy.DefaultVersionId" --output text)
+      aws iam get-policy-version --policy-arn "${policy_arn}" --version-id "${version_id}" --query "PolicyVersion.Document" --output json
+    else
+      echo "No policy found with name: ${policy_name}" >&2
+    fi
+  done
+}
+

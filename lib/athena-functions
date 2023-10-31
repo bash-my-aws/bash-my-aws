@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# athena-functions - Amazon Athena
+
+athena-named-queries() {
+
+  # List Amazon Athena Named Queries with Details
+  
+  local named_query_ids=$(skim-stdin)
+  if [[ -z $named_query_ids ]]; then
+    named_query_ids=$(athena-named-query-ids)
+  fi
+
+  local filters=$(__bma_read_filters "$@")
+
+  # Iterate through each named query ID and fetch details
+  for named_query_id in $named_query_ids; do
+    aws athena get-named-query \
+      --named-query-id "$named_query_id" \
+      --output text \
+      --query '
+	  NamedQuery.[
+	    NamedQueryId,
+	    Name,
+	    WorkGroup,
+	    Database,
+	    Description]
+      '
+  done |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -k 2 |
+  columnise
+}
+
+athena-named-query-ids() {
+  aws athena list-named-queries --output text --query 'NamedQueryIds[]' | 
+    tr "\t" "\n"
+}

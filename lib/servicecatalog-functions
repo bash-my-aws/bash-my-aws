@@ -1,0 +1,300 @@
+#!/bin/bash
+#
+# servicecatalog-functions
+
+products(){
+  local filter="$1"
+  shift
+  local next_token=""
+  while true; do
+    output=$(aws servicecatalog search-products \
+      --output text \
+      ${filter:+--filters "FullTextSearch=$filter"} \
+      --query 'ProductViewSummaries[].[ProductId, Name]' \
+      ${next_token:+--starting-token "$next_token"} \
+      --page-size 100)
+
+    echo "$output"
+
+    next_token=$(aws servicecatalog search-products \
+      --output text \
+      ${filter:+--filters "FullTextSearch=$filter"} \
+      --query 'NextToken' \
+      ${next_token:+--starting-token "$next_token"} \
+      --page-size 100)
+
+    [ -z "$next_token" ] && break
+  done
+}
+
+products(){
+  local filter="$1"
+  shift
+  local next_token=""
+  
+  while true; do
+    output=$(aws servicecatalog search-products \
+      --output json \
+      ${filter:+--filters "FullTextSearch=$filter"} \
+      ${next_token:+--starting-token "$next_token"} \
+      --page-size 100 \
+      --query '{Items: ProductViewSummaries[].[ProductId, Name], Next: NextToken}')
+
+    # Extract and print the product summaries
+    echo "$output" | jq -r '.Items[] | @tsv'
+
+    # Extract the next token for pagination
+    next_token=$(echo "$output" | jq -r '.Next')
+
+    # If next_token is null or empty, break the loop
+    [ -z "$next_token" ] || [ "$next_token" == "null" ] && break
+  done
+}
+
+product-provisioning-artifacts-latest(){
+  local products="$(skim-stdin "$@")"
+  local product_id
+  for product_id in ${products}; do
+    aws servicecatalog list-provisioning-artifacts \
+	  --product-id "$product_id" \
+	  --output text \
+	  --query "ProvisioningArtifactDetails[].[
+		  Id,
+		  '${product_id}',
+		  Name,
+		  Description,
+		  Active,
+		  CreatedTime
+		]" \
+	| sort -k6,6 -r \
+ 	| awk 'NR==1' \
+	| columnise
+   done
+}
+
+provisioned-products() {
+	aws servicecatalog search-provisioned-products \
+		--output text \
+		--query "ProvisionedProducts[].[
+			Id,
+			Name,
+			Type,
+			Status,
+			CreatedTime
+		]" \
+	| sort -k5,5 \
+	| columnise
+}
+
+product-provisioned-products() {
+  local products=$(skim-stdin "$@")
+  for product_id in ${products}; do
+    aws servicecatalog search-provisioned-products \
+	  ${product_id:+--filters "SearchQuery=productId:${product_id}"} \
+      --output text \
+      --query "ProvisionedProducts[].[ Id,
+		'product_id',
+        Name,
+        Type,
+        Status,
+        CreatedTime
+      ]" \
+    | sort -k6,6 \
+    | columnise
+  done
+}
+
+
+product-provision() {
+  local product_ids="$(skim-stdin "$@")"
+  local provisioned_product_name="${USER}-bma-$(date +%Y%m%d-%h%m%s)"
+
+  local product_id provisioning_artifact_id
+  for product_id in $product_ids; do
+    provisioning_artifact_id="$(
+	  product-provisioning-artifacts-latest "$product_id" | awk '{print $1}'
+	)"
+	echo "Provisioning product ${product_id} with artifact ${provisioning_artifact_id}"
+
+	aws servicecatalog provision-product \
+		--product-id "$product_id" \
+		--provisioned-product-name "${provisioned_product_name}" \
+		--provisioning-artifact-id "${provisioning_artifact_id}"
+	done
+}
+
+# shellcheck disable=SC2120,SC2155
+product-provision() {
+  local product_id="$(skim-stdin "$@" | cut -f1)"
+  if [[ $1 == $product_id ]]; then
+	shift
+  fi
+  local params=("$@") # Capture remaining arguments as parameters
+  local provisioned_product_name="${USER}-bma-$(date +%Y%m%dT%H%M%S)"
+
+  local product_id provisioning_artifact_id path_id
+    provisioning_artifact_id="$(
+    product-provisioning-artifacts-latest "${product_id}" | awk '{print $1}'
+    )"
+
+    # Retrieve all available PathIds for the product
+    path_ids=$(aws servicecatalog list-launch-paths --product-id "${product_id}" \
+              --query 'LaunchPathSummaries[*].Id' --output text)
+
+    # If multiple PathIds, prompt user to select one
+    if [[ $(echo "${path_ids}" | wc -w) -gt 1 ]]; then
+      echo "Multiple PathIds found: ${path_ids}"
+      echo "Please select one:"
+      read -r path_id
+    else
+      path_id=${path_ids}
+    fi
+
+	# Retrieve required parameters
+	required_params=$(aws servicecatalog describe-provisioning-parameters \
+	--product-id "${product_id}" \
+	--provisioning-artifact-id "${provisioning_artifact_id}" \
+	--path-id "${path_id}" \
+	--query "ProvisioningArtifactParameters[?DefaultValue==null].ParameterKey" \
+	--output text)
+
+    if [[ -z "${required_params}" ]]; then
+      echo "No required parameters found."
+    else
+      echo "The following parameters are required: ${required_params}"
+
+	    # Identify missing required parameters
+	  missing_params=()
+	  for req_param in $required_params; do
+		if ! [[ "${params[*]}" =~ "$req_param" ]]; then
+		missing_params+=("$req_param")
+		fi
+	  done
+		if [[ ${#missing_params[@]} -gt 0 ]]; then
+		echo "Missing required parameters: ${missing_params[*]}"
+		echo "Select a recently provisioned product to use its parameters or 'q' to quit:"
+
+		# Fetch recent provisioned products
+		recent_provisioned_products=$(aws servicecatalog scan-provisioned-products \
+			--access-level-filter Key=Account,Value=self \
+			--query "ProvisionedProducts[?ProductId=='$product_id' && Status=='AVAILABLE'] | sort_by(@, &CreatedTime) | reverse(@) | [0:5].[Id, Name, Status, CreatedTime]" \
+			--output text)
+
+		#	--query "ProvisionedProducts[?ProductId=='$product_id'] | sort_by(@, &CreatedTime) | [].[Id, Name, Status, CreatedTime]" \
+		# Create a simplified list for the select menu
+		select_options=()
+		IFS=$'\n'
+		for line in $recent_provisioned_products; do
+			select_options+=("$line")
+		done
+		unset IFS
+
+		select choice in "${select_options[@]}" "Quit"; do
+			if [[ $choice == "Quit" ]]; then
+			return 1
+			elif [[ -n $choice ]]; then
+			selected_id=$(echo "$choice" | awk '{print $1}' )
+			
+			# Fetch provisioning parameters
+
+			echo provisioning_parameters=$(aws servicecatalog describe-provisioned-product --id "$selected_id" --query "ProvisionedProductDetail.ProvisioningParameters" --output json)
+
+            echo "${provisioning_parameters}" | jq .
+			# -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' | while read -r param; do
+			#	params+=("$param")
+			#done
+			# Add your logic here to merge these parameters with the user-provided ones
+			break
+			fi
+		done
+	  fi
+    fi
+	return 0
+
+    # Prepare parameters for AWS CLI
+    local param_string=""
+    for param in "${params[@]}"; do
+      param_string+="ParameterKey=${param%%=*},ParameterValue=${param#*=} "
+    done
+
+    echo "Provisioning product ${product_id} with artifact ${provisioning_artifact_id}"
+
+	# Provision product and capture output
+	provision_output=$(aws servicecatalog provision-product \
+		--product-id "${product_id}" \
+		--provisioned-product-name "${provisioned_product_name}" \
+		--provisioning-artifact-id "${provisioning_artifact_id}" \
+		--path-id "${path_id}" \
+        --provisioning-parameters ${param_string})
+
+	provisioned_product_id=$(echo "${provision_output}" | jq -r '.RecordDetail.ProvisionedProductId')
+
+	# Wait for provisioning to complete and check final status
+	while true; do
+		sleep 30  # Wait for 30 seconds before checking status
+		final_status=$(aws servicecatalog describe-provisioned-product \
+		--id "${provisioned_product_id}" \
+		--query 'ProvisionedProductDetail.Status' \
+		--output text)
+
+		if [[ "${final_status}" != "CREATED" && "${final_status}" != "UNDER_CHANGE" ]]; then
+		break
+		fi
+	done
+
+	# Display final status and details
+	if [[ "${final_status}" == "AVAILABLE" ]]; then
+		echo "Product successfully provisioned. Final status: ${final_status}"
+	else
+		echo "Failed to provision product. Final status: ${final_status}"
+		error_message=$(aws servicecatalog describe-provisioned-product \
+		--id "${provisioned_product_id}" \
+		--query 'ProvisionedProductDetail.StatusMessage' \
+		--output text)
+		echo "Error details: ${error_message}"
+	fi
+}
+
+gimmec2() {
+  products ec2 | product-provision
+}
+
+
+
+
+# gimmec2(){
+
+# 	# Check if provisioned product id is provided
+# 	if [ -z "$1" ]; then
+# 	  echo "Usage: $0 <provisioned-product-id>"
+# 	  exit 1
+# 	fi
+
+# 	# Retrieve Product and Artifact IDs
+# 	product_info=$(aws servicecatalog describe-provisioned-product --id $1)
+# 	product_id=$(echo $product_info | jq -r '.ProvisionedProductDetail.ProductId')
+# 	provisioning_artifact_id=$(echo $product_info | jq -r '.ProvisionedProductDetail.ProvisioningArtifactId')
+
+# 	# Retrieve Provisioning Parameters
+# 	record_id=$(echo $product_info | jq -r '.ProvisionedProductDetail.LastRecordId')
+# 	params=$(aws servicecatalog describe-record --id $record_id | jq -r '.RecordOutputs[] | select(.OutputKey=="ProvisioningParameters") | .OutputValue')
+
+# 	# Create JSON File for Parameters
+# 	echo $params > params.json
+
+# 	# Generate a unique provision token
+# 	provision_token=$(uuidgen)
+
+# 	# Provision new product
+# 	aws servicecatalog provision-product \
+# 	  --product-id $product_id \
+# 	  --provisioning-artifact-id $provisioning_artifact_id \
+# 	  --provisioned-product-name "NewProvisionedProduct" \
+# 	  --provisioning-parameters file://params.json \
+# 	  --provision-token $provision_token
+
+# 	# Clean-up
+# 	rm params.json
+
+# 	echo "New product provisioned."
+# }

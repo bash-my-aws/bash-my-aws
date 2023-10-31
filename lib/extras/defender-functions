@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# defender-functions - CLI tools for Microsoft Defender for Endpoint
+
+# The domain api.securitycenter.microsoft.com is associated with the Microsoft
+# Defender for Endpoint service, which is a part of Microsoft 365's security
+# solutions.
+
+# OData queries with Microsoft Defender for Endpoint
+# https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/api/exposed-apis-odata-samples?view=o365-worldwide
+
+# Obtain the bearer token
+sc-token-get () {
+  export SC_TOKEN="$(az account get-access-token --resource https://api.securitycenter.microsoft.com/ | jq -r '.accessToken')"
+}
+
+Xsc-machines() {
+    sc-token-get
+
+    if [[ $1 == "-h" || $1 == "--help" ]]; then
+        echo "Usage: sc-machines [options] [filter] [top] [skip]"
+        echo
+        echo "Options:"
+        echo "  -h, --help      Display this help message and exit"
+        echo
+        echo "Arguments:"
+        echo "  filter          OData filter query to refine search"
+        echo "  top             Maximum number of results to return (max value: 10,000)"
+        echo "  skip            Number of results to skip for pagination"
+        echo
+        echo "Filterable Fields:"
+        echo "  computerDnsName, id, version, deviceValue, aadDeviceId, machineTags,"
+        echo "  lastSeen, exposureLevel, onboardingStatus, lastIpAddress, healthStatus,"
+        echo "  osPlatform, riskScore, rbacGroupId"
+        echo
+        echo "Example:"
+        echo "  sc-machines \"osPlatform eq 'windows'\" 100 0"
+        return 0
+    fi
+
+    result=${filter:+--filters FullTextSearch="$filter"}
+
+    local filter="${1:+\&\$filter=\'${1// /+}\'}" # e.g. "osPlatform eq 'windows'"
+    local top="${2:+\&\$top=\'${2}\'}" 
+    local skip="${3:+\&\$skip=\'${3}\'}" 
+
+    url="https://api.securitycenter.microsoft.com/api/machines?${filter}${top}${skip}"
+    echo "${url}"
+    curl --silent \
+        -H "Authorization: Bearer $SC_TOKEN" \
+        -H "Accept: application/json" \
+        "${url// /+}" \
+    | jq -r '.value[] | [
+        .id, 
+        .computerDnsName, 
+        .healthStatus, 
+        .lastSeen, 
+        .firstSeen, 
+        .osPlatform, 
+        .osVersion, 
+        .agentVersion] 
+        | @tsv' \
+    | columnise
+}
+
+sc-machine() {
+    sc-token-get
+    local machine_id="$1"
+  
+  # Endpoint URL to get machine details
+  local url="https://api.securitycenter.microsoft.com/api/machines/${machine_id}"
+  
+  # Send GET request to search for the machine
+  local response=$(curl -s -X GET \
+                      -H "Authorization: Bearer ${SC_TOKEN}" \
+                      -H "Accept: application/json" \
+                      "${url}")
+  
+  # Check if the request was successful
+  local success=$(echo "${response}" | jq -r '.id? // empty')
+  if [[ -z "${success}" ]]; then
+    # Output error message if the machine was not found or if the request failed
+    echo "Machine not found or request failed"
+    return 1
+  else
+    # Output the machine details
+    echo "${response}" | jq
+  fi
+}

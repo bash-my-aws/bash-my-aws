@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+
+# ssm-functions - AWS Systems Manager functions
+
+associations() {
+
+  local filters=$(bma __bma_read_filters $@)
+
+  # AWS-RunPatchBaseline                None                  2022-03-01T17:16:52.541000+11:00  Failed
+  # AWS-RunPatchBaseline                cron(45 3 * * ? *)    2023-07-03T13:47:42.125000+10:00  Success
+  # AWS-ConfigureAWSPackage             rate(14 days)         2023-06-28T17:39:15.866000+10:00  Success
+  # InstallAndConfigureCloudwatchAgent  cron(0 17 ? * TUE *)  2023-06-28T03:11:04+10:00         Failed
+
+  aws ssm list-associations \
+    --query 'Associations[].[
+        AssociationId,
+        AssociationName,
+        Name,
+        ScheduleExpression,
+        LastExecutionDate,
+        Overview.Status]' \
+    --output text |
+    grep -E -- "$filters" |
+    columnise
+}
+
+association-executions() {
+  local associations=$(skim-stdin "$@")
+  local association
+  for association in $associations; do
+    aws ssm describe-association-executions \
+      --association-id "$association" \
+      --output text \
+      --query '
+        AssociationExecutions[].[
+          AssociationId,
+          ExecutionId,
+          Status,
+          ResourceCountByStatus,
+          CreatedTime
+        ]' |
+      LC_ALL=C sort -k 5 -t $'\t' |
+      columnise
+  done
+}
+
+association-execution-targets() {
+  local association_id="$1"
+  local execution_id="$2"
+  aws ssm describe-association-execution-targets \
+    --association-id "$association_id" \
+    --execution-id "$execution_id" \
+    --query "
+      AssociationExecutionTargets[].[
+        AssociationId,
+        ExecutionId,
+        ResourceId,
+        Status,
+        DetailedStatus,
+        LastExecutionDate]" \
+    --output text |
+    columnise
+}
+
+ssm-parameters() {
+  aws ssm describe-parameters \
+    --output text \
+    --query 'Parameters[].[Name]'
+}
+
+ssm-parameter-value() {
+  local parameters=$(skim-stdin "$@")
+  local parameter
+  for parameter in $parameters; do
+    aws ssm get-parameter \
+      --name "$parameter" \
+      --query Parameter.Value \
+      --output text |
+      jq .
+  done
+}
+
+instance-ssm-platform-type () 
+{ 
+    local instance_ids=$(skim-stdin "$@");
+    if [[ -z $instance_ids ]]; then
+        echo "Usage: $FUNCNAME instance-id [instance-id]";
+        return 1;
+    fi;
+    for instance_id in $instance_ids;
+    do
+        local platform_type=$(aws --no-cli-pager ssm describe-instance-information --filters "Key=InstanceIds,Values=${instance_id}" --query 'InstanceInformationList[0].PlatformType' --output text)
+        echo -e "$instance_id\t$platform_type"
+    done
+}
+
+ssm-send-command() {
+    local command=$1
+    local instance=$2
+
+    if [[ -z $command ]] || [[ -z $instance ]]; then
+        echo "Usage: $0 <command> <instance-id>" >&2
+        return 1
+    fi
+
+    echo "Instance: $instance" >&2
+
+    # Send command
+    local command_id
+    if ! command_id=$(aws ssm send-command \
+        --instance-ids "$instance" \
+        --document-name "AWS-RunShellScript" \
+        --parameters "{\"commands\":[\"$command\"]}" \
+        --query "Command.CommandId" \
+        --output text); then
+        return 1
+    fi
+
+    echo "Instance: $instance Command ID: $command_id" >&2
+
+    # Wait for command to complete
+    aws ssm wait command-executed \
+        --command-id "$command_id" \
+        --instance-id "$instance"
+
+    # Fetch command result
+    aws ssm list-command-invocations \
+        --command-id "$command_id" \
+        --instance-id "$instance" \
+        --details \
+        --query "CommandInvocations[0].CommandPlugins[0].Output" \
+        --output text
+}
+
+ssm-instances() {
+
+  # List Instances known to SSM
+  #
+  #     $ ssm-instances
+  #     i-4e15ece1de1a3f869  Online  Amazon Linux  2  EC2Instance  10.67.128.69
+  #
+  # *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+  #
+  #     $ ssm-instances Linux
+  #     i-4e15ece1de1a3f869  Online  Amazon Linux  2  EC2Instance  10.67.128.69
+
+  local instances=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  local arg_filters="${instances:+--filters Key=InstanceIds,Values="${instances// /,}"}"
+
+  aws ssm describe-instance-information \
+    --output text \
+    $arg_filters \
+    --query "
+      InstanceInformationList[][
+        InstanceId,
+        PingStatus,
+        PlatformName,
+        PlatformVersion,
+        IPAddress,
+        ComputerName
+      ]" |
+  grep -E -- "$filters" |
+  LC_ALL=C sort -t $'\t' -k 1 |
+    columnise
+}

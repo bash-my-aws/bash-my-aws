@@ -1,0 +1,87 @@
+
+#!/bin/bash
+#
+# sns-functions
+#
+# List, run, start, stop and ssh to Amazon AWS EC2 instances
+
+
+sns-subscriptions() {
+
+  # List SNS Subscriptions
+  #
+  #     $ sns-subscriptions
+  #     arn:aws:sns:ap-southeast-2:123456789012:MyTopic  SMS  +123456789  confirmed  2022-12-31T12:34:56.000Z
+  #     arn:aws:sns:ap-southeast-2:123456789012:MyTopic  email  example@example.com  confirmed  2022-12-31T12:34:56.000Z
+  #
+  # *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+  #
+  #     $ sns-subscriptions MyTopic
+  #     arn:aws:sns:ap-southeast-2:123456789012:MyTopic  SMS  +123456789  confirmed  2022-12-31T12:34:56.000Z
+  
+  local filters=$(__bma_read_filters $@)
+  
+  aws sns list-subscriptions            \
+    --output text                       \
+    --query "
+      Subscriptions[][
+        TopicArn,
+        Protocol,
+        Endpoint,
+        SubscriptionArn,
+        SubscriptionAttributes.Status,
+        SubscriptionAttributes.Timestamp
+      ]"                |
+  grep -E -- "$filters"  |
+  awk -F'\t' 'BEGIN {OFS=FS} { 
+      n=split($1, a, ":"); $1=a[n]; 
+      m=split($4, b, ":"); $4=b[m-1]":"b[m]; 
+      print }' |
+  LC_ALL=C sort -b -k 6  |
+    columnise
+}
+
+sns-topics() {
+
+  # List SNS Topics
+  #
+  #     $ sns-topics
+  #     arn:aws:sns:ap-southeast-2:123456789012:MyTopic1  2022-12-31T12:34:56.000Z
+  #     arn:aws:sns:ap-southeast-2:123456789012:MyTopic2  2022-12-31T12:35:56.000Z
+  #
+  # *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+  #
+  #     $ sns-topics MyTopic1
+  #     arn:aws:sns:ap-southeast-2:123456789012:MyTopic1  2022-12-31T12:34:56.000Z
+  
+  local filters=$(__bma_read_filters $@)
+
+  aws sns list-topics            \
+    --output text                \
+    --query "Topics[][TopicArn]" |
+  grep -E -- "$filters"          |
+  sort
+}
+
+
+sns-topic-subscriptions() {
+
+  # List SNS Subscriptions for topics
+  
+  local sns_topics=$(skim-stdin "$@")
+  
+  aws sns list-subscriptions            \
+    --output text                       \
+    --query "
+      Subscriptions[][
+        TopicArn,
+        Protocol,
+        Endpoint,
+        SubscriptionArn,
+        SubscriptionAttributes.Status,
+        SubscriptionAttributes.Timestamp
+      ]"                |
+  grep -f <(echo "$sns_topics" | tr " " "\n")
+  LC_ALL=C sort -b -k 6  |
+    columnise
+}
