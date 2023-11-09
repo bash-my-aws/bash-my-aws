@@ -87,3 +87,40 @@ sc-machine() {
     echo "${response}" | jq
   fi
 }
+
+
+defender-downgrade-yum() {
+    # Get the current version with build number
+    INITIAL_VERSION=$(rpm -q --queryformat '%{VERSION}-%{RELEASE}\n' mdatp)
+
+    # Get the list of available versions
+    AVAILABLE_VERSIONS=$(yum --showduplicates list mdatp | awk '/mdatp/{print $2}' | sort -V)
+
+    # Find the previous version by comparing the sorted list to the current version
+    PREVIOUS_VERSION=""
+    LAST_VERSION=""
+    for VERSION in $AVAILABLE_VERSIONS; do
+        if [[ "$VERSION" == "$INITIAL_VERSION" ]]; then
+            PREVIOUS_VERSION=$LAST_VERSION
+            break
+        fi
+        LAST_VERSION=$VERSION
+    done
+
+    if [[ -z "$PREVIOUS_VERSION" ]]; then
+        echo "No previous version found."
+        return 1
+    fi
+
+    # Downgrade Microsoft Defender to the previous version
+    sudo yum -y downgrade mdatp-${PREVIOUS_VERSION}
+
+    # Get the new version with build number
+    FINAL_VERSION=$(rpm -q --queryformat '%{VERSION}-%{RELEASE}\n' mdatp)
+
+    # Display a summary of the version change
+    echo -e "\nSummary:"
+    echo "Version before downgrade: $INITIAL_VERSION"
+    echo "Version after downgrade: $FINAL_VERSION"
+}
+
