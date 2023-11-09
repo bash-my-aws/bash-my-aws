@@ -3,7 +3,7 @@ import configparser
 import os
 import sys
 
-# script.py - List AWS profile names with account IDs extracted from role_arn in credentials file
+# script.py - List AWS profile names with account IDs from aws_account_id or extracted from role_arn
 
 # Get patterns from command-line arguments
 patterns = sys.argv[1:]
@@ -31,12 +31,10 @@ def get_account_id_from_arn(arn):
 # Iterate through the sections and print those that match the patterns along with the account ID
 for section in config.sections():
     if not patterns or any(pattern in section for pattern in patterns):
-        try:
-            # Attempt to fetch the role_arn from the credentials file
+        account_id = config.get(section, 'aws_account_id') if config.has_option(section, 'aws_account_id') else 'Unknown'
+        # If aws_account_id is not found, try to extract it from role_arn
+        if account_id == 'Unknown' and config.has_option(section, 'role_arn'):
             role_arn = config.get(section, 'role_arn')
             account_id = get_account_id_from_arn(role_arn)
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            # If the role_arn is not found, set account_id to 'Unknown'
-            account_id = 'Unknown'
-        
+
         print(f"{section}\t{account_id}")
