@@ -3,6 +3,8 @@ import configparser
 import os
 import sys
 
+# script.py - List AWS profile names with account IDs extracted from role_arn in credentials file
+
 # Get patterns from command-line arguments
 patterns = sys.argv[1:]
 
@@ -18,8 +20,23 @@ credentials_file = os.environ.get('AWS_SHARED_CREDENTIALS_FILE', os.path.expandu
 config = configparser.ConfigParser(interpolation=None)
 config.read(credentials_file)
 
-# Iterate through the sections and print those that match the patterns
+# Helper function to extract account ID from role_arn
+def get_account_id_from_arn(arn):
+    # Split the ARN and extract the account ID
+    parts = arn.split(':')
+    if len(parts) > 4 and parts[0].startswith('arn') and parts[2] == 'iam':
+        return parts[4]  # The account ID is the 5th element in the ARN
+    return 'Unknown'
+
+# Iterate through the sections and print those that match the patterns along with the account ID
 for section in config.sections():
     if not patterns or any(pattern in section for pattern in patterns):
-        print(section)
-
+        try:
+            # Attempt to fetch the role_arn from the credentials file
+            role_arn = config.get(section, 'role_arn')
+            account_id = get_account_id_from_arn(role_arn)
+        except (configparser.NoSectionError, configparser.NoOptionError):
+            # If the role_arn is not found, set account_id to 'Unknown'
+            account_id = 'Unknown'
+        
+        print(f"{section}\t{account_id}")
