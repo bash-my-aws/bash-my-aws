@@ -38,9 +38,9 @@ ssm-instances() {
         IPAddress,
         ComputerName
       ]" |
-  grep -E -- "$filters" |
-  LC_ALL=C sort -t $'\t' -k 6 |
-  columnise
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t $'\t' -k 6 |
+    columnise
 }
 
 ssm-send-command() {
@@ -48,7 +48,7 @@ ssm-send-command() {
   # Run a command locally on EC2 instance(s)
   #
   #     USAGE: ssm-send-command COMMAND instance-id [instance-id]
-  # 
+  #
   #     $ ssm-send-command 'date +%F' i-0fict1234abcd
   #     Command ID: 12345abc-de67-f890-gh12-34ij56kl789m
   #     Waiting for command to complete...
@@ -63,7 +63,7 @@ ssm-send-command() {
   #     i-0fake4567d890efa  2023-11-30
   #     i-0fake5678e901fgh  2023-12-01
   #     i-0fake6789f012ghi  2023-12-01
- 
+
   local document_name="${bma_document_name:-AWS-RunShellScript}"
 
   local command=$1
@@ -71,8 +71,8 @@ ssm-send-command() {
   local instances=$(skim-stdin "$@")
 
   if [[ -z $command ]] || [[ -z $instances ]]; then
-      echo "Usage: $0 command instance-id [instance-id]" >&2
-      return 1
+    echo "Usage: $0 command instance-id [instance-id]" >&2
+    return 1
   fi
 
   # Escape double quotes in command
@@ -81,34 +81,34 @@ ssm-send-command() {
   # Send command
   local command_id
   if ! command_id=$(aws ssm send-command \
-      --targets "Key=instanceids,Values=${instances// /,}" \
-      --document-name "${bma_document_name}" \
-      --parameters "{\"commands\":[\"$escaped_command\"]}" \
-      --query "Command.CommandId" \
-      --output text); then
-      return 1
+    --targets "Key=instanceids,Values=${instances// /,}" \
+    --document-name "${bma_document_name}" \
+    --parameters "{\"commands\":[\"$escaped_command\"]}" \
+    --query "Command.CommandId" \
+    --output text); then
+    return 1
   fi
 
   echo "Command ID: $command_id" >&2
 
   echo >&2 "Waiting for command to complete..."
   for instance in $instances; do
-    
+
     # Wait for command to complete
     aws ssm wait command-executed \
-        --command-id "$command_id" \
-        --instance-id "$instance"
+      --command-id "$command_id" \
+      --instance-id "$instance"
 
     # Fetch command result
-    
+
     aws ssm list-command-invocations \
-        --command-id "$command_id" \
-        --instance-id "$instance" \
-        --details \
-        --query "CommandInvocations[0].CommandPlugins[0].['${instance}', Output]" \
-        --output text 
-   done \
-   | columnise
+      --command-id "$command_id" \
+      --instance-id "$instance" \
+      --details \
+      --query "CommandInvocations[0].CommandPlugins[0].['${instance}', Output]" \
+      --output text
+  done |
+    columnise
 }
 
 ssm-send-command-windows() {
@@ -214,7 +214,7 @@ ssm-association-executions() {
   #
   #     USAGE: ssm-associations [filter]
   #
-  #     $ ssm-associations 
+  #     $ ssm-associations
   #     12345678-9abc-def0-1234-56789abcdef0  a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890  Success  {Success=10}  2023-07-21T10:30:00.000000+00:00
   #     12345678-9abc-def0-1234-56789abcdef0  b1c2d3e4-f5g6-7890-b1c2-d3e4f5g67890  Success  {Success=15}  2023-07-22T11:00:00.000000+00:00
   #     12345678-9abc-def0-1234-56789abcdef0  c1d2e3f4-g5h6-7890-c1d2-e3f4g5h67890  Success  {Success=13}  2023-07-23T09:45:00.000000+00:00
@@ -273,11 +273,10 @@ ssm-association-execution-targets() {
   | columnise
 }
 
-
 ssm-parameters() {
 
   # List SSM Parameters
-  # 
+  #
   #    USAGE: ssm-parameters [filter]
   #
   #    $ ssm-parameters
@@ -325,7 +324,7 @@ ssm-parameter-value() {
   done
 }
 
-instance-ssm-platform-type () { 
+instance-ssm-platform-type() {
 
   # Show platform type (OS) for instance
   #
@@ -338,16 +337,14 @@ instance-ssm-platform-type () {
   #     i-0f1e2d3c4b5a6789e     None
   #     i-0a9f8e7d6c5b4a312     None
   #     i-01b2a3c4d5e6f7893     Windows
-    
-    local instance_ids=$(skim-stdin "$@");
-    if [[ -z $instance_ids ]]; then
-        echo "Usage: $FUNCNAME instance-id [instance-id]";
-        return 1;
-    fi;
-    for instance_id in $instance_ids;
-    do
-        local platform_type=$(aws --no-cli-pager ssm describe-instance-information --filters "Key=InstanceIds,Values=${instance_id}" --query 'InstanceInformationList[0].PlatformType' --output text)
-        echo -e "$instance_id\t$platform_type"
-    done
-}
 
+  local instance_ids=$(skim-stdin "$@")
+  if [[ -z $instance_ids ]]; then
+    echo "Usage: $FUNCNAME instance-id [instance-id]"
+    return 1
+  fi
+  for instance_id in $instance_ids; do
+    local platform_type=$(aws --no-cli-pager ssm describe-instance-information --filters "Key=InstanceIds,Values=${instance_id}" --query 'InstanceInformationList[0].PlatformType' --output text)
+    echo -e "$instance_id\t$platform_type"
+  done
+}
