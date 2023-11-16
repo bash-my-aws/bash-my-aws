@@ -66,15 +66,39 @@ ssm-send-command() {
   #
   #     See also: ssm-send-command-windows
 
-  local bma_document_name="${bma_document_name:-AWS-RunShellScript}"
-
   local command=$1
   shift
   local instances=$(skim-stdin "$@")
-
   if [[ -z $command ]] || [[ -z $instances ]]; then
     echo "Usage: $0 command instance-id [instance-id]" >&2
     return 1
+  fi
+
+  local ssm_target_platform="${ssm_target_platform:-Linux}"
+  local document_name
+
+  if [[ $ssm_target_platform = Linux ]]; then
+    document_name='AWS-RunShellScript'
+  elif [[ $ssm_target_platform = Windows ]]; then
+    document_name='AWS-RunPowerShellScript'
+  else
+    echo >&2 "Invalid value (\$ssm_target_platform ${ssm_target_platform})"
+    return 1
+  fi
+
+  if [[ $ssm_target_platform = Linux ]]; then
+
+    # If the command is a file
+    if [[ -f $command ]]; then
+      # Load contents of the file into variable
+      command=$(<"$command")
+    fi
+
+    # Base64 encode the command if it's a script
+    if [[ $command == *$'\n'* ]]; then
+      command=$(echo "$command" | base64)
+      command="echo $command | base64 --decode | bash"
+    fi
   fi
 
   # Escape double quotes in command
@@ -84,7 +108,7 @@ ssm-send-command() {
   local command_id
   if ! command_id=$(aws ssm send-command \
     --targets "Key=instanceids,Values=${instances// /,}" \
-    --document-name "${bma_document_name}" \
+    --document-name "${document_name}" \
     --parameters "{\"commands\":[\"$escaped_command\"]}" \
     --query "Command.CommandId" \
     --output text); then
@@ -147,7 +171,7 @@ ssm-send-command-windows() {
   #        FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
   #
   #     See also: ssm-send-command-windows
-  local bma_document_name='AWS-RunPowerShellScript'
+  local ssm_target_platform='Windows'
   ssm-send-command "$@"
 }
 
