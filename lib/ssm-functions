@@ -206,6 +206,46 @@ ssm-automation-executions() {
   | columnise
 }
 
+ssm-automation-execution-failures() {
+  local search="${@:-}"
+  ssm-automation-executions Failed | grep 'i-' | grep "${search}" | xargs -I{} sh -c ' echo "{}" | cut -f 1,2,3,4 | tr "\n" "\t" | tee /dev/tty | bma ssm-automation-step-executions | rg --word-regexp Failed | cut -f 2,3,4,6,8'
+}
+
+ssm-automation-step-executions() {
+
+  # Show step-by-step details for an SSM Automation Execution
+  #
+  #     USAGE: automation-execution-steps execution_id [execution_id]
+  #
+  #     $ ssm-automation-executions | ssm-automation-steps-executions
+  #     [Outputs detailed step information for each provided execution ID]
+  
+  local automation_executions="$(skim-stdin "$@")"
+
+  local automation_execution
+  for automation_execution in $automation_executions; do
+    # echo "Details for Automation Execution ID: $automation_execution"
+    aws ssm describe-automation-step-executions \
+      --automation-execution-id "$automation_execution" \
+      --output text \
+      --query "
+        StepExecutions[].[ 
+          '$automation_execution',
+          StepName,
+          StepStatus,
+          Action,
+          StepExecutionId,
+          ExecutionStartTime,
+          ExecutionEndTime,
+          FailureMessage
+        ]"
+    echo "" # Adds a line break for readability
+  done  \
+  | LC_ALL=C sort -k 5 -t $'\t' \
+  | columnise
+}
+
+
 ssm-automation-execution() {
 
   # Show details for an SSM Automation Execution
