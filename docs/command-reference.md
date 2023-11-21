@@ -614,6 +614,14 @@ List ip address of EC2 Instance(s)
     i-806d8f1592e2a2efd  10.178.243.63  54.214.244.90
 
 
+### instance-profile
+
+
+
+### instance-profile-role
+
+
+
 ### instance-ssh
 
 Establish SSH connection to EC2 Instance(s)
@@ -1090,16 +1098,16 @@ LOCAL_FILTER: grep results
 columnise
 
 
-### function
- ad-user-upns
+### ad-user-upns
 
 
-### function
- ad-user-upns
+
+### ad-user-upns
 
 
-### function
- ad-user-names
+
+### ad-user-names
+
 
 
 ### ad-users-graph
@@ -1166,29 +1174,29 @@ Usage: ad-app-owners APP [APP]
   LC_ALL=C sort -t$'\t' -b -k 3
 
 
-### function
- connectors
+### connectors
+
 Usage: connectors REMOTE_FILTER LOCAL_FILTER
 
 REMOTE_FILTER: filters on start of machineName
 LOCAL_FILTER: grep results
 
 
-### function
- connector-groups
+### connector-groups
+
 Usage: connector-groups REMOTE_FILTER LOCAL_FILTER
 
 REMOTE_FILTER: filters on start of displayName
 LOCAL_FILTER: grep results
 
 
-### function
- connector-group-apps
+### connector-group-apps
+
 Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 
-### function
- connector-group-members
+### connector-group-members
+
 Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
 
@@ -2017,6 +2025,207 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
 
 ### secrets
 
+
+
+## ssm-commands
+
+
+### ssm-instances
+
+List Instances known to SSM
+
+   USAGE: ssm-instances [filter]
+
+   $ ssm-instances
+   i-00a123b456d789012  Online  Amazon Linux                              2           192.168.1.10    server001.example.com
+   i-01b234c567e890123  Online  Microsoft Windows Server 2019 Datacenter  10.0.17763  192.168.1.20    winserver002.example.com
+   i-02c345d678f901234  Online  Ubuntu                                    20.04       192.168.1.30    ubuntu003.example.com
+   i-03d456e789a012345  Online  Ubuntu                                    20.04       192.168.1.40    ubuntu004.example.com
+   i-04e567f89b1234567  Online  Amazon Linux                              2           192.168.1.50    server005.example.com
+   *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+
+   $ ssm-instances Windows
+   i-00a123b456d789012 Online  Microsoft Windows Server 2019 Datacenter  68.0.11111  192.168.1.10    server001.example.com
+   i-01b234c567e890123 Online  Microsoft Windows Server 2022 Datacenter  68.0.11112  192.168.1.20    winserver002.example.com
+
+
+### ssm-send-command
+
+Run a command locally on EC2 instance(s) running Linux
+
+    USAGE: ssm-send-command COMMAND instance-id [instance-id]
+
+    $ ssm-send-command 'date +%F' i-0fict1234abcd
+    Command ID: 12345abc-de67-f890-gh12-34ij56kl789m
+    Waiting for command to complete...
+    i-0fict1234abcd  2023-12-01
+
+    $ ssm-instances | grep Linux | ssm-send-command 'date +%F'
+    Command ID: 98b7c6d2-e3f4-11ac-8d20-47a56db09c8f
+    Waiting for command to complete...
+    i-0fake1234a567bcd  2023-12-01
+    i-0fake2345b678cde  2023-12-01
+    i-0fake3456c789def  2023-11-30
+    i-0fake4567d890efa  2023-11-30
+    i-0fake5678e901fgh  2023-12-01
+    i-0fake6789f012ghi  2023-12-01
+
+    See also: ssm-send-command-windows
+Escape double quotes in command
+Send command
+
+
+### ssm-send-command-windows
+
+Run a command locally on EC2 instance(s) running Windows
+
+    USAGE: ssm-send-command-windows COMMAND instance-id [instance-id]
+
+    $ ssm-send-command 'Get-Hotfix' i-0fict1234abcd
+    Command ID: 12345abc-de67-f890-gh12-34ij56kl789m
+    Waiting for command to complete...
+    i-0fict1234abcd  2023-12-01
+
+    $ ssm-instances Windows | ssm-send-command-windows Get-Hotfix
+    Command ID: a0eeeddc-2edf-42bc-b0c7-122f5bc50956
+    Waiting for command to complete...
+    i-0fake1234abcd                                                                           
+       Source        Description      HotFixID      InstalledBy          InstalledOn              
+       ------        -----------      --------      -----------          -----------              
+       FAKEAPP01234  Update           KB1234567     NT AUTHORITY\SYSTEM  10/11/2023 12:00:00 AM   
+       FAKEAPP01234  Update           KB8901234     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
+       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
+       FAKEAPP01234  Update           KB2345678     NT AUTHORITY\SYSTEM  1/9/2019 12:00:00 AM     
+       FAKEAPP01234  Update           KB3456789     NT AUTHORITY\SYSTEM  3/11/2021 12:00:00 AM    
+       FAKEAPP01234  Security Update  KB4567890     NT AUTHORITY\SYSTEM  4/21/2019 12:00:00 AM    
+       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  5/15/2019 12:00:00 AM    
+       FAKEAPP01234  Security Update  KB6789012     NT AUTHORITY\SYSTEM  6/12/2019 12:00:00 AM   
+    ---Output truncated---                                                                        
+    i-0fake1234abcd                                                                           
+       Source        Description      HotFixID      InstalledBy          InstalledOn              
+       ------        -----------      --------      -----------          -----------              
+       FAKEAPP01234  Update           KB1234567     NT AUTHORITY\SYSTEM  10/11/2023 12:00:00 AM   
+       FAKEAPP01234  Update           KB8901234     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
+       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
+
+    See also: ssm-send-command-windows
+
+
+### ssm-automation-executions
+
+List recent SSM Automation Executions
+USAGE: ssm-automation-executions [filter]
+
+    $ ssm-automation-executions
+    1234abcd-ef56-7890-gh12-ijk3456lmnop  UpdateAndSecureNodes    None                 Failed   2023-07-20T09:00:00.000000+00:00  None
+    5678efgh-ijkl-9012-mnop-qrstuvwx3456  UpdateAndSecureNodes    i-0a1b2c3d4e5f67890  Failed   2023-07-20T09:00:10.000000+00:00  None
+    90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
+    cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
+    ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
+
+
+### ssm-automation-execution
+
+Show details for an SSM Automation Execution
+
+    USAGE: ssm-automation-execution execution_id [execution_id]
+
+    $ ssm-automation-executions | head | ssm-automation-execution
+    1234abcd-5678-9def-ghij-klmnopqrstuv  DeployNewFeatures  i-01234a5b6c7d8e9f0  Failed  2023-09-10T10:10:10.000000+00:00  2023-09-10T10:10:20.000000+00:00
+    9876fedc-ba98-7654-c321-onmlkjihgfed  DeployNewFeatures  i-09876b5c4d3e2f1g0  Failed  2023-09-10T10:20:30.000000+00:00  2023-09-10T10:20:40.000000+00:00
+    abcd1234-efgh-5678-ijkl-9mnopq7rstuv  DeployNewFeatures  i-0a1b2c3d4e5f6g7h8  Failed  2023-09-10T10:30:50.000000+00:00  2023-09-10T10:31:00.000000+00:00
+    ijkl8765-ghij-4321-klmn-5opq4rstu3vw  DeployNewFeatures  i-0i8j7k6l5m4n3o2p1  Failed  2023-09-10T10:40:10.000000+00:00  2023-09-10T10:40:20.000000+00:00
+
+
+### ssm-associations
+
+List SSM associations
+
+    USAGE: ssm-associations [filter]
+
+    $ ssm-associations
+    Task-RunSecurityScan                cron(30 2 * * SUN)    2023-01-15T02:30:00.000000+00:00  Failed
+    Task-UpdateSystemPackages           cron(0 4 * * SAT)     2023-04-22T04:00:00.000000+00:00  Success
+    Service-ConfigureNetworkSettings    rate(7 days)          2023-05-07T11:00:00.000000+00:00  Success
+    Script-DeployMonitoringTools        cron(15 3 * * FRI)    2023-03-03T03:15:00.000000+00:00  Failed
+
+
+### ssm-association-executions
+
+List SSM Association Executions
+
+    USAGE: ssm-associations [filter]
+
+    $ ssm-associations
+    12345678-9abc-def0-1234-56789abcdef0  a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890  Success  {Success=10}  2023-07-21T10:30:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  b1c2d3e4-f5g6-7890-b1c2-d3e4f5g67890  Success  {Success=15}  2023-07-22T11:00:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  c1d2e3f4-g5h6-7890-c1d2-e3f4g5h67890  Success  {Success=13}  2023-07-23T09:45:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  d1e2f3g4-h5i6-7890-d1e2-f3g4h5i67890  Failed   {Failed=2, Success=12} 2023-07-24T12:30:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  e1f2g3h4-i5j6-7890-e1f2-g3h4i5j67890  Failed   {Failed=3, Success=11}  2023-07-25T14:15:00.000000+00:00
+
+
+### ssm-association-execution-targets
+
+List targets for SSM Association Execution
+
+    USAGE: ssm-association-execution-targets association-id execution-id
+
+    $ association-execution-targets abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-01234abcde56789f0  Success  Success  2023-08-10T11:30:00.000000+00:00
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-02345bcdef67891g1  Success  Success  2023-08-10T11:30:10.000000+00:00
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-03456cdefg78912h2  Success  Success  2023-08-10T11:30:20.000000+00:00
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-04567defgh89123i3  Success  Success  2023-08-10T11:30:30.000000+00:00
+
+Note: Can't use skim-stdin as it requires to arguments
+
+
+### ssm-parameters
+
+List SSM Parameters
+
+   USAGE: ssm-parameters [filter]
+
+   $ ssm-parameters
+   /company/ad/a1234567/username
+   /ami/Ubuntu-20.04-proxy
+   /cloudwatch-agent/config/general
+   /cnf/staticSite/B1P2V34SR5KF0Z/encryptionKeyArn
+   /ops/CloudMetrics/linux
+   /ops/CloudMetrics/windows
+
+
+### ssm-parameter-value
+
+Print SSM Parameter Value
+
+   USAGE: ssm-parameter-value ssm-parameter [ssm-parameter]
+
+   $ ssm-parameters | ssm-parameter-value
+   /ops/Monitoring/metrics/unix
+   {
+     "agent": {
+       "metrics_collection_interval": 60,
+       "logfile": "/var/log/aws-monitoring/aws-monitoring-agent.log"
+     },
+     "logs": {
+       "logs_collected": {
+         "files": {
+   <snip>
+
+
+### instance-ssm-platform-type
+
+Show platform type (OS) for instance
+
+    USAGE: instance-ssm-platform-type instance-id [instance-id]
+
+    $ instances | instance-ssm-platform-type
+    i-0c1d2e3f4a567890b     None
+    i-0d1c2b3a4e5f6789c     Linux
+    i-0e1f2d3c4b5a6789d     Linux
+    i-0f1e2d3c4b5a6789e     None
+    i-0a9f8e7d6c5b4a312     None
+    i-01b2a3c4d5e6f7893     Windows
 
 
 ## sts-commands
