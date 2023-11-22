@@ -257,6 +257,7 @@ tag-keys
 tag-values
 target-group-targets
 target-groups
+trim_date
 vpc-az-count
 vpc-azs
 vpc-default-delete
