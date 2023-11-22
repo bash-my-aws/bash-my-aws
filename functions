@@ -97,6 +97,8 @@ distributions
 ecr-repositories
 ecr-repository-images
 ecs-clusters
+ecs-scaling-actions
+ecs-scaling-activities
 ecs-services
 ecs-tasks
 elasticache-replication-groups
@@ -199,7 +201,6 @@ resource-groups
 resource-show
 resourceids
 resources
-scaling-ecs
 secrets
 service-principals
 skim-stdin
