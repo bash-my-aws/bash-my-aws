@@ -923,7 +923,7 @@ List scaling activities for Autoscaling Group(s)
 ## autoscaling-commands
 
 
-### scaling-ecs
+### ##scaling-ecs
 
 List autoscaling actions
 filter by environment (eg test1) or namespace (eg ecs)
@@ -1406,7 +1406,7 @@ List images for ECR Repositories
 ## ecs-commands
 
 
-### ecs-clusters
+### ecs-clusters2
 
 List ECS clusters
 output includes clusterName,status,activeServicesCount,runningTasksCount,pendingTasksCount
@@ -1419,7 +1419,7 @@ if you pass an argument, it'll filter for clusters whose ARN contains your text
   test2-ecs-cluster        ACTIVE  3  3  0
 
 
-### ecs-services
+### ecs-services2
 
 List ECS services
 output includes serviceName,status,desiredCount,runningCount,pendingCount,createdAt
@@ -1448,6 +1448,24 @@ if you do pass a filter, it filters on the task name.  All clusters are included
   arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-public:18    2023-09-19T17:51:56.418000+10:00  2048  4096
   arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-admin:20     2023-08-29T10:03:36.956000+10:00  2048  4096
   arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-hangfire:22  2023-09-19T17:11:06.622000+10:00  1024  2048
+
+
+### ecs-scaling-activities
+
+LIst autoscaling activities - the actual scaling events that have happened
+eg
+ecs-scaling www
+2023-11-22T06:24:50.937000+11:00        www-ecs-public-ServicePublic-OuN3rXBLvmx3-AlarmLow-64de4512-d901-4b26-a6a2-184bb1e90bc6 in state ALARM triggered policy www-ecs-public-target-tracking-mem70     Successfully set desired count to 2. Change successfully fulfilled by ecs.
+2023-11-22T05:25:48.611000+11:00        www-ecs-public-ServicePublic-OuN3rXBLvmx3-AlarmHigh-6408c172-647e-4c0e-aac9-a800cd83317d in state ALARM triggered policy www-ecs-public-target-tracking-mem70    Successfully set desired count to 3. Change successfully fulfilled by ecs.
+
+
+### ecs-scaling-actions
+
+List autoscaling actions - cron-based scheduled scaling
+filter by environment (eg test1) or namespace (eg ecs)
+if you pass an argument, it'll filter for clusters whose ARN contains your text
+
+  $ scaling-ecs 'test.*down'     # list the scale-down times of all our test environments
 
 
 ## elasticache-commands
@@ -2122,6 +2140,20 @@ USAGE: ssm-automation-executions [filter]
     90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
     cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
     ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
+
+
+### ssm-automation-execution-failures
+
+
+
+### ssm-automation-step-executions
+
+Show step-by-step details for an SSM Automation Execution
+
+    USAGE: automation-execution-steps execution_id [execution_id]
+
+    $ ssm-automation-executions | ssm-automation-steps-executions
+    [Outputs detailed step information for each provided execution ID]
 
 
 ### ssm-automation-execution

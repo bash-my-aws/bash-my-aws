@@ -92,14 +92,15 @@ debug
 deployment
 deployment-delete-danger
 deployment-groups
+deployments
 deployments-group
 distributions
 ecr-repositories
 ecr-repository-images
-ecs-clusters
+ecs-clusters2
 ecs-scaling-actions
 ecs-scaling-activities
-ecs-services
+ecs-services2
 ecs-tasks
 elasticache-replication-groups
 elasticaches
@@ -116,6 +117,9 @@ elbv2-dnsname
 elbv2-subnets
 elbv2-target-groups
 elbv2s
+fargate-clusters
+fargate-services
+fargate-tasks
 hosted-zone-ns-records
 hosted-zones
 iam-role-principal
