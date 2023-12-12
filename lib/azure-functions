@@ -472,15 +472,15 @@ ad-users() {
   # columnise
 }
 
-function ad-user-upns() {
+ad-user-upns() {
   ad-users $@ | cut -f1
 }
 
-function ad-user-upns() {
+ad-user-upns() {
   ad-users $@ | cut -f2
 }
 
-function ad-user-names() {
+ad-user-names() {
   ad-users $@ | cut -f3
 }
 
@@ -664,7 +664,7 @@ ad-app-owners() {
   #   LC_ALL=C sort -t$'\t' -b -k 3
 }
 
-function connectors() {
+connectors() {
 
   # Usage: connectors REMOTE_FILTER LOCAL_FILTER
   #
@@ -690,7 +690,7 @@ function connectors() {
     sort -k 3
 }
 
-function connector-groups() {
+connector-groups() {
 
   # Usage: connector-groups REMOTE_FILTER LOCAL_FILTER
   #
@@ -716,7 +716,7 @@ function connector-groups() {
     sort -k 2
 }
 
-function connector-group-apps() {
+connector-group-apps() {
 
   # Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 
@@ -742,7 +742,7 @@ function connector-group-apps() {
   done
 }
 
-function connector-group-members() {
+connector-group-members() {
 
   # Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
 

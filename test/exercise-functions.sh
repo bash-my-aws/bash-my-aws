@@ -4,21 +4,21 @@
 source "${BMA_HOME:-$HOME/.bash-my-aws}"/bin/bma
 
 # init function override for aws
-function aws() {
+aws() {
   echo "aws $@"
 }
 
 # override to make output prettier
-function base64() {
+base64() {
   cat
 }
 
 # Don't run this one
-function stack-tail() {
+stack-tail() {
   :
 }
 
-function cmd() {
+cmd() {
   echo "# Command: $@"
   $@
   echo

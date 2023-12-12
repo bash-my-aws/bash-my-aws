@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+
+# cached - Cache the output of shell commands
+
+# example usage:
+#
+# $ cached date
+# Cache hit (35 seconds ago)
+# Mon 16 Oct 2023 10:46:31 AEDT
+# 
+# $ cached -f date
+# Mon 16 Oct 2023 10:47:11 AEDT
+# 
+# $ cached date
+# Cache hit (3 seconds ago)
+# Mon 16 Oct 2023 10:47:11 AEDT
+
+import os
+import sys
+import subprocess
+import hashlib
+import time
+from pathlib import Path
+from datetime import datetime, timedelta
+
+def print_help():
+    print("Usage: cached [-f|--force] [-h|--help] <command>")
+    print("  -f, --force    Force the command to run and update the cache")
+    print("  -h, --help     Show this help message and exit")
+    sys.exit(0)
+
+def calculate_age_in_human_friendly_format(timestamp):
+    now = time.time()
+    age_seconds = now - timestamp
+    age = timedelta(seconds=age_seconds)
+
+    if age_seconds < 60:
+        return f"{age_seconds:.0f} seconds ago"
+    elif age_seconds < 3600:
+        return f"{age.seconds // 60} minutes ago"
+    else:
+        return f"{age.seconds // 3600} hours ago"
+    
+# Get XDG cache directory
+cache_dir = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "cached"
+cache_dir.mkdir(parents=True, exist_ok=True)
+
+# Separate script flags from the command to run
+force_update = False
+command_start_idx = 1
+
+for idx, arg in enumerate(sys.argv[1:]):
+    if arg == '-f' or arg == '--force':
+        force_update = True
+        command_start_idx = idx + 2
+    elif arg == '-h' or arg == '--help':
+        print_help()
+    elif arg == '-s' or arg == '--show-cache':  # New flag
+        print(f"Cache directory: {cache_dir}")
+        sys.exit(0)  # Exit after showing the cache directory
+    else:
+        command_start_idx = idx + 1
+        break
+
+# Check if a command is provided
+if command_start_idx >= len(sys.argv) or not sys.argv[command_start_idx:]:
+    print("Error: No command provided")
+    print_help()
+    sys.exit(1)  # Explicitly exit the script
+
+# Get timeout from environment or default to 60 minutes
+timeout_minutes = int(os.environ.get("CACHED_TIMEOUT", 60))
+timeout_seconds = timeout_minutes * 60
+
+# Create a safe filename based on the command and its arguments
+cmd_str = " ".join(sys.argv[command_start_idx:])
+filename = hashlib.sha256(cmd_str.encode()).hexdigest()
+cache_file = cache_dir / filename
+
+if cache_file.exists() and not force_update:
+    file_age_seconds = time.time() - cache_file.stat().st_mtime
+    file_age_humanized = calculate_age_in_human_friendly_format(cache_file.stat().st_mtime)
+
+    if file_age_seconds < timeout_seconds:
+        print(f"Cache hit ({file_age_humanized})", file=sys.stderr)
+        with open(cache_file, 'r') as f:
+            print(f.read())
+        sys.exit(0)
+    else:
+        print(f"Cache miss ({file_age_humanized})", file=sys.stderr)
+
+# Run the command
+try:
+    output = subprocess.check_output(cmd_str, shell=True, text=True)
+except subprocess.CalledProcessError as e:
+    print(f"Command failed with error code {e.returncode}", file=sys.stderr)
+    sys.exit(1)
+
+# Cache the output
+with open(cache_file, 'w') as f:
+    f.write(output)
+
+print(output)

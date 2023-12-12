@@ -90,6 +90,7 @@ stacks() {
     --output text       |
   grep -E -- "$filters" |
   LC_ALL=C sort -b -k 3 |
+    trim_date |
     columnise
 }
 

@@ -27,7 +27,7 @@ pkcs12-verify() {
 
   # Extract certificate and chain from PFX file
   openssl pkcs12 $BMA_PKCS12_ARGS -in "$pfx_file" -nodes -passin "pass:${pfx_pass:?}" |
-    openssl x509 -noout -issuer -subject -dates || return 1
+    openssl x509 -noout -issuer -subject -dates || echo >&2 "Set the following if using unsupported algorithm 'RC2-40-CBC': BMA_PKCS12_ARGS='-legacy'" && return 1
 
   cat "$pfx_file" | pkcs12-cert "$pfx_pass" > "$cert_file"
   cat "$pfx_file" | pkcs12-chain "$pfx_pass" > "$chain_file"
