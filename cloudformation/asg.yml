@@ -64,6 +64,10 @@ Resources:
                   - 'ec2messages:GetMessages'
                   - 'ec2messages:SendReply'
                   - 'cloudwatch:PutMetricData'
+                  - 'ssmmessages:CreateControlChannel'
+                  - 'ssmmessages:CreateDataChannel'
+                  - 'ssmmessages:OpenControlChannel'
+                  - 'ssmmessages:OpenDataChannel'
                 Resource: '*'
 
   SSMInstanceProfile:
