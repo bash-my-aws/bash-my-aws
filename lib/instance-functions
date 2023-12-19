@@ -4,6 +4,44 @@
 #
 # List, run, start, stop and ssh to Amazon AWS EC2 instances
 
+# Function to display the stopped duration of EC2 instances
+function instance-stopped() {
+    # Usage: instance-stopped [instance_id_1 instance_id_2 ...] | instance-stopped (with no args for standard input)
+
+    # Read from standard input or from arguments
+    local instance_ids
+    instance_ids=$(skim-stdin "$@")
+
+    local filter=""
+    if [ -n "$instance_ids" ]; then
+        filter="--instance-ids $instance_ids"
+    else
+        filter="--filters Name=instance-state-name,Values=stopped"
+    fi
+
+    # Fetch instances with their state transition reason
+    aws ec2 describe-instances $filter \
+        --query 'Reservations[*].Instances[*].[InstanceId, State.Name, StateTransitionReason]' \
+        --output text | while read instance_id state reason
+    do
+        if [ "$state" == "stopped" ]; then
+            # Extract stop time from the reason
+            local stop_time=$(echo $reason | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}')
+            if [ ! -z "$stop_time" ]; then
+                # Convert stop time to timestamp
+                local stop_timestamp=$(date -d $stop_time +%s)
+                local current_timestamp=$(date +%s)
+                # Calculate stopped duration in hours
+                local duration=$(( (current_timestamp - stop_timestamp) / 3600 ))
+                echo "Instance ID: $instance_id has been stopped for $duration hours."
+            else
+                echo "Instance ID: $instance_id stop time not available."
+            fi
+        fi
+    done
+}
+
+
 instances() {
 
   # List EC2 Instances
@@ -35,7 +73,8 @@ instances() {
         [Tags[?Key=='Name'].Value][0][0],
         LaunchTime,
         Placement.AvailabilityZone,
-        VpcId
+        VpcId,
+        StateTransitionReason
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -t$'\t' -k 6 |
@@ -90,6 +129,42 @@ instance-az() {
       ][]"          |
     columnise
 }
+
+instance-ssm-command-invocations() {
+  # List SSM command invocations for EC2 Instance(s)
+  #
+  # USAGE: instance-ssm-command-invocations instance-id [instance-id]
+  #
+  # $ instances | instance-ssm-command-invocations 
+  # ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
+  # 097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
+  # 472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
+  # 8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
+  # 63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
+  # 37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+
+  for instance_id in $instance_ids; do
+    aws ssm list-command-invocations \
+      --instance-id "${instance_id}" \
+      --output text                  \
+      --query "
+        CommandInvocations[][
+          CommandId,
+          InstanceId,
+          DocumentName,
+          Status,
+          RequestedDateTime
+        ]"                |
+    LC_ALL=C sort -t$'\t' -k 5 |
+    columnise
+  done
+}
+
+
+
 
 instance-console() {
 
