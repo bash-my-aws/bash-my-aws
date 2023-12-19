@@ -207,8 +207,15 @@ ssm-automation-execution() {
 }
 
 ssm-command-invocation() {
-  # Handle arguments and/or STDIN
+
+  # Show details for an SSM Command Invocation
+  #
+  # Usage: ssm-command-invocation command instance
+  #
+  # $ ssm-command-invocation 12345678-90ab-cdef-1234-567890abcdef i-01234abcde56789f0
+
   inputs=$(skim-stdin-2 "$@")
+  [[ -z $inputs ]] && __bma_usage "command instance" && return 1
 
   local command instance
   while IFS=$'\t' read -r command instance; do
@@ -224,8 +231,9 @@ alias instance-ssm-command-invocation-failed='ssm-command-invocation-failed'
 
 ssm-command-invocation-failed() {
 
-  local instances=$(skim-stdin)
+  local instances=$(skim-stdin "$@")
   # local plugin='runShellScript'
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
 
   local instance
   for instance in $instances; do
