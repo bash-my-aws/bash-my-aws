@@ -43,9 +43,10 @@ region() {
   local inputs=$(skim-stdin "$@")
   # XXX Check input is a valid region
   if [[ -z "$inputs" ]]; then
-    echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
+    echo "${AWS_DEFAULT_REGION:-${AWS_REGION:-AWS_DEFAULT_REGION and AWS_REGION not set}}"
   else
     export AWS_DEFAULT_REGION="$inputs"
+    export AWS_REGION="${AWS_DEFAULT_REGION}"
   fi
 }
 
@@ -61,11 +62,18 @@ region-each() {
   #     ...
   #     example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
 
+  # Updated to properly support both AWS_REGION and AWD_DEFAULT_REGION
+  # https://docs.aws.amazon.com/sdkref/latest/guide/feature-region.html
+ 
   local old_aws_default_region="$AWS_DEFAULT_REGION"
+  local old_aws_region="$AWS_REGION"
   export AWS_DEFAULT_REGION
+  export AWS_REGION
   for AWS_DEFAULT_REGION in $(regions); do
+    AWS_REGION="${AWS_DEFAULT_REGION}"
     eval "$@" | sed "s/$/ #${AWS_DEFAULT_REGION}/"
   done
   AWS_DEFAULT_REGION="$old_aws_default_region"
+  AWS_REGION="$old_aws_region"
 }
 
