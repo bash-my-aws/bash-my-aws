@@ -3,20 +3,33 @@
 # miscellaneous functions that don't belong anywhere else
 
 
-  # Handy function to columnise output
-  #
-  # Leaving the command itself in functions (for now) to be explicit but
-  # I'm finding it handy to have this function at the CLI for formatting
-  # output from commands run in a loop.
-  #
-  # Looped commands (such as those with multiple resources piped in) do
-  # not delay output by sending the aggregate through `column`.
+# Handy function to columnise output
+
+awslogin-firefox(){
+  local account="${1:?}"
+  local url=$(aws-vault login "${account}" -s | jq -s -R -r @uri)
+  (nohup firefox "ext+container:name=$account&url=$url" &>/dev/null) &
+}
 
 columnise() {
-
-  if [[ $BMA_COLUMNISE_ONLY_WHEN_TERMINAL_PRESENT == 'true' ]] && ! [[ -t 1 ]]; then
-    cat
+  # Check if no arguments are provided
+  if [ $# -eq 0 ]; then
+    if ! [[ -t 1 ]]; then
+      cat
+    else
+      column -t -s $'\t'
+    fi
   else
-    column -t -s $'\t'
+    # Loop through all arguments
+    for file in "$@"; do
+      if [ -e "$file" ]; then
+        # Process the file if it exists
+        column -t -s $'\t' < "$file"
+      else
+        # Print an error message if the file doesn't exist
+        echo "Error: File '$file' does not exist" >&2
+      fi
+    done
   fi
 }
+
