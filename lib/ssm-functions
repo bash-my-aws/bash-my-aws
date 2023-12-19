@@ -2,6 +2,243 @@
 
 # ssm-functions - AWS Systems Manager functions
 
+# aws ssm get-command-invocation - get more detail
+
+
+
+
+# Most recent failed automations
+ssm-association-fail-last(){
+  local association="${1:-}"
+  ssm-associations "$association" | tee /dev/tty \
+  | ssm-association-executions \
+  | rg Failed \
+  | tail -1 | tee /dev/tty \
+  | ssm-association-execution-targets
+
+  # 459004af-cf9e-4e04-9802-a99acf658b29	InstallAndLinkAgents	InstallAndLinkAgents	cron(0 8 ? * * *)	2023-12-07T19:06:26+11:00	Failed
+  # 459004af-cf9e-4e04-9802-a99acf658b29	6ae13f8b-98c2-4476-b2d9-0f2b71736a89	Failed	{Failed=4}	2023-12-07T19:01:30.213000+11:00
+  # 459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0a1bb45ae0b6841cf  e56ba970-dc9c-4efa-af75-b0a0dd3b9c93  Failed  2023-12-07T19:03:58+11:00
+  # 459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0f044cea6d953aa36  85546efd-b525-4001-9749-c77eeceb46a7  Failed  2023-12-07T19:03:58+11:00
+  # 459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0bbaa71be80ce4419  e0e48736-78f9-4c2b-8358-e3e455dde729  Failed  2023-12-07T19:06:25+11:00
+  # 459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0713cddda0f432d62  76cc092e-00ee-492c-8ac9-5f1730347443  Failed  2023-12-07T19:06:26+11:00
+
+  # Now dig deeper to get the commands!
+
+  # $ ssm-automation-step-executions 76cc092e-00ee-492c-8ac9-5f1730347443
+  # 76cc092e-00ee-492c-8ac9-5f1730347443
+  # 76cc092e-00ee-492c-8ac9-5f1730347443  fc7cac46-9e94-4525-b3dd-5b49e0c598ac  CheckSSMOnline          Success  aws:assertAwsResourceProperty  None                                  2023-12-07T19:03:59.115000+11:00  2023-12-07T19:03:59.430000+11:00
+  # 76cc092e-00ee-492c-8ac9-5f1730347443  1b88c056-8f95-4c15-bb6a-afc657e5aeb5  getSSMParams            Success  aws:executeScript              None                                  2023-12-07T19:03:59.683000+11:00  2023-12-07T19:04:12.736000+11:00
+  # 76cc092e-00ee-492c-8ac9-5f1730347443  700de8b4-5eae-4582-b6be-6d41f7091056  NoOp                    Success  aws:sleep                      None                                  2023-12-07T19:06:25.763000+11:00  2023-12-07T19:06:25.856000+11:00
+  # 76cc092e-00ee-492c-8ac9-5f1730347443  90486d41-8d49-42bc-a4fc-aae2297c5761  InstallAndLinkDefender  Failed   aws:executeAutomation          f76f242a-a8d4-4450-935f-8a4208cf1754  2023-12-07T19:04:12.949000+11:00  2023-12-07T19:06:25.517000+11:00
+
+
+  # $ ssm-automation-step-executions f76f242a-a8d4-4450-935f-8a4208cf1754
+  # f76f242a-a8d4-4450-935f-8a4208cf1754
+  # f76f242a-a8d4-4450-935f-8a4208cf1754  b73cc93b-1733-43dd-993d-f8ae8ff38952  ChoiceDefender        Success  aws:branch      None                                  2023-12-07T19:04:13.684000+11:00  2023-12-07T19:04:13.815000+11:00
+  # f76f242a-a8d4-4450-935f-8a4208cf1754  2b03b1ce-b39a-4533-97dd-4d7d5dd5a836  Exempt                Pending  aws:sleep       None                                  None                              None
+  # f76f242a-a8d4-4450-935f-8a4208cf1754  882c102b-724f-4751-ace4-cb577745c2a2  NoOp                  Pending  aws:sleep       None                                  None                              None
+  # f76f242a-a8d4-4450-935f-8a4208cf1754  ac32131e-154f-479e-9b30-48ca0402dfd3  InstallDefenderLinux  Failed   aws:runCommand  e6574b26-5e4b-4fe0-9c90-82089c8470bc  2023-12-07T19:04:14.034000+11:00  2023-12-07T19:06:25.011000+11:00
+
+# $ ssm-command-invocation e6574b26-5e4b-4fe0-9c90-82089c8470bc i-0713cddda0f432d62 --detail
+# {
+#     "CommandId": "e6574b26-5e4b-4fe0-9c90-82089c8470bc",
+#     "InstanceId": "i-0713cddda0f432d62",
+#     "Comment": "",
+#     "DocumentName": "AWS-RunRemoteScript",
+#     "DocumentVersion": "$DEFAULT",
+#     "ResponseCode": 0,
+#     "ExecutionEndDateTime": "",
+#     "Status": "Failed",
+#     "StatusDetails": "Failed",
+#     "CloudWatchOutputConfig": {
+#         "CloudWatchLogGroupName": "",
+#         "CloudWatchOutputEnabled": false
+#     }
+# }
+
+
+}
+
+skim-stdin-2() {
+  { 
+    [[ $# -ge 2 ]] && printf "%s\t%s\n" "$1" "$2"
+    # Read from STDIN if data is available
+    if ! [[ -t 0 ]]; then
+      cat
+    fi
+  } | awk -F'\t' 'NF>=2 {print $1 "\t" $2}' 
+}
+
+ssm-association-executions() {
+
+  # List SSM Association Executions
+  #
+  #     USAGE: ssm-associations [filter]
+  #
+  #     $ ssm-associations
+  #     12345678-9abc-def0-1234-56789abcdef0  a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890  Success  {Success=10}  2023-07-21T10:30:00.000000+00:00
+  #     12345678-9abc-def0-1234-56789abcdef0  b1c2d3e4-f5g6-7890-b1c2-d3e4f5g67890  Success  {Success=15}  2023-07-22T11:00:00.000000+00:00
+  #     12345678-9abc-def0-1234-56789abcdef0  c1d2e3f4-g5h6-7890-c1d2-e3f4g5h67890  Success  {Success=13}  2023-07-23T09:45:00.000000+00:00
+  #     12345678-9abc-def0-1234-56789abcdef0  d1e2f3g4-h5i6-7890-d1e2-f3g4h5i67890  Failed   {Failed=2, Success=12} 2023-07-24T12:30:00.000000+00:00
+  #     12345678-9abc-def0-1234-56789abcdef0  e1f2g3h4-i5j6-7890-e1f2-g3h4i5j67890  Failed   {Failed=3, Success=11}  2023-07-25T14:15:00.000000+00:00
+
+  local associations=$(skim-stdin "$@")
+  [[ -z $associations ]] && __bma_usage "association [association]" && return 1
+
+  local association
+  for association in $associations; do
+    aws ssm describe-association-executions \
+      --association-id "$association" \
+      --output text \
+      --query '
+        AssociationExecutions[].[
+          AssociationId,
+          ExecutionId,
+          Status,
+          ResourceCountByStatus,
+          CreatedTime
+        ]' \
+    | LC_ALL=C sort -k 5 -t $'\t' \
+    | columnise
+  done
+}
+
+ssm-association-execution-targets() {
+
+  # List targets for SSM Association Execution
+  #
+  #     USAGE: ssm-association-execution-targets association execution
+  #
+  #     $ association-execution-targets abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef
+  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-01234abcde56789f0  Success  Success  2023-08-10T11:30:00.000000+00:00
+  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-02345bcdef67891g1  Success  Success  2023-08-10T11:30:10.000000+00:00
+  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-03456cdefg78912h2  Success  Success  2023-08-10T11:30:20.000000+00:00
+  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-04567defgh89123i3  Success  Success  2023-08-10T11:30:30.000000+00:00
+
+  # Append first two items from each line of STDIN to first two arguments
+
+  # Check if we have at least one argument or data from STDIN
+  if [[ $# -eq 0 && -t 0 ]]; then
+    echo "Error: No input provided. Usage: ssm-association-execution-targets association execution" >&2
+    return 1
+  fi
+
+  # Handle arguments and/or STDIN
+  inputs=$(skim-stdin-2 "$@")
+  
+  while IFS=$'\t' read -r association execution; do
+    aws ssm describe-association-execution-targets \
+      --association-id "$association" \
+      --execution-id "$execution" \
+      --output text \
+      --query "
+        AssociationExecutionTargets[].[
+          AssociationId,
+          ExecutionId,
+          ResourceId,
+          OutputSource.OutputSourceId,
+          Status,
+          LastExecutionDate
+        ]" \
+    | LC_ALL=C sort -k 5 -t $'\t'
+  done <<< "$inputs" \
+  | columnise
+
+}
+
+ssm-automation-executions() {
+
+  # List recent SSM Automation Executions
+
+  # USAGE: ssm-automation-executions [filter]
+  #
+  #     $ ssm-automation-executions
+  #     1234abcd-ef56-7890-gh12-ijk3456lmnop  UpdateAndSecureNodes    None                 Failed   2023-07-20T09:00:00.000000+00:00  None
+  #     5678efgh-ijkl-9012-mnop-qrstuvwx3456  UpdateAndSecureNodes    i-0a1b2c3d4e5f67890  Failed   2023-07-20T09:00:10.000000+00:00  None
+  #     90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
+  #     cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
+  #     ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
+
+  local filters=$(__bma_read_filters $@)
+  aws ssm describe-automation-executions \
+    --filter Key=StartTimeAfter,Values="$(date -d yesterday -I)T00:00:00Z" \
+    --output text \
+    --query '
+      AutomationExecutionMetadataList[].[
+        AutomationExecutionId,
+        DocumentName,
+        Target,
+        AutomationExecutionStatus,
+        ExecutionStartTime,
+        ExecutionEndime
+      ]' \
+  | grep -E -- "$filters" \
+  | LC_ALL=C sort -k 5 -t $'\t' \
+  | columnise
+}
+
+ssm-automation-execution() {
+
+  # Show details for an SSM Automation Execution
+  #
+  #     USAGE: ssm-automation-execution execution [execution]
+  #
+
+  local automation_executions="$(skim-stdin "$@")"
+
+  local automation_execution
+  for automation_execution in $automation_executions; do
+    aws ssm get-automation-execution \
+      --automation-execution-id "$automation_execution" \
+      --output text \
+      --query "
+        AutomationExecution.[
+          AutomationExecutionId,
+          DocumentName,
+          Parameters.InstanceId,
+          AutomationExecutionStatus,
+          ExecutionStartTime,
+          ExecutionEndTime
+        ][]"
+  done  \
+  | LC_ALL=C sort -k 6 -t $'\t' \
+  | columnise
+}
+
+ssm-command-invocation() {
+  # Handle arguments and/or STDIN
+  inputs=$(skim-stdin-2 "$@")
+
+  local command instance
+  while IFS=$'\t' read -r command instance; do
+    aws ssm get-command-invocation \
+        --command-id "${command}" \
+        --instance-id "${instance}" # \
+        # --query "CommandInvocations[].[CommandPlugins[?Status=='Failed'].[Name, Output]][]" \
+        # --output text
+  done <<< "$inputs"
+}
+
+alias instance-ssm-command-invocation-failed='ssm-command-invocation-failed'
+
+ssm-command-invocation-failed() {
+
+  local instances=$(skim-stdin)
+  # local plugin='runShellScript'
+
+  local instance
+  for instance in $instances; do
+    echo -e "\n${instance}"
+    aws ssm list-command-invocations \
+        --instance-id "${instance}" \
+        --filters key=Status,value=Failed \
+        --details \
+        --query "CommandInvocations[].[CommandPlugins[?Status=='Failed'].[Name, Output]][]" \
+         --output text
+  done
+}
+
 ssm-instances() {
 
   # List Instances known to SSM
@@ -43,6 +280,57 @@ ssm-instances() {
     columnise
 }
 
+
+ssm-instance-patch-states() {
+  # List patch states of instances known to SSM
+  #
+  # USAGE: instance-ssm-patch-states [filter]
+  #
+  # Example:
+  # $ instance-ssm-patch-states
+  # InstanceId        PatchGroup   OperationEndTime           Installed  InstalledOther  InstalledPendingReboot  InstalledRejected
+  # i-00a123b456d789012  PATCH_GROUP  2021-07-16T12:34:56Z       5          3               0                       0
+  # i-01b234c567e890123  PATCH_GROUP  2021-07-16T12:35:12Z       5          3               0                       0
+  #
+  # Optionally provide a filter string for a `| grep` effect with tighter columnization:
+  #
+  # $ instance-ssm-patch-states Ubuntu
+  # InstanceId        PatchGroup   OperationEndTime           Installed  InstalledOther  InstalledPendingReboot  InstalledRejected
+  # i-02c345d678f901234  PATCH_GROUP  2021-07-16T12:36:30Z       5          2               1                       0
+
+  local instances=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  local arg_filters=""
+  if [[ -n "$instances" ]]; then
+    arg_filters="--instance-ids $instances"
+  fi
+
+  # Print headers to stderr
+  {
+
+  echo -e "InstanceId\tPatchGroup\tOperationEndTime\tInstalled\tInstalledOther\tInstalledPendingReboot\tInstalledRejected"
+
+  aws ssm describe-instance-patch-states \
+    --output text \
+    $arg_filters \
+    --query "
+      InstancePatchStates[][
+        InstanceId,
+        PatchGroup,
+        OperationEndTime,
+        InstalledCount,
+        InstalledOtherCount,
+        InstalledPendingRebootCount,
+        InstalledRejectedCount
+      ]" |
+    grep -E -- "$filters" |
+    LC_ALL=C sort -t $'\t' -k 3 
+  } | columnise
+}
+
+alias instance-ssm-patch-states='ssm-instance-patch-states'
+
 ssm-send-command() {
 
   # Run a command locally on EC2 instance(s) running Linux
@@ -69,6 +357,8 @@ ssm-send-command() {
   local command=$1
   shift
   local instances=$(skim-stdin "$@")
+  echo >&2 "\$command=$command"
+  echo >&2 "\$instances=$instances"
   if [[ -z $command ]] || [[ -z $instances ]]; then
     echo "Usage: $0 command instance-id [instance-id]" >&2
     return 1
@@ -90,14 +380,12 @@ ssm-send-command() {
 
     # If the command is a file
     if [[ -f $command ]]; then
-      # Load contents of the file into variable
-      command=$(<"$command")
-    fi
+      # Compress and encode the script
+      command=$(xz -c9 "$command" | base64)
 
-    # Base64 encode the command if it's a script
-    if [[ $command == *$'\n'* ]]; then
-      command=$(echo "$command" | base64)
-      command="echo $command | base64 --decode | bash"
+      # Prepare the command to decode, decompress, and execute the script
+      local temp_script="temp_script.sh"
+      command="echo $command | base64 --decode | xz -cd > $temp_script; chmod +x $temp_script; trap 'rm -f $temp_script' EXIT; ./$temp_script"
     fi
   fi
 
@@ -126,7 +414,6 @@ ssm-send-command() {
       --instance-id "$instance"
 
     # Fetch command result
-
     aws ssm list-command-invocations \
       --command-id "$command_id" \
       --instance-id "$instance" \
@@ -175,41 +462,17 @@ ssm-send-command-windows() {
   ssm-send-command "$@"
 }
 
-ssm-automation-executions() {
 
-  # List recent SSM Automation Executions
 
-  # USAGE: ssm-automation-executions [filter]
-  #
-  #     $ ssm-automation-executions
-  #     1234abcd-ef56-7890-gh12-ijk3456lmnop  UpdateAndSecureNodes    None                 Failed   2023-07-20T09:00:00.000000+00:00  None
-  #     5678efgh-ijkl-9012-mnop-qrstuvwx3456  UpdateAndSecureNodes    i-0a1b2c3d4e5f67890  Failed   2023-07-20T09:00:10.000000+00:00  None
-  #     90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
-  #     cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
-  #     ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
-
-  local filters=$(__bma_read_filters $@)
-  aws ssm describe-automation-executions \
-    --filter Key=StartTimeAfter,Values="$(date -d yesterday -I)T00:00:00Z" \
-    --output text \
-    --query '
-      AutomationExecutionMetadataList[].[
-        AutomationExecutionId,
-        DocumentName,
-        Target,
-        AutomationExecutionStatus,
-        ExecutionStartTime,
-        ExecutionEndime
-      ]' \
-  | grep -E -- "$filters" \
-  | LC_ALL=C sort -k 5 -t $'\t' \
-  | columnise
-}
-
-ssm-automation-execution-failures() {
+ssm-automation-execution-failed() {
   local search="${@:-}"
-  ssm-automation-executions Failed | grep 'i-' | grep "${search}" | xargs -I{} sh -c ' echo "{}" | cut -f 1,2,3,4 | tr "\n" "\t" | tee /dev/tty | bma ssm-automation-step-executions | rg --word-regexp Failed | cut -f 2,3,4,6,8'
+  ssm-automation-executions Failed | grep 'i-' | grep "${search}" | xargs -I{} sh -c ' echo "{}" | cut -f 1,2,3,4 | tr "\n" "\t"; echo "{}" | bma ssm-automation-step-executions | rg --word-regexp Failed | cut -f 2,3,4,6,8'
 }
+
+# ssm-automation-execution-success() {
+#   local search="${@:-}"
+#   ssm-automation-executions Success | grep 'i-' | grep "${search}" 
+# }
 
 ssm-automation-step-executions() {
 
@@ -221,6 +484,7 @@ ssm-automation-step-executions() {
   #     [Outputs detailed step information for each provided execution ID]
   
   local automation_executions="$(skim-stdin "$@")"
+  echo "$automation_executions"
 
   local automation_execution
   for automation_execution in $automation_executions; do
@@ -231,54 +495,21 @@ ssm-automation-step-executions() {
       --query "
         StepExecutions[].[ 
           '$automation_execution',
+          StepExecutionId,
           StepName,
           StepStatus,
           Action,
-          StepExecutionId,
-          ExecutionStartTime,
-          ExecutionEndTime,
-          FailureMessage
-        ]"
-    echo "" # Adds a line break for readability
-  done  \
-  | LC_ALL=C sort -k 5 -t $'\t' \
-  | columnise
-}
-
-
-ssm-automation-execution() {
-
-  # Show details for an SSM Automation Execution
-  #
-  #     USAGE: ssm-automation-execution execution_id [execution_id]
-  #
-  #     $ ssm-automation-executions | head | ssm-automation-execution
-  #     1234abcd-5678-9def-ghij-klmnopqrstuv  DeployNewFeatures  i-01234a5b6c7d8e9f0  Failed  2023-09-10T10:10:10.000000+00:00  2023-09-10T10:10:20.000000+00:00
-  #     9876fedc-ba98-7654-c321-onmlkjihgfed  DeployNewFeatures  i-09876b5c4d3e2f1g0  Failed  2023-09-10T10:20:30.000000+00:00  2023-09-10T10:20:40.000000+00:00
-  #     abcd1234-efgh-5678-ijkl-9mnopq7rstuv  DeployNewFeatures  i-0a1b2c3d4e5f6g7h8  Failed  2023-09-10T10:30:50.000000+00:00  2023-09-10T10:31:00.000000+00:00
-  #     ijkl8765-ghij-4321-klmn-5opq4rstu3vw  DeployNewFeatures  i-0i8j7k6l5m4n3o2p1  Failed  2023-09-10T10:40:10.000000+00:00  2023-09-10T10:40:20.000000+00:00
-
-  local automation_executions="$(skim-stdin "$@")"
-
-  local automation_execution
-  for automation_execution in $automation_executions; do
-    aws ssm get-automation-execution \
-      --automation-execution-id "$automation_execution" \
-      --output text \
-      --query "
-        AutomationExecution.[
-          AutomationExecutionId,
-          DocumentName,
-          Parameters.InstanceId,
-          Parameters.InstallDefender,
-          AutomationExecutionStatus,
+          Outputs.ExecutionId[0] || Outputs.CommandId[0],
           ExecutionStartTime,
           ExecutionEndTime
-        ][]"
+        ]"
+    echo "" # Adds a line break for readability
   done  \
   | LC_ALL=C sort -k 6 -t $'\t' \
   | columnise
 }
+
+
 
 ssm-associations() {
 
@@ -307,72 +538,6 @@ ssm-associations() {
     columnise
 }
 
-ssm-association-executions() {
-
-  # List SSM Association Executions
-  #
-  #     USAGE: ssm-associations [filter]
-  #
-  #     $ ssm-associations
-  #     12345678-9abc-def0-1234-56789abcdef0  a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890  Success  {Success=10}  2023-07-21T10:30:00.000000+00:00
-  #     12345678-9abc-def0-1234-56789abcdef0  b1c2d3e4-f5g6-7890-b1c2-d3e4f5g67890  Success  {Success=15}  2023-07-22T11:00:00.000000+00:00
-  #     12345678-9abc-def0-1234-56789abcdef0  c1d2e3f4-g5h6-7890-c1d2-e3f4g5h67890  Success  {Success=13}  2023-07-23T09:45:00.000000+00:00
-  #     12345678-9abc-def0-1234-56789abcdef0  d1e2f3g4-h5i6-7890-d1e2-f3g4h5i67890  Failed   {Failed=2, Success=12} 2023-07-24T12:30:00.000000+00:00
-  #     12345678-9abc-def0-1234-56789abcdef0  e1f2g3h4-i5j6-7890-e1f2-g3h4i5j67890  Failed   {Failed=3, Success=11}  2023-07-25T14:15:00.000000+00:00
-
-  local associations=$(skim-stdin "$@")
-  [[ -z $associations ]] && __bma_usage "association [association]" && return 1
-
-  local association
-  for association in $associations; do
-    aws ssm describe-association-executions \
-      --association-id "$association" \
-      --output text \
-      --query '
-        AssociationExecutions[].[
-          AssociationId,
-          ExecutionId,
-          Status,
-          ResourceCountByStatus,
-          CreatedTime
-        ]' \
-    | LC_ALL=C sort -k 5 -t $'\t' \
-    | columnise
-  done
-}
-
-ssm-association-execution-targets() {
-
-  # List targets for SSM Association Execution
-  #
-  #     USAGE: ssm-association-execution-targets association-id execution-id
-  #
-  #     $ association-execution-targets abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef
-  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-01234abcde56789f0  Success  Success  2023-08-10T11:30:00.000000+00:00
-  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-02345bcdef67891g1  Success  Success  2023-08-10T11:30:10.000000+00:00
-  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-03456cdefg78912h2  Success  Success  2023-08-10T11:30:20.000000+00:00
-  #     abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-04567defgh89123i3  Success  Success  2023-08-10T11:30:30.000000+00:00
-  #
-  # Note: Can't use skim-stdin as it requires to arguments
-
-  local association_id="$1"
-  local execution_id="$2"
-  aws ssm describe-association-execution-targets \
-    --association-id "$association_id" \
-    --execution-id "$execution_id" \
-    --output text \
-    --query "
-      AssociationExecutionTargets[].[
-        AssociationId,
-        ExecutionId,
-        ResourceId,
-        Status,
-        DetailedStatus,
-        LastExecutionDate
-      ]" \
-  | LC_ALL=C sort -k 5 -t $'\t' \
-  | columnise
-}
 
 ssm-parameters() {
 
@@ -448,4 +613,9 @@ instance-ssm-platform-type() {
     local platform_type=$(aws --no-cli-pager ssm describe-instance-information --filters "Key=InstanceIds,Values=${instance_id}" --query 'InstanceInformationList[0].PlatformType' --output text)
     echo -e "$instance_id\t$platform_type"
   done
+}
+
+instance-ssm-not-online() {
+  local instances_ssm_online=$(bma ssm-instances | grep Online | cut -f1)
+  instances | rg -vf <(echo "$instances_ssm_online")
 }
