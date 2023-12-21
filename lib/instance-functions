@@ -156,7 +156,8 @@ instance-ssm-command-invocations() {
           InstanceId,
           DocumentName,
           Status,
-          RequestedDateTime
+          RequestedDateTime,
+          Comment
         ]"                |
     LC_ALL=C sort -t$'\t' -k 5 |
     columnise
