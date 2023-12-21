@@ -233,7 +233,7 @@ ssm-command-invocation-failed() {
 
   local instances=$(skim-stdin "$@")
   # local plugin='runShellScript'
-  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+  [[ -z $instance ]] && __bma_usage "instance [instance]" && return 1
 
   local instance
   for instance in $instances; do
