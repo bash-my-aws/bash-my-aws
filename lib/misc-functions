@@ -2,14 +2,28 @@
 #
 # miscellaneous functions that don't belong anywhere else
 
+aws-unset() {
+  unset AWS_PROFILE
+  unset AWS_SHARED_CREDENTIALS_FILE
+  unset AWS_SECURITY_TOKEN
+}
 
-# Handy function to columnise output
+awslogin() {
+  local account="${1:?}"
+  aws-unset
+  aws-vault exec --no-session "$1"
+}
+complete -o default -F _aws-vault_bash_autocomplete awslogin
+
 
 awslogin-firefox(){
   local account="${1:?}"
   local url=$(aws-vault login "${account}" -s | jq -s -R -r @uri)
   (nohup firefox "ext+container:name=$account&url=$url" &>/dev/null) &
 }
+complete -o default -F _aws-vault_bash_autocomplete awslogin-firefox
+
+# Handy function to columnise output
 
 columnise() {
   # Check if no arguments are provided
