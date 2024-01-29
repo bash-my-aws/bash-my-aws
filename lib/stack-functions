@@ -255,6 +255,24 @@ stack-update() {
   if [ -n "$params" ]; then local parameters="--parameters file://$params"; fi
 
   local capabilities=''
+  local arn=''
+  local inputs_array=($@)
+  local IFS='=' # override default field separator in the scope of this function only
+  local regex_role_arn="^\-\-role\-arn=.*"
+  local regex_capabilities="^\-\-capabilities=.*"
+  for index in "${inputs_array[@]}" ; do
+    if [[ "$index" =~ $regex_role_arn ]] ; then
+      read arn_opt arn_arg <<< "$index" # ignore anything after option + arg
+      arn="--role-arn $arn_arg"
+    elif [[ "$index" =~ $regex_capabilities ]] ; then
+      read caps_opt caps_arg <<< "$index" # ignore anything after option + arg
+      capabilities="--capabilities $caps_arg"
+    fi
+  done
+  unset IFS # to prevent it from breaking things later
+
+  # Automatically set capabilities if required but not provided as argument
+  # XXX Dodgy but convenient
   local capabilities_value=$(_bma_stack_capabilities $stack)
   [[ -z "${capabilities_value}" ]] || capabilities="--capabilities ${capabilities_value}"
 
@@ -328,6 +346,19 @@ stack-exports() {
     --query 'Exports[].[Name, Value]' \
     --output text                     |
     columnise
+}
+
+stack-save() {
+  local stacks=$(skim-stdin "$@")
+  [[ -z "${stacks}" ]] && __bma_usage "stack [stack]" && return 1
+
+  local stack
+  for stack in $stacks; do
+      local target_dir="${AWS_PROFILE}/${AWS_DEFAULT_REGION}"
+      mkdir -p "${target_dir}"
+      stack-template "$stack" > "${target_dir}/${stack}.template"
+      stack-parameters "$stack" > "${target_dir}/${stack}-params.json"
+  done
 }
 
 stack-recreate() {
