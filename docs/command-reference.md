@@ -582,17 +582,10 @@ List availability zone of EC2 Instance(s)
 
 ### instance-ssm-command-invocations
 
-List SSM command invocations for EC2 Instance(s)
 
-USAGE: instance-ssm-command-invocations instance-id [instance-id]
 
-$ instances | instance-ssm-command-invocations 
-ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
-097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
-472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
-8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
-63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
-37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
+### instance-ssm-command-invocations-failed
+
 
 
 ### instance-console
