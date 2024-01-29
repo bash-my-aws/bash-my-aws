@@ -99,6 +99,19 @@ Get/Set `$AWS_PROFILE` shell environment variable
     profile2
 
 
+### aws-profile
+
+Get/Set `$AWS_PROFILE` shell environment variable
+
+    $ aws-profile
+    profile1
+
+    $ aws-profile profile2
+
+    $ aws-profile
+    profile2
+
+
 ### aws-account-cost-explorer
 
 Use with an AWS Organisations Master Account to open multiple accounts
@@ -161,6 +174,8 @@ Any output lines will be appended with "#${REGION}".
     example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
     ...
     example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
+Updated to properly support both AWS_REGION and AWD_DEFAULT_REGION
+https://docs.aws.amazon.com/sdkref/latest/guide/feature-region.html
 Updated to properly support both AWS_REGION and AWD_DEFAULT_REGION
 https://docs.aws.amazon.com/sdkref/latest/guide/feature-region.html
 
@@ -286,6 +301,7 @@ to take advantage of shorter commands*
     |  2019-12-21T13:14:07.820Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE                      |
     +--------------------------+----------------------+-----------------------------------------+---------------------------------------+
 Automatically set capabilities if required but not provided as argument
+Automatically set capabilities if required but not provided as argument
 
 
 ### stack-delete
@@ -322,6 +338,10 @@ Delete a CloudFormation Stack
 
 
 ### stack-exports
+
+
+
+### stack-save
 
 
 
@@ -562,10 +582,17 @@ List availability zone of EC2 Instance(s)
 
 ### instance-ssm-command-invocations
 
+List SSM command invocations for EC2 Instance(s)
 
+USAGE: instance-ssm-command-invocations instance-id [instance-id]
 
-### instance-ssm-command-invocations-failed
-
+$ instances | instance-ssm-command-invocations 
+ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
+097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
+472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
+8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
+63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
+37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
 
 
 ### instance-console
@@ -2072,6 +2099,26 @@ i-02c345d678f901234  PATCH_GROUP  2021-07-16T12:36:30Z       5          2       
 Print headers to stderr
 
 
+### ssm-instance-patch-states
+
+List patch states of instances known to SSM
+
+USAGE: instance-ssm-patch-states [filter]
+
+Example:
+$ instance-ssm-patch-states
+InstanceId        PatchGroup   OperationEndTime           Installed  InstalledOther  InstalledPendingReboot  InstalledRejected
+i-00a123b456d789012  PATCH_GROUP  2021-07-16T12:34:56Z       5          3               0                       0
+i-01b234c567e890123  PATCH_GROUP  2021-07-16T12:35:12Z       5          3               0                       0
+
+Optionally provide a filter string for a `| grep` effect with tighter columnization:
+
+$ instance-ssm-patch-states Ubuntu
+InstanceId        PatchGroup   OperationEndTime           Installed  InstalledOther  InstalledPendingReboot  InstalledRejected
+i-02c345d678f901234  PATCH_GROUP  2021-07-16T12:36:30Z       5          2               1                       0
+Print headers to stderr
+
+
 ### ssm-send-command
 
 Run a command locally on EC2 instance(s) running Linux
@@ -2166,7 +2213,10 @@ Show step-by-step details for an SSM Automation Execution
 Show details for an SSM Automation Execution
 
     USAGE: automation-execution-steps execution_id [execution_id]
+    USAGE: automation-execution-steps execution_id [execution_id]
 
+    $ ssm-automation-executions | ssm-automation-steps-executions
+    [Outputs detailed step information for each provided execution ID]
     $ ssm-automation-executions | ssm-automation-steps-executions
     [Outputs detailed step information for each provided execution ID]
 
@@ -2231,6 +2281,10 @@ Show platform type (OS) for instance
     i-0f1e2d3c4b5a6789e     None
     i-0a9f8e7d6c5b4a312     None
     i-01b2a3c4d5e6f7893     Windows
+
+
+### instance-ssm-not-online
+
 
 
 ### instance-ssm-not-online

@@ -46,3 +46,8 @@ aws_config_file = os.getenv("AWS_CONFIG_FILE", os.path.expanduser("~/.aws/config
 aws_credentials_file = os.getenv("AWS_SHARED_CREDENTIALS_FILE", os.path.expanduser("~/.aws/credentials"))
 
 list_aws_profiles(aws_config_file, aws_credentials_file)
+# Paths to the AWS config and credentials files
+aws_config_file = os.getenv("AWS_CONFIG_FILE", os.path.expanduser("~/.aws/config"))
+aws_credentials_file = os.getenv("AWS_SHARED_CREDENTIALS_FILE", os.path.expanduser("~/.aws/credentials"))
+
+list_aws_profiles(aws_config_file, aws_credentials_file)

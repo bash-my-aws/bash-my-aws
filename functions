@@ -69,6 +69,11 @@ aws-unset
 awslogin
 awslogin-firefox
 awslogin-sso
+aws-profile
+aws-unset
+awslogin
+awslogin-firefox
+awslogin-sso
 az-account
 az-cache-item
 az-cache-item-delete
@@ -148,6 +153,7 @@ instance-stop-protection
 instance-stop-protection-disable
 instance-stop-protection-enable
 instance-stopped
+instance-stopped
 instance-subnet
 instance-tag
 instance-tag-create
@@ -207,6 +213,7 @@ secrets
 service-principals
 skim-stdin
 skim-stdin-2
+skim-stdin-2
 skim-stdin-bma
 skim-stdin-tsv
 ssm-association-execution-targets
@@ -244,6 +251,7 @@ stack-outputs
 stack-parameters
 stack-recreate
 stack-resources
+stack-save
 stack-save
 stack-status
 stack-tag

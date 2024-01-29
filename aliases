@@ -69,6 +69,11 @@ alias aws-unset='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma aws-unset'
 alias awslogin='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma awslogin'
 alias awslogin-firefox='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma awslogin-firefox'
 alias awslogin-sso='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma awslogin-sso'
+alias aws-profile='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma aws-profile'
+alias aws-unset='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma aws-unset'
+alias awslogin='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma awslogin'
+alias awslogin-firefox='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma awslogin-firefox'
+alias awslogin-sso='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma awslogin-sso'
 alias az-account='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma az-account'
 alias az-cache-item='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma az-cache-item'
 alias az-cache-item-delete='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma az-cache-item-delete'
@@ -148,6 +153,7 @@ alias instance-stop-protection='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance
 alias instance-stop-protection-disable='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-stop-protection-disable'
 alias instance-stop-protection-enable='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-stop-protection-enable'
 alias instance-stopped='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-stopped'
+alias instance-stopped='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-stopped'
 alias instance-subnet='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-subnet'
 alias instance-tag='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-tag'
 alias instance-tag-create='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma instance-tag-create'
@@ -206,6 +212,7 @@ alias secrets='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma secrets'
 alias service-principals='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma service-principals'
 alias skim-stdin='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma skim-stdin'
 alias skim-stdin-2='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma skim-stdin-2'
+alias skim-stdin-2='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma skim-stdin-2'
 alias skim-stdin-bma='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma skim-stdin-bma'
 alias skim-stdin-tsv='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma skim-stdin-tsv'
 alias ssm-association-execution-targets='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma ssm-association-execution-targets'
@@ -243,6 +250,7 @@ alias stack-outputs='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-outputs'
 alias stack-parameters='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-parameters'
 alias stack-recreate='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-recreate'
 alias stack-resources='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-resources'
+alias stack-save='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-save'
 alias stack-save='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-save'
 alias stack-status='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-status'
 alias stack-tag='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma stack-tag'
@@ -286,8 +294,10 @@ function region() {
     local inputs=$(skim-stdin "$@");
     if [[ -z "$inputs" ]]; then
         echo "${AWS_DEFAULT_REGION:-${AWS_REGION:-AWS_DEFAULT_REGION and AWS_REGION not set}}";
+        echo "${AWS_DEFAULT_REGION:-${AWS_REGION:-AWS_DEFAULT_REGION and AWS_REGION not set}}";
     else
         export AWS_DEFAULT_REGION="$inputs";
+        export AWS_REGION="${AWS_DEFAULT_REGION}";
         export AWS_REGION="${AWS_DEFAULT_REGION}";
     fi
 }
