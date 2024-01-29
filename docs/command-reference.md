@@ -86,6 +86,19 @@ Run a script/command across a number of AWS Accounts
 aws-panopticon was previous name for aws-account-each()
 
 
+### aws-profile
+
+Get/Set `$AWS_PROFILE` shell environment variable
+
+    $ aws-profile
+    profile1
+
+    $ aws-profile profile2
+
+    $ aws-profile
+    profile2
+
+
 ### aws-account-cost-explorer
 
 Use with an AWS Organisations Master Account to open multiple accounts
@@ -148,6 +161,8 @@ Any output lines will be appended with "#${REGION}".
     example-ec2-ap-northeast-2  CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #ap-northeast-2
     ...
     example-ec2-us-west-2       CREATE_COMPLETE  2011-05-23T15:47:44Z  NEVER_UPDATED  NOT_NESTED  #us-west-2
+Updated to properly support both AWS_REGION and AWD_DEFAULT_REGION
+https://docs.aws.amazon.com/sdkref/latest/guide/feature-region.html
 
 
 ## stack-commands
@@ -270,6 +285,7 @@ to take advantage of shorter commands*
     |  2019-12-21T13:14:07.118Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE_CLEANUP_IN_PROGRESS  |
     |  2019-12-21T13:14:07.820Z|  asg-prod            |  AWS::CloudFormation::Stack             |  UPDATE_COMPLETE                      |
     +--------------------------+----------------------+-----------------------------------------+---------------------------------------+
+Automatically set capabilities if required but not provided as argument
 
 
 ### stack-delete
@@ -306,6 +322,10 @@ Delete a CloudFormation Stack
 
 
 ### stack-exports
+
+
+
+### stack-save
 
 
 
@@ -501,6 +521,10 @@ determine what (if any) capabilities a given stack was deployed with
 ## instance-commands
 
 
+### function
+ instance-stopped
+
+
 ### instances
 
 List EC2 Instances
@@ -534,6 +558,21 @@ List availability zone of EC2 Instance(s)
     $ instances postgres | instance-az
     i-89cefa9403373d7a5  ap-southeast-2a
     i-806d8f1592e2a2efd  ap-southeast-2a
+
+
+### instance-ssm-command-invocations
+
+List SSM command invocations for EC2 Instance(s)
+
+USAGE: instance-ssm-command-invocations instance-id [instance-id]
+
+$ instances | instance-ssm-command-invocations 
+ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
+097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
+472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
+8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
+63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
+37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
 
 
 ### instance-console
@@ -1869,6 +1908,98 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
 ## ssm-commands
 
 
+### ssm-association-fail-last
+
+459004af-cf9e-4e04-9802-a99acf658b29	InstallAndLinkAgents	InstallAndLinkAgents	cron(0 8 ? * * *)	2023-12-07T19:06:26+11:00	Failed
+459004af-cf9e-4e04-9802-a99acf658b29	6ae13f8b-98c2-4476-b2d9-0f2b71736a89	Failed	{Failed=4}	2023-12-07T19:01:30.213000+11:00
+459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0a1bb45ae0b6841cf  e56ba970-dc9c-4efa-af75-b0a0dd3b9c93  Failed  2023-12-07T19:03:58+11:00
+459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0f044cea6d953aa36  85546efd-b525-4001-9749-c77eeceb46a7  Failed  2023-12-07T19:03:58+11:00
+459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0bbaa71be80ce4419  e0e48736-78f9-4c2b-8358-e3e455dde729  Failed  2023-12-07T19:06:25+11:00
+459004af-cf9e-4e04-9802-a99acf658b29  6ae13f8b-98c2-4476-b2d9-0f2b71736a89  i-0713cddda0f432d62  76cc092e-00ee-492c-8ac9-5f1730347443  Failed  2023-12-07T19:06:26+11:00
+Now dig deeper to get the commands!
+$ ssm-automation-step-executions 76cc092e-00ee-492c-8ac9-5f1730347443
+76cc092e-00ee-492c-8ac9-5f1730347443
+76cc092e-00ee-492c-8ac9-5f1730347443  fc7cac46-9e94-4525-b3dd-5b49e0c598ac  CheckSSMOnline          Success  aws:assertAwsResourceProperty  None                                  2023-12-07T19:03:59.115000+11:00  2023-12-07T19:03:59.430000+11:00
+76cc092e-00ee-492c-8ac9-5f1730347443  1b88c056-8f95-4c15-bb6a-afc657e5aeb5  getSSMParams            Success  aws:executeScript              None                                  2023-12-07T19:03:59.683000+11:00  2023-12-07T19:04:12.736000+11:00
+76cc092e-00ee-492c-8ac9-5f1730347443  700de8b4-5eae-4582-b6be-6d41f7091056  NoOp                    Success  aws:sleep                      None                                  2023-12-07T19:06:25.763000+11:00  2023-12-07T19:06:25.856000+11:00
+76cc092e-00ee-492c-8ac9-5f1730347443  90486d41-8d49-42bc-a4fc-aae2297c5761  InstallAndLinkDefender  Failed   aws:executeAutomation          f76f242a-a8d4-4450-935f-8a4208cf1754  2023-12-07T19:04:12.949000+11:00  2023-12-07T19:06:25.517000+11:00
+$ ssm-automation-step-executions f76f242a-a8d4-4450-935f-8a4208cf1754
+f76f242a-a8d4-4450-935f-8a4208cf1754
+f76f242a-a8d4-4450-935f-8a4208cf1754  b73cc93b-1733-43dd-993d-f8ae8ff38952  ChoiceDefender        Success  aws:branch      None                                  2023-12-07T19:04:13.684000+11:00  2023-12-07T19:04:13.815000+11:00
+f76f242a-a8d4-4450-935f-8a4208cf1754  2b03b1ce-b39a-4533-97dd-4d7d5dd5a836  Exempt                Pending  aws:sleep       None                                  None                              None
+f76f242a-a8d4-4450-935f-8a4208cf1754  882c102b-724f-4751-ace4-cb577745c2a2  NoOp                  Pending  aws:sleep       None                                  None                              None
+f76f242a-a8d4-4450-935f-8a4208cf1754  ac32131e-154f-479e-9b30-48ca0402dfd3  InstallDefenderLinux  Failed   aws:runCommand  e6574b26-5e4b-4fe0-9c90-82089c8470bc  2023-12-07T19:04:14.034000+11:00  2023-12-07T19:06:25.011000+11:00
+
+
+### skim-stdin-2
+
+
+
+### ssm-association-executions
+
+List SSM Association Executions
+
+    USAGE: ssm-associations [filter]
+
+    $ ssm-associations
+    12345678-9abc-def0-1234-56789abcdef0  a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890  Success  {Success=10}  2023-07-21T10:30:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  b1c2d3e4-f5g6-7890-b1c2-d3e4f5g67890  Success  {Success=15}  2023-07-22T11:00:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  c1d2e3f4-g5h6-7890-c1d2-e3f4g5h67890  Success  {Success=13}  2023-07-23T09:45:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  d1e2f3g4-h5i6-7890-d1e2-f3g4h5i67890  Failed   {Failed=2, Success=12} 2023-07-24T12:30:00.000000+00:00
+    12345678-9abc-def0-1234-56789abcdef0  e1f2g3h4-i5j6-7890-e1f2-g3h4i5j67890  Failed   {Failed=3, Success=11}  2023-07-25T14:15:00.000000+00:00
+
+
+### ssm-association-execution-targets
+
+List targets for SSM Association Execution
+
+    USAGE: ssm-association-execution-targets association execution
+
+    $ association-execution-targets abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-01234abcde56789f0  Success  Success  2023-08-10T11:30:00.000000+00:00
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-02345bcdef67891g1  Success  Success  2023-08-10T11:30:10.000000+00:00
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-03456cdefg78912h2  Success  Success  2023-08-10T11:30:20.000000+00:00
+    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-04567defgh89123i3  Success  Success  2023-08-10T11:30:30.000000+00:00
+Append first two items from each line of STDIN to first two arguments
+Check if we have at least one argument or data from STDIN
+Handle arguments and/or STDIN
+
+
+### ssm-automation-executions
+
+List recent SSM Automation Executions
+USAGE: ssm-automation-executions [filter]
+
+    $ ssm-automation-executions
+    1234abcd-ef56-7890-gh12-ijk3456lmnop  UpdateAndSecureNodes    None                 Failed   2023-07-20T09:00:00.000000+00:00  None
+    5678efgh-ijkl-9012-mnop-qrstuvwx3456  UpdateAndSecureNodes    i-0a1b2c3d4e5f67890  Failed   2023-07-20T09:00:10.000000+00:00  None
+    90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
+    cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
+    ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
+
+
+### ssm-automation-execution
+
+Show details for an SSM Automation Execution
+
+    USAGE: ssm-automation-execution execution [execution]
+
+
+
+### ssm-command-invocation
+
+Show details for an SSM Command Invocation
+
+Usage: ssm-command-invocation command instance
+
+$ ssm-command-invocation 12345678-90ab-cdef-1234-567890abcdef i-01234abcde56789f0
+
+
+### ssm-command-invocation-failed
+
+local plugin='runShellScript'
+
+
 ### ssm-instances
 
 List Instances known to SSM
@@ -1886,6 +2017,26 @@ List Instances known to SSM
    $ ssm-instances Windows
    i-00a123b456d789012 Online  Microsoft Windows Server 2019 Datacenter  68.0.11111  192.168.1.10    server001.example.com
    i-01b234c567e890123 Online  Microsoft Windows Server 2022 Datacenter  68.0.11112  192.168.1.20    winserver002.example.com
+
+
+### ssm-instance-patch-states
+
+List patch states of instances known to SSM
+
+USAGE: instance-ssm-patch-states [filter]
+
+Example:
+$ instance-ssm-patch-states
+InstanceId        PatchGroup   OperationEndTime           Installed  InstalledOther  InstalledPendingReboot  InstalledRejected
+i-00a123b456d789012  PATCH_GROUP  2021-07-16T12:34:56Z       5          3               0                       0
+i-01b234c567e890123  PATCH_GROUP  2021-07-16T12:35:12Z       5          3               0                       0
+
+Optionally provide a filter string for a `| grep` effect with tighter columnization:
+
+$ instance-ssm-patch-states Ubuntu
+InstanceId        PatchGroup   OperationEndTime           Installed  InstalledOther  InstalledPendingReboot  InstalledRejected
+i-02c345d678f901234  PATCH_GROUP  2021-07-16T12:36:30Z       5          2               1                       0
+Print headers to stderr
 
 
 ### ssm-send-command
@@ -1950,30 +2101,22 @@ Run a command locally on EC2 instance(s) running Windows
     See also: ssm-send-command-windows
 
 
-### ssm-automation-executions
-
-List recent SSM Automation Executions
-USAGE: ssm-automation-executions [filter]
-
-    $ ssm-automation-executions
-    1234abcd-ef56-7890-gh12-ijk3456lmnop  UpdateAndSecureNodes    None                 Failed   2023-07-20T09:00:00.000000+00:00  None
-    5678efgh-ijkl-9012-mnop-qrstuvwx3456  UpdateAndSecureNodes    i-0a1b2c3d4e5f67890  Failed   2023-07-20T09:00:10.000000+00:00  None
-    90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
-    cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
-    ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
+### ssm-automation-execution-failed
 
 
-### ssm-automation-execution
 
-Show details for an SSM Automation Execution
+### #
+ ssm-automation-execution-success
 
-    USAGE: ssm-automation-execution execution_id [execution_id]
 
-    $ ssm-automation-executions | head | ssm-automation-execution
-    1234abcd-5678-9def-ghij-klmnopqrstuv  DeployNewFeatures  i-01234a5b6c7d8e9f0  Failed  2023-09-10T10:10:10.000000+00:00  2023-09-10T10:10:20.000000+00:00
-    9876fedc-ba98-7654-c321-onmlkjihgfed  DeployNewFeatures  i-09876b5c4d3e2f1g0  Failed  2023-09-10T10:20:30.000000+00:00  2023-09-10T10:20:40.000000+00:00
-    abcd1234-efgh-5678-ijkl-9mnopq7rstuv  DeployNewFeatures  i-0a1b2c3d4e5f6g7h8  Failed  2023-09-10T10:30:50.000000+00:00  2023-09-10T10:31:00.000000+00:00
-    ijkl8765-ghij-4321-klmn-5opq4rstu3vw  DeployNewFeatures  i-0i8j7k6l5m4n3o2p1  Failed  2023-09-10T10:40:10.000000+00:00  2023-09-10T10:40:20.000000+00:00
+### ssm-automation-step-executions
+
+Show step-by-step details for an SSM Automation Execution
+
+    USAGE: automation-execution-steps execution_id [execution_id]
+
+    $ ssm-automation-executions | ssm-automation-steps-executions
+    [Outputs detailed step information for each provided execution ID]
 
 
 ### ssm-associations
@@ -1987,35 +2130,6 @@ List SSM associations
     Task-UpdateSystemPackages           cron(0 4 * * SAT)     2023-04-22T04:00:00.000000+00:00  Success
     Service-ConfigureNetworkSettings    rate(7 days)          2023-05-07T11:00:00.000000+00:00  Success
     Script-DeployMonitoringTools        cron(15 3 * * FRI)    2023-03-03T03:15:00.000000+00:00  Failed
-
-
-### ssm-association-executions
-
-List SSM Association Executions
-
-    USAGE: ssm-associations [filter]
-
-    $ ssm-associations
-    12345678-9abc-def0-1234-56789abcdef0  a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890  Success  {Success=10}  2023-07-21T10:30:00.000000+00:00
-    12345678-9abc-def0-1234-56789abcdef0  b1c2d3e4-f5g6-7890-b1c2-d3e4f5g67890  Success  {Success=15}  2023-07-22T11:00:00.000000+00:00
-    12345678-9abc-def0-1234-56789abcdef0  c1d2e3f4-g5h6-7890-c1d2-e3f4g5h67890  Success  {Success=13}  2023-07-23T09:45:00.000000+00:00
-    12345678-9abc-def0-1234-56789abcdef0  d1e2f3g4-h5i6-7890-d1e2-f3g4h5i67890  Failed   {Failed=2, Success=12} 2023-07-24T12:30:00.000000+00:00
-    12345678-9abc-def0-1234-56789abcdef0  e1f2g3h4-i5j6-7890-e1f2-g3h4i5j67890  Failed   {Failed=3, Success=11}  2023-07-25T14:15:00.000000+00:00
-
-
-### ssm-association-execution-targets
-
-List targets for SSM Association Execution
-
-    USAGE: ssm-association-execution-targets association-id execution-id
-
-    $ association-execution-targets abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef
-    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-01234abcde56789f0  Success  Success  2023-08-10T11:30:00.000000+00:00
-    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-02345bcdef67891g1  Success  Success  2023-08-10T11:30:10.000000+00:00
-    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-03456cdefg78912h2  Success  Success  2023-08-10T11:30:20.000000+00:00
-    abcd1234-ef56-7890-gh12-ijk3456lmnop  12345678-90ab-cdef-1234-567890abcdef  i-04567defgh89123i3  Success  Success  2023-08-10T11:30:30.000000+00:00
-
-Note: Can't use skim-stdin as it requires to arguments
 
 
 ### ssm-parameters
@@ -2065,6 +2179,10 @@ Show platform type (OS) for instance
     i-0f1e2d3c4b5a6789e     None
     i-0a9f8e7d6c5b4a312     None
     i-01b2a3c4d5e6f7893     Windows
+
+
+### instance-ssm-not-online
+
 
 
 ## sts-commands

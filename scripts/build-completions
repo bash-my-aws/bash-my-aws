@@ -65,4 +65,6 @@ done
 cat <<EOF
 complete -f stack-validate
 complete -F _bma_completion bma
+complete -F _bma_aws-profiles_completion awslogin-sso
+complete -F _bma_aws-vault_completion -o default aws-vault # XXX this is a hack to get the completions to work
 EOF

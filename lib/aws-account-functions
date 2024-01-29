@@ -107,6 +107,26 @@ aws-panopticon() {
   aws-account-each $@
 }
 
+aws-profile() {
+
+  # Get/Set `$AWS_PROFILE` shell environment variable
+  #
+  #     $ aws-profile
+  #     profile1
+  #
+  #     $ aws-profile profile2
+  #
+  #     $ aws-profile
+  #     profile2
+
+  local inputs=$(skim-stdin "$@")
+  if [[ -z "$inputs" ]]; then
+    echo "${AWS_PROFILE:-AWS_PROFILE not set}"
+  else
+    export AWS_PROFILE="$inputs"
+  fi
+}
+
 aws-account-cost-explorer(){
 
   # Use with an AWS Organisations Master Account to open multiple accounts

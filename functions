@@ -64,6 +64,11 @@ aws-account-each
 aws-account-id
 aws-accounts
 aws-panopticon
+aws-profile
+aws-unset
+awslogin
+awslogin-firefox
+awslogin-sso
 az-account
 az-cache-item
 az-cache-item-delete
@@ -128,6 +133,8 @@ instance-rdp
 instance-ssh
 instance-ssh-details
 instance-ssm
+instance-ssm-command-invocations
+instance-ssm-not-online
 instance-ssm-platform-type
 instance-ssm-port-forward
 instance-stack
@@ -137,6 +144,7 @@ instance-stop
 instance-stop-protection
 instance-stop-protection-disable
 instance-stop-protection-enable
+instance-stopped
 instance-subnet
 instance-tag
 instance-tag-create
@@ -195,13 +203,20 @@ resources
 secrets
 service-principals
 skim-stdin
+skim-stdin-2
 skim-stdin-bma
 skim-stdin-tsv
 ssm-association-execution-targets
 ssm-association-executions
+ssm-association-fail-last
 ssm-associations
 ssm-automation-execution
+ssm-automation-execution-failed
 ssm-automation-executions
+ssm-automation-step-executions
+ssm-command-invocation
+ssm-command-invocation-failed
+ssm-instance-patch-states
 ssm-instances
 ssm-parameter-value
 ssm-parameters
@@ -223,6 +238,7 @@ stack-outputs
 stack-parameters
 stack-recreate
 stack-resources
+stack-save
 stack-status
 stack-tag
 stack-tags

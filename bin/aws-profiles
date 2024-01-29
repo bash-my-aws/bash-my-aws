@@ -1,52 +1,33 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+
 import configparser
 import os
-import sys
 
-# script.py - List AWS profile names with account IDs from aws_account_id or extracted from role_arn, sorted by profile name
+def list_aws_profiles(config_file, credentials_file):
+    # Initialize a set to hold unique profile names
+    profile_names = set()
 
-# Get patterns from command-line arguments
-patterns = sys.argv[1:]
+    # Function to parse a file and extract profile names
+    def parse_file(file_path):
+        if os.path.exists(file_path):
+            config = configparser.ConfigParser()
+            config.read(file_path)
+            for section in config.sections():
+                if "sso-session" not in section:
+                    # For 'config' file, strip 'profile ' prefix
+                    profile_name = section.replace("profile ", "") if file_path.endswith("config") else section
+                    profile_names.add(profile_name)
 
-# Get patterns from stdin if available
-if not sys.stdin.isatty():
-    for line in sys.stdin:
-        patterns.append(line.strip().split()[0])
+    # Parse the config and credentials files
+    parse_file(config_file)
+    parse_file(credentials_file)
 
-# Define the path to the AWS credentials file
-credentials_file = os.environ.get('AWS_SHARED_CREDENTIALS_FILE', os.path.expanduser('~/.aws/credentials'))
+    # Print the profile names
+    for profile_name in sorted(profile_names):
+        print(profile_name)
 
-# Read and parse the AWS credentials file
-config = configparser.ConfigParser(interpolation=None)
-config.read(credentials_file)
+# Paths to the AWS config and credentials files
+aws_config_file = os.getenv("AWS_CONFIG_FILE", os.path.expanduser("~/.aws/config"))
+aws_credentials_file = os.getenv("AWS_SHARED_CREDENTIALS_FILE", os.path.expanduser("~/.aws/credentials"))
 
-# Helper function to extract account ID from role_arn
-def get_account_id_from_arn(arn):
-    # Split the ARN and extract the account ID
-    parts = arn.split(':')
-    if len(parts) > 4 and parts[0].startswith('arn') and parts[2] == 'iam':
-        return parts[4]  # The account ID is the 5th element in the ARN
-    return 'Unknown'
-
-# Collect profile names and account IDs
-profiles_with_ids = []
-
-# Iterate through the sections and collect profile names and account IDs
-for section in config.sections():
-    if not patterns or any(pattern in section for pattern in patterns):
-        account_id = (config.get(section, 'aws_account_id')
-                      if config.has_option(section, 'aws_account_id')
-                      else 'Unknown')
-        # If aws_account_id is not found, try to extract it from role_arn
-        if account_id == 'Unknown' and config.has_option(section, 'role_arn'):
-            role_arn = config.get(section, 'role_arn')
-            account_id = get_account_id_from_arn(role_arn)
-
-        profiles_with_ids.append((section, account_id))
-
-# Sort the list by profile name
-sorted_profiles = sorted(profiles_with_ids)
-
-# Print sorted profiles and account IDs
-for profile, account_id in sorted_profiles:
-    print(f"{profile}\t{account_id}")
+list_aws_profiles(aws_config_file, aws_credentials_file)

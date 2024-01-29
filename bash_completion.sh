@@ -16,6 +16,29 @@ _bma_aws-accounts_completion() {
   COMPREPLY=($(compgen -W "${options}" -- ${word}))
   return 0
 }
+_bma_aws-profiles_completion() {
+  local command="$1"
+  local word="$2"
+  local options=$(bma aws-profiles)
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
+_bma_aws-vault_completion() {
+    local i cur prev opts base
+
+    for (( i=1; i < COMP_CWORD; i++ )); do
+        if [[ ${COMP_WORDS[i]} == -- ]]; then
+            _command_offset $i+1
+            return
+        fi
+    done
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    opts=$( ${COMP_WORDS[0]} --completion-bash "${COMP_WORDS[@]:1:$COMP_CWORD}" )
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    return 0
+}
 _bma_buckets_completion() {
   local command="$1"
   local word="$2"
@@ -172,6 +195,7 @@ complete -F _bma_asgs_completion asgs
 complete -F _bma_aws-accounts_completion aws-account-cost-explorer
 complete -F _bma_aws-accounts_completion aws-account-cost-recommendations
 complete -F _bma_aws-accounts_completion aws-accounts
+complete -F _bma_aws-profiles_completion aws-profile
 complete -F _bma_buckets_completion bucket-acls
 complete -F _bma_buckets_completion bucket-remove
 complete -F _bma_buckets_completion bucket-remove-force
@@ -209,6 +233,8 @@ complete -F _bma_instances_completion instance-rdp
 complete -F _bma_instances_completion instance-ssh
 complete -F _bma_instances_completion instance-ssh-details
 complete -F _bma_instances_completion instance-ssm
+complete -F _bma_instances_completion instance-ssm-command-invocations
+complete -F _bma_instances_completion instance-ssm-not-online
 complete -F _bma_instances_completion instance-ssm-platform-type
 complete -F _bma_instances_completion instance-ssm-port-forward
 complete -F _bma_instances_completion instance-stack
@@ -218,6 +244,7 @@ complete -F _bma_instances_completion instance-stop
 complete -F _bma_instances_completion instance-stop-protection
 complete -F _bma_instances_completion instance-stop-protection-disable
 complete -F _bma_instances_completion instance-stop-protection-enable
+complete -F _bma_instances_completion instance-stopped
 complete -F _bma_instances_completion instance-subnet
 complete -F _bma_instances_completion instance-tag
 complete -F _bma_instances_completion instance-tag-create
@@ -250,6 +277,7 @@ complete -F _bma_stacks_completion stack-outputs
 complete -F _bma_stacks_completion stack-parameters
 complete -F _bma_stacks_completion stack-recreate
 complete -F _bma_stacks_completion stack-resources
+complete -F _bma_stacks_completion stack-save
 complete -F _bma_stacks_completion stack-status
 complete -F _bma_stacks_completion stack-tail
 complete -F _bma_stacks_completion stack-template
@@ -271,3 +299,5 @@ complete -F _bma_vpcs_completion vpc-subnets
 complete -F _bma_vpcs_completion vpcs
 complete -f stack-validate
 complete -F _bma_completion bma
+complete -F _bma_aws-profiles_completion awslogin-sso
+complete -F _bma_aws-vault_completion -o default aws-vault # XXX this is a hack to get the completions to work

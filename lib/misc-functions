@@ -21,7 +21,14 @@ awslogin-firefox(){
   local url=$(aws-vault login "${account}" -s | jq -s -R -r @uri)
   (nohup firefox "ext+container:name=$account&url=$url" &>/dev/null) &
 }
-complete -o default -F _aws-vault_bash_autocomplete awslogin-firefox
+complete -o default -F _bma_aws-vault_completion awslogin-firefox
+
+awslogin-sso() {
+  local profile="${1:-${AWS_PROFILE}}"
+  local sso_start_url="$(aws configure get sso_start_url --profile "${profile}")"
+  local sso_region="${AWS_SSO_REGION:-$(aws configure get sso_region --profile "${profile}")}"
+  aws sso login --no-browser --profile "${profile}"
+}
 
 # Handy function to columnise output
 

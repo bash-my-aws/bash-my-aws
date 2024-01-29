@@ -1,0 +1,7 @@
+_bma_aws-profiles_completion() {
+  local command="$1" # XXX tidy up
+  local word="$2"
+  local options=$(bma aws-profiles)
+  COMPREPLY=($(compgen -W "${options}" -- ${word}))
+  return 0
+}
