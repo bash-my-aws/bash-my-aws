@@ -562,17 +562,10 @@ List availability zone of EC2 Instance(s)
 
 ### instance-ssm-command-invocations
 
-List SSM command invocations for EC2 Instance(s)
 
-USAGE: instance-ssm-command-invocations instance-id [instance-id]
 
-$ instances | instance-ssm-command-invocations 
-ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
-097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
-472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
-8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
-63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
-37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
+### instance-ssm-command-invocations-failed
+
 
 
 ### instance-console
@@ -1908,6 +1901,43 @@ Remove an S3 Bucket, and delete all objects if it's not empty.
 ## ssm-commands
 
 
+### ssm-association-last-execution-step-failures
+
+
+
+### ssm-command-invocations
+
+List SSM command invocations for EC2 Instance(s)
+
+USAGE: instance-ssm-command-invocations instance [instance]
+
+$ instances | instance-ssm-command-invocations 
+ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
+097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
+472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
+8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
+63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
+37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
+
+
+### ssm-command-invocations-failed
+
+
+
+### ssm-command-invocation
+
+Show details for an SSM Command Invocation
+
+Usage: ssm-command-invocation command instance
+
+$ ssm-command-invocation 12345678-90ab-cdef-1234-567890abcdef i-01234abcde56789f0
+
+
+### ssm-command-invocation-failed
+
+local plugin='runShellScript'
+
+
 ### ssm-association-fail-last
 
 459004af-cf9e-4e04-9802-a99acf658b29	InstallAndLinkAgents	InstallAndLinkAgents	cron(0 8 ? * * *)	2023-12-07T19:06:26+11:00	Failed
@@ -1984,20 +2014,9 @@ Show details for an SSM Automation Execution
 
     USAGE: ssm-automation-execution execution [execution]
 
-
-
-### ssm-command-invocation
-
-Show details for an SSM Command Invocation
-
-Usage: ssm-command-invocation command instance
-
-$ ssm-command-invocation 12345678-90ab-cdef-1234-567890abcdef i-01234abcde56789f0
-
-
-### ssm-command-invocation-failed
-
-local plugin='runShellScript'
+\
+| LC_ALL=C sort -k 6 -t $'\t' \
+| columnise
 
 
 ### ssm-instances

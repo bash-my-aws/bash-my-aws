@@ -234,6 +234,7 @@ complete -F _bma_instances_completion instance-ssh
 complete -F _bma_instances_completion instance-ssh-details
 complete -F _bma_instances_completion instance-ssm
 complete -F _bma_instances_completion instance-ssm-command-invocations
+complete -F _bma_instances_completion instance-ssm-command-invocations-failed
 complete -F _bma_instances_completion instance-ssm-not-online
 complete -F _bma_instances_completion instance-ssm-platform-type
 complete -F _bma_instances_completion instance-ssm-port-forward

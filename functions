@@ -134,6 +134,7 @@ instance-ssh
 instance-ssh-details
 instance-ssm
 instance-ssm-command-invocations
+instance-ssm-command-invocations-failed
 instance-ssm-not-online
 instance-ssm-platform-type
 instance-ssm-port-forward
@@ -209,6 +210,7 @@ skim-stdin-tsv
 ssm-association-execution-targets
 ssm-association-executions
 ssm-association-fail-last
+ssm-association-last-execution-step-failures
 ssm-associations
 ssm-automation-execution
 ssm-automation-execution-failed
@@ -216,6 +218,8 @@ ssm-automation-executions
 ssm-automation-step-executions
 ssm-command-invocation
 ssm-command-invocation-failed
+ssm-command-invocations
+ssm-command-invocations-failed
 ssm-instance-patch-states
 ssm-instances
 ssm-parameter-value

@@ -4,8 +4,101 @@
 
 # aws ssm get-command-invocation - get more detail
 
+ssm-association-last-execution-step-failures(){
+  ssm-association-executions \
+  | tail -1 \
+  | bma ssm-association-execution-targets \
+  | grep Failed \
+  | cut -f4 \
+  | bma ssm-automation-step-executions \
+  | grep -v -e Pending -e Success \
+  | columnise
+}
 
+ssm-command-invocations() {
+  # List SSM command invocations for EC2 Instance(s)
+  #
+  # USAGE: instance-ssm-command-invocations instance [instance]
+  #
+  # $ instances | instance-ssm-command-invocations 
+  # ee069cbe-7ed8-4d36-b7be-fdbcb0e31b3b  i-039b49e9e20597891  Command1   Success  None
+  # 097991f9-c877-4c61-8544-03a1e3dd8e13  i-039b49e9e20597891  Command2   Success  None
+  # 472a1760-bc29-40b2-a9fc-1882b571e215  i-039b49e9e20597891  Command3   Success  None
+  # 8adc95f0-d8c9-4d43-ab71-330a7b4c6a0d  i-039b49e9e20597891  Command4   Success  None
+  # 63de4ddf-a179-460b-af47-026fc090017f  i-039b49e9e20597891  Command5   Success  None
+  # 37ee3dee-7bbb-4ba8-b2c2-aefc8bb56a9e  i-039b49e9e20597891  Command6   Success  None
 
+  local instances=$(skim-stdin "$@")
+  # [[ -z $instance ]] && __bma_usage "instance [instance]" && return 1
+
+  local filters
+  filters+=${BMA_ARG_STATUS:+"key=Status,value=$BMA_ARG_STATUS"}  
+  filters+=" key=InvokedAfter,value=$(date -u "+%Y-%m-%dT%H:%M:%SZ" --date "1 day ago")" # XXX Make configurable
+
+  local instance
+  for instance in ${instances:-''}; do
+    aws ssm list-command-invocations     \
+      ${instance:+--instance-id "$instance"} \
+      ${filters:+--filters $filters}       \
+      --output text                           \
+      --max-items 1000                        \
+      --query "
+        CommandInvocations[][
+          CommandId,
+          InstanceId,
+          DocumentName,
+          Status,
+          RequestedDateTime,
+          Comment
+        ]"                |
+    LC_ALL=C sort -t$'\t' -k 5 |
+    columnise
+  done
+}
+
+ssm-command-invocations-failed() {
+  local BMA_ARG_STATUS=failed
+  ssm-command-invocations "$@"
+}
+
+ssm-command-invocation() {
+
+  # Show details for an SSM Command Invocation
+  #
+  # Usage: ssm-command-invocation command instance
+  #
+  # $ ssm-command-invocation 12345678-90ab-cdef-1234-567890abcdef i-01234abcde56789f0
+
+  inputs=$(skim-stdin-2 "$@")
+  [[ -z $inputs ]] && __bma_usage "command instance" && return 1
+
+  local command instance
+  while IFS=$'\t' read -r command instance; do
+    aws ssm get-command-invocation \
+        --command-id "${command}" \
+        --instance-id "${instance}" # \
+        # --query "CommandInvocations[].[CommandPlugins[?Status=='Failed'].[Name, Output]][]" \
+        # --output text
+  done <<< "$inputs"
+}
+
+ssm-command-invocation-failed() {
+
+  local instances=$(skim-stdin "$@")
+  # local plugin='runShellScript'
+  [[ -z $instances ]] && __bma_usage "instance [instance]" && return 1
+
+  local instance
+  for instance in $instances; do
+    echo -e "\n${instance}"
+    aws ssm list-command-invocations \
+        --instance-id "${instance}" \
+        --filters key=Status,value=Failed \
+        --details # \
+        # --query "CommandInvocations[].[CommandPlugins[?Status=='Failed'].[Name, Output]][]" \
+        #  --output text
+  done
+}
 
 # Most recent failed automations
 ssm-association-fail-last(){
@@ -203,49 +296,10 @@ ssm-automation-execution() {
         ][]"
   done  \
   | LC_ALL=C sort -k 6 -t $'\t' \
-  | columnise
+  | columnise # XXX check this - was commented out
 }
 
-ssm-command-invocation() {
 
-  # Show details for an SSM Command Invocation
-  #
-  # Usage: ssm-command-invocation command instance
-  #
-  # $ ssm-command-invocation 12345678-90ab-cdef-1234-567890abcdef i-01234abcde56789f0
-
-  inputs=$(skim-stdin-2 "$@")
-  [[ -z $inputs ]] && __bma_usage "command instance" && return 1
-
-  local command instance
-  while IFS=$'\t' read -r command instance; do
-    aws ssm get-command-invocation \
-        --command-id "${command}" \
-        --instance-id "${instance}" # \
-        # --query "CommandInvocations[].[CommandPlugins[?Status=='Failed'].[Name, Output]][]" \
-        # --output text
-  done <<< "$inputs"
-}
-
-alias instance-ssm-command-invocation-failed='ssm-command-invocation-failed'
-
-ssm-command-invocation-failed() {
-
-  local instances=$(skim-stdin "$@")
-  # local plugin='runShellScript'
-  [[ -z $instance ]] && __bma_usage "instance [instance]" && return 1
-
-  local instance
-  for instance in $instances; do
-    echo -e "\n${instance}"
-    aws ssm list-command-invocations \
-        --instance-id "${instance}" \
-        --filters key=Status,value=Failed \
-        --details \
-        --query "CommandInvocations[].[CommandPlugins[?Status=='Failed'].[Name, Output]][]" \
-         --output text
-  done
-}
 
 ssm-instances() {
 
@@ -492,7 +546,6 @@ ssm-automation-step-executions() {
   #     [Outputs detailed step information for each provided execution ID]
   
   local automation_executions="$(skim-stdin "$@")"
-  echo "$automation_executions"
 
   local automation_execution
   for automation_execution in $automation_executions; do
@@ -511,7 +564,6 @@ ssm-automation-step-executions() {
           ExecutionStartTime,
           ExecutionEndTime
         ]"
-    echo "" # Adds a line break for readability
   done  \
   | LC_ALL=C sort -k 6 -t $'\t' \
   | columnise
