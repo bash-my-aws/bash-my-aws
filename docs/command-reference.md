@@ -1800,6 +1800,41 @@ Generate NS records for delegating domain to AWS
     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
 
 
+### hosted-zones
+
+List Route53 Hosted Zones
+
+    $ hosted-zones
+    /hostedzone/Z3333333333333  5   NotPrivateZone  bash-my-aws.org.
+    /hostedzone/Z5555555555555  2   NotPrivateZone  bash-my-universe.com.
+    /hostedzone/Z4444444444444  3   NotPrivateZone  bashmyaws.org.
+    /hostedzone/Z1111111111111  3   NotPrivateZone  bash-my-aws.com.
+    /hostedzone/Z2222222222222  3   NotPrivateZone  bashmyaws.com.
+
+
+### hosted-zone-ns-records
+
+Generate NS records for delegating domain to AWS
+
+    $ hosted-zones bash-my-aws.org
+    /hostedzone/ZJ6ZCG2UD6OKX  5  NotPrivateZone  bash-my-aws.org.
+
+    $ hosted-zones bash-my-aws.org | hosted-zone-ns-records
+    bash-my-aws.org. 300 IN NS	ns-786.awsdns-34.net.
+    bash-my-aws.org. 300 IN NS	ns-1549.awsdns-01.co.uk.
+    bash-my-aws.org. 300 IN NS	ns-362.awsdns-45.com.
+    bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
+
+
+### hosted-zone-a-records
+
+Generate NS records for delegating domain to AWS
+
+    $ hosted-zone-a-records bash-my-aws.org
+
+    $ hosted-zones | hosted-zone-a-records
+
+
 ## s3-commands
 
 

@@ -108,6 +108,7 @@ elbv2-dnsname
 elbv2-subnets
 elbv2-target-groups
 elbv2s
+hosted-zone-a-records
 hosted-zone-ns-records
 hosted-zones
 iam-role-principal

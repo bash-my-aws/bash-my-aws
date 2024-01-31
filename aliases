@@ -108,6 +108,7 @@ alias elbv2-dnsname='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma elbv2-dnsname'
 alias elbv2-subnets='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma elbv2-subnets'
 alias elbv2-target-groups='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma elbv2-target-groups'
 alias elbv2s='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma elbv2s'
+alias hosted-zone-a-records='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma hosted-zone-a-records'
 alias hosted-zone-ns-records='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma hosted-zone-ns-records'
 alias hosted-zones='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma hosted-zones'
 alias iam-role-principal='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma iam-role-principal'
@@ -247,7 +248,7 @@ alias vpcs='${BMA_HOME:-$HOME/.bash-my-aws}/bin/bma vpcs'
 # We'll find a less suprising place for this in future
 # region() needs to be a function in order to let it
 # set AWS_DEFAULT_REGION in the current shell
-function region() { 
+function region() {
     local inputs=$(skim-stdin "$@");
     if [[ -z "$inputs" ]]; then
         echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}";
