@@ -42,23 +42,47 @@ hosted-zone-ns-records(){
   #     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
 
   local inputs=$(skim-stdin "$@")
-  local hosted_zone_id=$(echo "$inputs" | awk '{print $1}')
-  [[ -z "$hosted_zone_id" ]] && __bma_usage "hosted-zone-id" && return 1
+  local hosted_zone_ids=$(echo "$inputs")
+  [[ -z "$hosted_zone_ids" ]] && __bma_usage "hosted-zone-id" && return 1
 
   local hosted_zone_name
-  hosted_zone_name=$(
-    aws route53 list-resource-record-sets            \
-      --hosted-zone-id "$hosted_zone_id"             \
-      --query "ResourceRecordSets[?Type=='NS'].Name" \
-      --output text
-  )
+  for hosted_zone_id in $hosted_zone_ids; do
+    hosted_zone_name=$(
+      aws route53 list-resource-record-sets            \
+        --hosted-zone-id "$hosted_zone_id"             \
+        --query "ResourceRecordSets[?Type=='NS'].Name" \
+        --output text
+    )
 
-  aws route53 list-resource-record-sets                   \
-    --hosted-zone-id "$hosted_zone_id"                    \
-    --output text                                         \
-    --query "
-      ResourceRecordSets[?Type=='NS'].ResourceRecords[].[
-        '$hosted_zone_name 300 IN NS',
-        Value
-      ]"
+    aws route53 list-resource-record-sets                   \
+      --hosted-zone-id "$hosted_zone_id"                    \
+      --output text                                         \
+      --query "
+        ResourceRecordSets[?Type=='NS'].ResourceRecords[].[
+          '$hosted_zone_name 300 IN NS',
+          Value
+        ]"
+  done
+}
+
+hosted-zone-a-records(){
+
+  # Generate NS records for delegating domain to AWS
+  #
+  #     $ hosted-zone-a-records bash-my-aws.org
+  #
+  #     $ hosted-zones | hosted-zone-a-records
+
+  local inputs=$(skim-stdin "$@")
+  local hosted_zone_ids=$(echo "$inputs")
+  [[ -z "$hosted_zone_ids" ]] && __bma_usage "hosted-zone-id" && return 1
+
+  local hosted_zone_name
+  for hosted_zone_id in $hosted_zone_ids; do
+
+    aws route53 list-resource-record-sets                   \
+      --hosted-zone-id "$hosted_zone_id"                    \
+      --output text                                         \
+      --query "ResourceRecordSets[?Type=='A'].[Name,AliasTarget.DNSName]"
+  done
 }
