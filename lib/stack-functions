@@ -208,7 +208,14 @@ stack-create() {
   fi
 
   ## if it fails because of missing capabilities, add a "do you want to try again with the following capabilities" question
-  ## see stack-delete for a simple yes/no
+  ##
+#  local regex_yes="^[Yy]$"
+#  echo "This stack requires the following capabilities:"
+#  echo "$missing_capabilities" | tr ' ' "\n" | missing_capabilities
+#  read -p "Do you want to try again with these capabilities? " -n 1 -r
+#  echo
+#  [[ $REPLY =~ $regex_yes ]] || return 0
+
 }
 
 stack-update() {
