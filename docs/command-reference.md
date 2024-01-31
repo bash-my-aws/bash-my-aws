@@ -1405,9 +1405,6 @@ List images for ECR Repositories
 
 ## ecs-commands
 
-
-### ecs-clusters2
-
 List ECS clusters
 output includes clusterName,status,activeServicesCount,runningTasksCount,pendingTasksCount
 if you pass an argument, it'll filter for clusters whose ARN contains your text
@@ -1419,7 +1416,7 @@ if you pass an argument, it'll filter for clusters whose ARN contains your text
   test2-ecs-cluster        ACTIVE  3  3  0
 
 
-### ecs-services2
+### ecs-services
 
 List ECS services
 output includes serviceName,status,desiredCount,runningCount,pendingCount,createdAt
@@ -1487,6 +1484,68 @@ Accepts a string to filter on
 This is not very useful without column headings.
 Most of the things you want to know about a replication group are boolean
 eg AutomaticFailover, MultiAZClusterEnabled, AtRestEncryptionEnabled etc
+
+
+### ecs-clusters
+
+List ECS clusters
+output includes clusterName,status,activeServicesCount,runningTasksCount,pendingTasksCount
+if you pass an argument, it'll filter for clusters whose ARN contains your text
+
+  $ ecs-clusters test
+  test-octopus-ecs-cluster  ACTIVE  1  1  0
+  test1-ecs-cluster        ACTIVE  3  1  0
+  test3-ecs-cluster        ACTIVE  3  1  0
+  test2-ecs-cluster        ACTIVE  3  3  0
+
+
+### ecs-services
+
+List ECS services
+output includes serviceName,status,desiredCount,runningCount,pendingCount,createdAt
+
+gets all clusters if no filter passed in
+if you do pass a filter:
+1. if your filter is the name of one of your clusters, it will list the services in that cluster (eg ecs-clusters test1 | ecs-services)
+2. if your filter is not a cluster name, it will list the services in all clusters whose names match your filter (ie it filters on cluster name not service name)
+3. if you do not pass a filter, it will list all services in all clusters
+
+  $ ecs-clusters test1|ecs-services
+  test1-ecs-admin-7URaUr0YGJHi        ACTIVE  0  0  0  2023-09-13T17:16:48.198000+10:00
+  test1-ecs-public-wEaTAqGXqbpq      ACTIVE  0  0  0  2023-09-13T16:54:54.162000+10:00
+  test1-ecs-hangfire-YNIo1hlx8rjn  ACTIVE  1  1  0  2023-09-13T16:39:06.218000+10:00
+
+
+### ecs-tasks
+
+List ECS tasks
+output includes taskDefinitionArn, createdAt, cpu, memory
+
+gets all tasks if no filter passed in
+if you do pass a filter, it filters on the task name.  All clusters are included (I haven't worked out a way of passing a cluster name AND a filter)
+
+  $ ecs-tasks test2
+  arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-public:18    2023-09-19T17:51:56.418000+10:00  2048  4096
+  arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-admin:20     2023-08-29T10:03:36.956000+10:00  2048  4096
+  arn:aws:ecs:ap-southeast-2:xxxxxxxxxxxx:task-definition/test2-hangfire:22  2023-09-19T17:11:06.622000+10:00  1024  2048
+
+
+### ecs-scaling-activities
+
+LIst autoscaling activities - the actual scaling events that have happened
+eg
+ecs-scaling www
+2023-11-22T06:24:50.937000+11:00        www-ecs-public-ServicePublic-OuN3rXBLvmx3-AlarmLow-64de4512-d901-4b26-a6a2-184bb1e90bc6 in state ALARM triggered policy www-ecs-public-target-tracking-mem70     Successfully set desired count to 2. Change successfully fulfilled by ecs.
+2023-11-22T05:25:48.611000+11:00        www-ecs-public-ServicePublic-OuN3rXBLvmx3-AlarmHigh-6408c172-647e-4c0e-aac9-a800cd83317d in state ALARM triggered policy www-ecs-public-target-tracking-mem70    Successfully set desired count to 3. Change successfully fulfilled by ecs.
+
+
+### ecs-scaling-actions
+
+List autoscaling actions - cron-based scheduled scaling
+filter by environment (eg test1) or namespace (eg ecs)
+if you pass an argument, it'll filter for clusters whose ARN contains your text
+
+  $ scaling-ecs 'test.*down'     # list the scale-down times of all our test environments
 
 
 ## elb-commands
@@ -1987,6 +2046,18 @@ Generate NS records for delegating domain to AWS
     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
 
 
+### hosted-zone-a-records
+
+Generate NS records for delegating domain to AWS
+
+    $ hosted-zone-a-records bash-my-aws.org
+
+    $ hosted-zones | hosted-zone-a-records
+
+
+## route53-commandsTEMP
+
+
 ### hosted-zones
 
 List Route53 Hosted Zones
@@ -2011,15 +2082,6 @@ Generate NS records for delegating domain to AWS
     bash-my-aws.org. 300 IN NS	ns-1549.awsdns-01.co.uk.
     bash-my-aws.org. 300 IN NS	ns-362.awsdns-45.com.
     bash-my-aws.org. 300 IN NS	ns-1464.awsdns-55.org.
-
-
-### hosted-zone-a-records
-
-Generate NS records for delegating domain to AWS
-
-    $ hosted-zone-a-records bash-my-aws.org
-
-    $ hosted-zones | hosted-zone-a-records
 
 
 ## s3-commands
@@ -2142,24 +2204,24 @@ Run a command locally on EC2 instance(s) running Windows
     $ ssm-instances Windows | ssm-send-command-windows Get-Hotfix
     Command ID: a0eeeddc-2edf-42bc-b0c7-122f5bc50956
     Waiting for command to complete...
-    i-0fake1234abcd                                                                           
-       Source        Description      HotFixID      InstalledBy          InstalledOn              
-       ------        -----------      --------      -----------          -----------              
-       FAKEAPP01234  Update           KB1234567     NT AUTHORITY\SYSTEM  10/11/2023 12:00:00 AM   
-       FAKEAPP01234  Update           KB8901234     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
-       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
-       FAKEAPP01234  Update           KB2345678     NT AUTHORITY\SYSTEM  1/9/2019 12:00:00 AM     
-       FAKEAPP01234  Update           KB3456789     NT AUTHORITY\SYSTEM  3/11/2021 12:00:00 AM    
-       FAKEAPP01234  Security Update  KB4567890     NT AUTHORITY\SYSTEM  4/21/2019 12:00:00 AM    
-       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  5/15/2019 12:00:00 AM    
-       FAKEAPP01234  Security Update  KB6789012     NT AUTHORITY\SYSTEM  6/12/2019 12:00:00 AM   
-    ---Output truncated---                                                                        
-    i-0fake1234abcd                                                                           
-       Source        Description      HotFixID      InstalledBy          InstalledOn              
-       ------        -----------      --------      -----------          -----------              
-       FAKEAPP01234  Update           KB1234567     NT AUTHORITY\SYSTEM  10/11/2023 12:00:00 AM   
-       FAKEAPP01234  Update           KB8901234     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
-       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM   
+    i-0fake1234abcd
+       Source        Description      HotFixID      InstalledBy          InstalledOn
+       ------        -----------      --------      -----------          -----------
+       FAKEAPP01234  Update           KB1234567     NT AUTHORITY\SYSTEM  10/11/2023 12:00:00 AM
+       FAKEAPP01234  Update           KB8901234     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM
+       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM
+       FAKEAPP01234  Update           KB2345678     NT AUTHORITY\SYSTEM  1/9/2019 12:00:00 AM
+       FAKEAPP01234  Update           KB3456789     NT AUTHORITY\SYSTEM  3/11/2021 12:00:00 AM
+       FAKEAPP01234  Security Update  KB4567890     NT AUTHORITY\SYSTEM  4/21/2019 12:00:00 AM
+       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  5/15/2019 12:00:00 AM
+       FAKEAPP01234  Security Update  KB6789012     NT AUTHORITY\SYSTEM  6/12/2019 12:00:00 AM
+    ---Output truncated---
+    i-0fake1234abcd
+       Source        Description      HotFixID      InstalledBy          InstalledOn
+       ------        -----------      --------      -----------          -----------
+       FAKEAPP01234  Update           KB1234567     NT AUTHORITY\SYSTEM  10/11/2023 12:00:00 AM
+       FAKEAPP01234  Update           KB8901234     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM
+       FAKEAPP01234  Security Update  KB5678901     NT AUTHORITY\SYSTEM  12/12/2018 12:00:00 AM
 
     See also: ssm-send-command-windows
 
