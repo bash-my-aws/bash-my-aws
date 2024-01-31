@@ -83,6 +83,7 @@ hosted-zone-a-records(){
     aws route53 list-resource-record-sets                   \
       --hosted-zone-id "$hosted_zone_id"                    \
       --output text                                         \
-      --query "ResourceRecordSets[?Type=='A'].[Name,AliasTarget.DNSName]"
+      --query "ResourceRecordSets[?Type=='A'].[Name,AliasTarget.DNSName]" |
+    columnise
   done
 }
