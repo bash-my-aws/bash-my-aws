@@ -120,6 +120,7 @@ elbv2s
 fargate-clusters
 fargate-services
 fargate-tasks
+hosted-zone-a-records
 hosted-zone-ns-records
 hosted-zones
 iam-role-principal
