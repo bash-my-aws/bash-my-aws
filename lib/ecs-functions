@@ -9,7 +9,7 @@
 # ecs-services [cluster-name]
 # but then i don't know how to filter on the task/service name
 
-ecs-clusters2() {
+ecs-clusters() {
   # List ECS clusters
   # output includes clusterName,status,activeServicesCount,runningTasksCount,pendingTasksCount
   # if you pass an argument, it'll filter for clusters whose ARN contains your text
@@ -30,7 +30,7 @@ ecs-clusters2() {
     columnise
 }
 
-ecs-services2() {
+ecs-services() {
 
   # List ECS services
   # output includes serviceName,status,desiredCount,runningCount,pendingCount,createdAt
