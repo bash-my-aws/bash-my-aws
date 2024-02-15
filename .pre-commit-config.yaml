@@ -1,0 +1,41 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+# Lock external hooks to a specific version (git sha) with:
+#
+#   pre-commit autoupdate --freeze
+
+repos:
+
+  # Remove exif data
+  - repo: local
+    hooks:
+      - id: no-spicy-exif
+        name: Ban spicy exif data
+        description: Ensures that there is no sensitive exif data committed
+        language: system
+        entry: exiftool -all= --icc_profile:all -tagsfromfile @ -orientation -overwrite_original
+        exclude_types: ["svg"]
+        types: ["image"]
+
+  # PNG resize
+  - repo: https://github.com/gdubicki/pre-commit-pngquant
+    rev: '9010345cf034fe1097b3b7bb9ecd5ea92dcf85dc' 
+    hooks:
+      - id: pngquant
+        args: [--speed=1] # these are optional
+
+  # Check Markdown Links
+  - repo: https://github.com/tcort/markdown-link-check
+    rev: c45ef2674092d87cac9072d2b44fe6be5eb57874  # frozen: v3.11.2
+    hooks:
+      - id: markdown-link-check
+        args: [--quiet]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: c4a0b883114b00d8d76b479c820ce7950211c99b  # frozen: v4.5.0
+    hooks:
+      - id: check-added-large-files
+    # -   id: trailing-whitespace
+    # -   id: end-of-file-fixer
+    # -   id: check-yaml

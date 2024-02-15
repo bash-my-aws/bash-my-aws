@@ -215,7 +215,7 @@ Cancel an in-progress stack update
 
 Create a CloudFormation Stack
 
-*See suggested [CloudFormation File Naming Conventions](/cloudformation-naming/)
+*See suggested [CloudFormation File Naming Conventions](./cloudformation-naming.md)
 to take advantage of shorter commands*
 
     USAGE: stack-create stack [template-file] [parameters-file]             \

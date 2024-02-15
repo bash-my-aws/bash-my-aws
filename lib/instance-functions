@@ -81,6 +81,9 @@ instances() {
     columnise
 }
 
+# XXX Should we prefix? There are other services with instances.
+# alias ec2-instances='instances'
+
 instance-asg() {
 
   # List autoscaling group membership of EC2 Instance(s)
