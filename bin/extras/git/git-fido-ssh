@@ -8,6 +8,10 @@
 # 
 #       keyid: Any word to identify your Yubikey to you (e.g. key1)
 #       realm: security domain or organization (e.g. personal, work, mycompany)
+#
+# Prerequisites:
+#
+# - GitHub CLI (gh) - https://cli.github.com/
 
 git-fido-ssh() {
     local keyid_realm="$1"
