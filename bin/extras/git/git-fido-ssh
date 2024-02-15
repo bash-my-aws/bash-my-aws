@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+#
+# git-fido-ssh - Sets up an SSH key, checks and switches GitHub account,
+#                adds the key to GitHub, configures it for Git signing,
+#                updates Git user details based on realm, and manages SSH configurations.
+#
+# Usage: ./git-fido-ssh keyid@realm [git-email] [git-name]
+# 
+#       keyid: Any word to identify your Yubikey to you (e.g. key1)
+#       realm: security domain or organization (e.g. personal, work, mycompany)
+
+git-fido-ssh() {
+    local keyid_realm="$1"
+    local git_email="$2"
+    local git_name="$3"
+
+    local keyid="${keyid_realm%@*}"
+    local realm="${keyid_realm#*@}"
+    local key_path="$HOME/.ssh/${keyid_realm}"
+    local git_config_path="$HOME/.gitconfig_${realm}"
+    local ssh_config_file="$HOME/.ssh/conf.d/${realm}"
+
+    check_and_switch_github_account() {
+        # Check if logged in to GitHub
+        local auth_status
+        auth_status=$(gh auth status 2>&1)
+
+        if [[ $auth_status == *"You are not logged into any GitHub hosts"* ]]; then
+            echo "You are not logged into any GitHub hosts."
+            read -p "Do you want to log in now? (y/n) " login_choice
+
+            if [[ $login_choice =~ ^[Yy]$ ]]; then
+                gh auth login
+            else
+                echo "Cannot proceed without GitHub authentication. Exiting."
+                exit 1
+            fi
+        else
+            # Fetch the current GitHub username
+            echo "$auth_status" | grep 'Logged in to github.com as'
+
+            read -p "Do you want to continue with this account? (y/n) " choice
+
+            if [[ $choice =~ ^[Nn]$ ]]; then
+                echo "Logging out..."
+                gh auth logout
+                echo "Please log in to the correct GitHub account."
+                gh auth login
+            fi
+        fi
+    }
+
+
+    # SSH configuration setup
+    create_ssh_config() {
+        local host_alias="$realm"
+        echo "Host $host_alias" > "$ssh_config_file"
+        echo "  User git" >> "$ssh_config_file"
+        echo "  HostName github.com" >> "$ssh_config_file"
+        echo "  IdentityFile $key_path" >> "$ssh_config_file"
+        echo "  IdentitiesOnly yes" >> "$ssh_config_file"
+
+        # Include the new SSH configuration in the main SSH config file
+        local include_str="Include config_$realm"
+        grep -qxF "$include_str" "$HOME/.ssh/config" || echo "$include_str" >> "$HOME/.ssh/config"
+    }
+
+    if [[ -z "$keyid" || -z "$realm" ]]; then
+        echo "Error: Invalid format. Please use keyid@realm."
+        return 1
+    fi
+
+    if [[ ! -f "$key_path" ]]; then
+        ssh-keygen -t ecdsa-sk -b 521 -C "${keyid_realm}" -f "$key_path"
+        symlink_path="$(dirname $key_path)/${keyid_realm}"
+        echo "SSH key generated at $key_path"
+        (cd $(dirname $key_path) && ln -sf "$keyid_realm" "${realm}") # so we can use generic name
+    else
+        echo "Error: Key file $key_path already exists."
+        return 1
+    fi
+
+    eval "$(ssh-agent -s)"
+    ssh-add "$key_path"
+    check_and_switch_github_account
+    gh ssh-key add "${key_path}.pub" -t "${keyid_realm}"
+    create_ssh_config
+
+    if [[ -f "$git_config_path" ]]; then
+        local existing_email=$(git config -f "$git_config_path" --get user.email)
+        local existing_name=$(git config -f "$git_config_path" --get user.name)
+
+        if [[ -n "$git_email" && "$git_email" != "$existing_email" ]]; then
+            read -p "Replace existing email $existing_email with $git_email? (y/n) " choice
+            [[ $choice =~ ^[Yy]$ ]] && git config -f "$git_config_path" user.email "$git_email"
+        fi
+
+        if [[ -n "$git_name" && "$git_name" != "$existing_name" ]]; then
+            read -p "Replace existing name $existing_name with $git_name? (y/n) " choice
+            [[ $choice =~ ^[Yy]$ ]] && git config -f "$git_config_path" user.name "$git_name"
+        fi
+    else
+        echo "[user]" > "$git_config_path"
+        [[ -n "$git_email" ]] && echo "email = $git_email" >> "$git_config_path"
+        [[ -n "$git_name" ]] && echo "name = $git_name" >> "$git_config_path"
+        echo "signingkey = $(cat "${key_path}.pub")" >> "$git_config_path"
+        git config --global --add includeIf."gitdir:~/projects/${realm}/".path "$git_config_path"
+    fi
+
+    echo "Git and SSH setup complete for realm: $realm"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    if [[ $# -lt 1 ]]; then
+        echo "Usage: $0 keyid@realm [git-email] [git-name]"
+        exit 1
+    fi
+
+    git-fido-ssh "$@"
+fi
