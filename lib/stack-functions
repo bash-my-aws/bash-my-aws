@@ -177,44 +177,53 @@ stack-create() {
   local inputs_array=($@)
   local IFS='=' # override default field separator in the scope of this function only
   local regex_role_arn="^\-\-role\-arn=.*"
+  local list_capabilities=("CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND")
 
-  # scan the whole commandline for anything in the list of capabities
-  local list_capabilities="CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
   for index in "${inputs_array[@]}" ; do
     if [[ "$index" =~ $regex_role_arn ]] ; then
       read arn_opt arn_arg <<< "$index" # ignore anything after option + arg
       arn="--role-arn $arn_arg"
-    elif [[ "$index" =~ $list_capabilities ]] ; then
-      read caps_opt caps_arg <<< "$index" # ignore anything after option + arg
-      capabilities="--capabilities $caps_arg"
     fi
-    echo "capabilities include $caps_arg"
+    # search for anything in the capabilities list, with or without "--capabilities"
+    test_capability=${index##* }
+    if [[ " $list_capabilities " =~  "$test_capability" ]] ; then
+      capabilities="${capabilities} ${test_capability}"
+    fi
   done
-
-  ## also add shell completion
-  # end capabilities
+  if [ ! -z "${capabilities}" ] ; then
+    capabilities="--capabilities ${capabilities}"
+  fi
+  ## TODO: add capabilities shell completion
 
   unset IFS # to prevent it from breaking things later
 
-  if aws cloudformation create-stack \
+  if output=$(
+    aws cloudformation create-stack \
     --stack-name $stack              \
     --template-body file://$template \
     $parameters                      \
     $capabilities                    \
     $arn                             \
     --disable-rollback               \
-    --output text; then
+    --output text                    \
+     2>&1
+  ); then
     stack-tail $stack
+  else
+    echo "stack creation failed because $output"
+    for capability in ${list_capabilities} ; do
+      if [[ $output ==  *"$capability"* ]] ; then
+        capabilities="${capabilities} ${capability}"
+      fi
+    done
+      local regex_yes="^[Yy]$"
+      read -p "Do you want to try again with these capabilities? " -n 1 -r
+      echo
+      [[ $REPLY =~ $regex_yes ]] || return 0
+      echo "now what?"
+      stack-create $@ ${capabilities}
   fi
 
-  ## if it fails because of missing capabilities, add a "do you want to try again with the following capabilities" question
-  ##
-#  local regex_yes="^[Yy]$"
-#  echo "This stack requires the following capabilities:"
-#  echo "$missing_capabilities" | tr ' ' "\n" | missing_capabilities
-#  read -p "Do you want to try again with these capabilities? " -n 1 -r
-#  echo
-#  [[ $REPLY =~ $regex_yes ]] || return 0
 
 }
 

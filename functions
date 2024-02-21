@@ -97,10 +97,10 @@ deployments-group
 distributions
 ecr-repositories
 ecr-repository-images
-ecs-clusters2
+ecs-clusters
 ecs-scaling-actions
 ecs-scaling-activities
-ecs-services2
+ecs-services
 ecs-tasks
 elasticache-replication-groups
 elasticaches
