@@ -57,6 +57,7 @@ git-fido-ssh() {
 
     # SSH configuration setup
     create_ssh_config() {
+        mkdir -p "$(dirname $ssh_config_file)"
         local host_alias="$realm"
         echo "Host $host_alias" > "$ssh_config_file"
         echo "  User git" >> "$ssh_config_file"
@@ -65,7 +66,7 @@ git-fido-ssh() {
         echo "  IdentitiesOnly yes" >> "$ssh_config_file"
 
         # Include the new SSH configuration in the main SSH config file
-        local include_str="Include config_$realm"
+        local include_str="Include ${ssh_config_file}"
         grep -qxF "$include_str" "$HOME/.ssh/config" || echo "$include_str" >> "$HOME/.ssh/config"
     }
 
