@@ -3,6 +3,8 @@ import configparser
 import os
 import sys
 
+# script.py - List AWS profile names with account IDs from aws_account_id or extracted from role_arn, sorted by profile name
+
 # Get patterns from command-line arguments
 patterns = sys.argv[1:]
 
@@ -18,8 +20,33 @@ credentials_file = os.environ.get('AWS_SHARED_CREDENTIALS_FILE', os.path.expandu
 config = configparser.ConfigParser(interpolation=None)
 config.read(credentials_file)
 
-# Iterate through the sections and print those that match the patterns
+# Helper function to extract account ID from role_arn
+def get_account_id_from_arn(arn):
+    # Split the ARN and extract the account ID
+    parts = arn.split(':')
+    if len(parts) > 4 and parts[0].startswith('arn') and parts[2] == 'iam':
+        return parts[4]  # The account ID is the 5th element in the ARN
+    return 'Unknown'
+
+# Collect profile names and account IDs
+profiles_with_ids = []
+
+# Iterate through the sections and collect profile names and account IDs
 for section in config.sections():
     if not patterns or any(pattern in section for pattern in patterns):
-        print(section)
+        account_id = (config.get(section, 'aws_account_id')
+                      if config.has_option(section, 'aws_account_id')
+                      else 'Unknown')
+        # If aws_account_id is not found, try to extract it from role_arn
+        if account_id == 'Unknown' and config.has_option(section, 'role_arn'):
+            role_arn = config.get(section, 'role_arn')
+            account_id = get_account_id_from_arn(role_arn)
 
+        profiles_with_ids.append((section, account_id))
+
+# Sort the list by profile name
+sorted_profiles = sorted(profiles_with_ids)
+
+# Print sorted profiles and account IDs
+for profile, account_id in sorted_profiles:
+    print(f"{profile}\t{account_id}")

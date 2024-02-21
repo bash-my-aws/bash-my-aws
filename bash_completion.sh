@@ -202,11 +202,15 @@ complete -F _bma_instances_completion instance-console
 complete -F _bma_instances_completion instance-dns
 complete -F _bma_instances_completion instance-health-set-unhealthy
 complete -F _bma_instances_completion instance-iam-profile
+complete -F _bma_instances_completion instance-id
 complete -F _bma_instances_completion instance-ip
+complete -F _bma_instances_completion instance-profile
+complete -F _bma_instances_completion instance-profile-role
 complete -F _bma_instances_completion instance-rdp
 complete -F _bma_instances_completion instance-ssh
 complete -F _bma_instances_completion instance-ssh-details
 complete -F _bma_instances_completion instance-ssm
+complete -F _bma_instances_completion instance-ssm-platform-type
 complete -F _bma_instances_completion instance-ssm-port-forward
 complete -F _bma_instances_completion instance-stack
 complete -F _bma_instances_completion instance-start
@@ -237,7 +241,10 @@ complete -F _bma_stacks_completion stack-asg-instances
 complete -F _bma_stacks_completion stack-asgs
 complete -F _bma_stacks_completion stack-cancel-update
 complete -F _bma_stacks_completion stack-delete
+complete -F _bma_stacks_completion stack-describe-drift
+complete -F _bma_stacks_completion stack-detect-drift
 complete -F _bma_stacks_completion stack-diff
+complete -F _bma_stacks_completion stack-diff-drift
 complete -F _bma_stacks_completion stack-elbs
 complete -F _bma_stacks_completion stack-events
 complete -F _bma_stacks_completion stack-exports
