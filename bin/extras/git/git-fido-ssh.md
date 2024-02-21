@@ -4,7 +4,7 @@ Keep work and personal GitHub accounts separate by using FIDO2 SSH keys.
 
 ## For Windows WSL users
 
-Download and install a recent version of OpenSSH for Windows. This will give you the `
+Download and install a recent version of OpenSSH for Windows. This will give you ssh-sk-helper.exe which WSL can call out to.
 
 1. Download and install a recent OpenSSH for Windows:
 
@@ -15,7 +15,6 @@ Download and install a recent version of OpenSSH for Windows. This will give you
     ```shell
     echo 'export SSH_SK_HELPER="/mnt/c/Program Files/OpenSSH/ssh-sk-helper.exe"' >> ~/.bashrc
     ```
-
 
 ## Setup FIDO2 SSH keys for GitHub Work Context
 
