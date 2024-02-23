@@ -69,6 +69,7 @@ git-fido-ssh() {
         local include_str="Include config.d/*"
 
         # Check if the line already exists
+        local config_file="$HOME/.ssh/config"
         grep -qxF "$include_str" "$config_file" || {
             # Prepend the line to a temp file
             temp_file="$(mktemp)"
