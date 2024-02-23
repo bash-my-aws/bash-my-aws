@@ -22,7 +22,7 @@ git-fido-ssh() {
     local realm="${keyid_realm#*@}"
     local key_path="$HOME/.ssh/${keyid_realm}"
     local git_config_path="$HOME/.gitconfig_${realm}"
-    local ssh_config_file="$HOME/.ssh/conf.d/${realm}"
+    local ssh_config_file="$HOME/.ssh/config.d/${realm}"
 
     check_and_switch_github_account() {
         # Check if logged in to GitHub
@@ -66,8 +66,19 @@ git-fido-ssh() {
         echo "  IdentitiesOnly yes" >> "$ssh_config_file"
 
         # Include the new SSH configuration in the main SSH config file
-        local include_str="Include ${ssh_config_file}"
-        grep -qxF "$include_str" "$HOME/.ssh/config" || echo "$include_str" >> "$HOME/.ssh/config"
+        local include_str="Include config.d/*"
+
+        # Check if the line already exists
+        grep -qxF "$include_str" "$config_file" || {
+            # Prepend the line to a temp file
+            temp_file="$(mktemp)"
+            echo "$include_str" > "$temp_file"
+            # Append the original file content to the temp file
+            cat "$config_file" >> "$temp_file"
+            # Move the temp file to the original file location
+            cp "$config_file" "$config_file.$(date +%s).bak"
+            mv "$temp_file" "$config_file"
+        }
     }
 
     if [[ -z "$keyid" || -z "$realm" ]]; then
