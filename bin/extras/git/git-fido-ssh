@@ -12,6 +12,18 @@
 # Prerequisites:
 #
 # - GitHub CLI (gh) - https://cli.github.com/
+#
+# Preparation for WSL (Windows Subsystem for Linux)
+# --------------------------------------------------
+# WSL does not support USB devices natively, so we need to use Windows OpenSSH to access the YubiKey.
+# This requires a recent version of OpenSSH for Windows and a helper program to access the YubiKey.
+#
+# Download and install a recent version of OpenSSH for Windows. This will give you 'ssh-sk-helper.exe'
+# 1. Download and install a recent OpenSSH for Windows:
+#      OpenSSH for Windows: https://github.com/PowerShell/Win32-OpenSSH/releases
+# 2. Tell WSL OpenSSH to ask Windows for help:
+#
+#      echo 'export SSH_SK_HELPER="/mnt/c/Program Files/OpenSSH/ssh-sk-helper.exe"' >> ~/.bashrc
 
 git-fido-ssh() {
     local keyid_realm="$1"
@@ -54,6 +66,28 @@ git-fido-ssh() {
         fi
     }
 
+    configure_git() {
+        if [[ -f "$git_config_path" ]]; then
+            local existing_email=$(git config -f "$git_config_path" --get user.email)
+            local existing_name=$(git config -f "$git_config_path" --get user.name)
+
+            if [[ -n "$git_email" && "$git_email" != "$existing_email" ]]; then
+                read -p "Replace existing email $existing_email with $git_email? (y/n) " choice
+                [[ $choice =~ ^[Yy]$ ]] && git config -f "$git_config_path" user.email "$git_email"
+            fi
+
+            if [[ -n "$git_name" && "$git_name" != "$existing_name" ]]; then
+                read -p "Replace existing name $existing_name with $git_name? (y/n) " choice
+                [[ $choice =~ ^[Yy]$ ]] && git config -f "$git_config_path" user.name "$git_name"
+            fi
+        else
+            echo "[user]" > "$git_config_path"
+            [[ -n "$git_email" ]] && echo "email = $git_email" >> "$git_config_path"
+            [[ -n "$git_name" ]] && echo "name = $git_name" >> "$git_config_path"
+            echo "signingkey = $(cat "${key_path}.pub")" >> "$git_config_path"
+            git config --global --add includeIf."gitdir:~/projects/${realm}/".path "$git_config_path"
+        fi
+    }
 
     # SSH configuration setup
     create_ssh_config() {
@@ -102,27 +136,7 @@ git-fido-ssh() {
     check_and_switch_github_account
     gh ssh-key add "${key_path}.pub" -t "${keyid_realm}"
     create_ssh_config
-
-    if [[ -f "$git_config_path" ]]; then
-        local existing_email=$(git config -f "$git_config_path" --get user.email)
-        local existing_name=$(git config -f "$git_config_path" --get user.name)
-
-        if [[ -n "$git_email" && "$git_email" != "$existing_email" ]]; then
-            read -p "Replace existing email $existing_email with $git_email? (y/n) " choice
-            [[ $choice =~ ^[Yy]$ ]] && git config -f "$git_config_path" user.email "$git_email"
-        fi
-
-        if [[ -n "$git_name" && "$git_name" != "$existing_name" ]]; then
-            read -p "Replace existing name $existing_name with $git_name? (y/n) " choice
-            [[ $choice =~ ^[Yy]$ ]] && git config -f "$git_config_path" user.name "$git_name"
-        fi
-    else
-        echo "[user]" > "$git_config_path"
-        [[ -n "$git_email" ]] && echo "email = $git_email" >> "$git_config_path"
-        [[ -n "$git_name" ]] && echo "name = $git_name" >> "$git_config_path"
-        echo "signingkey = $(cat "${key_path}.pub")" >> "$git_config_path"
-        git config --global --add includeIf."gitdir:~/projects/${realm}/".path "$git_config_path"
-    fi
+    configure_git
 
     echo "Git and SSH setup complete for realm: $realm"
 }
