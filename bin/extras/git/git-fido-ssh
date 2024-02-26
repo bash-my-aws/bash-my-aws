@@ -25,17 +25,7 @@
 #
 #      echo 'export SSH_SK_HELPER="/mnt/c/Program Files/OpenSSH/ssh-sk-helper.exe"' >> ~/.bashrc
 
-git-fido-ssh() {
-    local keyid_realm="$1"
-    local git_email="$2"
-    local git_name="$3"
-
-    local keyid="${keyid_realm%@*}"
-    local realm="${keyid_realm#*@}"
-    local key_path="$HOME/.ssh/${keyid_realm}"
-    local git_config_path="$HOME/.gitconfig_${realm}"
-    local ssh_config_file="$HOME/.ssh/config.d/${realm}"
-
+configure_github() {
     check_and_switch_github_account() {
         # Check if logged in to GitHub
         local auth_status
@@ -65,6 +55,21 @@ git-fido-ssh() {
             fi
         fi
     }
+
+    check_and_switch_github_account
+    gh ssh-key add "${key_path}.pub" -t "${keyid_realm}"
+}
+
+git-fido-ssh() {
+    local keyid_realm="$1"
+    local git_email="$2"
+    local git_name="$3"
+
+    local keyid="${keyid_realm%@*}"
+    local realm="${keyid_realm#*@}"
+    local key_path="$HOME/.ssh/${keyid_realm}"
+    local git_config_path="$HOME/.gitconfig_${realm}"
+    local ssh_config_file="$HOME/.ssh/config.d/${realm}"
 
     configure_git() {
         if [[ -f "$git_config_path" ]]; then
@@ -133,8 +138,7 @@ git-fido-ssh() {
 
     eval "$(ssh-agent -s)"
     ssh-add "$key_path"
-    check_and_switch_github_account
-    gh ssh-key add "${key_path}.pub" -t "${keyid_realm}"
+    configure_github
     create_ssh_config
     configure_git
 
