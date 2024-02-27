@@ -7,7 +7,14 @@
 # Usage: ./git-fido-ssh keyid@realm [git-email] [git-name]
 # 
 #       keyid: Any word to identify your Yubikey to you (e.g. key1)
-#       realm: security domain or organization (e.g. personal, work, mycompany)
+#       realm: security domain or organization (e.g. github username)
+#
+# Recommendations:
+#
+# Use a separate github account for each security domain:
+# - e.g. personal, work, mycompany, etc
+# - SSO Authorisation not required for FIDO SSH?
+# - Run this script only on a device you trust logging into this GitHub account with.
 #
 # Prerequisites:
 #
@@ -25,28 +32,41 @@
 #
 #      echo 'export SSH_SK_HELPER="/mnt/c/Program Files/OpenSSH/ssh-sk-helper.exe"' >> ~/.bashrc
 
+# TODO
+#
+# - work out SSO issue
+# - Refuse to create key if yubikey does not have pin set
+# - resident or not
+# - Print whenever we do something
+
+
+
+
 create-key() {
     if [[ -z "$keyid" || -z "$realm" ]]; then
         echo "Error: Invalid format. Please use keyid@realm."
         return 1
     fi
-
-    if [[ -f "$key_path" ]]; then
-        echo "Error: Key file $key_path already exists."
-        # confirm whether user wants to overwrite the key
-        read -p "Do you want to overwrite the existing key? (y/n) " choice
-        [[ $choice =~ ^[Yy]$ ]] || return 1
-    fi
+    
+    echo "Generating SSH key for $keyid_realm"
+    echo "Note: Please ensure your YubiKey is configured with a PIN for enhanced security."
     ssh-keygen -t ecdsa-sk -b 521 -C "${keyid_realm}" -f "$key_path"
     symlink_path="$(dirname $key_path)/${keyid_realm}"
     echo "SSH key generated at $key_path"
 
-    echo "Creating symlink: ${keypath} -> ${realm}"
+    echo "Creating symlink: ${key_path} -> ${realm}"
     echo "This is so SSH config can use the key based on the realm."
     echo "This allows us to use the same ssh config on multiple machines with their own Yubikey"
     echo "Don't use the symlink on a spare key if you use a resident yubikey on this machine."
     echo
-    (cd $(dirname $key_path) && ln -s "$keyid_realm" "${realm}")
+    symlink_target="$(dirname $key_path)/${realm}"
+    if [[ -f $symlink_target ]]; then
+        # confirm whether user wants to overwrite the symlink
+        echo "Symlink already exists: $(ls -la "${symlink_target}")"
+        read -p "Do you want to overwrite the existing symlink? (y/n) " choice
+        [[ $choice =~ ^[Yy]$ ]] || return 1
+    fi
+    (cd $(dirname $key_path) && ln -sf "$keyid_realm" "${realm}")
 }
 
 configure-ssh() {
@@ -100,39 +120,52 @@ configure-git() {
 }
 
 configure-github() {
-    check-and-switch-github-account
-    gh ssh-key add "${key_path}.pub" -t "${keyid_realm}"
+    # check-and-switch-github-account
+    echo "Logging in to GitHub (via GitHub CLI Oauth2 Device Flow) with following scopes:"
+    echo
+    echo "- admin:public_key"
+    echo "- admin:signing_key"
+    echo
+    echo "Do this only on a device you trust with this access."
+    echo
+    echo "If your default browser does not support GitHub Login (e.g. Firefox may not handle Microsoft SSO with Security Keys), please open the following URL in one that does: https://github.com/login/device"
+    echo
+    gh auth login --web --git-protocol https --scopes admin:public_key,admin:ssh_signing_key
+    gh ssh-key add --type authentication --title "${keyid_realm}" "${key_path}.pub"
+    gh ssh-key add --type signing        --title "${keyid_realm}" "${key_path}.pub" 
+    echo "Logging out of GitHub"
+    gh auth logout
 }
 
-check-and-switch-github-account() {
-    # Check if logged in to GitHub
-    local auth_status
-    auth_status=$(gh auth status 2>&1)
+configure-github() {
 
-    if [[ $auth_status == *"You are not logged into any GitHub hosts"* ]]; then
-        echo "You are not logged into any GitHub hosts."
-        read -p "Do you want to log in now? (y/n) " login_choice
+    github-login
 
-        if [[ $login_choice =~ ^[Yy]$ ]]; then
-            gh auth login
-        else
-            echo "Cannot proceed without GitHub authentication. Exiting."
-            exit 1
-        fi
-    else
-        # Fetch the current GitHub username
-        echo "$auth_status" | grep 'Logged in to github.com as'
+    # Add ssh-key and signing-key
+    echo "Adding SSH key to GitHub"
+    gh ssh-key add --type authentication --title "${keyid_realm}" "${key_path}.pub"
+    echo "Adding signing key to GitHub"
+    gh ssh-key add --type signing --title "${keyid_realm}" "${key_path}.pub"
 
-        read -p "Do you want to continue with this account? (y/n) " choice
-
-        if [[ $choice =~ ^[Nn]$ ]]; then
-            echo "Logging out..."
-            gh auth logout
-            echo "Please log in to the correct GitHub account."
-            gh auth login
-        fi
-    fi
+    echo "Logging out of GitHub"
+    gh auth logout
 }
+
+github-login() {
+    echo "Logging in to GitHub (via GitHub CLI OAuth2 Device Flow) with the following scopes:"
+    echo
+    echo "- admin:public_key"
+    echo "- admin:signing_key"
+    echo
+    echo "Do this only on a device you trust with this access."
+    echo
+    echo "If your default browser does not support GitHub Login (e.g., Firefox may not handle Microsoft SSO with Security Keys), please open the following URL in one that does: https://github.com/login/device"
+    echo
+
+    gh auth status 2>&1 | grep 'Logged in to github.com as'
+    gh auth login --web --git-protocol https --scopes admin:public_key,admin:ssh_signing_key
+}
+
 
 git-fido-ssh() {
     local keyid_realm="$1"
