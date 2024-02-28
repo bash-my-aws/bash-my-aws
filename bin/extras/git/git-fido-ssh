@@ -7,14 +7,15 @@
 # Usage: ./git-fido-ssh keyid@realm [git-email] [git-name]
 # 
 #       keyid: Any word to identify your Yubikey to you (e.g. key1)
-#       realm: security domain or organization (e.g. github username)
+#       realm: security domain (e.g. github account)
 #
 # Recommendations:
 #
 # Use a separate github account for each security domain:
 # - e.g. personal, work, mycompany, etc
 # - SSO Authorisation not required for FIDO SSH?
-# - Run this script only on a device you trust logging into this GitHub account with.
+# - When running, only authenticate to github.com accounts from machines within that security domain.
+
 #
 # Prerequisites:
 #
@@ -97,6 +98,7 @@ configure-ssh() {
 }
 
 configure-git() {
+
     if [[ -f "$git_config_path" ]]; then
         local existing_email=$(git config -f "$git_config_path" --get user.email)
         local existing_name=$(git config -f "$git_config_path" --get user.name)
@@ -120,35 +122,27 @@ configure-git() {
 }
 
 configure-github() {
-    # check-and-switch-github-account
-    echo "Logging in to GitHub (via GitHub CLI Oauth2 Device Flow) with following scopes:"
-    echo
-    echo "- admin:public_key"
-    echo "- admin:signing_key"
-    echo
-    echo "Do this only on a device you trust with this access."
-    echo
-    echo "If your default browser does not support GitHub Login (e.g. Firefox may not handle Microsoft SSO with Security Keys), please open the following URL in one that does: https://github.com/login/device"
-    echo
-    gh auth login --web --git-protocol https --scopes admin:public_key,admin:ssh_signing_key
-    gh ssh-key add --type authentication --title "${keyid_realm}" "${key_path}.pub"
-    gh ssh-key add --type signing        --title "${keyid_realm}" "${key_path}.pub" 
-    echo "Logging out of GitHub"
-    gh auth logout
-}
 
-configure-github() {
+    echo "Your newly created publich SSH key needs to be uploaded (twice) to Github:"
+    echo
+    echo " - authentication"
+    echo " - signing"
+    echo 
+    echo "This script can do that using the GitHub CLI (gh) or you can do it manually"
+    echo
+    read -p "Proceed with uploading public key to GitHub using Github CLI? (y/n) " choice
+    [[ $choice =~ ^[Yy]$ ]] || return 1
 
-    github-login
-
-    # Add ssh-key and signing-key
-    echo "Adding SSH key to GitHub"
-    gh ssh-key add --type authentication --title "${keyid_realm}" "${key_path}.pub"
-    echo "Adding signing key to GitHub"
-    gh ssh-key add --type signing --title "${keyid_realm}" "${key_path}.pub"
-
-    echo "Logging out of GitHub"
-    gh auth logout
+    if github-login; then
+        # Add ssh-key and signing-key
+        echo "Adding SSH key to GitHub"
+        gh ssh-key add --type authentication --title "${keyid_realm}" "${key_path}.pub"
+        echo "Adding signing key to GitHub"
+        gh ssh-key add --type signing --title "${keyid_realm}" "${key_path}.pub"
+        echo
+        echo "Logging out of GitHub"
+        gh auth logout
+    fi
 }
 
 github-login() {
@@ -160,12 +154,10 @@ github-login() {
     echo "Do this only on a device you trust with this access."
     echo
     echo "If your default browser does not support GitHub Login (e.g., Firefox may not handle Microsoft SSO with Security Keys), please open the following URL in one that does: https://github.com/login/device"
-    echo
 
     gh auth status 2>&1 | grep 'Logged in to github.com as'
     gh auth login --web --git-protocol https --scopes admin:public_key,admin:ssh_signing_key
 }
-
 
 git-fido-ssh() {
     local keyid_realm="$1"
