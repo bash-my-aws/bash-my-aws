@@ -1,30 +1,45 @@
 #!/usr/bin/env python
+#
+# list-aws-profiles - List AWS profiles with their corresponding AWS Account IDs
+#
+# Usage: list-aws-profiles
 
 import configparser
 import os
+import re
+
+def extract_account_id(profile_config):
+    """
+    Extract the AWS account ID from the profile configuration.
+    This assumes the account ID is part of the role_arn in the format 'arn:aws:iam::<account_id>:role/...'
+    """
+    role_arn = profile_config.get('role_arn', '')
+    match = re.search(r':iam::(\d+):role/', role_arn)
+    return match.group(1) if match else 'Unknown'
 
 def list_aws_profiles(config_file, credentials_file):
-    # Initialize a set to hold unique profile names
-    profile_names = set()
+    # Initialize a dictionary to hold profile names and account IDs
+    profiles = {}
 
-    # Function to parse a file and extract profile names
+    # Function to parse a file and extract profile information
     def parse_file(file_path):
         if os.path.exists(file_path):
             config = configparser.ConfigParser()
             config.read(file_path)
             for section in config.sections():
                 if "sso-session" not in section:
-                    # For 'config' file, strip 'profile ' prefix
+                    # Extract profile name
                     profile_name = section.replace("profile ", "") if file_path.endswith("config") else section
-                    profile_names.add(profile_name)
+                    if profile_name not in profiles:
+                        profiles[profile_name] = extract_account_id(config[section])
 
-    # Parse the config and credentials files
+    # Parse both config and credentials files
     parse_file(config_file)
     parse_file(credentials_file)
 
-    # Print the profile names
-    for profile_name in sorted(profile_names):
-        print(profile_name)
+    # Print profile names and account IDs in TSV format
+    for profile_name, account_id in sorted(profiles.items()):
+        print(f"{profile_name}\t{account_id}")
 
 # Paths to the AWS config and credentials files
 aws_config_file = os.getenv("AWS_CONFIG_FILE", os.path.expanduser("~/.aws/config"))
