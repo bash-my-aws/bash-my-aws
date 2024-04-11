@@ -4,8 +4,9 @@
 #
 # Worth a look:
 #
+# - git-ls-noticed: List files from git index (based on a gitinclude file)
+# - git-tarball-create: Creates a tarball based on a gitinclude (special gitginore) file
 # - git-repos: List all git repos (remote_url and git_dir)
-# - git-tarball-create: Creates a tarball based on a pecial gitignore file
 
 git-repos() {
 
@@ -24,55 +25,69 @@ git-repos() {
 }
 
 git-ls-noticed() {
-
-    # git-ls-included - List files from git index that not ignored by specified gitignore file.
+    # This uses gitignore but flips the meaning. Any file matched here is allowed (instead of ignored).
     #
-    # Usage: git-ls-noticed <gitignore_file>
+    # List files with:
+    #
+    #   git ls-files --ignored --cached --exclude-from=<path/to/this_file>
+    #
+    # How it works:
+    #
+    #     `--ignored`: Lists all files that are ignored by git
+    #     `--cached`: Lists all files that are staged for commit. (Required to use `--ignored`.)
+    #     `--exclude-from`: Use specified file as the ignore file (and ignore all others)
 
-    local gitignore_file="${1:-}"
+    local gitinclude_file="${1:-}"
 
-    if [[ -z $gitignore_file ]]; then
-        echo "Usage: git-ls-included <gitignore_file>" >&2
+    if [[ -z "$gitinclude_file" ]]; then
+        echo "Usage: git-ls-noticed <gitinclude_file>" >&2
         return 1
-    elif [[ ! -f $gitignore_file ]]; then
-        echo "Error: File '$gitignore_file' not found." >&2
+    elif [[ ! -f "$gitinclude_file" ]]; then
+        echo "Error: File '$gitinclude_file' not found." >&2
         return 1
     fi
-    gitignore_file="$(realpath "$gitignore_file")"
-    local git_repo_path="$(git rev-parse --show-toplevel)"
 
+    # Convert the relative path to an absolute path
+    gitinclude_file="$(realpath "$gitinclude_file")"
+
+    # Ensure command is run within a git repository
+    local git_repo_path
+    if ! git_repo_path=$(git rev-parse --show-toplevel); then
+        echo "Error: Current directory is not within a git repository." >&2
+        return 1
+    fi
+
+    # Use subshell do directory change is not persistent
     (
-        cd "${git_repo_path}" || exit
-        # Use git to list files for inclusion in the tarball
-        git ls-files --exclude-from="$gitignore_file"
-          # --cached # include uncommitted changes from git staging are
-          # --others # include untracked files
+        cd "${git_repo_path}" || return 1
+        # Use git to list files that are not ignored
+        git ls-files --ignored --cached --exclude-from="$gitinclude_file"
     )
 }
 
 git-tarball-create() {
 
-    # git-tarball-create - Creates a tarball based on a single gitignore file
+    # git-tarball-create - Creates a tarball based on a single gitinclude file
     #
-    # Usage: git-tarball-create <gitignore_file>
+    # Usage: git-tarball-create <gitinclude_file>
     #
 
-    local gitignore="${1:-}"
+    local gitinclude_file="${1:-}"
 
-    # Verify gitignore_file argument is provided
-    if [[ -z $gitignore_file ]]; then
-        echo "Usage: tarball-create <gitignore_file>" >&2
+    # Verify gitinclude_file argument is provided
+    if [[ -z $gitinclude_file ]]; then
+        echo "Usage: tarball-create <gitinclude_file>" >&2
         return 1
-    elif [[ ! -f $gitignore_file ]]; then
-        # Verify gitignore_file file exists
-        echo "Error: gitignore_file file '$gitignore_file' not found." >&2
+    elif [[ ! -f $gitinclude_file ]]; then
+        # Verify gitinclude_file file exists
+        echo "Error: gitinclude file '$gitinclude_file' not found." >&2
         return 1
     fi
 
     local last_commit_date="$(git log -1 --format=%cd --date=format:%Y-%m-%d)"
     local git_repo_path="$(git rev-parse --show-toplevel)"
     local git_repo_name="${git_repo_path##*/}"
-    local variant="$(basename "${gitignore_file}")"
+    local variant="$(basename "${gitinclude_file}")"
     local release="${git_repo_name}-${variant}-${last_commit_date}"
     local build_dir="build"
     local tarball="${build_dir}/${release}.tar.gz"
@@ -83,7 +98,7 @@ git-tarball-create() {
         mkdir -p "$build_dir" || { echo "Failed to create build directory: $build_dir" >&2; return 1; }
 
         # Use git to list files for inclusion in the tarball
-        if ! git-ls-included "$gitignore_file" \
+        if ! git-ls-noticed "$gitinclude_file" \
         | tar --transform "s,^,${release}/," -czf "${tarball}" -T -
         then 
             echo "Error: Failed to create tarball." >&2
