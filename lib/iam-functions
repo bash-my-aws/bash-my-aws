@@ -79,3 +79,74 @@ iam-users() {
   LC_ALL=C sort -b -k 3 |
     columnise
 }
+
+iam-access-key-rotate() {
+    local user_name="$1"
+
+    # Check if user exists
+    if ! aws iam get-user --user-name "$user_name" >/dev/null 2>&1; then
+        echo "User does not exist."
+        return
+    fi
+
+    read -p "Proceed with key rotation for user $user_name? (y/n): " confirm
+    if [ "$confirm" != "y" ]; then
+        echo "Key rotation cancelled."
+        return
+    fi
+
+    # Get existing keys
+    local keys=$(aws iam list-access-keys --user-name "$user_name")
+    local active_keys=$(echo "$keys" | jq -r '.AccessKeyMetadata[] | select(.Status == "Active") | .AccessKeyId')
+    local inactive_keys=$(echo "$keys" | jq -r '.AccessKeyMetadata[] | select(.Status == "Inactive") | .AccessKeyId')
+
+    # Identify and remove inactive keys if exist
+    if [ -n "$inactive_keys" ]; then
+        IFS=$'\n' # Set Internal Field Separator to newline for the loop
+        for key_to_remove in $inactive_keys; do
+            read -p "Remove inactive key $key_to_remove for user $user_name? (y/n): " confirm
+            if [ "$confirm" == "y" ]; then
+                aws iam delete-access-key --user-name "$user_name" --access-key-id "$key_to_remove"
+            fi
+        done
+    fi
+
+    # Identify and remove inactive keys if exist
+    if [ -n "$inactive_keys" ]; then
+        while read -r key_to_remove; do
+            read -p "Remove inactive key $key_to_remove for user $user_name? (y/n): " confirm
+            [ "$confirm" == "y" ] && aws iam delete-access-key --user-name "$user_name" --access-key-id "$key_to_remove"
+        done <<<"$inactive_keys"
+    fi
+
+    # If one or zero active keys, create a new key
+    if [ $(echo "$active_keys" | wc -l) -lt 2 ]; then
+        read -p "Create new key for user $user_name? (y/n): " confirm
+        if [ "$confirm" == "y" ]; then
+            local new_key=$(aws iam create-access-key --user-name "$user_name" | jq -r '.AccessKey')
+            local access_key_id=$(echo "$new_key" | jq -r '.AccessKeyId')
+            local secret_access_key=$(echo "$new_key" | jq -r '.SecretAccessKey')
+            local date=$(date +%Y-%m-%d)
+
+            # Create the secret in Secrets Manager
+            aws secretsmanager create-secret \
+                --name "IAM-USER-$user_name-ACCESS-KEY-$access_key_id-$date" \
+                --description "Access Key Secret generated for IAM User Key rotation for user $user_name." \
+                --secret-string "{\"AccessKeyId\":\"$access_key_id\",\"SecretAccessKey\":\"$secret_access_key\"}"
+
+            echo "New key created and stored in Secrets Manager."
+        fi
+        local secrets_name="IAM-USER-$user_name-ACCESS-KEY-$access_key_id-$date"
+        local AWS_ACCOUNT_NAME=$(aws sts get-caller-identity --query Account --output text)
+
+        echo "----------------------------------------"
+        echo "COMMUNICATION TEMPLATE:"
+        echo "----------------------------------------"
+        echo "A IAM USER Access Key has been generated for the user $user_name."
+        echo "This has been stored in Secrets Manager in the account $AWS_ACCOUNT_NAME."
+        echo "The secret's name is $secrets_name."
+        echo "----------------------------------------"
+    else
+        echo "Both keys are active. Contact the application owner to determine which key to remove."
+    fi
+}
