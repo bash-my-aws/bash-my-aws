@@ -174,6 +174,7 @@ Put the following in your shell's startup file:
 
 ```Shell
 export PATH="$PATH:${BMA_HOME:-$HOME/.bash-my-aws}/bin"
+export BMA_COLUMNISE_ONLY_WHEN_TERMINAL_PRESENT=true
 source ${BMA_HOME:-$HOME/.bash-my-aws}/aliases
 
 # For ZSH users, uncomment the following two lines:
