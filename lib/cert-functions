@@ -130,6 +130,36 @@ cert-chain() {
   done
 }
 
+cert-resource-record-valid() {
+
+  # cert-resource-record-valid - Check if a specified DNS resource record matches the expected value and includes input validation.
+  #
+  # Usage: cert-resource-record-valid <name> <type> <value>
+
+  [[ "$#" -ne 3 ]] && __bma_usage "<name> <type> <value" && return 1
+
+  local name="$1"
+  local type="$2"
+  local value="$3"
+
+  # Perform the DNS query
+  local output=$(dig +noall +answer "$name" "$type")
+
+  # Print the output of the DNS query
+  echo "Query output:"
+  echo "$output"
+
+  # Check if the expected value is in the output
+  if echo "$output" | grep -q "$value"; then
+      echo "The DNS record is valid."
+      return 0
+  else
+      echo "The DNS record is invalid or does not exist."
+      return 1
+  fi
+}
+
+
 # openssl verify -CAfile trusted-ca.crt -untrusted chain.crt cert.crt
 
 cert-verify() {
