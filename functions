@@ -77,6 +77,7 @@ buckets
 cert-chain
 cert-delete
 cert-ificate
+cert-resource-record-valid
 cert-users
 cert-verify
 certs
@@ -110,6 +111,7 @@ elbv2-target-groups
 elbv2s
 hosted-zone-ns-records
 hosted-zones
+iam-access-key-rotate
 iam-role-principal
 iam-roles
 iam-users
@@ -201,7 +203,9 @@ ssm-association-execution-targets
 ssm-association-executions
 ssm-associations
 ssm-automation-execution
+ssm-automation-execution-failures
 ssm-automation-executions
+ssm-automation-step-executions
 ssm-instances
 ssm-parameter-value
 ssm-parameters

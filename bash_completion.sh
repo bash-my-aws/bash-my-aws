@@ -179,6 +179,7 @@ complete -F _bma_buckets_completion buckets
 complete -F _bma_certs_completion cert-chain
 complete -F _bma_certs_completion cert-delete
 complete -F _bma_certs_completion cert-ificate
+complete -F _bma_certs_completion cert-resource-record-valid
 complete -F _bma_certs_completion cert-users
 complete -F _bma_certs_completion cert-verify
 complete -F _bma_certs_completion certs
