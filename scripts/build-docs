@@ -8,7 +8,7 @@ lib/stack-functions
 lib/instance-functions
 "
 
-filelist="${filelist}$(ls lib/* | grep -v 'aws-account\|region\|stack\|instance\|shared\|misc\|github\|pkcs12\|extras')"
+filelist="${filelist}$(ls lib/* | grep -v 'aws-account\|region\|stack\|instance\|shared\|misc\|git\|github\|pkcs12\|extras')"
 
 cp docs/.command-reference-intro.md $COMMAND_REFERENCE_FILE
 

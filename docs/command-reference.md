@@ -1317,6 +1317,16 @@ Return Cert Chain for ACM Cert(s)
     USAGE: cert-chain cert-arn [cert-arn]
 
 
+### cert-resource-record-valid
+
+cert-resource-record-valid - Check if a specified DNS resource record matches the expected value and includes input validation.
+
+Usage: cert-resource-record-valid <name> <type> <value>
+Perform the DNS query
+Print the output of the DNS query
+Check if the expected value is in the output
+
+
 ### cert-verify
 
 Verify ACM cert(s)
@@ -1528,6 +1538,10 @@ List IAM Users
     config-role-ap-southeast-2               AROAI3QHAU3J2CDRNLQHD  2017-02-02T03:03:02Z
     AWSBatchServiceRole                      AROAJJWRGUPTRXTV52TED  2017-03-09T05:31:39Z
     ecsInstanceRole                          AROAJFQ3WMZXESGIKW5YD  2017-03-09T05:31:39Z
+
+
+### iam-access-key-rotate
+
 
 
 ## image-commands
@@ -2120,17 +2134,36 @@ Run a command locally on EC2 instance(s) running Windows
     See also: ssm-send-command-windows
 
 
-### ssm-automation-execution-failed
+### ssm-automation-executions
+
+List recent SSM Automation Executions
+USAGE: ssm-automation-executions [filter]
+
+    $ ssm-automation-executions
+    1234abcd-ef56-7890-gh12-ijk3456lmnop  UpdateAndSecureNodes    None                 Failed   2023-07-20T09:00:00.000000+00:00  None
+    5678efgh-ijkl-9012-mnop-qrstuvwx3456  UpdateAndSecureNodes    i-0a1b2c3d4e5f67890  Failed   2023-07-20T09:00:10.000000+00:00  None
+    90abijkl-mnop-4567-qrst-uvwxyza12345  UpdateAndSecureNodes    i-1b2c3d4e5f6g78901  Failed   2023-07-20T09:00:20.000000+00:00  None
+    cdefmnop-qrst-8910-uvwx-yzab1234cdef  UpdateAndSecureNodes    i-2c3d4e5f6g7h89012  Failed   2023-07-20T09:00:30.000000+00:00  None
+    ghijqrst-uvwx-2345-yzab-abcd5678efgh  UpdateAndSecureNodes    i-3d4e5f6g7h8i90123  Failed   2023-07-20T09:00:40.000000+00:00  None
 
 
+### ssm-automation-execution-failures
 
-### #
- ssm-automation-execution-success
 
 
 ### ssm-automation-step-executions
 
 Show step-by-step details for an SSM Automation Execution
+
+    USAGE: automation-execution-steps execution_id [execution_id]
+
+    $ ssm-automation-executions | ssm-automation-steps-executions
+    [Outputs detailed step information for each provided execution ID]
+
+
+### ssm-automation-execution
+
+Show details for an SSM Automation Execution
 
     USAGE: automation-execution-steps execution_id [execution_id]
 
