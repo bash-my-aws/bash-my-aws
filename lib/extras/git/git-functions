@@ -43,8 +43,7 @@ git-tarball-create() {
         # Use git to list files for inclusion in the tarball
         if ! git-ls-noticed "$gitinclude_file" \
         | tar \
-            --transform "s,^,${release}/," \
-            --transform 's,${release}/\([^/]*\) -> \(.*\),\1 -> \2,' \
+            --transform "flags=r;s,^,${release}/," \
             -czf "${tarball}" -T -
         then 
             echo "Error: Failed to create tarball." >&2
