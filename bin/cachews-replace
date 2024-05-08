@@ -11,6 +11,7 @@
 #   BMA_AWSCLI=cachews instances
 
 SLF_DIR="$(readlink -f "$(dirname -- "${BASH_SOURCE[0]:-${0:A}}")/../")"
+export REAL_AWSCLI="$(command -v aws)"
 export PATH="${SLF_DIR}/bin/replacements:${PATH}"
 
 "$@"

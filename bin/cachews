@@ -15,7 +15,13 @@ CACHEWS_DIR = (
 )
 AWS_DEFAULT_REGION = os.environ.get('AWS_DEFAULT_REGION')
 AWS_PROFILE = os.environ.get('AWS_PROFILE')
+REAL_AWSCLI = os.environ.get('REAL_AWSCLI','awsX')
 AWS_ACCOUNT_ALIAS = AWS_PROFILE[:-6] if AWS_PROFILE and AWS_PROFILE.endswith('-admin') else AWS_PROFILE
+
+# Exit with usage if AWS_PROFILE is not set
+if not AWS_PROFILE:
+    print("AWS_PROFILE environment variable is not set", file=sys.stderr)
+    sys.exit(1)
 
 def list_or_describe(service, api_call, output_format='json', query=None):
     file_path = f"{CACHEWS_DIR}/{AWS_ACCOUNT_ALIAS}/{AWS_DEFAULT_REGION}/{service}/{api_call}.json"
@@ -26,7 +32,7 @@ def list_or_describe(service, api_call, output_format='json', query=None):
     except FileNotFoundError:
         print(f'Cache miss for file: {file_path}', file=sys.stderr)
         args = ' '.join(shlex.quote(arg) for arg in sys.argv[1:])
-        cmd = f"aws {args} --output json"
+        cmd = f"{REAL_AWSCLI} {args} --output json"
         print(f"Executing command: {cmd}", file=sys.stderr)
         try:
             data = json.loads(subprocess.check_output(cmd, shell=True, timeout=60))
