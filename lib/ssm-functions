@@ -335,7 +335,8 @@ ssm-instances() {
         PlatformName,
         PlatformVersion,
         IPAddress,
-        ComputerName
+        ComputerName,
+        PlatformType
       ]" |
     grep -E -- "$filters" |
     LC_ALL=C sort -t $'\t' -k 6 |
