@@ -780,9 +780,10 @@ deployments-group() {
       name,
       properties.timestamp
     ]' \
-    --output tsv |
-    grep -E -- "$filters" |
-    LC_ALL=C sort -k 2
+    --output tsv \
+    | grep -E -- "$filters" \
+    | LC_ALL=C sort -k 2 \
+    | columnise
 }
 
 alias deployments=deployments-group
