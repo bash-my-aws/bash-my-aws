@@ -1009,9 +1009,9 @@ afd-waf-policy-rule-match-conditions() {
         join(`=`, [`matchVariable`, matchVariable]),
         join(`=`, [
           `matchValues`,
-           to_string(length(matchValue))
+          to_string(length(matchValue))
         ]),
-       `# view matches with afd-waf-policy-rule-match-values()`
+        `# view matches with afd-waf-policy-rule-match-values()`
       ]][]' \
       --output tsv
   done
@@ -1123,3 +1123,118 @@ deployment-delete-danger() {
       --name "$deployment"
   done
 }
+
+private-dns-zones() {
+
+  # private-dns-zones - List Azure private DNS zones with details
+  #
+  # Usage: private-dns-zones
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" # Define default output format or use an env variable
+
+  az network private-dns zone list \
+    --only-show-errors \
+    --query "[].[
+      name,
+      location,
+      numberOfRecordSets,
+      numberOfVirtualNetworkLinks,
+      maxNumberOfRecordSets,
+      maxNumberOfVirtualNetworkLinks,
+      provisioningState,
+      resourceGroup,
+      type
+    ]" \
+    --output "$output_format" \
+    | LC_ALL=C sort -k 1 \
+    | columnise
+}
+
+private-endpoints() {
+
+  # private-endpoints - List Azure private endpoints with details
+  #
+  # Usage: private-endpoints
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+    az network private-endpoint list \
+      --only-show-errors \
+      --query "[].[
+        name,
+        location,
+        privateLinkServiceConnections[0].name,
+        provisioningState,
+        resourceGroup,
+        type
+      ]" \
+      --output "$output_format" \
+    | LC_ALL=C sort -k 1 \
+    | columnise
+}
+
+vnets() {
+
+  # vnets - List Azure Virtual Networks with details
+  #
+  # Usage: list-vnets
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" # or json, table, etc
+
+  az network vnet list \
+    --only-show-errors \
+    --query "[].[
+      name,
+      location,
+      addressSpace.addressPrefixes[0],
+      subnets[].name,
+      provisioningState,
+      resourceGroup,
+      type
+    ]" \
+    --output "$output_format" \
+    | LC_ALL=C sort -k 1 \
+    | columnise
+}
+
+vnet-subnets() {
+
+  # List subnets in a VNet
+  #
+  #   USAGE: vnet-subnets VNET
+  #
+  #   $ vnet-subnets my-vnet
+
+  local vnets=$(skim-stdin "$@")
+  [[ -z $vnets ]] && __bma_usage "VNET [VNET]" && return 1
+
+  local vnet
+  for vnet in $vnets; do
+    az network vnet subnet list \
+      --vnet-name "$vnet" \
+      --query "[].[
+        name,
+        addressPrefix,
+        provisioningState,
+        resourceGroup,
+        type
+      ]" \
+      --output tsv \
+    | LC_ALL=C sort -k 1 \
+    | columnise
+  done
+}
+
+nics() {
+    az network nic list \
+      --only-show-errors \
+      --output tsv \
+      --query "[].ipConfigurations[].[
+        name,
+        privateIPAddress,
+        join(',', privateLinkConnectionProperties.fqdns[])
+      ]" \
+    | LC_ALL=C sort -k 2 \
+    | columnise
+}
+
