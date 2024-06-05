@@ -1150,6 +1150,55 @@ private-dns-zones() {
     | columnise
 }
 
+
+private-dns-zone-record-sets() {
+  local zones="$(skim-stdin "$@")"
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" # Define default output format or use an env variable
+
+  if [[ -z $zones ]]; then
+    __bma_usage "<private-dns-zone> [<private-dns-zone>]"
+    return 1
+  fi
+  local zone
+  for zone in $zones; do
+    az network private-dns record-set list \
+      --zone-name "$zone" \
+      --query "[].[
+        '$zone',
+        name, 
+        type, 
+        ttl, 
+        join(',', [aRecords[].ipv4Address][]), 
+        resourceGroup,
+        fqdn
+      ]" \
+      --output "$output_format" \
+    | LC_ALL=C sort -k 1 \
+    | sed 's#Microsoft.Network/privateDnsZones/##g' \
+    | columnise
+  done
+}
+
+private-dns-zone-a-record-add(){
+    local ipv4_address="${1:?}"
+    local record_set_name="${2:?}"
+    local zone_name="${3:?}"
+    az network private-dns record-set a add-record \
+      --ipv4-address "$ipv4_address" \
+      --record-set-name "$record_set_name" \
+      --zone-name "$zone_name"
+}
+
+# Are you sure you want to perform this operation? (y/n): y
+private-dns-zone-a-record-delete() {
+    local zone_name="$1:?"
+    local name="$2:?"
+    az network private-dns record-set a delete \
+        --zone-name "$zone_name" \
+        --name "$name"
+}
+
 private-endpoints() {
 
   # private-endpoints - List Azure private endpoints with details
@@ -1166,7 +1215,9 @@ private-endpoints() {
         privateLinkServiceConnections[0].name,
         provisioningState,
         resourceGroup,
-        type
+        type,
+        customDnsConfigs[0].fqdn,
+        join(',' customDnsConfigs[0].ipAddresses || \`[]\`)
       ]" \
       --output "$output_format" \
     | LC_ALL=C sort -k 1 \
