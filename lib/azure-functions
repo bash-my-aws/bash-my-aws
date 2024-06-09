@@ -1215,13 +1215,39 @@ private-endpoints() {
         privateLinkServiceConnections[0].name,
         provisioningState,
         resourceGroup,
-        type,
         customDnsConfigs[0].fqdn,
         join(',' customDnsConfigs[0].ipAddresses || \`[]\`)
       ]" \
       --output "$output_format" \
     | LC_ALL=C sort -k 1 \
     | columnise
+}
+
+private-endpoint-custom-dns-configs() {
+
+  # private-endpoint-custom-dns-configs - List Azure customDnsConfigs for private endpoints
+  #
+  # Usage: private-endpointcustom-dns-configs
+
+  local private_endpoints private_endpoint 
+  private_endpoints="$(skim-stdin "$@")"
+  [[ -z $private_endpoints ]] && __bma_usage "PRIVATE_ENDPOINT [PRIVATE_ENDPOINT]" && return 1
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" #  or json, table, etc
+
+  for private_endpoint in $private_endpoints; do
+    az network private-endpoint show \
+      --name "$private_endpoint" \
+      --only-show-errors \
+      --query "customDnsConfigs[].[
+        '$private_endpoint',
+        fqdn,
+        join(',' ipAddresses || \`[]\`)
+      ] || \`$private_endpoint\`" \
+      --output "$output_format" \
+    | LC_ALL=C sort -k 1 \
+    | columnise
+  done
 }
 
 vnets() {
