@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+# example-functions - AWS Service Name functions
+
+things() {
+
+  # List Things
+  #
+  #    USAGE: things [filter]
+  #
+  #    $ things
+  #    thing-1234567890123  Online  Amazon Linux                              2           192.168.1.10    server001.example.com
+  #    thing-1234567890124  Offline Amazon Linux                              2           192.168.1.10    server001.example.com
+  #    thing-1234567890125  Online  Amazon Linux                              2           192.168.1.10    server001.example.com
+  #
+  #    *Optionally provide a filter string for a `| grep` effect with tighter columisation:*
+  #
+  #    $ things Online
+  #    i-00a123b456d789012 Online  Microsoft Windows Server 2019 Datacenter  68.0.11111  192.168.1.10    server001.example.com
+  #    i-01b234c567e890123 Online  Microsoft Windows Server 2022 Datacenter  68.0.11112  192.168.1.20    winserver002.example.com
+
+  local things=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  # Only some AWS CLI commands support filtering like this - otherwise filtered in output
+  local arg_filters="${things:+--filters Key=ThingIds,Values="${things// /,}"}"
+
+  aws <service_name> describe-things \
+    --output text \
+    $arg_filters \
+    --query "
+      ThingList[][
+        ThingId, # or ThingName depending on what other commands accept
+        ComputerName,
+        PlatformType
+      ]" \
+  | grep -E -- "$filters" \
+  | LC_ALL=C sort -t $'\t' -k 6 \
+  | columnise
+}
+
+thing-delete(){
+
+  # Delete <AWS ServiceName> Things by providing their names as arguments or via STDIN
+  #
+  #     USAGE: thing-delete thing[thing]
+  #
+  #     $ thing-delete alice bob
+  #     You are about to delete the following Things:
+  #     alice
+  #     bob
+  #     Are you sure you want to continue? y
+  #
+  #     $ things | things-delete
+  #     You are about to delete the following Things:
+  #     yet-another-thing
+  #     Are you sure you want to continue? y
+
+  local things="$(skim-stdin "$@")"
+  [[ -z $things ]] && __bma_usage "thing_name [thing_name]" && return 1
+
+  echo "You are about to delete the following Cloudwatch Alarms:"
+  cloudwatch-alarms "$alarm_names_json" | jq .
+  [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
+  local regex_yes="^[Yy]$"
+  read -p "Are you sure you want to continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ $regex_yes ]]; then
+    aws cloudwatch delete-alarms --cli-input-json "${aws_alarm_names_json}"
+  fi
+}
