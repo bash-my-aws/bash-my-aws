@@ -41,7 +41,9 @@ cloudwatch-alarms(){
 
 cloudwatch-alarm-delete() {
   local alarms="$(skim-stdin "$@")"
-  alarm_names_json=$(printf "%\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
+  [[ -z $alarms ]] && __bma_usage "alarm_name [alarm_name]" && return 1
+
+  alarm_names_json=$(printf "%s\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
 
   echo "You are about to delete the following Cloudwatch Alarms:"
   cloudwatch-alarms "$alarm_names_json" | jq .
@@ -56,7 +58,9 @@ cloudwatch-alarm-delete() {
 
 cloudwatch-alarm-actions-disable() {
   local alarms="$(skim-stdin "$@")"
-  alarm_names_json=$(printf "%\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
+  [[ -z $alarms ]] && __bma_usage "alarm_name [alarm_name]" && return 1
+
+  alarm_names_json=$(printf "%s\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
 
   echo "You are about to disable alarm actions on the following Cloudwatch Alarms:"
   cloudwatch-alarms "$alarm_names_json" | jq .
@@ -71,7 +75,9 @@ cloudwatch-alarm-actions-disable() {
 
 cloudwatch-alarm-actions-enable() {
   local alarms="$(skim-stdin "$@")"
-  alarm_names_json=$(printf "%\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
+  [[ -z $alarms ]] && __bma_usage "alarm_name [alarm_name]" && return 1
+
+  alarm_names_json=$(printf "%s\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
 
   echo "You are about to enable alarm actions on the following Cloudwatch Alarms:"
   cloudwatch-alarms "$alarm_names_json" | jq .
