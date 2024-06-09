@@ -46,7 +46,7 @@ cloudwatch-alarm-delete() {
   alarm_names_json=$(printf "%s\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
 
   echo "You are about to delete the following Cloudwatch Alarms:"
-  cloudwatch-alarms "$alarm_names_json" | jq .
+  echo "$alarm_names_json" | jq .
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
@@ -59,11 +59,11 @@ cloudwatch-alarm-delete() {
 cloudwatch-alarm-actions-disable() {
   local alarms="$(skim-stdin "$@")"
   [[ -z $alarms ]] && __bma_usage "alarm_name [alarm_name]" && return 1
-
+  
   alarm_names_json=$(printf "%s\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
 
   echo "You are about to disable alarm actions on the following Cloudwatch Alarms:"
-  cloudwatch-alarms "$alarm_names_json" | jq .
+  echo "$alarm_names_json" | jq .
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
@@ -80,7 +80,7 @@ cloudwatch-alarm-actions-enable() {
   alarm_names_json=$(printf "%s\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
 
   echo "You are about to enable alarm actions on the following Cloudwatch Alarms:"
-  cloudwatch-alarms "$alarm_names_json" | jq .
+  echo "$alarm_names_json" | jq .
   [ -t 0 ] || exec </dev/tty # reattach keyboard to STDIN
   local regex_yes="^[Yy]$"
   read -p "Are you sure you want to continue? " -n 1 -r
