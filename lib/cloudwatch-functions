@@ -22,7 +22,7 @@ cloudwatch-alarms(){
   local alarms=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
 
-  local arg_filters="${alarms:+--alarm-names "${alarms// /,}"}"
+  local arg_filters="${alarms:+--alarm-names "${alarms}"}"
 
   aws cloudwatch describe-alarms \
     $arg_filters \
