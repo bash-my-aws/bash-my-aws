@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# cloudwatch-functions
+
+cloudwatch-alarms(){
+    aws cloudwatch describe-alarms \
+        --query "MetricAlarms[].[
+            AlarmName,
+            StateValue,
+            ActionsEnabled,
+            join(',', AlarmActions || \`[]\`)
+            ]" \
+        --output text
+}
+
+cloudwatch-alarm-delete() {
+    local alarms="$(skim-stdin "$@")"
+    alarm_names_json=$(printf "%\n" "$alarms" | jq -R '.' | jq -crs '{"AlarmNames":.}')
+    aws cloudwatch delete-alarms --cli-input-json "${aws_alarm_names_json}"
+}
