@@ -52,7 +52,7 @@ cloudwatch-alarm-delete() {
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
   if [[ $REPLY =~ $regex_yes ]]; then
-    aws cloudwatch delete-alarms --cli-input-json "${aws_alarm_names_json}"
+    aws cloudwatch delete-alarms --cli-input-json "${alarm_names_json}"
   fi
 }
 
@@ -69,7 +69,7 @@ cloudwatch-alarm-actions-disable() {
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
   if [[ $REPLY =~ $regex_yes ]]; then
-    aws cloudwatch disable-alarm-actions --cli-input-json "${aws_alarm_names_json}"
+    aws cloudwatch disable-alarm-actions --cli-input-json "${alarm_names_json}"
   fi
 }
 
@@ -86,6 +86,6 @@ cloudwatch-alarm-actions-enable() {
   read -p "Are you sure you want to continue? " -n 1 -r
   echo
   if [[ $REPLY =~ $regex_yes ]]; then
-    aws cloudwatch enable-alarm-actions --cli-input-json "${aws_alarm_names_json}"
+    aws cloudwatch enable-alarm-actions --cli-input-json "${alarm_names_json}"
   fi
 }
