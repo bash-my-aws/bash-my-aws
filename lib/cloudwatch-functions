@@ -19,7 +19,13 @@ cloudwatch-alarms(){
   #    i-00a123b456d789012 Online  Microsoft Windows Server 2019 Datacenter  68.0.11111  192.168.1.10    server001.example.com
   #    i-01b234c567e890123 Online  Microsoft Windows Server 2022 Datacenter  68.0.11112  192.168.1.20    winserver002.example.com
 
+  local alarms=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  local arg_filters="${alarms:+--alarm-names "${alarms// /,}"}"
+
   aws cloudwatch describe-alarms \
+    $arg_filters \
     --output text \
     --query "
       MetricAlarms[].[

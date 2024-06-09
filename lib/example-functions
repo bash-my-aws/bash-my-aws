@@ -26,8 +26,8 @@ things() {
   local arg_filters="${things:+--filters Key=ThingIds,Values="${things// /,}"}"
 
   aws <service_name> describe-things \
-    --output text \
     $arg_filters \
+    --output text \
     --query "
       ThingList[][
         ThingId, # or ThingName depending on what other commands accept
