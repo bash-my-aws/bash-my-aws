@@ -62,3 +62,29 @@ hosted-zone-ns-records(){
         Value
       ]"
 }
+
+resolver-rules(){
+
+  # List Route53 Resolver Rules
+  #
+  #     $ resolver-rules privatelink
+  #     privatelink.api.azureml.ms.          FORWARD  123456789012  10.10.1.4
+  #     privatelink.azurecr.io.              FORWARD  123456789012  10.10.1.4
+  #     privatelink.azurewebsites.net.       FORWARD  123456789012  10.10.1.4
+
+  # local ids=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  aws route53resolver list-resolver-rules \
+    --output text               \
+    --query "
+      ResolverRules[].[
+        DomainName,
+        RuleType,
+        OwnerId,
+        join(' ', TargetIps[].Ip || \`[]\`)
+      ]" \
+  | sort -k 4 \
+  | grep -E -- "$filters" \
+  | columnise
+}
