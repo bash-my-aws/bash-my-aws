@@ -1150,7 +1150,6 @@ private-dns-zones() {
     | columnise
 }
 
-
 private-dns-zone-record-sets() {
   local zones="$(skim-stdin "$@")"
 
@@ -1176,6 +1175,31 @@ private-dns-zone-record-sets() {
       --output "$output_format" \
     | LC_ALL=C sort -k 1 \
     | sed 's#Microsoft.Network/privateDnsZones/##g' \
+    | columnise
+  done
+}
+
+private-dns-zone-vnets() {
+  local zones="$(skim-stdin "$@")"
+
+  local output_format="${OUTPUT_FORMAT:-tsv}" # Define default output format or use an env variable
+
+  if [[ -z $zones ]]; then
+    __bma_usage "<private-dns-zone> [<private-dns-zone>]"
+    return 1
+  fi
+  local zone
+  for zone in $zones; do
+    az network private-dns link vnet list \
+      --zone-name "$zone" \
+      --query "[].[
+        '$zone',
+        name, 
+        provisioningState,
+        resourceGroup
+      ]" \
+      --output "$output_format" || echo "${zone}" \
+    | LC_ALL=C sort -k 1 \
     | columnise
   done
 }
