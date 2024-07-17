@@ -1309,7 +1309,7 @@ nics() {
       --query "[].ipConfigurations[].[
         name,
         privateIPAddress,
-        join(',', privateLinkConnectionProperties.fqdns[])
+        join(',', privateLinkConnectionProperties.fqdns[] || \`[]\` )
       ]" \
     | LC_ALL=C sort -k 2 \
     | columnise
