@@ -746,7 +746,7 @@ connector-group-apps() {
 
 connector-group-members() {
 
-  # Usage: connector-group-apps CONNECTOR_GROUP [CONNECTOR_GROUP]
+  # Usage: connector-group-members CONNECTOR_GROUP [CONNECTOR_GROUP]
 
   local cgs=$(skim-stdin "$@")
   [[ -z $cgs ]] && __bma_usage "CONNECTOR_GROUP [CONNECTOR_GROUP]" && return 1
