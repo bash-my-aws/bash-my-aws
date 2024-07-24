@@ -712,8 +712,9 @@ connector-groups() {
     --method get \
     --url "$url" \
     --output "$output_format" \
-    --query 'value[].[id, name, region, connectorGroupType, isDefault]' --output tsv |
-    sort -k 2
+    --query 'value[].[id, name, region, connectorGroupType, isDefault]' --output tsv \
+  | LC_ALL=C sort -k 2 \
+  | columnise
 }
 
 connector-group-apps() {
@@ -737,8 +738,9 @@ connector-group-apps() {
         displayName,
         createdDateTime
       ]' \
-      --output tsv |
-      sort -k 2
+      --output tsv \
+    | LC_ALL=C sort -k 2 \
+    | columnise
   done
 }
 
@@ -764,8 +766,9 @@ connector-group-members() {
         machineName,
         externalIp
       ]' \
-      --output tsv |
-      sort -k 2
+      --output tsv \
+    | LC_ALL=C sort -k 2 \
+    | columnise
   done
 }
 # https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
