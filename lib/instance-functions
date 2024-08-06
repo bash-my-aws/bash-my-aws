@@ -410,8 +410,9 @@ instance-start() {
         InstanceId,
         join('=', ['PreviousState', PreviousState.Name]),
         join('=', ['CurrentState', CurrentState.Name])]
-    " |
-    column -t
+    " \
+  | column -t
+  # aws ec2 wait instance-running --instance-ids "$instance_ids"
 }
 
 instance-state() {
