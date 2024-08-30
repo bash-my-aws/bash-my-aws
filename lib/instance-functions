@@ -22,6 +22,8 @@ instances() {
 
   local instances=$(skim-stdin)
   local filters=$(__bma_read_filters $@)
+  local sort_key=5
+  [ -z $filters ] && sort_key=6
 
   aws ec2 describe-instances            \
     ${instances/#/'--instance-ids '} \
@@ -34,12 +36,24 @@ instances() {
         State.Name,
         [Tags[?Key=='Name'].Value][0][0],
         LaunchTime,
-        Placement.AvailabilityZone,
-        VpcId
+        Placement.AvailabilityZone
       ]"                |
   grep -E -- "$filters" |
   LC_ALL=C sort -t$'\t' -k 6 |
     columnise
+}
+
+
+instance-id() {
+
+  # Just return the instance ID of whatever was passed in (so you can run a for loop, for instance)
+  #
+  #     USAGE: instances [grep] | instance-id
+
+  local instance_ids=$(skim-stdin "$@")
+  [[ -z $instance_ids ]] && __bma_usage "instance-id [instance-id]" && return 1
+  echo $instance_ids |
+  column -s$'\t' -t
 }
 
 instance-asg() {
@@ -85,6 +99,7 @@ instance-az() {
       Reservations[].Instances[][
         [
           InstanceId,
+          VpcId,
           Placement.AvailabilityZone
         ]
       ][]"          |
@@ -623,7 +638,7 @@ instance-tag-create() {
 
   aws ec2 create-tags             \
     --resources $instances        \
-    --tags "Key=$key,Value=$value"  
+    --tags "Key=$key,Value=$value"
 }
 
 instance-tag-delete() {
@@ -639,7 +654,7 @@ instance-tag-delete() {
 
   aws ec2 delete-tags      \
     --resources $instances \
-    --tags "Key=$key"  
+    --tags "Key=$key"
 }
 
 instance-terminate() {

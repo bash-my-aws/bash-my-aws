@@ -34,6 +34,8 @@ ecr-repository-images() {
   local repository_names=$(skim-stdin "$@")
 
   # XXX Display USAGE if no repository_names passed in
+  local repository_names=$(skim-stdin "$@")
+  [[ -z ${repository_names} ]] && __bma_usage "ecr" && return 1
 
   local repository_name
   for repository_name in $repository_names; do
