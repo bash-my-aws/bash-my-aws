@@ -72,7 +72,54 @@ This document outlines the coding conventions used in our project, particularly 
 - Maintain consistent indentation (prefer 2 spaces).
 - Use consistent naming conventions across all functions.
 
-These conventions are derived from the observed patterns in the project files. They should be followed when contributing new functions or modifying existing ones to maintain consistency across the project.
+## Shared Functions
+
+### skim-stdin
+The `skim-stdin` function is a crucial utility for handling input in our scripts. It allows functions to accept input from both command-line arguments and piped input, providing flexibility in how users interact with our tools.
+
+```bash
+skim-stdin() {
+  # Append first token from each line of STDIN to argument list
+  #
+  # Implementation of `pipe-skimming` pattern.
+  #
+  #     $ stacks | skim-stdin foo bar
+  #     foo bar huginn mastodon grafana
+  #
+  #     $ stacks
+  #     huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+  #     mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+  #     grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+
+  local skimmed_stdin="$([[ -t 0 ]] || awk 'ORS=" " { print $1 }')"
+
+  printf -- '%s %s' "$*" "$skimmed_stdin" |
+    awk '{$1=$1;print}'  # trim leading/trailing spaces
+}
+```
+
+Usage:
+- Place `local resource_ids=$(skim-stdin "$@")` at the beginning of functions to handle both piped input and arguments.
+- This allows users to either pipe in resource IDs or provide them as arguments.
+
+### columnise
+The `columnise` function is used to format output into aligned columns, improving readability:
+
+```bash
+columnise() {
+  if [[ $BMA_COLUMNISE_ONLY_WHEN_TERMINAL_PRESENT == 'true' ]] && ! [[ -t 1 ]]; then
+    cat
+  else
+    column -t -s $'\t'
+  fi
+}
+```
+
+Usage:
+- Pipe the output of AWS CLI commands through `columnise` to format it into aligned columns.
+- Example: `aws ec2 describe-vpcs ... | columnise`
+
+These shared functions enhance the consistency and usability of our scripts across the project.
 
 ## Examples
 
