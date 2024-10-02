@@ -73,3 +73,86 @@ This document outlines the coding conventions used in our project, particularly 
 - Use consistent naming conventions across all functions.
 
 These conventions are derived from the observed patterns in the project files. They should be followed when contributing new functions or modifying existing ones to maintain consistency across the project.
+
+## Examples
+
+### Example 1: Listing a Resource (VPCs)
+
+The `vpcs` function is an example of listing a resource type. It demonstrates how to query and format the output for VPCs:
+
+```bash
+vpcs() {
+  # List VPCs
+  #
+  #     $ vpcs
+  #     vpc-018d9739  default-vpc  NO_NAME  172.31.0.0/16  NO_STACK  NO_VERSION
+
+  local vpc_ids=$(skim-stdin)
+  local filters=$(__bma_read_filters $@)
+
+  aws ec2 describe-vpcs       \
+    ${vpc_ids/#/'--vpc-ids '} \
+    --output text             \
+    --query '
+      Vpcs[].[
+        VpcId,
+        ((IsDefault==`false`)&&`not-default`)||`default-vpc`,
+        join(`,`, [Tags[?Key==`Name`].Value || `NO_NAME`][]),
+        CidrBlock,
+        join(`,`, [Tags[?Key==`aws:cloudformation:stack-name`].Value || `NO_STACK`][]),
+        join(`,`, [Tags[?Key==`version`].Value || `NO_VERSION`][])
+      ]'                |
+  grep -E -- "$filters" |
+    columnise
+}
+```
+
+This function showcases:
+- Using `skim-stdin` to handle both piped input and arguments
+- Applying filters with `__bma_read_filters`
+- Using AWS CLI with a complex query to format the output
+- Using `columnise` for consistent output formatting
+
+### Example 2: Listing Associated Resources (VPC Subnets)
+
+The `vpc-subnets` function is an example of listing resources associated with another resource. It demonstrates how to query and format the output for subnets associated with specific VPCs:
+
+```bash
+vpc-subnets() {
+  # List subnets for a specific VPC
+  #
+  # USAGE: vpc-subnets vpc-id [vpc-id]
+  #
+  # EXAMPLE:
+  #     $ vpc-subnets vpc-018d9739
+  #     subnet-34fd9cfa  vpc-018d9739  ap-southeast-2c  172.31.32.0/20  NO_NAME
+  #     subnet-8bb774fe  vpc-018d9739  ap-southeast-2a  172.31.0.0/20   NO_NAME
+  #     subnet-9eea2c07  vpc-018d9739  ap-southeast-2b  172.31.16.0/20  NO_NAME
+
+  local vpc_ids=$(skim-stdin "$@")
+  [[ -z "$vpc_ids" ]] && __bma_usage "vpc-id [vpc-id]" && return 1
+
+  local vpc_id
+  for vpc_id in $vpc_ids; do
+    aws ec2 describe-subnets                            \
+      --output text                                     \
+      --query "
+        Subnets[?VpcId=='$vpc_id'].[
+          SubnetId,
+          VpcId,
+          AvailabilityZone,
+          CidrBlock,
+          join(',', [Tags[?Key=='Name'].Value || 'NO_NAME'][])
+        ]"
+  done |
+  columnise
+}
+```
+
+This function showcases:
+- Handling multiple VPC IDs
+- Error checking for empty input
+- Looping through VPC IDs to query associated subnets
+- Formatting output consistently with `columnise`
+
+These examples illustrate the consistent patterns used across the project for querying AWS resources and formatting the output.
