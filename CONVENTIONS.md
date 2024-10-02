@@ -39,6 +39,38 @@ This document outlines the coding conventions used in our project, particularly 
 - Use `skim-stdin` (a custom function) to handle both piped input and arguments.
 - Allow functions to accept input from both command-line arguments and piped input.
 
+#### skim-stdin
+
+The `skim-stdin` function is a utility function that allows functions to accept input from both command-line arguments and piped input. It appends the first token from each line of STDIN to the argument list.
+
+```bash
+skim-stdin() {
+
+  # Append first token from each line of STDIN to argument list
+  #
+  # Implementation of `pipe-skimming` pattern.
+  #
+  #     $ stacks | skim-stdin foo bar
+  #     foo bar huginn mastodon grafana
+  #
+  #     $ stacks
+  #     huginn    CREATE_COMPLETE  2020-01-11T06:18:46.905Z  NEVER_UPDATED  NOT_NESTED
+  #     mastodon  CREATE_COMPLETE  2020-01-11T06:19:31.958Z  NEVER_UPDATED  NOT_NESTED
+  #     grafana   CREATE_COMPLETE  2020-01-11T06:19:47.001Z  NEVER_UPDATED  NOT_NESTED
+  #
+  # Typical usage within Bash-my-AWS functions:
+  #
+  #     local asg_names=$(skim-stdin "$@") # Append to arg list
+  #     local asg_names=$(skim-stdin)      # Only draw from STDIN
+
+  local skimmed_stdin="$([[ -t 0 ]] || awk 'ORS=" " { print $1 }')"
+
+  printf -- '%s %s' "$*" "$skimmed_stdin" |
+    awk '{$1=$1;print}'  # trim leading/trailing spaces
+
+}
+```
+
 ### Function Structure
 - Start with input validation and error handling.
 - Use local variables to store intermediate results.
