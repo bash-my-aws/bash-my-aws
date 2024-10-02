@@ -398,3 +398,40 @@ vpc-default-delete() {
     echo aws --region $REGION ec2 delete-vpc --vpc-id=$VPCID
   fi
 }
+
+subnet-ips() {
+  # List IP addresses for a subnet along with the resources they are allocated to
+  #
+  # USAGE: subnet-ips subnet-id [subnet-id...]
+  #
+  # EXAMPLE:
+  #     $ subnet-ips subnet-12345678
+  #     10.0.1.10  i-abcdef1234567890  EC2 Instance
+  #     10.0.1.20  eni-1234567890abcdef  Network Interface
+  #     10.0.1.30  rds:my-database  RDS Instance
+
+  local subnet_ids=$(skim-stdin "$@")
+  [[ -z "$subnet_ids" ]] && __bma_usage "subnet-id [subnet-id...]" && return 1
+
+  local subnet_id
+  for subnet_id in $subnet_ids; do
+    # Get EC2 instances
+    aws ec2 describe-instances \
+      --filters "Name=subnet-id,Values=$subnet_id" \
+      --query "Reservations[].Instances[].[PrivateIpAddress,InstanceId,'EC2 Instance']" \
+      --output text
+
+    # Get Network Interfaces
+    aws ec2 describe-network-interfaces \
+      --filters "Name=subnet-id,Values=$subnet_id" \
+      --query "NetworkInterfaces[].[PrivateIpAddress,NetworkInterfaceId,'Network Interface']" \
+      --output text
+
+    # Get RDS instances
+    aws rds describe-db-instances \
+      --query "DBInstances[?DBSubnetGroup.Subnets[?SubnetIdentifier=='$subnet_id']].[Endpoint.Address,DBInstanceIdentifier,'RDS Instance']" \
+      --output text
+
+    # Add more resource types here as needed
+  done | sort -k1,1 | columnise
+}
