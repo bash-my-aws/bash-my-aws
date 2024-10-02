@@ -399,6 +399,7 @@ vpc-default-delete() {
   fi
 }
 
+
 subnet-ips() {
   # List IP addresses for a subnet along with the resources they are allocated to
   #
@@ -406,9 +407,11 @@ subnet-ips() {
   #
   # EXAMPLE:
   #     $ subnet-ips subnet-12345678
-  #     10.0.1.10  i-abcdef1234567890  EC2 Instance
+  #     10.0.1.10  i-abcdef1234567890    EC2 Instance
   #     10.0.1.20  eni-1234567890abcdef  Network Interface
-  #     10.0.1.30  rds:my-database  RDS Instance
+  #     10.0.1.30  rds:my-database       RDS Instance
+  #
+  # XXX Tidy up to follow function formatting conventions.
 
   local subnet_ids=$(skim-stdin "$@")
   [[ -z "$subnet_ids" ]] && __bma_usage "subnet-id [subnet-id...]" && return 1
@@ -432,6 +435,5 @@ subnet-ips() {
       --query "DBInstances[?DBSubnetGroup.Subnets[?SubnetIdentifier=='$subnet_id']].[Endpoint.Address,DBInstanceIdentifier,'RDS Instance']" \
       --output text
 
-    # Add more resource types here as needed
   done | sort -V | columnise
 }
