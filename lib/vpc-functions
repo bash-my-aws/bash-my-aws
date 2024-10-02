@@ -433,5 +433,5 @@ subnet-ips() {
       --output text
 
     # Add more resource types here as needed
-  done | sort -k1,1 | columnise
+  done | sort -V | columnise
 }
