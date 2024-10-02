@@ -439,3 +439,31 @@ subnet-ips() {
     done
   done | sort -V | columnise
 }
+
+network-interfaces() {
+  # List network interfaces with key information
+  #
+  # USAGE: network-interfaces [filter]
+  #
+  # EXAMPLE:
+  #     $ network-interfaces
+  #     10.0.1.10  203.0.113.10  eni-1234567890abcdef  subnet-a1b2c3d4  vpc-11223344  in-use  default,web-tier  ELB net/my-nlb/1234567890abcdef
+
+  local filters=$(__bma_read_filters $@)
+
+  aws ec2 describe-network-interfaces \
+    --query 'NetworkInterfaces[].[
+      PrivateIpAddress,
+      Association.PublicIp || `N/A`,
+      NetworkInterfaceId,
+      SubnetId,
+      VpcId,
+      Status,
+      join(`,`, Groups[].GroupName),
+      Description
+    ]' \
+    --output text |
+  grep -E -- "$filters" |
+  sort -V -k1,1 -k2,2 |
+  columnise
+}
