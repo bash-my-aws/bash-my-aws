@@ -456,14 +456,15 @@ network-interfaces() {
       PrivateIpAddress,
       Association.PublicIp || `N/A`,
       NetworkInterfaceId,
-      SubnetId,
       VpcId,
+      SubnetId,
       Status,
-      join(`,`, Groups[].GroupName),
       Description
     ]' \
     --output text |
   grep -E -- "$filters" |
   sort -V -k1,1 -k2,2 |
   columnise
+
+  # join(`,`, Groups[].GroupName), # too noisy
 }
