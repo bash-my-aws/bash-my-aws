@@ -46,6 +46,10 @@ region() {
     echo "${AWS_DEFAULT_REGION:-'AWS_DEFAULT_REGION not set'}"
   else
     export AWS_DEFAULT_REGION="$inputs"
+    # Update AWS_REGION only if already set.
+    if [[ -n $AWS_REGION ]];  then
+        export AWS_REGION="$AWS_DEFAULT_REGION"
+    fi
   fi
 }
 
