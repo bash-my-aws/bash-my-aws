@@ -407,33 +407,35 @@ subnet-ips() {
   #
   # EXAMPLE:
   #     $ subnet-ips subnet-12345678
-  #     10.0.1.10  i-abcdef1234567890    EC2 Instance
-  #     10.0.1.20  eni-1234567890abcdef  Network Interface
-  #     10.0.1.30  rds:my-database       RDS Instance
-  #
-  # XXX Tidy up to follow function formatting conventions.
+  #     10.0.1.10  eni-1234567890abcdef  EC2 Instance  i-abcdef1234567890
+  #     10.0.1.20  eni-0987654321fedcba  RDS Instance  db-foobar
+  #     10.0.1.30  eni-1a2b3c4d5e6f7g8h  Unknown       unknown
 
   local subnet_ids=$(skim-stdin "$@")
   [[ -z "$subnet_ids" ]] && __bma_usage "subnet-id [subnet-id...]" && return 1
 
   local subnet_id
   for subnet_id in $subnet_ids; do
-    # Get EC2 instances
-    aws ec2 describe-instances \
-      --filters "Name=subnet-id,Values=$subnet_id" \
-      --query "Reservations[].Instances[].[PrivateIpAddress,InstanceId,'EC2 Instance']" \
-      --output text
-
-    # Get Network Interfaces
+    # Get all network interfaces in the subnet
     aws ec2 describe-network-interfaces \
       --filters "Name=subnet-id,Values=$subnet_id" \
-      --query "NetworkInterfaces[].[PrivateIpAddress,NetworkInterfaceId,'Network Interface']" \
-      --output text
+      --query "NetworkInterfaces[].[PrivateIpAddress,NetworkInterfaceId,Attachment.InstanceId,Description]" \
+      --output text | while read -r ip eni instance_id description; do
+        resource_type="Unknown"
+        resource_id="unknown"
+        
+        if [[ $description == *"ELB"* ]]; then
+          resource_type="Load Balancer"
+          resource_id=$(echo $description | awk '{print $2}')
+        elif [[ $description == *"RDSNetworkInterface"* ]]; then
+          resource_type="RDS Instance"
+          resource_id=$(aws rds describe-db-instances --query "DBInstances[?DBSubnetGroup.Subnets[?contains(@,'$subnet_id')]].DBInstanceIdentifier" --output text)
+        elif [[ -n $instance_id ]]; then
+          resource_type="EC2 Instance"
+          resource_id=$instance_id
+        fi
 
-    # Get RDS instances
-    aws rds describe-db-instances \
-      --query "DBInstances[?DBSubnetGroup.Subnets[?SubnetIdentifier=='$subnet_id']].[Endpoint.Address,DBInstanceIdentifier,'RDS Instance']" \
-      --output text
-
+        echo -e "$ip\t$eni\t$resource_type\t$resource_id"
+    done
   done | sort -V | columnise
 }
