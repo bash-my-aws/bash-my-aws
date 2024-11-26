@@ -468,3 +468,29 @@ network-interfaces() {
 
   # join(`,`, Groups[].GroupName), # too noisy
 }
+
+vpc-endpoint-policy() {
+  # Show policy for VPC endpoint(s)
+  #
+  #     USAGE: vpc-endpoint-policy vpc-endpoint-id [vpc-endpoint-id]
+  #
+  #     $ vpc-endpoints | vpc-endpoint-policy
+  #     vpce-0123456789abcdef0    {
+  #                                 "Version": "2008-10-17",
+  #                                 "Statement": [...]
+  #                               }
+
+  local vpc_endpoint_ids=$(skim-stdin "$@")
+  [[ -z "$vpc_endpoint_ids" ]] && __bma_usage "vpc-endpoint-id [vpc-endpoint-id]" && return 1
+
+  local vpc_endpoint_id
+  for vpc_endpoint_id in $vpc_endpoint_ids; do
+    local policy=$(aws ec2 describe-vpc-endpoints \
+      --vpc-endpoint-ids "$vpc_endpoint_id" \
+      --query "VpcEndpoints[0].PolicyDocument" \
+      --output text)
+    
+    # Pretty print the JSON policy
+    echo "$vpc_endpoint_id    $(echo "$policy" | jq '.' | sed '2,$s/^/                               /')"
+  done
+}
