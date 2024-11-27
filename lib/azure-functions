@@ -335,6 +335,19 @@ subscriptions() {
     columnise
 }
 
+subscriptions-each() {
+    local old_subscription="$(bma subscription | cut -f1)";
+    local old_rg="$(bma resource-group | cut -f1)";
+    bma resource-group-unset
+    local subscription
+    for subscription in $(bma subscriptions | cut -f1); do
+        bma subscription "$subscription"
+        eval "$@"
+    done;
+    bma subscription "$(bma "$old_subscription")"
+    bma resource-group "$old_rg"
+}
+
 subscription() {
 
   local subscription=$(skim-stdin-bma "$@")
@@ -773,6 +786,27 @@ connector-group-members() {
 }
 # https://graph.microsoft.com/beta/rolemanagement/directory/transitiveRoleAssignments?$count=true&$filter=principalId eq '12345'
 # https://graph.microsoft.com/beta/onPremisesPublishingProfiles/applicationProxy/connectors
+
+
+# Get instance ids for connectors
+#
+# This works...
+#
+# $ connector-groups prd-connectors | connector-group-members > prd-connectors
+# $ ssm-instances | rg -f <(cut -f3 prd-connectors) > prd-connectors-instances
+#
+# But this is not working...
+#
+# connector-group-instances() {
+#   local cgs=$(skim-stdin "$@")
+#   [[ -z $cgs ]] && __bma_usage "CONNECTOR_GROUP [CONNECTOR_GROUP]" && return 1
+# 
+#   for cg in cgs; do
+# 
+#       ssm-instances \
+#       | rg -f <( connector-group-members "$cg" | cut -f3)
+#   done
+# }
 
 # TODO
 
@@ -1276,6 +1310,7 @@ vnets() {
     | LC_ALL=C sort -k 1 \
     | columnise
 }
+      # join(',', dhcpOptions.dnsServers || [])
 
 vnet-subnets() {
 
@@ -1304,6 +1339,34 @@ vnet-subnets() {
     | columnise
   done
 }
+
+
+vnet-dns-resolvers() {
+
+  # List dns resolvers in a VNet
+  #
+  #   USAGE: vnet-dns-resolvers VNET
+  #
+  #   $ vnet-dns-resolves my-vnet
+
+  local vnets=$(skim-stdin "$@")
+  [[ -z $vnets ]] && __bma_usage "VNET [VNET]" && return 1
+
+  local vnet
+  for vnet in $vnets; do
+    az network vnet show  \
+      --name "$vnet" \
+      --query "[[
+          name,
+          resourceGroup,
+          join(',', dhcpOptions.dnsServers || [])]]" \
+      --output tsv \
+    | LC_ALL=C sort -k 1 \
+    | columnise
+  done
+}
+
+# az network vnet show -n vnet-openai-prd-ae-001  --query "join(' ', dhcpOptions.dnsServers || None)" -o tsv
 
 nics() {
     az network nic list \
