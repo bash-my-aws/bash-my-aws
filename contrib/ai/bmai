@@ -25,13 +25,14 @@ bmai() {
     # Create a filename by converting the prompt to lowercase, replacing spaces with hyphens,
     # and truncating to 50 chars
     local filename=$(echo "$*" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | cut -c1-50)
-    
-    mkdir -p "${BMA_HOME:-$HOME/.bash-my-aws}/ai_slop"
+   
+    local ai_slop_bucket="${BMA_HOME:-$HOME/.bash-my-aws}/contrib/ai/slop"
+    mkdir -p "${ai_slop_bucket}"
     
     llm prompt \
         -s "$(<"${conventions}")" \
         "Do not provide a preamble or closing comments. Output only an authentic bash-my-aws command that follows the conventions and does the following: '$@'" \
-    | tee "${BMA_HOME:-$HOME/.bash-my-aws}/ai_slop/${filename}"
+    | tee "${ai_slop_bucket}"
 }
 
 # Execute function with same name as file called unless sourced
