@@ -22,9 +22,16 @@ bmai() {
       - Do not provide a preamble or closing comments.
     "
     
+    # Create a filename by converting the prompt to lowercase, replacing spaces with hyphens,
+    # and truncating to 50 chars
+    local filename=$(echo "$*" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | cut -c1-50)
+    
+    mkdir -p "${BMA_HOME:-$HOME/.bash-my-aws}/ai_slop"
+    
     llm prompt \
         -s "$(<"${conventions}")" \
-        "Do not provide a preamble or closing comments. Output only an authentic bash-my-aws command that follows the conventions and does the following: '$@'"
+        "Do not provide a preamble or closing comments. Output only an authentic bash-my-aws command that follows the conventions and does the following: '$@'" \
+    | tee "${BMA_HOME:-$HOME/.bash-my-aws}/ai_slop/${filename}"
 }
 
 # Execute function with same name as file called unless sourced
