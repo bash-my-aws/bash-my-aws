@@ -41,6 +41,8 @@ source ~/.bash-my-aws/lib/extras/bmai
 
 ## 💡 Examples
 
+Generate a command:
+
 ```bash
 # Generate a command to list S3 buckets
 $ bmai "list s3 buckets"
@@ -67,6 +69,33 @@ s3-buckets() {
 Generated functions are saved to:
 `~/.bash-my-aws/contrib/ai/slop/` 📁
 
+**Here's what the actual BMA command looks like:**
+
+```bash
+ buckets() {
+ 
+   # List S3 Buckets
+   #
+   #     $ buckets
+   #     web-assets  2019-12-20  08:24:38.182045
+   #     backups     2019-12-20  08:24:44.351215
+   #     archive     2019-12-20  08:24:57.567652
+ 
+   local buckets=$(skim-stdin)
+   local filters=$(__bma_read_filters $@)
+ 
+   aws s3api list-buckets \
+     --output text        \
+     --query "
+       Buckets[${buckets:+?contains(['${buckets// /"','"}'], Name)}].[
+         Name,
+         CreationDate
+       ]"                |
+   grep -E -- "$filters" |
+   column -t
+ }
+```
+
 ## ⚙️ How It Works
 
 1. 📝 Takes a natural language description as input
@@ -76,6 +105,7 @@ Generated functions are saved to:
 5. 📺 Displays the generated function
 
 The generated functions follow BMA conventions including:
+
 - 🎯 Standard argument handling
 - 🔄 Integration with skim-stdin
 - 📊 Consistent output formatting
