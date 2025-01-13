@@ -37,6 +37,8 @@ source ~/.bash-my-aws/lib/extras/bmai
 
 ## Examples
 
+*Note: BMA's `buckets` command already does this.*
+
 ```bash
 # Generate a command to list S3 buckets
 $ bmai "list s3 buckets"
