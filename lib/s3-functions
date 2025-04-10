@@ -238,7 +238,7 @@ bucket-size() {
       } else if (bytes < 1099511627776) {
         printf "%.1fGB", bytes/1073741824
       } else if (bytes < 1125899906842624) {
-        printf "%.1fPB", bytes/1099511627776
+        printf "%.1fTB", bytes/1099511627776
       } else {
         printf "%.1fPB", bytes/1125899906842624
       }
