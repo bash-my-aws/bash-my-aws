@@ -306,7 +306,7 @@ bucket-size() {
         # - For all storage types, only show non-zero ones (except STANDARD)
         if [[ "$show_all" == "false" ]] || [[ "$size" != "0" ]] || [[ "$storage_type" == "StandardStorage" ]]; then
           display_name="${display_names[$storage_type]}"
-          output="$output  $display_name=$formatted_size"
+          output="$output"$'\t'"$display_name=$formatted_size"
           has_data=true
         fi
       fi
@@ -314,7 +314,7 @@ bucket-size() {
     
     # If no data was found, at least show STANDARD=0B
     if [[ "$has_data" == "false" ]]; then
-      output="$output  STANDARD=0B"
+      output="$output"$'\t'"STANDARD=0B"
     fi
     
     echo "$output" | columnise
