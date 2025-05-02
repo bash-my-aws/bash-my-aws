@@ -16,18 +16,11 @@ bedrock-model-token-limits() {
   local model_ids=$(skim-stdin "$@")
   local filters=$(__bma_read_filters $@)
 
-  local column_command
-  if column --help 2>/dev/null | grep -- --table-right > /dev/null; then
-    column_command='column --table --table-right 2,3,4'
-  else
-    column_command='column -t'
-  fi
-
   # First list available models
   aws bedrock list-foundation-models \
     --output text \
-    --query "modelSummaries[?contains(modelId, 'anthropic')].[modelId]" |
-  sort |
+    --query "modelSummaries[?contains(modelId, 'anthropic')].[modelId]" |\
+  sort |\
   while read -r model_id; do
     # Only process models specified in arguments, or all if no arguments
     if [[ -z "$model_ids" ]] || [[ "$model_ids" == *"$model_id"* ]]; then
@@ -42,9 +35,10 @@ bedrock-model-token-limits() {
           inferenceTypesSupported[?inferenceType=='ON_DEMAND'].inferenceSpecificThrottling[0].throttlingValues[0].[rateLimit.requestsPerSecond, rateLimit.tokensPerMinute, rateLimit.tokenBucketCapacity] | [0][0][2]
         ]"
     fi
-  done |
-  grep -E -- "$filters" |
-  $column_command
+  done |\
+  grep -E -- "$filters" |\
+  columnise
+
 }
 
 bedrock-models() {
@@ -63,8 +57,8 @@ bedrock-models() {
     --query "modelSummaries[].[
       modelId,
       modelLifecycle.status
-    ]" |
-  grep -E -- "$filters" |
-  sort |
+    ]" |\
+  grep -E -- "$filters" |\
+  sort |\
   columnise
 }
